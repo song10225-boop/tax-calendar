@@ -83,9 +83,32 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
+
+<style>
+#authGate{position:fixed;inset:0;z-index:9999;background:#f1f5f9;display:flex;align-items:center;justify-content:center;padding:20px}
+#authGate .auth-card{width:min(420px,100%);background:#fff;border:1px solid #dbe1e8;border-radius:18px;padding:26px;box-shadow:0 18px 50px #0f172a1a}
+#authGate h2{font-size:1.35rem;margin-bottom:8px;color:#1e6091}#authGate p{font-size:.9rem;color:#64748b;line-height:1.6;margin-bottom:16px}
+#authGate label{display:block;font-size:.82rem;font-weight:700;margin:12px 0 5px}#authGate input{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px}
+#authGate .auth-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}#authGate button{flex:1;padding:10px;border:0;border-radius:8px;font-weight:800;cursor:pointer}
+#authLoginBtn{background:#2563eb;color:#fff}#authSignupBtn{background:#e0e7ff;color:#1e40af}#authResetBtn{background:#f1f5f9;color:#334155}
+#authMessage{font-size:.82rem;color:#b91c1c;min-height:1.3em;margin-top:10px;white-space:pre-wrap}#accountBar{font-size:.75rem;opacity:.95;display:flex;align-items:center;gap:8px}#accountBar button{border:0;border-radius:6px;padding:5px 8px;cursor:pointer}
+</style>
+<div id="authGate">
+ <div class="auth-card">
+  <h2>📅 TaxDiary 로그인</h2>
+  <p>계정별로 달력과 업무일지가 따로 저장됩니다. 처음이라면 이메일과 비밀번호를 입력한 뒤 회원가입을 눌러 주세요.</p>
+  <label for="authEmail">이메일</label><input id="authEmail" type="email" autocomplete="username" placeholder="name@example.com">
+  <label for="authPassword">비밀번호 (6자 이상)</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="비밀번호">
+  <div class="auth-actions"><button id="authLoginBtn" type="button">로그인</button><button id="authSignupBtn" type="button">회원가입</button></div>
+  <div class="auth-actions"><button id="authResetBtn" type="button">비밀번호 재설정 메일</button></div>
+  <div id="authMessage" role="status"></div>
+ </div>
+</div>
+
 <header>
   <div class="logo-area"><span>📅</span><span id="appTitleText">경영전략부 업무 캘린더</span></div>
   <div class="header-actions">
+    <span id="accountBar" style="display:none"></span>
     <button class="btn btn-white" onclick="openAppearanceSettings()">제목·색상 설정</button>
     <button class="btn btn-white" onclick="openTaskModal()">＋ 업무 추가</button>
     <button class="btn btn-white" onclick="exportJSON()">백업 내보내기</button>
@@ -255,8 +278,29 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
-const STORAGE_KEY='management-calendar-v1';
+const firebaseConfig = {
+  apiKey: "AIzaSyCWwZp44LZj6vsQobyGHR_K5SImIZyQSx8",
+  authDomain: "taxdiary-calendar.firebaseapp.com",
+  projectId: "taxdiary-calendar",
+  storageBucket: "taxdiary-calendar.firebasestorage.app",
+  messagingSenderId: "4033600838",
+  appId: "1:4033600838:web:6d41b6767d129ad0845947",
+  measurementId: "G-Z3JYCYNCCZ"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const firestore = firebase.firestore();
+let currentUser = null;
+let cloudLoadComplete = false;
+let saveTimer = null;
+const LEGACY_STORAGE_KEY = 'management-calendar-v1';
+const STORAGE_KEY_BASE='management-calendar-v1';
+let STORAGE_KEY=STORAGE_KEY_BASE;
+'management-calendar-v1';
 const $=id=>document.getElementById(id);
 const today=new Date();
 let viewYear=today.getFullYear(),viewMonth=today.getMonth(),selectedDate=toISO(today),viewMode='month';
@@ -278,12 +322,60 @@ function parseISO(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-
 function monthLabel(y,m){return `${y}년 ${m+1}월`}
 function escapeHTML(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function loadData(){
- try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);tasks=Array.isArray(data.tasks)?data.tasks:[];diaryRows=Array.isArray(data.diaryRows)?data.diaryRows:[];profile=data.profile||profile}else{tasks=seedTasks.map(t=>({...t}));saveData()}}
- catch(e){tasks=seedTasks.map(t=>({...t}));}
+ try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);tasks=Array.isArray(data.tasks)?data.tasks:[];diaryRows=Array.isArray(data.diaryRows)?data.diaryRows:[];profile=data.profile||profile}else{tasks=seedTasks.map(t=>({...t}));diaryRows=[];saveData()}}
+ catch(e){tasks=seedTasks.map(t=>({...t}));diaryRows=[];}
  $('profileText').textContent=`${profile.name} · ${profile.company}`;
  applyAppearance();
 }
-function saveData(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({tasks,diaryRows,profile,updatedAt:new Date().toISOString()}))}catch(e){alert('브라우저 저장에 실패했습니다. 저장 공간을 확인하고 백업해 주세요.')}}
+function saveData(){
+ const data={tasks,diaryRows,profile,updatedAt:new Date().toISOString()};
+ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){alert('브라우저 저장에 실패했습니다. 저장 공간을 확인하고 백업해 주세요.')}
+ if(currentUser && cloudLoadComplete){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+   try{await firestore.collection('users').doc(currentUser.uid).collection('appData').doc('main').set(data);setSyncStatus('클라우드 저장 완료')}
+   catch(e){setSyncStatus('클라우드 저장 실패: '+(e.message||'권한 또는 인터넷 연결 확인'))}
+  },500);
+ }
+}
+function setSyncStatus(message){const bar=$('accountBar');if(bar){const status=$('syncStatus');if(status)status.textContent=message}}
+function showAuthMessage(message,isError=true){const el=$('authMessage');if(el){el.style.color=isError?'#b91c1c':'#166534';el.textContent=message}}
+function setAuthBusy(busy){['authLoginBtn','authSignupBtn','authResetBtn'].forEach(id=>$(id).disabled=busy)}
+function firebaseErrorMessage(e){const map={'auth/invalid-email':'이메일 주소 형식을 확인해 주세요.','auth/missing-password':'비밀번호를 입력해 주세요.','auth/weak-password':'비밀번호는 6자 이상으로 설정해 주세요.','auth/email-already-in-use':'이미 가입된 이메일입니다. 로그인해 주세요.','auth/invalid-credential':'이메일 또는 비밀번호가 올바르지 않습니다.','auth/user-not-found':'가입된 계정을 찾을 수 없습니다.','auth/too-many-requests':'요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.','auth/operation-not-allowed':'Firebase에서 이메일/비밀번호 로그인이 활성화되어 있는지 확인해 주세요.'};return map[e.code]||('처리 중 문제가 발생했습니다: '+(e.message||e.code||'알 수 없는 오류'))}
+async function authAction(kind){
+ const email=$('authEmail').value.trim(),password=$('authPassword').value;
+ if(!email){showAuthMessage('이메일을 입력해 주세요.');return}
+ if(kind!=='reset'&&!password){showAuthMessage('비밀번호를 입력해 주세요.');return}
+ setAuthBusy(true);showAuthMessage('처리 중입니다…',false);
+ try{
+  if(kind==='login')await auth.signInWithEmailAndPassword(email,password);
+  else if(kind==='signup')await auth.createUserWithEmailAndPassword(email,password);
+  else {await auth.sendPasswordResetEmail(email);showAuthMessage('비밀번호 재설정 메일을 보냈습니다. 이메일을 확인해 주세요.',false);}
+ }catch(e){showAuthMessage(firebaseErrorMessage(e))}finally{setAuthBusy(false)}
+}
+$('authLoginBtn').addEventListener('click',()=>authAction('login'));
+$('authSignupBtn').addEventListener('click',()=>authAction('signup'));
+$('authResetBtn').addEventListener('click',()=>authAction('reset'));
+$('authPassword').addEventListener('keydown',e=>{if(e.key==='Enter')authAction('login')});
+async function handleSignedIn(user){
+ currentUser=user;cloudLoadComplete=false;STORAGE_KEY=STORAGE_KEY_BASE+'-'+user.uid;
+ $('authGate').style.display='none';
+ const bar=$('accountBar');bar.style.display='flex';bar.innerHTML=`${escapeHTML(user.email||'로그인 사용자')} <span id="syncStatus">클라우드 불러오는 중…</span> <button type="button" onclick="signOutTaxDiary()">로그아웃</button>`;
+ try{
+  const ref=firestore.collection('users').doc(user.uid).collection('appData').doc('main');
+  const snap=await ref.get();
+  if(snap.exists){const data=snap.data();localStorage.setItem(STORAGE_KEY,JSON.stringify(data));tasks=Array.isArray(data.tasks)?data.tasks:[];diaryRows=Array.isArray(data.diaryRows)?data.diaryRows:[];profile=data.profile||{name:'사용자',company:'경영전략부',calendarTitle:'경영전략부 업무 캘린더',theme:'blue'};$('profileText').textContent=`${profile.name} · ${profile.company}`;applyAppearance();}
+  else {loadData();}
+  cloudLoadComplete=true;
+  if(!snap.exists){await ref.set({tasks,diaryRows,profile,updatedAt:new Date().toISOString()});}
+  renderAll();renderDiaryTable();renderQuickLinksManager();renderHolidaysManager();setSyncStatus('클라우드 연결됨');
+ }catch(e){cloudLoadComplete=false;setSyncStatus('클라우드 연결 오류');alert('로그인은 되었지만 클라우드 데이터를 불러오지 못했습니다. Firestore 규칙이 게시되었는지 확인해 주세요.\n'+(e.message||''));}
+}
+async function signOutTaxDiary(){cloudLoadComplete=false;currentUser=null;await auth.signOut();}
+auth.onAuthStateChanged(async user=>{
+ if(user){showAuthMessage('',false);await handleSignedIn(user)}
+ else{currentUser=null;cloudLoadComplete=false;$('authGate').style.display='flex';$('accountBar').style.display='none';}
+});
 function applyAppearance(){
  const title=(profile.calendarTitle||'경영전략부 업무 캘린더').trim()||'경영전략부 업무 캘린더';
  const theme=profile.theme==='rose'?'rose':'blue';
@@ -494,7 +586,7 @@ function excelDate(value){
  const m=s.match(/^(\\d{4})[./년-]\\s*(\\d{1,2})[./월-]\\s*(\\d{1,2})/);return m?`${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`:'';
 }
 
-loadData();renderAll();renderDiaryTable();renderQuickLinksManager();renderHolidaysManager();
+// Firebase 로그인 후 사용자별 데이터를 불러온 다음 화면을 초기화합니다.
 </script>
 </body>
 </html>
