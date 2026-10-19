@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>경영전략부 업무 캘린더</title>
+<title>경영전략부 업무 캘린더 - 개선판</title>
 <style>
 :root{--navy:#1e6091;--blue:#2563eb;--line:#dbe1e8;--muted:#64748b;--bg:#f5f7fb;--red:#dc2626;--green:#15803d;--purple:#7c3aed;--amber:#b45309}
 *{box-sizing:border-box;margin:0;padding:0;font-family:Pretendard,"Malgun Gothic",sans-serif}
@@ -38,6 +38,10 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;ba
 .view-controls{display:flex;gap:6px;flex-wrap:wrap}
 .filters{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:10px}
 .filters select,.search-input{border:1px solid var(--line);background:white;border-radius:7px;padding:7px 9px;font-size:.8rem}
+.quick-filters{display:flex;gap:6px;flex-wrap:wrap;margin:-2px 0 10px}
+.quick-filter{border:1px solid var(--line);background:#fff;color:#475569;border-radius:999px;padding:6px 10px;font-size:.75rem;font-weight:700}
+.quick-filter.active{background:#dbeafe;border-color:#93c5fd;color:#1e40af}
+
 .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line);background:white;flex:1;min-height:500px;grid-auto-rows:minmax(95px,1fr)}
 .day-header{background:#eef2f7;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px;text-align:center;font-size:.8rem;font-weight:800}
 .day-header:first-child{color:#dc2626}.day-header:last-child{color:#2563eb}
@@ -114,8 +118,14 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
       <div class="view-controls"><button class="btn btn-outline" id="monthViewBtn" onclick="setView('month')">월간</button><button class="btn btn-outline" id="listViewBtn" onclick="setView('list')">목록</button></div>
     </div>
     <div class="filters">
-      <select id="statusFilter" onchange="renderAll()"><option value="all">모든 상태</option><option value="예정">예정</option><option value="진행 중">진행 중</option><option value="결재 대기">결재 대기</option><option value="자료 대기">타부서 자료 대기</option><option value="완료">완료</option><option value="지연">지연</option></select>
+      <select id="statusFilter" onchange="clearQuickFilter();renderAll()"><option value="all">모든 상태</option><option value="예정">예정</option><option value="진행 중">진행 중</option><option value="결재 대기">결재 대기</option><option value="자료 대기">타부서 자료 대기</option><option value="완료">완료</option><option value="지연">지연</option></select>
       <input class="search-input" id="searchInput" placeholder="업무명·메모 검색" oninput="renderAll()">
+    </div>
+    <div class="quick-filters" aria-label="빠른 업무 필터">
+      <button class="quick-filter active" id="qf-all" onclick="quickFilter('all')">전체</button>
+      <button class="quick-filter" id="qf-week" onclick="quickFilter('week')">7일 이내 마감</button>
+      <button class="quick-filter" id="qf-waiting" onclick="quickFilter('waiting')">결재·자료 대기</button>
+      <button class="quick-filter" id="qf-overdue" onclick="quickFilter('overdue')">지연 업무</button>
     </div>
     <div id="calendarContent"></div>
   </section>
@@ -174,6 +184,7 @@ const STORAGE_KEY='management-calendar-v1';
 const $=id=>document.getElementById(id);
 const today=new Date();
 let viewYear=today.getFullYear(),viewMonth=today.getMonth(),selectedDate=toISO(today),viewMode='month';
+let activeQuickFilter='all';
 let profile={name:'사용자',company:'경영전략부'};
 let tasks=[];
 const seedTasks=[
@@ -198,6 +209,17 @@ function saveData(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({tasks,p
 function changeMonth(delta){viewMonth+=delta;if(viewMonth<0){viewYear--;viewMonth=11}if(viewMonth>11){viewYear++;viewMonth=0}renderAll()}
 function goToday(){viewYear=today.getFullYear();viewMonth=today.getMonth();selectedDate=toISO(today);renderAll()}
 function setView(v){viewMode=v;renderAll()}
+function clearQuickFilter(){activeQuickFilter='all';updateQuickFilterButtons()}
+function quickFilter(mode){
+ activeQuickFilter=mode;
+ if(mode==='waiting')$('statusFilter').value='all';
+ else if(mode==='overdue')$('statusFilter').value='지연';
+ else $('statusFilter').value='all';
+ updateQuickFilterButtons();renderAll();
+}
+function updateQuickFilterButtons(){
+ ['all','week','waiting','overdue'].forEach(k=>{const b=$('qf-'+k);if(b)b.classList.toggle('active',activeQuickFilter===k)});
+}
 function setAllCategories(value){document.querySelectorAll('.cat-filter').forEach(c=>c.checked=value);renderAll()}
 function selectedCategories(){return [...document.querySelectorAll('.cat-filter:checked')].map(c=>c.value)}
 function isOverdue(t){return t.status!=='완료'&&t.date<toISO(today)}
@@ -207,10 +229,16 @@ function visibleTasks(){const cats=selectedCategories(),status=$('statusFilter')
  if(isOverdue(t)&&!$('showOverdue').checked)return false;
  if(status==='지연'&&!isOverdue(t))return false;
  if(status!=='all'&&status!=='지연'&&t.status!==status)return false;
+ if(activeQuickFilter==='week'){
+   const d=daysUntil(t.date);
+   if(t.status==='완료'||d<0||d>7)return false;
+ }
+ if(activeQuickFilter==='waiting'&&t.status!=='결재 대기'&&t.status!=='자료 대기')return false;
+ if(activeQuickFilter==='overdue'&&!isOverdue(t))return false;
  if(search&&!`${t.title} ${t.memo||''} ${t.category}`.toLowerCase().includes(search))return false;
  return true;
 })}
-function renderAll(){renderCalendar();renderMini();renderSidebar();$('calendarTitle').textContent=monthLabel(viewYear,viewMonth);$('miniTitle').textContent=monthLabel(viewYear,viewMonth);$('monthViewBtn').style.background=viewMode==='month'?'#dbeafe':'white';$('listViewBtn').style.background=viewMode==='list'?'#dbeafe':'white'}
+function renderAll(){updateQuickFilterButtons();renderCalendar();renderMini();renderSidebar();$('calendarTitle').textContent=monthLabel(viewYear,viewMonth);$('miniTitle').textContent=monthLabel(viewYear,viewMonth);$('monthViewBtn').style.background=viewMode==='month'?'#dbeafe':'white';$('listViewBtn').style.background=viewMode==='list'?'#dbeafe':'white'}
 function renderCalendar(){
  const root=$('calendarContent'),all=visibleTasks();root.innerHTML='';
  if(viewMode==='list'){const first=dateISO(viewYear,viewMonth+1,1),last=dateISO(viewYear,viewMonth+1,new Date(viewYear,viewMonth+1,0).getDate());const arr=all.filter(t=>t.date>=first&&t.date<=last).sort((a,b)=>a.date.localeCompare(b.date));const box=document.createElement('div');box.className='list-view';box.innerHTML='<div class="list-row header"><span>마감일</span><span>업무명</span><span>분야</span><span class="list-status">상태</span></div>'+ (arr.length?arr.map(t=>`<div class="list-row"><span>${t.date}</span><span><button class="tiny-btn" style="font-size:.8rem;color:#1d4ed8" onclick="editTask('${t.id}')">${escapeHTML(t.title)}</button></span><span><span class="tag ${t.category}">${t.category}</span></span><span class="list-status">${escapeHTML(isOverdue(t)?'지연':t.status)}</span></div>`).join(''):'<div class="empty-state">이번 달 등록된 업무가 없습니다.</div>');root.appendChild(box);return}
