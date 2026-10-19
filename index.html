@@ -1,333 +1,268 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>업무 & 개인 회계 캘린더</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', 'Malgun Gothic', sans-serif; }
-        body { display: flex; flex-direction: column; height: 100vh; background-color: #f8f9fa; color: #333; overflow: hidden; }
-        
-        /* 상단 네비게이션바 */
-        header { display: flex; justify-content: space-between; align-items: center; background: #1e6091; color: white; padding: 10px 20px; flex-shrink: 0; }
-        .logo-area { display: flex; align-items: center; gap: 15px; font-weight: bold; font-size: 1.1rem; }
-        .login-btn { background: white; color: #1e6091; border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; }
-
-        /* 메인 레이아웃 (3단) */
-        .main-container { display: flex; flex: 1; overflow: hidden; }
-        
-        /* [1단] 왼쪽 사이드바 */
-        aside.left-sidebar { width: 270px; background: #fff; border-right: 1px solid #d1d5db; padding: 15px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; flex-shrink: 0; }
-        
-        /* 미니 달력 */
-        .mini-cal { border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; background: #fafafa; font-size: 0.8rem; text-align: center; }
-        .mini-cal-title { font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; }
-        .mini-cal-table { width: 100%; border-collapse: collapse; text-align: center; }
-        .mini-cal-table th, .mini-cal-table td { padding: 3px; font-size: 0.75rem; }
-        .mini-cal-table th { color: #6b7280; font-weight: 600; }
-        .mini-cal-table td.today { background: #2563eb; color: white; border-radius: 50%; font-weight: bold; }
-
-        /* 캘린더 카테고리 (수정 가능) */
-        .cal-group { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; background: #f9fafb; padding: 10px; border-radius: 6px; border: 1px solid #f3f4f6; }
-        .cal-group-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: bold; color: #374151; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px; }
-        .edit-btn { background: none; border: none; cursor: pointer; font-size: 0.75rem; color: #6b7280; text-decoration: underline; }
-        .edit-btn:hover { color: #2563eb; }
-
-        .cal-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #374151; cursor: pointer; margin-top: 4px; }
-        .cal-item input { cursor: pointer; }
-
-        /* [2단] 중앙 메인 캘린더 */
-        section.calendar-area { flex: 1; padding: 15px; background: white; display: flex; flex-direction: column; overflow-y: auto; }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-shrink: 0; }
-        .calendar-title { font-size: 1.3rem; font-weight: 700; }
-        
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid #d1d5db; border-left: 1px solid #d1d5db; flex: 1; min-height: 600px; }
-        .day-header { background: #f3f4f6; border-right: 1px solid #d1d5db; border-bottom: 1px solid #d1d5db; padding: 6px; text-align: center; font-weight: 600; font-size: 0.8rem; height: 32px; }
-        
-        .calendar-cell { border-right: 1px solid #d1d5db; border-bottom: 1px solid #d1d5db; padding: 6px; min-height: 90px; background: white; position: relative; display: flex; flex-direction: column; gap: 4px; }
-        .calendar-cell.other-month { background-color: #fafafa; opacity: 0.5; }
-        .calendar-cell.has-urgent { background-color: #ffe4e6 !important; } /* 긴급 일정이 있으면 셀 전체 연핑크 연출 */
-        
-        .day-num { font-size: 0.8rem; font-weight: 600; margin-bottom: 2px; }
-        .day-num.sun { color: #ef4444; }
-        .day-num.sat { color: #2563eb; }
-
-        /* 일정 칩 스타일 */
-        .event-chip { font-size: 0.75rem; padding: 3px 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .event-chip.urgent { background: #fecdd3; color: #9f1239; font-weight: bold; }
-        .event-chip.normal { background: #dbeafe; color: #1e40af; }
-        .event-chip.daily { background: #dcfce7; color: #166534; }
-        .event-chip.completed { text-decoration: line-through; opacity: 0.55; background: #e5e7eb !important; color: #6b7280 !important; }
-
-        /* [3단] 오른쪽 To-Do 사이드바 */
-        aside.todo-sidebar { width: 310px; background: white; border-left: 1px solid #d1d5db; padding: 15px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; overflow-y: auto; }
-        .todo-header { font-size: 1rem; font-weight: 700; color: #111827; }
-        
-        .add-todo-box { display: flex; flex-direction: column; gap: 6px; background: #f9fafb; padding: 10px; border-radius: 6px; border: 1px solid #e5e7eb; }
-        .todo-select { padding: 6px; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.8rem; }
-        .todo-input { width: 100%; padding: 7px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.8rem; }
-        .add-btn { background: #2563eb; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
-        .add-btn:hover { background: #1d4ed8; }
-
-        /* To-Do 목록 */
-        .todo-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-        .todo-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; padding: 8px; border: 1px solid #f3f4f6; border-radius: 4px; cursor: pointer; background: #fff; }
-        .todo-item.completed span.todo-text { text-decoration: line-through; color: #9ca3af; }
-        
-        .tag { font-size: 0.68rem; padding: 2px 5px; border-radius: 3px; font-weight: bold; }
-        .tag.urgent { background: #ffe4e6; color: #e11d48; }
-        .tag.normal { background: #e0f2fe; color: #0284c7; }
-        .tag.daily { background: #dcfce7; color: #15803d; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>경영전략부 업무 캘린더</title>
+<style>
+:root{--navy:#1e6091;--blue:#2563eb;--line:#dbe1e8;--muted:#64748b;--bg:#f5f7fb;--red:#dc2626;--green:#15803d;--purple:#7c3aed;--amber:#b45309}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Pretendard,"Malgun Gothic",sans-serif}
+body{height:100vh;min-height:620px;display:flex;flex-direction:column;background:var(--bg);color:#1f2937;overflow:hidden}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--navy);color:#fff;padding:12px 18px;flex-shrink:0}
+.logo-area{font-size:1.05rem;font-weight:800;display:flex;align-items:center;gap:9px}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid transparent;border-radius:7px;padding:8px 11px;font-size:.83rem;font-weight:700}
+.btn-primary{background:var(--blue);color:white}.btn-white{background:white;color:var(--navy)}.btn-outline{background:white;border-color:var(--line);color:#334155}.btn-danger{background:#fff1f2;color:#be123c;border-color:#fecdd3}
+.main-container{display:grid;grid-template-columns:240px minmax(420px,1fr) 290px;flex:1;min-height:0}
+.left-sidebar,.todo-sidebar{background:white;padding:14px;overflow-y:auto;min-height:0}
+.left-sidebar{border-right:1px solid var(--line);display:flex;flex-direction:column;gap:14px}
+.todo-sidebar{border-left:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+.mini-cal{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fbfdff}
+.mini-cal-title{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:.9rem;margin-bottom:8px}
+.mini-cal table{width:100%;border-collapse:collapse;text-align:center;font-size:.75rem}
+.mini-cal th,.mini-cal td{padding:5px 1px}
+.mini-cal td{cursor:pointer;border-radius:5px}.mini-cal td:hover{background:#e0edff}.mini-cal td.today{background:var(--blue);color:white;font-weight:800}.mini-cal td.selected{outline:2px solid #93c5fd}
+.section-label{font-size:.78rem;font-weight:800;color:#475569;margin-bottom:7px}
+.cal-group{background:#f8fafc;border:1px solid #e8edf3;border-radius:8px;padding:10px}
+.cal-group-header{display:flex;justify-content:space-between;align-items:center;font-size:.84rem;font-weight:800;margin-bottom:8px}
+.edit-btn{border:0;background:none;color:var(--muted);font-size:.72rem;text-decoration:underline}
+.cal-item{display:flex;align-items:center;gap:8px;font-size:.82rem;margin:8px 0;cursor:pointer}
+.cal-item input{accent-color:var(--blue)}
+.color-dot{width:10px;height:10px;border-radius:3px;display:inline-block;flex-shrink:0}
+.calendar-area{padding:15px;overflow:auto;display:flex;flex-direction:column;min-width:0}
+.calendar-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.month-controls{display:flex;align-items:center;gap:8px}.calendar-title{font-size:1.35rem;font-weight:850;min-width:150px}
+.icon-btn{background:white;border:1px solid var(--line);border-radius:7px;padding:7px 10px;color:#334155}
+.view-controls{display:flex;gap:6px;flex-wrap:wrap}
+.filters{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.filters select,.search-input{border:1px solid var(--line);background:white;border-radius:7px;padding:7px 9px;font-size:.8rem}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line);background:white;flex:1;min-height:500px;grid-auto-rows:minmax(95px,1fr)}
+.day-header{background:#eef2f7;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px;text-align:center;font-size:.8rem;font-weight:800}
+.day-header:first-child{color:#dc2626}.day-header:last-child{color:#2563eb}
+.calendar-cell{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px;min-width:0;display:flex;flex-direction:column;gap:4px;cursor:pointer;background:#fff}
+.calendar-cell:hover{background:#f8fbff}.calendar-cell.other-month{background:#f8fafc;color:#9ca3af}.calendar-cell.today-cell{background:#eff6ff}.calendar-cell.has-urgent{box-shadow:inset 0 0 0 1px #fda4af;background:#fff8f8}
+.day-num{font-size:.78rem;font-weight:800;display:flex;justify-content:space-between;gap:3px}.day-num.sun{color:#dc2626}.day-num.sat{color:#2563eb}
+.event-chip{font-size:.69rem;line-height:1.35;padding:4px 5px;border-radius:5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:0;text-align:left;width:100%;cursor:pointer}
+.event-chip.cat-회계{background:#dbeafe;color:#1e40af}.event-chip.cat-자금{background:#dcfce7;color:#166534}.event-chip.cat-인사{background:#ffedd5;color:#9a3412}.event-chip.cat-총무{background:#ede9fe;color:#5b21b6}.event-chip.cat-공통{background:#ffe4e6;color:#9f1239}
+.event-chip.urgent{outline:1px solid #fb7185;font-weight:800}.event-chip.completed{text-decoration:line-through;opacity:.55;background:#e5e7eb;color:#64748b}
+.more-events{font-size:.68rem;color:#64748b;padding-left:3px}
+.panel-title{font-size:.98rem;font-weight:850}.subtle{font-size:.75rem;color:var(--muted)}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.summary-card{padding:10px;border:1px solid #e5eaf0;border-radius:8px;background:#fbfdff}.summary-card span{display:block;font-size:.72rem;color:var(--muted)}.summary-card strong{font-size:1.2rem;display:block;margin-top:3px}
+.add-todo-box{display:flex;flex-direction:column;gap:7px;padding:10px;background:#f8fafc;border:1px solid #e5eaf0;border-radius:8px}
+.field{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;background:white;font-size:.82rem}
+.todo-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+.todo-item{display:flex;align-items:flex-start;gap:7px;padding:9px;border:1px solid #e5eaf0;border-radius:7px;font-size:.8rem;background:white}
+.todo-item input{margin-top:3px;accent-color:var(--blue)}.todo-text{flex:1;overflow-wrap:anywhere}.todo-item.completed .todo-text{text-decoration:line-through;color:#94a3b8}
+.tag{font-size:.65rem;padding:3px 5px;border-radius:4px;font-weight:800;white-space:nowrap}.tag.회계{background:#dbeafe;color:#1e40af}.tag.자금{background:#dcfce7;color:#166534}.tag.인사{background:#ffedd5;color:#9a3412}.tag.총무{background:#ede9fe;color:#5b21b6}.tag.공통{background:#ffe4e6;color:#9f1239}
+.todo-actions{display:flex;gap:4px}.tiny-btn{border:0;background:transparent;color:#64748b;font-size:.75rem;padding:2px}
+.status-line{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.78rem;padding:7px 0;border-bottom:1px solid #f1f5f9}
+.status-pill{font-size:.68rem;border-radius:99px;padding:3px 6px;background:#f1f5f9;color:#475569;white-space:nowrap}.status-pill.지연{background:#fee2e2;color:#b91c1c}.status-pill.완료{background:#dcfce7;color:#166534}.status-pill.결재대기,.status-pill.자료대기{background:#fef3c7;color:#92400e}
+.empty-state{font-size:.8rem;color:#94a3b8;text-align:center;padding:18px 5px}
+.modal-backdrop{position:fixed;inset:0;background:#0f172a88;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modal-backdrop.open{display:flex}.modal{width:min(620px,100%);max-height:92vh;overflow:auto;background:white;border-radius:12px;box-shadow:0 20px 60px #0f172a33;padding:20px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.modal-header h2{font-size:1.1rem}.close-btn{border:0;background:none;font-size:1.5rem;color:#64748b}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-row{display:flex;flex-direction:column;gap:5px}.form-row.full{grid-column:1/-1}.form-row label{font-size:.78rem;font-weight:800;color:#475569}
+textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justify-content:space-between;gap:8px;margin-top:16px;flex-wrap:wrap}.modal-actions div{display:flex;gap:7px}
+.footer-note{font-size:.7rem;color:#94a3b8;line-height:1.45}
+.list-view{background:white;border:1px solid var(--line);border-radius:8px;overflow:hidden}.list-row{display:grid;grid-template-columns:100px 1fr 80px 90px;gap:8px;align-items:center;padding:10px;border-bottom:1px solid #eef2f7;font-size:.8rem}.list-row:last-child{border-bottom:0}.list-row.header{background:#f1f5f9;font-weight:800}
+@media(max-width:1100px){.main-container{grid-template-columns:200px minmax(350px,1fr)}.todo-sidebar{display:none}}
+@media(max-width:720px){body{height:auto;min-height:100vh;overflow:auto}.main-container{display:flex;flex-direction:column;overflow:visible}.left-sidebar{display:none}.calendar-area{overflow:visible;padding:8px}.calendar-grid{grid-auto-rows:minmax(78px,auto);min-height:0}.calendar-cell{padding:3px}.event-chip{font-size:.62rem;padding:3px}.calendar-title{font-size:1.1rem}.todo-sidebar{display:flex;border-left:0;border-top:1px solid var(--line)}header{align-items:flex-start;flex-direction:column}.form-grid{grid-template-columns:1fr}.form-row.full{grid-column:auto}.list-row{grid-template-columns:75px 1fr 60px}.list-row .list-status{display:none}}
+</style>
 </head>
 <body>
-
-    <!-- 상단 헤더 -->
-    <header>
-        <div class="logo-area">
-            <span>📅 업무 & 회계 일정 관리</span>
-        </div>
-        <button class="login-btn" onclick="alert('Google 계정 동기화를 통해 기기 간 자동 백업이 구동됩니다.')">
-            <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.15C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.39l3.99-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.61l3.99 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/></svg>
-            구글 로그인 / 백업
-        </button>
-    </header>
-
-    <div class="main-container">
-        <!-- [1단] 왼쪽 사이드바 -->
-        <aside class="left-sidebar">
-            <!-- 미니 달력 -->
-            <div class="mini-cal">
-                <div class="mini-cal-title">2026년 10월</div>
-                <table class="mini-cal-table">
-                    <thead>
-                        <tr><th style="color:#ef4444">일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th style="color:#2563eb">토</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td></td><td></td><td></td><td></td>1<td>2</td><td>3</td></tr>
-                        <tr><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>
-                        <tr><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>
-                        <tr><td>18</td><td class="today">19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td></tr>
-                        <tr><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td><td>31</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- 개인 캘린더 (이름 수정 가능) -->
-            <div class="cal-group">
-                <div class="cal-group-header">
-                    <span>👤 개인 캘린더</span>
-                    <button class="edit-btn" onclick="editName()">✏️ 이름 변경</button>
-                </div>
-                <label class="cal-item">
-                    <input type="checkbox" id="chk-personal" checked onchange="filterEvents()">
-                    <span>개인.<span id="userNameText">사용자</span></span>
-                </label>
-            </div>
-
-            <!-- 공유 / 회사 캘린더 (회사명 수정 가능) -->
-            <div class="cal-group">
-                <div class="cal-group-header">
-                    <span>🏢 회사 캘린더</span>
-                    <button class="edit-btn" onclick="editCompany()">✏️ 회사명 변경</button>
-                </div>
-                <label class="cal-item">
-                    <input type="checkbox" id="chk-company" checked onchange="filterEvents()">
-                    <span style="color: #2563eb;" id="companyNameText">[회사명] 경영전략부</span>
-                </label>
-                <label class="cal-item">
-                    <input type="checkbox" id="chk-shared" checked onchange="filterEvents()">
-                    <span>부서 공유 일정</span>
-                </label>
-            </div>
-        </aside>
-
-        <!-- [2단] 중앙 메인 캘린더 (1일~31일 전체 표출) -->
-        <section class="calendar-area">
-            <div class="calendar-header">
-                <div class="calendar-title">2026년 10월</div>
-            </div>
-
-            <div class="calendar-grid">
-                <!-- 요일 헤더 -->
-                <div class="day-header" style="color: #ef4444;">일</div>
-                <div class="day-header">월</div>
-                <div class="day-header">화</div>
-                <div class="day-header">수</div>
-                <div class="day-header">목</div>
-                <div class="day-header">금</div>
-                <div class="day-header" style="color: #2563eb;">토</div>
-
-                <!-- 10월 1일 ~ 31일 셀 생성 -->
-                <!-- 10월 1일은 목요일(4번째 칸부터 시작)이므로 앞의 4칸 빈 셀 -->
-                <div class="calendar-cell other-month"><div class="day-num">27</div></div>
-                <div class="calendar-cell other-month"><div class="day-num">28</div></div>
-                <div class="calendar-cell other-month"><div class="day-num">29</div></div>
-                <div class="calendar-cell other-month"><div class="day-num">30</div></div>
-
-                <!-- 1일 ~ 31일 실데이터 -->
-                <div class="calendar-cell"><div class="day-num">1</div></div>
-                <div class="calendar-cell"><div class="day-num">2</div></div>
-                <div class="calendar-cell"><div class="day-num sat">3 개천절</div></div>
-                
-                <div class="calendar-cell"><div class="day-num sun">4</div></div>
-                <div class="calendar-cell"><div class="day-num">5 대체공휴일</div></div>
-                <div class="calendar-cell"><div class="day-num">6</div></div>
-                <div class="calendar-cell"><div class="day-num">7</div></div>
-                <div class="calendar-cell"><div class="day-num">8</div></div>
-                <div class="calendar-cell"><div class="day-num">9 한글날</div></div>
-                <div class="calendar-cell"><div class="day-num sat">10</div></div>
-
-                <div class="calendar-cell"><div class="day-num sun">11</div></div>
-                <!-- 12일 (긴급 세무 일정) -->
-                <div class="calendar-cell has-urgent event-company">
-                    <div class="day-num">12</div>
-                    <div class="event-chip urgent" onclick="toggleComplete(this)">[긴급] 원천세 신고 및 납부</div>
-                </div>
-                <div class="calendar-cell event-personal">
-                    <div class="day-num">13</div>
-                    <div class="event-chip daily completed" onclick="toggleComplete(this)">[데일리] 통장 전표 정리</div>
-                </div>
-                <div class="calendar-cell"><div class="day-num">14</div></div>
-                <!-- 15일 (긴급 일정) -->
-                <div class="calendar-cell has-urgent event-company">
-                    <div class="day-num">15</div>
-                    <div class="event-chip urgent" onclick="toggleComplete(this)">[긴급] 근로내용확인신고</div>
-                </div>
-                <div class="calendar-cell event-company">
-                    <div class="day-num">16</div>
-                    <div class="event-chip normal" onclick="toggleComplete(this)">[보통] 법인카드 정산</div>
-                </div>
-                <div class="calendar-cell"><div class="day-num sat">17</div></div>
-
-                <div class="calendar-cell"><div class="day-num sun">18</div></div>
-                <div class="calendar-cell event-personal" style="background-color: #eff6ff;">
-                    <div class="day-num">19 (오늘)</div>
-                    <div class="event-chip normal" onclick="toggleComplete(this)">[보통] 주간 보고서 작성</div>
-                </div>
-                <div class="calendar-cell"><div class="day-num">20</div></div>
-                <div class="calendar-cell"><div class="day-num">21</div></div>
-                <div class="calendar-cell"><div class="day-num">22</div></div>
-                <div class="calendar-cell"><div class="day-num">23</div></div>
-                <div class="calendar-cell"><div class="day-num sat">24</div></div>
-
-                <div class="calendar-cell"><div class="day-num sun">25</div></div>
-                <div class="calendar-cell event-company">
-                    <div class="day-num">26</div>
-                    <div class="event-chip normal" onclick="toggleComplete(this)">[보통] 부가세 예정신고</div>
-                </div>
-                <div class="calendar-cell"><div class="day-num">27</div></div>
-                <div class="calendar-cell"><div class="day-num">28</div></div>
-                <div class="calendar-cell"><div class="day-num">29</div></div>
-                <div class="calendar-cell event-company">
-                    <div class="day-num">30</div>
-                    <div class="event-chip normal" onclick="toggleComplete(this)">[보통] 월말 급여 지급 및 전표</div>
-                </div>
-                <div class="calendar-cell"><div class="day-num sat">31</div></div>
-            </div>
-        </section>
-
-        <!-- [3단] 오른쪽 To-Do 사이드바 -->
-        <aside class="todo-sidebar">
-            <div class="todo-header">오늘의 To-Do List</div>
-
-            <!-- 신규 일정 입력 -->
-            <div class="add-todo-box">
-                <select id="prioritySelect" class="todo-select">
-                    <option value="urgent">[긴급] - 연핑크 배경</option>
-                    <option value="normal" selected>[보통] - 파란색</option>
-                    <option value="daily">[데일리] - 초록색</option>
-                </select>
-                <input type="text" id="todoInput" class="todo-input" placeholder="할 일 입력 후 Enter">
-                <button class="add-btn" onclick="addTodo()">To-Do 등록</button>
-            </div>
-
-            <!-- To-Do 목록 -->
-            <ul class="todo-list" id="todoList">
-                <li class="todo-item" onclick="toggleTodoItem(this)">
-                    <input type="checkbox">
-                    <span class="tag urgent">[긴급]</span>
-                    <span class="todo-text">부가세 신고 서류 최종 검토</span>
-                </li>
-                <li class="todo-item completed" onclick="toggleTodoItem(this)">
-                    <input type="checkbox" checked>
-                    <span class="tag daily">[데일리]</span>
-                    <span class="todo-text">통장 잔액 확인 및 기장</span>
-                </li>
-            </ul>
-        </aside>
+<header>
+  <div class="logo-area"><span>📅</span><span>경영전략부 업무 캘린더</span></div>
+  <div class="header-actions">
+    <button class="btn btn-white" onclick="openTaskModal()">＋ 업무 추가</button>
+    <button class="btn btn-white" onclick="exportJSON()">백업 내보내기</button>
+    <button class="btn btn-white" onclick="document.getElementById('importFile').click()">백업 복원</button>
+    <button class="btn btn-white" onclick="exportCSV()">업무 목록 CSV</button>
+    <input type="file" id="importFile" accept=".json,application/json" hidden onchange="importJSON(event)">
+  </div>
+</header>
+<div class="main-container">
+  <aside class="left-sidebar">
+    <div class="mini-cal">
+      <div class="mini-cal-title"><button class="tiny-btn" onclick="changeMonth(-1)">◀</button><span id="miniTitle"></span><button class="tiny-btn" onclick="changeMonth(1)">▶</button></div>
+      <table><thead><tr><th style="color:#dc2626">일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th style="color:#2563eb">토</th></tr></thead><tbody id="miniBody"></tbody></table>
     </div>
+    <div class="cal-group">
+      <div class="cal-group-header"><span>업무 분야</span><button class="edit-btn" onclick="setAllCategories(true)">전체 선택</button></div>
+      <label class="cal-item"><input type="checkbox" class="cat-filter" value="회계" checked onchange="renderAll()"><span class="color-dot" style="background:#93c5fd"></span>회계</label>
+      <label class="cal-item"><input type="checkbox" class="cat-filter" value="자금" checked onchange="renderAll()"><span class="color-dot" style="background:#86efac"></span>자금</label>
+      <label class="cal-item"><input type="checkbox" class="cat-filter" value="인사" checked onchange="renderAll()"><span class="color-dot" style="background:#fdba74"></span>인사</label>
+      <label class="cal-item"><input type="checkbox" class="cat-filter" value="총무" checked onchange="renderAll()"><span class="color-dot" style="background:#c4b5fd"></span>총무</label>
+      <label class="cal-item"><input type="checkbox" class="cat-filter" value="공통" checked onchange="renderAll()"><span class="color-dot" style="background:#fda4af"></span>공통</label>
+    </div>
+    <div class="cal-group">
+      <div class="cal-group-header"><span>진행 상태</span></div>
+      <label class="cal-item"><input type="checkbox" id="showCompleted" checked onchange="renderAll()">완료 업무 표시</label>
+      <label class="cal-item"><input type="checkbox" id="showOverdue" checked onchange="renderAll()">지연 업무 표시</label>
+    </div>
+    <div class="cal-group">
+      <div class="cal-group-header"><span>개인 설정</span><button class="edit-btn" onclick="editProfile()">수정</button></div>
+      <div class="subtle" id="profileText">개인 업무 공간</div>
+    </div>
+    <div class="footer-note">데이터는 이 브라우저에 저장됩니다. 정기적으로 백업 파일을 내려받아 보관하세요.</div>
+  </aside>
+  <section class="calendar-area">
+    <div class="calendar-header">
+      <div class="month-controls"><button class="icon-btn" onclick="changeMonth(-1)">‹</button><div class="calendar-title" id="calendarTitle"></div><button class="icon-btn" onclick="changeMonth(1)">›</button><button class="icon-btn" onclick="goToday()">오늘</button></div>
+      <div class="view-controls"><button class="btn btn-outline" id="monthViewBtn" onclick="setView('month')">월간</button><button class="btn btn-outline" id="listViewBtn" onclick="setView('list')">목록</button></div>
+    </div>
+    <div class="filters">
+      <select id="statusFilter" onchange="renderAll()"><option value="all">모든 상태</option><option value="예정">예정</option><option value="진행 중">진행 중</option><option value="결재 대기">결재 대기</option><option value="자료 대기">타부서 자료 대기</option><option value="완료">완료</option><option value="지연">지연</option></select>
+      <input class="search-input" id="searchInput" placeholder="업무명·메모 검색" oninput="renderAll()">
+    </div>
+    <div id="calendarContent"></div>
+  </section>
+  <aside class="todo-sidebar">
+    <div class="panel-title">업무 현황</div>
+    <div class="summary-grid">
+      <div class="summary-card"><span>이번 달 업무</span><strong id="sumTotal">0</strong></div>
+      <div class="summary-card"><span>완료</span><strong id="sumDone">0</strong></div>
+      <div class="summary-card"><span>진행 중</span><strong id="sumDoing">0</strong></div>
+      <div class="summary-card"><span>지연 / 확인 필요</span><strong id="sumAlert">0</strong></div>
+    </div>
+    <div class="panel-title" id="selectedDateTitle">선택 날짜 업무</div>
+    <div class="subtle" id="selectedDateSubtitle"></div>
+    <div class="add-todo-box">
+      <input id="quickTitle" class="field" placeholder="빠른 업무 추가 후 Enter" onkeydown="if(event.key==='Enter')quickAdd()">
+      <select id="quickCategory" class="field"><option>회계</option><option>자금</option><option>인사</option><option>총무</option><option>공통</option></select>
+      <button class="btn btn-primary" onclick="quickAdd()">선택 날짜에 추가</button>
+    </div>
+    <ul class="todo-list" id="selectedTasks"></ul>
+    <div class="panel-title">다가오는 업무</div>
+    <div id="upcomingList"></div>
+  </aside>
+</div>
 
-    <script>
-        // 사용자 이름 변경 함수
-        function editName() {
-            const currentName = document.getElementById('userNameText').innerText;
-            const newName = prompt("본인의 이름(별명)을 입력하세요:", currentName);
-            if (newName && newName.trim() !== "") {
-                document.getElementById('userNameText').innerText = newName.trim();
-            }
-        }
+<div class="modal-backdrop" id="taskModal" role="dialog" aria-modal="true">
+ <div class="modal">
+  <div class="modal-header"><h2 id="modalTitle">업무 등록</h2><button class="close-btn" onclick="closeTaskModal()" aria-label="닫기">×</button></div>
+  <form id="taskForm" onsubmit="saveTask(event)">
+   <input type="hidden" id="taskId">
+   <div class="form-grid">
+    <div class="form-row full"><label for="taskTitle">업무명 *</label><input class="field" id="taskTitle" required maxlength="150" placeholder="예: 월말 결산 및 전표 검토"></div>
+    <div class="form-row"><label for="taskDate">마감일 *</label><input class="field" id="taskDate" type="date" required></div>
+    <div class="form-row"><label for="taskCategory">업무 분야</label><select class="field" id="taskCategory"><option>회계</option><option>자금</option><option>인사</option><option>총무</option><option>공통</option></select></div>
+    <div class="form-row"><label for="taskStatus">진행 상태</label><select class="field" id="taskStatus"><option>예정</option><option>진행 중</option><option>결재 대기</option><option>자료 대기</option><option>완료</option></select></div>
+    <div class="form-row"><label for="taskPriority">중요도</label><select class="field" id="taskPriority"><option value="normal">보통</option><option value="important">중요</option><option value="urgent">긴급</option></select></div>
+    <div class="form-row"><label for="taskRepeat">반복 주기</label><select class="field" id="taskRepeat"><option value="none">반복 없음</option><option value="monthly">매월</option><option value="quarterly">분기별</option><option value="yearly">매년</option></select></div>
+    <div class="form-row"><label for="taskActualDate">실제 완료일</label><input class="field" id="taskActualDate" type="date"></div>
+    <div class="form-row full"><label for="taskMemo">메모 / 증빙 / 후속 조치</label><textarea class="field" id="taskMemo" placeholder="필요 서류, 타부서 협조, 다음 조치 등을 입력하세요."></textarea></div>
+    <div class="form-row full"><label for="taskLink">관련 링크 (선택)</label><input class="field" id="taskLink" type="url" placeholder="https://..."></div>
+   </div>
+   <div class="modal-actions"><div><button type="button" class="btn btn-danger" id="deleteTaskBtn" onclick="deleteCurrentTask()" style="display:none">삭제</button></div><div><button type="button" class="btn btn-outline" onclick="closeTaskModal()">취소</button><button type="submit" class="btn btn-primary">저장</button></div></div>
+  </form>
+ </div>
+</div>
 
-        // 회사명 변경 함수 (친구와 다른 회사명을 쓸 수 있음)
-        function editCompany() {
-            const currentComp = document.getElementById('companyNameText').innerText;
-            const newComp = prompt("소속 회사명 및 부서명을 입력하세요:", currentComp);
-            if (newComp && newComp.trim() !== "") {
-                document.getElementById('companyNameText').innerText = newComp.trim();
-            }
-        }
-
-        // 일정 완료 시 취소선 토글
-        function toggleComplete(element) {
-            element.classList.toggle('completed');
-        }
-
-        function toggleTodoItem(liElement) {
-            const checkbox = liElement.querySelector('input[type="checkbox"]');
-            checkbox.checked = !checkbox.checked;
-            liElement.classList.toggle('completed');
-        }
-
-        // To-Do 항목 추가
-        function addTodo() {
-            const input = document.getElementById('todoInput');
-            const priority = document.getElementById('prioritySelect').value;
-            const text = input.value.trim();
-
-            if (!text) return;
-
-            const ul = document.getElementById('todoList');
-            const li = document.createElement('li');
-            li.className = 'todo-item';
-            
-            let tagText = priority === 'urgent' ? '[긴급]' : (priority === 'daily' ? '[데일리]' : '[보통]');
-            
-            li.innerHTML = `
-                <input type="checkbox" onchange="this.parentElement.classList.toggle('completed')">
-                <span class="tag ${priority}">${tagText}</span>
-                <span class="todo-text">${text}</span>
-            `;
-
-            ul.appendChild(li);
-            input.value = '';
-        }
-
-        document.getElementById('todoInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') addTodo();
-        });
-
-        // 캘린더 카테고리 온/오프 필터
-        function filterEvents() {
-            const showPersonal = document.getElementById('chk-personal').checked;
-            const showCompany = document.getElementById('chk-company').checked;
-
-            document.querySelectorAll('.event-personal').forEach(el => {
-                el.style.display = showPersonal ? 'flex' : 'none';
-            });
-            document.querySelectorAll('.event-company').forEach(el => {
-                el.style.display = showCompany ? 'flex' : 'none';
-            });
-        }
-    </script>
+<script>
+const STORAGE_KEY='management-calendar-v1';
+const $=id=>document.getElementById(id);
+const today=new Date();
+let viewYear=today.getFullYear(),viewMonth=today.getMonth(),selectedDate=toISO(today),viewMode='month';
+let profile={name:'사용자',company:'경영전략부'};
+let tasks=[];
+const seedTasks=[
+ {title:'원천세 신고 및 납부',date:dateISO(2026,10,10),category:'인사',status:'예정',priority:'urgent',repeat:'none',memo:'신고 자료 확인 후 납부',id:'seed1'},
+ {title:'근로내용확인신고 기한 확인',date:dateISO(2026,10,15),category:'인사',status:'예정',priority:'urgent',repeat:'none',memo:'해당 신고 대상 여부 확인',id:'seed2'},
+ {title:'법인카드 정산 및 증빙 확인',date:dateISO(2026,10,16),category:'회계',status:'진행 중',priority:'normal',repeat:'monthly',memo:'영수증 및 사용내역 확인',id:'seed3'},
+ {title:'주간 보고서 작성',date:dateISO(2026,10,19),category:'공통',status:'예정',priority:'normal',repeat:'none',memo:'',id:'seed4'},
+ {title:'부가세 신고 자료 준비',date:dateISO(2026,10,26),category:'회계',status:'예정',priority:'normal',repeat:'quarterly',memo:'신고 유형과 실제 법정 기한 확인',id:'seed5'},
+ {title:'월말 급여 지급 및 전표 처리',date:dateISO(2026,10,30),category:'자금',status:'예정',priority:'important',repeat:'monthly',memo:'급여 지급 일정 및 자금 잔액 확인',id:'seed6'}
+];
+function dateISO(y,m,d){return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
+function toISO(d){return dateISO(d.getFullYear(),d.getMonth()+1,d.getDate())}
+function parseISO(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
+function monthLabel(y,m){return `${y}년 ${m+1}월`}
+function escapeHTML(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function loadData(){
+ try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);tasks=Array.isArray(data.tasks)?data.tasks:[];profile=data.profile||profile}else{tasks=seedTasks.map(t=>({...t}));saveData()}}
+ catch(e){tasks=seedTasks.map(t=>({...t}));}
+ $('profileText').textContent=`${profile.name} · ${profile.company}`;
+}
+function saveData(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({tasks,profile,updatedAt:new Date().toISOString()}))}catch(e){alert('브라우저 저장에 실패했습니다. 저장 공간을 확인하고 백업해 주세요.')}}
+function changeMonth(delta){viewMonth+=delta;if(viewMonth<0){viewYear--;viewMonth=11}if(viewMonth>11){viewYear++;viewMonth=0}renderAll()}
+function goToday(){viewYear=today.getFullYear();viewMonth=today.getMonth();selectedDate=toISO(today);renderAll()}
+function setView(v){viewMode=v;renderAll()}
+function setAllCategories(value){document.querySelectorAll('.cat-filter').forEach(c=>c.checked=value);renderAll()}
+function selectedCategories(){return [...document.querySelectorAll('.cat-filter:checked')].map(c=>c.value)}
+function isOverdue(t){return t.status!=='완료'&&t.date<toISO(today)}
+function visibleTasks(){const cats=selectedCategories(),status=$('statusFilter').value,search=$('searchInput').value.trim().toLowerCase();return tasks.filter(t=>{
+ if(!cats.includes(t.category))return false;
+ if(t.status==='완료'&&!$('showCompleted').checked)return false;
+ if(isOverdue(t)&&!$('showOverdue').checked)return false;
+ if(status==='지연'&&!isOverdue(t))return false;
+ if(status!=='all'&&status!=='지연'&&t.status!==status)return false;
+ if(search&&!`${t.title} ${t.memo||''} ${t.category}`.toLowerCase().includes(search))return false;
+ return true;
+})}
+function renderAll(){renderCalendar();renderMini();renderSidebar();$('calendarTitle').textContent=monthLabel(viewYear,viewMonth);$('miniTitle').textContent=monthLabel(viewYear,viewMonth);$('monthViewBtn').style.background=viewMode==='month'?'#dbeafe':'white';$('listViewBtn').style.background=viewMode==='list'?'#dbeafe':'white'}
+function renderCalendar(){
+ const root=$('calendarContent'),all=visibleTasks();root.innerHTML='';
+ if(viewMode==='list'){const first=dateISO(viewYear,viewMonth+1,1),last=dateISO(viewYear,viewMonth+1,new Date(viewYear,viewMonth+1,0).getDate());const arr=all.filter(t=>t.date>=first&&t.date<=last).sort((a,b)=>a.date.localeCompare(b.date));const box=document.createElement('div');box.className='list-view';box.innerHTML='<div class="list-row header"><span>마감일</span><span>업무명</span><span>분야</span><span class="list-status">상태</span></div>'+ (arr.length?arr.map(t=>`<div class="list-row"><span>${t.date}</span><span><button class="tiny-btn" style="font-size:.8rem;color:#1d4ed8" onclick="editTask('${t.id}')">${escapeHTML(t.title)}</button></span><span><span class="tag ${t.category}">${t.category}</span></span><span class="list-status">${escapeHTML(isOverdue(t)?'지연':t.status)}</span></div>`).join(''):'<div class="empty-state">이번 달 등록된 업무가 없습니다.</div>');root.appendChild(box);return}
+ const grid=document.createElement('div');grid.className='calendar-grid';['일','월','화','수','목','금','토'].forEach(d=>{const h=document.createElement('div');h.className='day-header';h.textContent=d;grid.appendChild(h)});
+ const first=new Date(viewYear,viewMonth,1),start=new Date(viewYear,viewMonth,1-first.getDay()),todayISO=toISO(today);
+ for(let i=0;i<42;i++){const d=new Date(start);d.setDate(start.getDate()+i);const iso=toISO(d),cell=document.createElement('div');cell.className='calendar-cell'+(d.getMonth()!==viewMonth?' other-month':'')+(iso===todayISO?' today-cell':'');cell.dataset.date=iso;
+ const day=document.createElement('div');day.className='day-num'+(d.getDay()===0?' sun':d.getDay()===6?' sat':'');day.innerHTML=`<span>${d.getDate()}</span>${iso===todayISO?'<span style="font-size:.62rem;color:#2563eb">오늘</span>':''}`;cell.appendChild(day);
+ const dayTasks=all.filter(t=>t.date===iso).sort((a,b)=>priorityOrder(a.priority)-priorityOrder(b.priority));
+ if(dayTasks.some(t=>t.priority==='urgent'&&!isOverdue(t)&&t.status!=='완료'))cell.classList.add('has-urgent');
+ dayTasks.slice(0,3).forEach(t=>{const chip=document.createElement('button');chip.className=`event-chip cat-${t.category}${t.priority==='urgent'?' urgent':''}${t.status==='완료'?' completed':''}`;chip.title=`${t.title} · ${t.category} · ${t.status}`;chip.textContent=(isOverdue(t)?'⚠ ':'')+t.title;chip.onclick=e=>{e.stopPropagation();editTask(t.id)};cell.appendChild(chip)});
+ if(dayTasks.length>3){const more=document.createElement('div');more.className='more-events';more.textContent=`+${dayTasks.length-3}건`;cell.appendChild(more)}
+ cell.onclick=()=>{selectedDate=iso;openTaskModal(null,iso);renderSidebar()};grid.appendChild(cell);
+ }
+ root.appendChild(grid);
+}
+function priorityOrder(p){return p==='urgent'?0:p==='important'?1:2}
+function renderMini(){
+ const y=viewYear,m=viewMonth,first=new Date(y,m,1),start=new Date(y,m,1-first.getDay()),body=$('miniBody');body.innerHTML='';
+ for(let r=0;r<6;r++){const tr=document.createElement('tr');for(let c=0;c<7;c++){const d=new Date(start);d.setDate(start.getDate()+r*7+c);const iso=toISO(d),td=document.createElement('td');td.textContent=d.getDate();if(d.getMonth()!==m)td.style.color='#cbd5e1';if(iso===toISO(today))td.classList.add('today');if(iso===selectedDate)td.classList.add('selected');td.onclick=()=>{selectedDate=iso;viewYear=d.getFullYear();viewMonth=d.getMonth();renderAll()};tr.appendChild(td)}body.appendChild(tr)}
+}
+function renderSidebar(){
+ const monthStart=dateISO(viewYear,viewMonth+1,1),monthEnd=dateISO(viewYear,viewMonth+1,new Date(viewYear,viewMonth+1,0).getDate()),monthTasks=tasks.filter(t=>t.date>=monthStart&&t.date<=monthEnd);
+ $('sumTotal').textContent=monthTasks.length;$('sumDone').textContent=monthTasks.filter(t=>t.status==='완료').length;$('sumDoing').textContent=monthTasks.filter(t=>t.status==='진행 중').length;$('sumAlert').textContent=monthTasks.filter(t=>isOverdue(t)||t.status==='결재 대기'||t.status==='자료 대기').length;
+ $('selectedDateTitle').textContent='선택 날짜 업무';$('selectedDateSubtitle').textContent=selectedDate;
+ const list=$('selectedTasks'),arr=visibleTasks().filter(t=>t.date===selectedDate);list.innerHTML='';
+ if(!arr.length)list.innerHTML='<li class="empty-state">이 날짜에 등록된 업무가 없습니다.</li>';
+ arr.forEach(t=>{const li=document.createElement('li');li.className='todo-item'+(t.status==='완료'?' completed':'');li.innerHTML=`<input type="checkbox" ${t.status==='완료'?'checked':''} aria-label="완료"><span class="tag ${t.category}">${t.category}</span><span class="todo-text">${escapeHTML(t.title)}<br><span class="subtle">${escapeHTML(isOverdue(t)?'지연':t.status)}</span></span><span class="todo-actions"><button class="tiny-btn" title="수정">✎</button></span>`;
+ li.querySelector('input').onchange=()=>{t.status=li.querySelector('input').checked?'완료':'진행 중';if(t.status==='완료')t.actualDate=toISO(today);saveData();renderAll()};
+ li.querySelector('button').onclick=()=>editTask(t.id);list.appendChild(li)});
+ const upcoming=$('upcomingList'),next=tasks.filter(t=>t.status!=='완료'&&t.date>=toISO(today)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);upcoming.innerHTML=next.length?next.map(t=>`<div class="status-line"><span><strong>${t.date.slice(5)}</strong> · ${escapeHTML(t.title)}</span><span class="status-pill">${t.priority==='urgent'?'긴급':t.status}</span></div>`).join(''):'<div class="empty-state">다가오는 미완료 업무가 없습니다.</div>';
+}
+function openTaskModal(id=null,date=selectedDate){
+ $('taskForm').reset();$('taskId').value='';$('taskDate').value=date||toISO(today);$('taskStatus').value='예정';$('taskRepeat').value='none';$('taskPriority').value='normal';$('modalTitle').textContent=id?'업무 수정':'업무 등록';$('deleteTaskBtn').style.display=id?'inline-block':'none';
+ if(id){const t=tasks.find(x=>x.id===id);if(!t)return;$('taskId').value=t.id;$('taskTitle').value=t.title;$('taskDate').value=t.date;$('taskCategory').value=t.category;$('taskStatus').value=t.status;$('taskPriority').value=t.priority||'normal';$('taskRepeat').value=t.repeat||'none';$('taskActualDate').value=t.actualDate||'';$('taskMemo').value=t.memo||'';$('taskLink').value=t.link||''}
+ $('taskModal').classList.add('open');$('taskTitle').focus();
+}
+function editTask(id){openTaskModal(id)}
+function closeTaskModal(){$('taskModal').classList.remove('open')}
+function saveTask(e){
+ e.preventDefault();const id=$('taskId').value,title=$('taskTitle').value.trim(),date=$('taskDate').value;if(!title||!date)return;
+ const item={id:id||`${Date.now()}-${Math.random().toString(16).slice(2)}`,title,date,category:$('taskCategory').value,status:$('taskStatus').value,priority:$('taskPriority').value,repeat:$('taskRepeat').value,actualDate:$('taskActualDate').value,memo:$('taskMemo').value.trim(),link:$('taskLink').value.trim()};
+ if(id){const idx=tasks.findIndex(t=>t.id===id);if(idx>=0)tasks[idx]=item}else{tasks.push(item);if(item.repeat!=='none')createRecurring(item)}
+ selectedDate=date;const d=parseISO(date);viewYear=d.getFullYear();viewMonth=d.getMonth();saveData();closeTaskModal();renderAll();
+}
+function createRecurring(t){
+ const count=t.repeat==='monthly'?11:t.repeat==='quarterly'?3:t.repeat==='yearly'?3:0;const source=parseISO(t.date);
+ for(let i=1;i<=count;i++){let d=new Date(source);if(t.repeat==='monthly')d.setMonth(d.getMonth()+i);if(t.repeat==='quarterly')d.setMonth(d.getMonth()+3*i);if(t.repeat==='yearly')d.setFullYear(d.getFullYear()+i);
+ const day=source.getDate();if(d.getDate()!==day)d.setDate(0);
+ const date=toISO(d);if(!tasks.some(x=>x.title===t.title&&x.date===date))tasks.push({...t,id:`${t.id}-r${i}`,date,status:'예정',actualDate:''})}
+}
+function deleteCurrentTask(){const id=$('taskId').value;if(!id)return;if(confirm('이 업무를 삭제할까요?')){tasks=tasks.filter(t=>t.id!==id);saveData();closeTaskModal();renderAll()}}
+function quickAdd(){const title=$('quickTitle').value.trim();if(!title)return;tasks.push({id:`${Date.now()}-${Math.random().toString(16).slice(2)}`,title,date:selectedDate,category:$('quickCategory').value,status:'예정',priority:'normal',repeat:'none',memo:''});$('quickTitle').value='';saveData();renderAll()}
+function editProfile(){const name=prompt('이름 또는 별칭을 입력하세요.',profile.name);if(name===null)return;const company=prompt('회사 / 부서명을 입력하세요.',profile.company);if(company===null)return;profile={name:name.trim()||'사용자',company:company.trim()||'경영전략부'};saveData();$('profileText').textContent=`${profile.name} · ${profile.company}`}
+function exportJSON(){const blob=new Blob([JSON.stringify({tasks,profile,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});downloadBlob(blob,`업무캘린더_백업_${toISO(today)}.json`)}
+function importJSON(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);if(!Array.isArray(data.tasks))throw new Error('tasks');if(!confirm('현재 데이터를 가져온 백업 데이터로 교체할까요? 먼저 현재 데이터를 백업하는 것을 권장합니다.'))return;tasks=data.tasks;profile=data.profile||profile;saveData();renderAll();alert('백업 데이터를 복원했습니다.')}catch(err){alert('올바른 업무 캘린더 백업 파일이 아닙니다.')}finally{e.target.value=''}};reader.readAsText(file)}
+function exportCSV(){const rows=[['업무명','마감일','분야','상태','중요도','반복주기','실제완료일','메모','관련링크'],...tasks.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(t=>[t.title,t.date,t.category,t.status,t.priority,t.repeat,t.actualDate||'',t.memo||'',t.link||''])];const csv='\uFEFF'+rows.map(row=>row.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');downloadBlob(new Blob([csv],{type:'text/csv;charset=utf-8;'}),`업무캘린더_목록_${toISO(today)}.csv`)}
+function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+$('taskModal').addEventListener('click',e=>{if(e.target===$('taskModal'))closeTaskModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeTaskModal()});
+loadData();renderAll();
+</script>
 </body>
 </html>
