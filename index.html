@@ -6,8 +6,13 @@
 <title>경영전략부 업무 캘린더 - 개선판</title>
 <style>
 :root{--navy:#1e6091;--blue:#2563eb;--line:#dbe1e8;--muted:#64748b;--bg:#f5f7fb;--red:#dc2626;--green:#15803d;--purple:#7c3aed;--amber:#b45309}
-*{box-sizing:border-box;margin:0;padding:0;font-family:Pretendard,"Malgun Gothic",sans-serif}
+body.theme-rose{--navy:#b77b83;--blue:#c78c96;--line:#eadbd8;--muted:#8b7777;--bg:#fbf5f1}
+body.theme-rose .nav-brand{color:#81545b}body.theme-rose .nav-brand .brand-mark{background:#b77b83}body.theme-rose .nav-link.active{border-bottom-color:#c78c96;color:#81545b}body.theme-rose .quick-filter.active{background:#f5e3e4;border-color:#dfb8bd;color:#81545b}body.theme-rose .mini-cal td.today{background:#c78c96}body.theme-rose .mini-cal td.selected{outline-color:#dfb8bd}body.theme-rose .calendar-cell.today-cell{background:#fcf0ef}body.theme-rose .calendar-cell:hover{background:#fdf7f4}body.theme-rose .day-header{background:#f7ece8}body.theme-rose .summary-card,body.theme-rose .add-todo-box,body.theme-rose .cal-group{background:#fdf8f5}body.theme-rose .icon-btn{color:#81545b}
+.appearance-modal{position:fixed;inset:0;background:#0f172a88;display:none;align-items:center;justify-content:center;padding:16px;z-index:30}.appearance-modal.open{display:flex}.appearance-card{width:min(460px,100%);background:white;border-radius:14px;padding:20px;box-shadow:0 20px 60px #0f172a33}.appearance-card h2{font-size:1.1rem;margin-bottom:14px}.appearance-card label{display:block;font-size:.82rem;font-weight:800;margin:12px 0 6px}.appearance-card input,.appearance-card select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;background:white}.appearance-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Malgun Gothic","맑은 고딕",sans-serif}
 body{height:100vh;min-height:620px;display:flex;flex-direction:column;background:var(--bg);color:#1f2937;overflow:hidden}
+.topnav{display:flex;align-items:center;gap:0;background:#fff;border-bottom:1px solid var(--line);padding:0 18px;min-height:54px;flex-shrink:0;overflow-x:auto}.nav-brand{font-weight:900;color:#173b31;margin-right:26px;white-space:nowrap}.nav-brand .brand-mark{display:inline-grid;place-items:center;background:#087f5b;color:white;border-radius:7px;width:25px;height:25px;margin-right:8px}.nav-link{height:54px;padding:0 13px;border:0;border-bottom:2px solid transparent;background:white;color:#64716d;white-space:nowrap;font-size:.84rem}.nav-link.active{border-bottom-color:#087f5b;color:#173b31;font-weight:800}.page-panel{display:none;flex:1;min-height:0;overflow:auto}.page-panel.active{display:flex;flex-direction:column}.diary-page{padding:18px;gap:14px}.settings-form{display:flex;align-items:end;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px}.settings-form label{display:flex;flex-direction:column;gap:5px;font-size:.78rem;font-weight:800;color:#475569;flex:1;min-width:180px}.settings-form input{padding:9px;border:1px solid #cbd5e1;border-radius:7px;min-width:0;background:#fff}.settings-list{display:flex;flex-direction:column;gap:8px}.settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;background:#fff;border:1px solid var(--line);border-radius:9px;overflow-wrap:anywhere}.settings-row-main{min-width:0;display:flex;flex-direction:column;gap:4px}.settings-row-main a{color:#1d4ed8;overflow-wrap:anywhere}.settings-row .subtle{overflow-wrap:anywhere}.settings-row button{flex-shrink:0}.diary-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.diary-filters{display:flex;gap:7px;flex-wrap:wrap}.diary-filters input,.diary-filters select{padding:8px;border:1px solid var(--line);border-radius:7px;background:#fff}.diary-table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:9px;flex:1}.diary-table{border-collapse:collapse;width:100%;min-width:1050px;font-size:.82rem}.diary-table th,.diary-table td{padding:9px;border-bottom:1px solid #e9edf2;text-align:left;vertical-align:top}.diary-table th{position:sticky;top:0;background:#eef2f7;z-index:1}.diary-table td input,.diary-table td select,.diary-table td textarea{width:100%;min-width:80px;border:1px solid #e2e8f0;border-radius:5px;padding:6px;background:#fff;font:inherit}.diary-table td textarea{min-width:180px;min-height:38px;resize:vertical}.diary-actions{display:flex;gap:7px;flex-wrap:wrap}.priority-pill{display:inline-block;padding:3px 7px;border-radius:5px;font-size:.68rem;font-weight:800}.priority-normal{background:#f1f5f9;color:#475569}.priority-important{background:#fef3c7;color:#92400e}.priority-urgent{background:#fee2e2;color:#b91c1c}
+@media(max-width:720px){.topnav{padding:0 8px}.nav-brand{margin-right:8px}.nav-link{padding:0 10px}.diary-page{padding:9px}.settings-form label{min-width:100%;}.settings-row{align-items:flex-start}}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 header{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--navy);color:#fff;padding:12px 18px;flex-shrink:0}
@@ -75,11 +80,13 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 @media(max-width:1100px){.main-container{grid-template-columns:200px minmax(350px,1fr)}.todo-sidebar{display:none}}
 @media(max-width:720px){body{height:auto;min-height:100vh;overflow:auto}.main-container{display:flex;flex-direction:column;overflow:visible}.left-sidebar{display:none}.calendar-area{overflow:visible;padding:8px}.calendar-grid{grid-auto-rows:minmax(78px,auto);min-height:0}.calendar-cell{padding:3px}.event-chip{font-size:.62rem;padding:3px}.calendar-title{font-size:1.1rem}.todo-sidebar{display:flex;border-left:0;border-top:1px solid var(--line)}header{align-items:flex-start;flex-direction:column}.form-grid{grid-template-columns:1fr}.form-row.full{grid-column:auto}.list-row{grid-template-columns:75px 1fr 60px}.list-row .list-status{display:none}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 <header>
-  <div class="logo-area"><span>📅</span><span>경영전략부 업무 캘린더</span></div>
+  <div class="logo-area"><span>📅</span><span id="appTitleText">경영전략부 업무 캘린더</span></div>
   <div class="header-actions">
+    <button class="btn btn-white" onclick="openAppearanceSettings()">제목·색상 설정</button>
     <button class="btn btn-white" onclick="openTaskModal()">＋ 업무 추가</button>
     <button class="btn btn-white" onclick="exportJSON()">백업 내보내기</button>
     <button class="btn btn-white" onclick="document.getElementById('importFile').click()">백업 복원</button>
@@ -87,6 +94,17 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
     <input type="file" id="importFile" accept=".json,application/json" hidden onchange="importJSON(event)">
   </div>
 </header>
+<nav class="topnav" aria-label="주 메뉴">
+  <div class="nav-brand"><span class="brand-mark">✓</span>TaxDiary</div>
+  <button class="nav-link active" data-page="calendarPage" onclick="showPage('calendarPage',this)">세무 달력</button>
+  <button class="nav-link" data-page="diaryPage" onclick="showPage('diaryPage',this)">업무 일지</button>
+  <button class="nav-link" data-page="quickLinksPage" onclick="showPage('quickLinksPage',this)">바로가기</button>
+  <button class="nav-link" data-page="holidaysPage" onclick="showPage('holidaysPage',this)">공휴일 관리</button>
+  <button class="nav-link" onclick="document.getElementById('excelImportFile').click()">엑셀 복원</button>
+  <button class="nav-link" onclick="exportExcel()">엑셀 백업</button>
+  <input type="file" id="excelImportFile" accept=".xlsx,.xls,.csv" hidden onchange="importExcel(event)">
+</nav>
+<div id="calendarPage" class="page-panel active">
 <div class="main-container">
   <aside class="left-sidebar">
     <div class="mini-cal">
@@ -123,9 +141,9 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
     </div>
     <div class="quick-filters" aria-label="빠른 업무 필터">
       <button class="quick-filter active" id="qf-all" onclick="quickFilter('all')">전체</button>
-      <button class="quick-filter" id="qf-week" onclick="quickFilter('week')">7일 이내 마감</button>
-      <button class="quick-filter" id="qf-waiting" onclick="quickFilter('waiting')">결재·자료 대기</button>
-      <button class="quick-filter" id="qf-overdue" onclick="quickFilter('overdue')">지연 업무</button>
+      <button class="quick-filter" id="qf-normal" onclick="quickFilter('normal')">보통</button>
+      <button class="quick-filter" id="qf-important" onclick="quickFilter('important')">중요</button>
+      <button class="quick-filter" id="qf-urgent" onclick="quickFilter('urgent')">긴급</button>
     </div>
     <div id="calendarContent"></div>
   </section>
@@ -155,6 +173,49 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
     <button class="small-action" onclick="manageHolidays()">공휴일·임시공휴일 관리</button>
   </aside>
 </div>
+</div>
+<section id="diaryPage" class="page-panel diary-page">
+  <div class="diary-toolbar">
+    <div><div class="panel-title">업무 일지</div><div class="subtle">업무 진행 내역을 행 단위로 기록하고, 각 열의 필터로 필요한 기록을 찾아보세요.</div></div>
+    <div class="diary-actions">
+      <button class="btn btn-primary" onclick="addDiaryRow()">＋ 일지 추가</button>
+      <button class="btn btn-outline" onclick="exportExcel()">엑셀 백업</button>
+      <button class="btn btn-outline" onclick="document.getElementById('excelImportFile').click()">엑셀 복원</button>
+    </div>
+  </div>
+  <div class="diary-filters">
+    <input id="diarySearch" placeholder="전체 내용 검색" oninput="renderDiaryTable()">
+    <select id="diaryStatusFilter" onchange="renderDiaryTable()"><option value="">모든 상태</option><option>예정</option><option>진행 중</option><option>결재 대기</option><option>자료 대기</option><option>완료</option><option>지연</option></select>
+    <input id="diaryDateFrom" type="date" title="기록 날짜 시작" onchange="renderDiaryTable()">
+    <input id="diaryDateTo" type="date" title="기록 날짜 종료" onchange="renderDiaryTable()">
+    <button class="small-action" onclick="clearDiaryFilters()">필터 초기화</button>
+  </div>
+  <div class="diary-table-wrap"><table class="diary-table"><thead><tr>
+    <th style="width:55px">NO.</th><th style="width:125px">날짜</th><th style="width:75px">요일</th><th style="width:120px">상태</th><th style="width:150px">업무관련자</th><th style="min-width:220px">내용</th><th style="width:130px">마감일</th><th style="min-width:180px">비고</th><th style="width:70px">관리</th>
+  </tr></thead><tbody id="diaryTableBody"></tbody></table></div>
+  <div class="subtle">※ 데이터는 현재 브라우저에 저장됩니다. PC 변경이나 브라우저 초기화 전에 엑셀 백업을 보관하세요.</div>
+</section>
+<section id="quickLinksPage" class="page-panel diary-page">
+  <div class="diary-toolbar"><div><div class="panel-title">자주 가는 사이트 바로가기</div><div class="subtle">사이트 주소와 로그인 ID 메모를 관리합니다. 비밀번호는 저장하지 마세요.</div></div></div>
+  <form class="settings-form" onsubmit="addQuickLinkFromForm(event)">
+    <label>사이트 이름<input id="shortcutName" required placeholder="예: 더존, 홈택스"></label>
+    <label>사이트 주소<input id="shortcutUrl" type="url" required placeholder="https://..."></label>
+    <label>로그인 ID (선택)<input id="shortcutLoginId" placeholder="아이디 메모"></label>
+    <button class="btn btn-primary" type="submit">＋ 바로가기 추가</button>
+  </form>
+  <div class="settings-list" id="quickLinksManagerList"></div>
+  <div class="subtle">※ ID 메모는 이 브라우저에 저장됩니다. 공용 PC에서는 민감한 정보를 입력하지 마세요.</div>
+</section>
+<section id="holidaysPage" class="page-panel diary-page">
+  <div class="diary-toolbar"><div><div class="panel-title">공휴일·임시공휴일 관리</div><div class="subtle">회사 휴무일이나 임시공휴일을 추가하면 달력에 표시됩니다.</div></div></div>
+  <form class="settings-form" onsubmit="addHolidayFromForm(event)">
+    <label>날짜<input id="holidayDate" type="date" required></label>
+    <label>공휴일 이름 / 사유<input id="holidayName" required placeholder="예: 임시공휴일, 회사 창립기념일"></label>
+    <button class="btn btn-primary" type="submit">＋ 날짜 추가</button>
+  </form>
+  <div class="settings-list" id="holidaysManagerList"></div>
+  <div class="subtle">※ 직접 추가한 날짜만 이 목록에서 삭제할 수 있습니다. 기본 공휴일 표시는 별도로 유지됩니다.</div>
+</section>
 
 <div class="modal-backdrop" id="taskModal" role="dialog" aria-modal="true">
  <div class="modal">
@@ -179,14 +240,30 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
  </div>
 </div>
 
+<div id="appearanceModal" class="appearance-modal" role="dialog" aria-modal="true" aria-labelledby="appearanceTitle" onclick="if(event.target===this)closeAppearanceSettings()">
+  <div class="appearance-card">
+    <h2 id="appearanceTitle">캘린더 제목·색상 설정</h2>
+    <label for="customCalendarTitle">캘린더 제목</label>
+    <input id="customCalendarTitle" maxlength="60" placeholder="예: 경영전략부 업무 캘린더">
+    <label for="calendarThemeChoice">달력 색상 테마</label>
+    <select id="calendarThemeChoice">
+      <option value="blue">블루 톤</option>
+      <option value="rose">연베이지·핑크 톤</option>
+    </select>
+    <div class="subtle" style="margin-top:7px">선택한 제목과 색상은 이 브라우저에 저장됩니다.</div>
+    <div class="appearance-actions"><button class="btn btn-outline" onclick="closeAppearanceSettings()">취소</button><button class="btn btn-primary" onclick="saveAppearanceSettings()">저장</button></div>
+  </div>
+</div>
+
 <script>
 const STORAGE_KEY='management-calendar-v1';
 const $=id=>document.getElementById(id);
 const today=new Date();
 let viewYear=today.getFullYear(),viewMonth=today.getMonth(),selectedDate=toISO(today),viewMode='month';
 let activeQuickFilter='all';
-let profile={name:'사용자',company:'경영전략부'};
+let profile={name:'사용자',company:'경영전략부',calendarTitle:'경영전략부 업무 캘린더',theme:'blue'};
 let tasks=[];
+let diaryRows=[];
 const seedTasks=[
  {title:'원천세 신고 및 납부',date:dateISO(2026,10,10),category:'인사',status:'예정',priority:'urgent',repeat:'none',memo:'신고 자료 확인 후 납부',id:'seed1'},
  {title:'근로내용확인신고 기한 확인',date:dateISO(2026,10,15),category:'인사',status:'예정',priority:'urgent',repeat:'none',memo:'해당 신고 대상 여부 확인',id:'seed2'},
@@ -201,25 +278,77 @@ function parseISO(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-
 function monthLabel(y,m){return `${y}년 ${m+1}월`}
 function escapeHTML(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function loadData(){
- try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);tasks=Array.isArray(data.tasks)?data.tasks:[];profile=data.profile||profile}else{tasks=seedTasks.map(t=>({...t}));saveData()}}
+ try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);tasks=Array.isArray(data.tasks)?data.tasks:[];diaryRows=Array.isArray(data.diaryRows)?data.diaryRows:[];profile=data.profile||profile}else{tasks=seedTasks.map(t=>({...t}));saveData()}}
  catch(e){tasks=seedTasks.map(t=>({...t}));}
  $('profileText').textContent=`${profile.name} · ${profile.company}`;
+ applyAppearance();
 }
-function saveData(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({tasks,profile,updatedAt:new Date().toISOString()}))}catch(e){alert('브라우저 저장에 실패했습니다. 저장 공간을 확인하고 백업해 주세요.')}}
+function saveData(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({tasks,diaryRows,profile,updatedAt:new Date().toISOString()}))}catch(e){alert('브라우저 저장에 실패했습니다. 저장 공간을 확인하고 백업해 주세요.')}}
+function applyAppearance(){
+ const title=(profile.calendarTitle||'경영전략부 업무 캘린더').trim()||'경영전략부 업무 캘린더';
+ const theme=profile.theme==='rose'?'rose':'blue';
+ document.body.classList.toggle('theme-rose',theme==='rose');
+ const titleEl=$('appTitleText');if(titleEl)titleEl.textContent=title;
+ document.title=title;
+}
+function openAppearanceSettings(){
+ $('customCalendarTitle').value=profile.calendarTitle||'경영전략부 업무 캘린더';
+ $('calendarThemeChoice').value=profile.theme==='rose'?'rose':'blue';
+ $('appearanceModal').classList.add('open');
+}
+function closeAppearanceSettings(){$('appearanceModal').classList.remove('open')}
+function saveAppearanceSettings(){
+ const title=$('customCalendarTitle').value.trim();
+ if(!title){alert('캘린더 제목을 입력해 주세요.');$('customCalendarTitle').focus();return}
+ profile.calendarTitle=title;profile.theme=$('calendarThemeChoice').value==='rose'?'rose':'blue';
+ saveData();applyAppearance();closeAppearanceSettings();
+}
 function changeMonth(delta){viewMonth+=delta;if(viewMonth<0){viewYear--;viewMonth=11}if(viewMonth>11){viewYear++;viewMonth=0}renderAll()}
 function goToday(){viewYear=today.getFullYear();viewMonth=today.getMonth();selectedDate=toISO(today);renderAll()}
 function setView(v){viewMode=v;renderAll()}
 function clearQuickFilter(){activeQuickFilter='all';updateQuickFilterButtons()}
 function quickFilter(mode){
  activeQuickFilter=mode;
- if(mode==='waiting')$('statusFilter').value='all';
- else if(mode==='overdue')$('statusFilter').value='지연';
- else $('statusFilter').value='all';
+ $('statusFilter').value='all';
  updateQuickFilterButtons();renderAll();
 }
 function updateQuickFilterButtons(){
- ['all','week','waiting','overdue'].forEach(k=>{const b=$('qf-'+k);if(b)b.classList.toggle('active',activeQuickFilter===k)});
+ ['all','normal','important','urgent'].forEach(k=>{const b=$('qf-'+k);if(b)b.classList.toggle('active',activeQuickFilter===k)});
 }
+function showPage(pageId,button){
+ document.querySelectorAll('.page-panel').forEach(p=>p.classList.toggle('active',p.id===pageId));
+ document.querySelectorAll('.nav-link[data-page]').forEach(b=>b.classList.toggle('active',b===button||b.dataset.page===pageId));
+ if(pageId==='diaryPage')renderDiaryTable();
+ if(pageId==='quickLinksPage')renderQuickLinksManager();
+ if(pageId==='holidaysPage')renderHolidaysManager();
+}
+function addDiaryRow(){
+ diaryRows.push({id:`d-${Date.now()}-${Math.random().toString(16).slice(2)}`,date:toISO(new Date()),status:'진행 중',person:'',content:'',deadline:'',note:''});
+ saveData();renderDiaryTable();
+ const body=$('diaryTableBody');if(body.lastElementChild)body.lastElementChild.scrollIntoView({block:'nearest'});
+}
+function removeDiaryRow(id){if(!confirm('이 일지 행을 삭제할까요?'))return;diaryRows=diaryRows.filter(r=>r.id!==id);saveData();renderDiaryTable()}
+function updateDiaryField(id,key,value){const r=diaryRows.find(x=>x.id===id);if(r){r[key]=value;saveData()}}
+function weekday(date){if(!date)return '';return ['일','월','화','수','목','금','토'][parseISO(date).getDay()]}
+function renderDiaryTable(){
+ const body=$('diaryTableBody');if(!body)return;
+ const search=($('diarySearch')?.value||'').trim().toLowerCase(),status=$('diaryStatusFilter')?.value||'',from=$('diaryDateFrom')?.value||'',to=$('diaryDateTo')?.value||'';
+ const rows=diaryRows.filter(r=>{
+  if(status&&r.status!==status)return false;if(from&&r.date<from)return false;if(to&&r.date>to)return false;
+  return !search||[r.date,r.status,r.person,r.content,r.deadline,r.note].join(' ').toLowerCase().includes(search);
+ }).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+ body.innerHTML=rows.length?rows.map((r,i)=>`<tr>
+ <td>${i+1}</td>
+ <td><input type="date" value="${escapeHTML(r.date||'')}" onchange="updateDiaryField('${r.id}','date',this.value);renderDiaryTable()"></td>
+ <td>${weekday(r.date)}</td>
+ <td><select onchange="updateDiaryField('${r.id}','status',this.value)">${['예정','진행 중','결재 대기','자료 대기','완료','지연'].map(s=>`<option ${r.status===s?'selected':''}>${s}</option>`).join('')}</select></td>
+ <td><input value="${escapeHTML(r.person||'')}" placeholder="담당자/부서" onchange="updateDiaryField('${r.id}','person',this.value)"></td>
+ <td><textarea placeholder="업무 내용" onchange="updateDiaryField('${r.id}','content',this.value)">${escapeHTML(r.content||'')}</textarea></td>
+ <td><input type="date" value="${escapeHTML(r.deadline||'')}" onchange="updateDiaryField('${r.id}','deadline',this.value)"></td>
+ <td><textarea placeholder="비고/후속 조치" onchange="updateDiaryField('${r.id}','note',this.value)">${escapeHTML(r.note||'')}</textarea></td>
+ <td><button class="small-action" onclick="removeDiaryRow('${r.id}')">삭제</button></td></tr>`).join(''):'<tr><td colspan="9" class="empty-state">표시할 일지가 없습니다. ‘＋ 일지 추가’를 눌러 기록을 시작하세요.</td></tr>';
+}
+function clearDiaryFilters(){['diarySearch','diaryStatusFilter','diaryDateFrom','diaryDateTo'].forEach(id=>{const el=$(id);if(el)el.value=''});renderDiaryTable()}
 function setAllCategories(value){document.querySelectorAll('.cat-filter').forEach(c=>c.checked=value);renderAll()}
 function selectedCategories(){return [...document.querySelectorAll('.cat-filter:checked')].map(c=>c.value)}
 function isOverdue(t){return t.status!=='완료'&&t.date<toISO(today)}
@@ -292,8 +421,8 @@ function createRecurring(t){
 function deleteCurrentTask(){const id=$('taskId').value;if(!id)return;if(confirm('이 업무를 삭제할까요?')){tasks=tasks.filter(t=>t.id!==id);saveData();closeTaskModal();renderAll()}}
 function quickAdd(){const title=$('quickTitle').value.trim();if(!title)return;tasks.push({id:`${Date.now()}-${Math.random().toString(16).slice(2)}`,title,date:selectedDate,category:$('quickCategory').value,status:'예정',priority:'normal',repeat:'none',memo:''});$('quickTitle').value='';saveData();renderAll()}
 function editProfile(){const name=prompt('이름 또는 별칭을 입력하세요.',profile.name);if(name===null)return;const company=prompt('회사 / 부서명을 입력하세요.',profile.company);if(company===null)return;profile={name:name.trim()||'사용자',company:company.trim()||'경영전략부'};saveData();$('profileText').textContent=`${profile.name} · ${profile.company}`}
-function exportJSON(){const blob=new Blob([JSON.stringify({tasks,profile,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});downloadBlob(blob,`업무캘린더_백업_${toISO(today)}.json`)}
-function importJSON(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);if(!Array.isArray(data.tasks))throw new Error('tasks');if(!confirm('현재 데이터를 가져온 백업 데이터로 교체할까요? 먼저 현재 데이터를 백업하는 것을 권장합니다.'))return;tasks=data.tasks;profile=data.profile||profile;saveData();renderAll();alert('백업 데이터를 복원했습니다.')}catch(err){alert('올바른 업무 캘린더 백업 파일이 아닙니다.')}finally{e.target.value=''}};reader.readAsText(file)}
+function exportJSON(){const blob=new Blob([JSON.stringify({tasks,diaryRows,profile,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});downloadBlob(blob,`업무캘린더_백업_${toISO(today)}.json`)}
+function importJSON(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);if(!Array.isArray(data.tasks))throw new Error('tasks');if(!confirm('현재 데이터를 가져온 백업 데이터로 교체할까요? 먼저 현재 데이터를 백업하는 것을 권장합니다.'))return;tasks=data.tasks;diaryRows=Array.isArray(data.diaryRows)?data.diaryRows:[];profile=data.profile||profile;saveData();renderAll();renderDiaryTable();alert('백업 데이터를 복원했습니다.')}catch(err){alert('올바른 업무 캘린더 백업 파일이 아닙니다.')}finally{e.target.value=''}};reader.readAsText(file)}
 function exportCSV(){const rows=[['업무명','마감일','분야','상태','중요도','반복주기','실제완료일','메모','관련링크','달력색상','진행일지'],...tasks.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(t=>[t.title,t.date,t.category,t.status,t.priority,t.repeat,t.actualDate||'',t.memo||'',t.link||'',t.color||'',(t.logs||[]).map(l=>`${l.at}: ${l.text}`).join(' | ')])];const csv='\uFEFF'+rows.map(row=>row.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');downloadBlob(new Blob([csv],{type:'text/csv;charset=utf-8;'}),`업무캘린더_목록_${toISO(today)}.csv`)}
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 
@@ -307,18 +436,65 @@ const baseHolidays={
  '2028-01-01':'신정','2028-05-01':'근로자의 날','2028-01-25':'설날 연휴','2028-01-26':'설날','2028-01-27':'설날 연휴','2028-03-01':'삼일절','2028-05-02':'부처님오신날','2028-05-05':'어린이날','2028-06-06':'현충일','2028-08-15':'광복절','2028-10-02':'추석 연휴','2028-10-03':'개천절·추석','2028-10-04':'추석 연휴','2028-10-05':'추석 대체공휴일','2028-10-09':'한글날','2028-12-25':'성탄절'
 };
 function getHoliday(iso){return (profile.customHolidays||[]).find(h=>h.date===iso)?.name||baseHolidays[iso]||((parseISO(iso).getDay()===0)?'일요일':null)}
+function addQuickLinkFromForm(e){e.preventDefault();const name=$('shortcutName').value.trim(),url=$('shortcutUrl').value.trim(),loginId=$('shortcutLoginId').value.trim();if(!name||!url)return;try{const u=new URL(url);if(!['http:','https:'].includes(u.protocol))throw new Error('url');profile.quickLinks=profile.quickLinks||[];profile.quickLinks.push({name,url:u.href,loginId});saveData();e.target.reset();renderQuickLinksManager();renderAll()}catch(err){alert('http:// 또는 https://로 시작하는 올바른 사이트 주소를 입력해 주세요.')}}
+function renderQuickLinksManager(){const box=$('quickLinksManagerList');if(!box)return;const links=profile.quickLinks||[];box.innerHTML=links.length?links.map((l,i)=>`<div class="settings-row"><div class="settings-row-main"><strong>${escapeHTML(l.name)}</strong><a href="${escapeHTML(l.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(l.url)}</a>${l.loginId?`<span class="subtle">로그인 ID: ${escapeHTML(l.loginId)}</span>`:''}</div><button class="btn btn-danger" onclick="deleteQuickLink(${i})">삭제</button></div>`).join(''):'<div class="empty-state">등록된 바로가기가 없습니다. 위에서 자주 가는 사이트를 추가하세요.</div>'}
+function deleteQuickLink(i){if(!confirm('이 바로가기를 삭제할까요?'))return;profile.quickLinks=profile.quickLinks||[];profile.quickLinks.splice(i,1);saveData();renderQuickLinksManager();renderAll()}
+function addHolidayFromForm(e){e.preventDefault();const date=$('holidayDate').value,name=$('holidayName').value.trim();if(!date||!name)return;profile.customHolidays=profile.customHolidays||[];profile.customHolidays=profile.customHolidays.filter(h=>h.date!==date);profile.customHolidays.push({date,name});profile.customHolidays.sort((a,b)=>a.date.localeCompare(b.date));saveData();e.target.reset();renderHolidaysManager();renderAll();alert(`${date} ${name} 날짜를 달력에 추가했습니다.`)}
+function renderHolidaysManager(){const box=$('holidaysManagerList');if(!box)return;const holidays=(profile.customHolidays||[]).slice().sort((a,b)=>a.date.localeCompare(b.date));box.innerHTML=holidays.length?holidays.map((h,i)=>`<div class="settings-row"><div class="settings-row-main"><strong>${escapeHTML(h.date)} · ${escapeHTML(weekday(h.date))}요일</strong><span>${escapeHTML(h.name)}</span></div><button class="btn btn-danger" onclick="deleteCustomHoliday(${i})">삭제</button></div>`).join(''):'<div class="empty-state">직접 추가한 공휴일이 없습니다. 위에서 날짜와 이름을 입력해 추가하세요.</div>'}
+function deleteCustomHoliday(i){if(!confirm('이 날짜를 직접 추가한 공휴일 목록에서 삭제할까요?'))return;profile.customHolidays=profile.customHolidays||[];const sorted=profile.customHolidays.slice().sort((a,b)=>a.date.localeCompare(b.date));const target=sorted[i];profile.customHolidays=profile.customHolidays.filter(h=>h!==target);saveData();renderHolidaysManager();renderAll()}
 function manageHolidays(){const current=profile.customHolidays||[];const action=prompt('공휴일 관리\n1 = 임시공휴일/회사 휴무일 추가\n2 = 직접 추가한 날짜 삭제\n\n등록된 직접 추가 날짜: '+(current.length?current.map(h=>`${h.date} ${h.name}`).join(' / '):'없음'));if(action==='1'){const date=prompt('추가할 날짜를 입력하세요. (YYYY-MM-DD)');if(date===null)return;if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert('날짜 형식은 YYYY-MM-DD로 입력해 주세요.');return}const name=prompt('공휴일 이름 또는 임시공휴일 사유를 입력하세요.');if(!name)return;profile.customHolidays=profile.customHolidays||[];profile.customHolidays=profile.customHolidays.filter(h=>h.date!==date);profile.customHolidays.push({date,name:name.trim()});saveData();renderAll();alert(`${date} ${name} 일정이 공휴일로 표시됩니다.`)}else if(action==='2'){if(!current.length){alert('직접 추가한 공휴일이 없습니다.');return}const n=Number(prompt('삭제할 번호를 입력하세요.\n'+current.map((h,i)=>`${i+1}. ${h.date} ${h.name}`).join('\n')));if(!Number.isInteger(n)||n<1||n>current.length)return;profile.customHolidays.splice(n-1,1);saveData();renderAll()} }
-function manageQuickLinks(){profile.quickLinks=profile.quickLinks||[];const action=prompt('바로가기 관리\n1 = 추가\n2 = 삭제\n3 = 전체 초기화');if(action==='1'){const name=prompt('바로가기 이름 (예: 더존 아마란스)');if(!name)return;const url=prompt('접속 주소(URL, https:// 포함)');if(!url)return;try{const u=new URL(url);if(!['http:','https:'].includes(u.protocol))throw 0;profile.quickLinks.push({name:name.trim(),url:u.href});}catch(e){alert('http:// 또는 https:// 주소를 입력해 주세요.');return}}else if(action==='2'){if(!profile.quickLinks.length){alert('등록된 바로가기가 없습니다.');return}const names=profile.quickLinks.map((l,i)=>`${i+1}. ${l.name}`).join('\n');const n=Number(prompt('삭제할 번호를 입력하세요.\n'+names));if(!Number.isInteger(n)||n<1||n>profile.quickLinks.length)return;profile.quickLinks.splice(n-1,1)}else if(action==='3'){if(confirm('등록된 바로가기를 모두 삭제할까요?'))profile.quickLinks=[]}else return;saveData();renderAll()}
+function manageQuickLinks(){profile.quickLinks=profile.quickLinks||[];const action=prompt('바로가기 관리\n1 = 추가\n2 = 삭제\n3 = 전체 초기화\n\n사이트 링크와 로그인 ID 메모를 저장할 수 있어요. 비밀번호는 브라우저에 평문으로 저장될 수 있으니 입력하지 마세요.');if(action==='1'){const name=prompt('바로가기 이름 (예: 더존 아마란스)');if(!name)return;const url=prompt('접속 주소(URL, https:// 포함)');if(!url)return;const loginId=prompt('로그인 아이디(선택, 비밀번호는 입력하지 마세요)')||'';try{const u=new URL(url);if(!['http:','https:'].includes(u.protocol))throw 0;profile.quickLinks.push({name:name.trim(),url:u.href,loginId:loginId.trim()});}catch(e){alert('http:// 또는 https:// 주소를 입력해 주세요.');return}}else if(action==='2'){if(!profile.quickLinks.length){alert('등록된 바로가기가 없습니다.');return}const names=profile.quickLinks.map((l,i)=>`${i+1}. ${l.name}`).join('\n');const n=Number(prompt('삭제할 번호를 입력하세요.\n'+names));if(!Number.isInteger(n)||n<1||n>profile.quickLinks.length)return;profile.quickLinks.splice(n-1,1)}else if(action==='3'){if(confirm('등록된 바로가기를 모두 삭제할까요?'))profile.quickLinks=[]}else return;saveData();renderAll()}
 const _renderSidebar=renderSidebar;
 renderSidebar=function(){_renderSidebar();
  const overdue=$('overdueList'),late=tasks.filter(t=>isOverdue(t)).sort((a,b)=>a.date.localeCompare(b.date));$('overdueCount').textContent=`${late.length}건`;overdue.innerHTML=late.length?late.map(t=>`<div class="overdue-row"><span>⚠</span><button onclick="editTask('${String(t.id).replace(/'/g,"\\'")}')">${escapeHTML(t.title)}<br><span class="subtle">마감 ${escapeHTML(t.date)} · ${Math.abs(daysUntil(t.date))}일 지연</span></button></div>`).join(''):'<div class="empty-state">지연된 업무가 없습니다.</div>';
- const q=$('quickLinksList');const links=profile.quickLinks||[];q.innerHTML=links.length?links.map((l,i)=>`<div class="quick-link-row"><span>↗</span><a href="${escapeHTML(l.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(l.name)}</a></div>`).join(''):'<div class="subtle">자주 사용하는 사이트를 등록하세요.</div>';
+ const q=$('quickLinksList');const links=profile.quickLinks||[];q.innerHTML=links.length?links.map((l,i)=>`<div class="quick-link-row"><span>↗</span><div style="flex:1;min-width:0"><a href="${escapeHTML(l.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(l.name)}</a>${l.loginId?`<div class="subtle">ID: ${escapeHTML(l.loginId)}</div>`:''}</div></div>`).join(''):'<div class="subtle">자주 사용하는 사이트를 등록하세요.</div>';
  const upcoming=$('upcomingList');if(upcoming){const next=tasks.filter(t=>t.status!=='완료'&&t.date>=toISO(today)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);upcoming.innerHTML=next.length?next.map(t=>{const dd=daysUntil(t.date);return `<div class="status-line"><span><strong>${escapeHTML(t.date.slice(5))}</strong> · ${escapeHTML(t.title)} <span class="dday">${dd===0?'D-Day':`D-${dd}`}</span></span><span class="status-pill">${t.priority==='urgent'?'긴급':escapeHTML(t.status)}</span></div>`}).join(''):'<div class="empty-state">다가오는 미완료 업무가 없습니다.</div>'}
 };
 
 $('taskModal').addEventListener('click',e=>{if(e.target===$('taskModal'))closeTaskModal()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeTaskModal()});
-loadData();renderAll();
+
+function exportExcel(){
+ if(typeof XLSX==='undefined'){alert('엑셀 기능을 불러오지 못했습니다. 인터넷 연결을 확인하거나 기존 CSV 내보내기를 이용해 주세요.');return}
+ const taskRows=tasks.map(t=>({'업무명':t.title,'마감일':t.date,'분야':t.category,'상태':t.status,'중요도':({'normal':'보통','important':'중요','urgent':'긴급'}[t.priority]||'보통'),'반복주기':t.repeat||'none','실제완료일':t.actualDate||'','메모':t.memo||'','관련링크':t.link||'','달력색상':t.color||'','진행일지':(t.logs||[]).map(l=>`${l.at}: ${l.text}`).join(' | ')}));
+ const diaryData=diaryRows.map((r,i)=>({'NO.':i+1,'날짜':r.date||'','요일':weekday(r.date),'상태':r.status||'진행 중','업무관련자':r.person||'','내용':r.content||'','마감일':r.deadline||'','비고':r.note||''}));
+ const settingsRows=[
+  ...(profile.quickLinks||[]).map(l=>({'종류':'바로가기','이름':l.name||'','URL':l.url||'','로그인 ID':l.loginId||'','날짜':'','설명':''})),
+  ...(profile.customHolidays||[]).map(h=>({'종류':'공휴일','이름':'','URL':'','로그인 ID':'','날짜':h.date||'','설명':h.name||''})),
+  {'종류':'화면설정','이름':profile.calendarTitle||'경영전략부 업무 캘린더','URL':'','로그인 ID':'','날짜':'','설명':profile.theme==='rose'?'rose':'blue'}
+ ];
+ const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(taskRows),'달력 업무');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(diaryData),'업무 일지');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(settingsRows),'바로가기·공휴일');
+ XLSX.writeFile(wb,`TaxDiary_백업_${toISO(new Date())}.xlsx`);
+}
+function importExcel(e){
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ const reader=new FileReader();reader.onload=ev=>{
+ try{
+  if(typeof XLSX==='undefined')throw new Error('엑셀 라이브러리를 불러오지 못했습니다.');
+  const wb=XLSX.read(ev.target.result,{type:'array'});
+  const taskSheet=wb.Sheets['달력 업무']||wb.Sheets[wb.SheetNames[0]];
+  const taskData=XLSX.utils.sheet_to_json(taskSheet,{defval:''});
+  const diarySheet=wb.Sheets['업무 일지'];
+  const diaryData=diarySheet?XLSX.utils.sheet_to_json(diarySheet,{defval:''}):[];
+  const settingsSheet=wb.Sheets['바로가기·공휴일'];
+  const settingsData=settingsSheet?XLSX.utils.sheet_to_json(settingsSheet,{defval:''}):[];
+  if(!confirm('선택한 엑셀의 업무와 일지로 현재 데이터를 교체할까요? 기존 데이터는 먼저 백업해 주세요.'))return;
+  tasks=taskData.map((r,i)=>({id:`import-${Date.now()}-${i}`,title:String(r['업무명']||''),date:String(r['마감일']||''),category:['회계','자금','인사','총무','공통'].includes(r['분야'])?r['분야']:'공통',status:['예정','진행 중','결재 대기','자료 대기','완료'].includes(r['상태'])?r['상태']:'예정',priority:({'보통':'normal','중요':'important','긴급':'urgent'}[r['중요도']]||(['normal','important','urgent'].includes(r['중요도'])?r['중요도']:'normal')),repeat:r['반복주기']||'none',actualDate:r['실제완료일']||'',memo:r['메모']||'',link:r['관련링크']||'',color:r['달력색상']||'',logs:[] })).filter(t=>t.title&&/^\d{4}-\d{2}-\d{2}$/.test(t.date));
+  diaryRows=diaryData.map((r,i)=>({id:`diary-import-${Date.now()}-${i}`,date:excelDate(r['날짜']),status:['예정','진행 중','결재 대기','자료 대기','완료','지연'].includes(r['상태'])?r['상태']:'진행 중',person:String(r['업무관련자']||''),content:String(r['내용']||''),deadline:excelDate(r['마감일']),note:String(r['비고']||'')})).filter(r=>r.date||r.content||r.person);
+  if(settingsSheet){profile.quickLinks=settingsData.filter(r=>r['종류']==='바로가기').map(r=>({name:String(r['이름']||''),url:String(r['URL']||''),loginId:String(r['로그인 ID']||'')})).filter(l=>l.name&&l.url);profile.customHolidays=settingsData.filter(r=>r['종류']==='공휴일').map(r=>({date:excelDate(r['날짜']),name:String(r['설명']||'')})).filter(h=>h.date&&h.name);const appearance=settingsData.find(r=>r['종류']==='화면설정');if(appearance){profile.calendarTitle=String(appearance['이름']||'경영전략부 업무 캘린더');profile.theme=String(appearance['설명']||'blue')==='rose'?'rose':'blue'}}
+  saveData();renderAll();renderDiaryTable();alert(`복원 완료: 달력 업무 ${tasks.length}건, 일지 ${diaryRows.length}건`);
+ }catch(err){alert('엑셀 파일을 읽지 못했습니다. TaxDiary에서 내보낸 .xlsx 파일인지 확인해 주세요.\\n'+err.message)}
+ finally{e.target.value=''}
+ };reader.readAsArrayBuffer(file);
+}
+function excelDate(value){
+ if(value===null||value===undefined||value==='')return '';
+ if(typeof value==='number'&&typeof XLSX!=='undefined'){const d=XLSX.SSF.parse_date_code(value);if(d)return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`}
+ const s=String(value).trim();if(/^\\d{4}-\\d{2}-\\d{2}$/.test(s))return s;
+ const m=s.match(/^(\\d{4})[./년-]\\s*(\\d{1,2})[./월-]\\s*(\\d{1,2})/);return m?`${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`:'';
+}
+
+loadData();renderAll();renderDiaryTable();renderQuickLinksManager();renderHolidaysManager();
 </script>
 </body>
 </html>
