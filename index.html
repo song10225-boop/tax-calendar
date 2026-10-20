@@ -56,7 +56,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;ba
 .event-chip{font-size:.69rem;line-height:1.35;padding:4px 5px;border-radius:5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:0;text-align:left;width:100%;cursor:pointer}
 .event-chip.cat-회계{background:#dbeafe;color:#1e40af}.event-chip.cat-자금{background:#dcfce7;color:#166534}.event-chip.cat-인사{background:#ffedd5;color:#9a3412}.event-chip.cat-총무{background:#ede9fe;color:#5b21b6}.event-chip.cat-공통{background:#ffe4e6;color:#9f1239}
 .event-chip.urgent{outline:1px solid #fb7185;font-weight:800}.event-chip.custom-color{color:#263244!important;border:1px solid #cbd5e1}.holiday-label{font-size:.75rem;color:#dc2626;font-weight:800;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dday{font-size:.75rem;font-weight:800;color:#b91c1c;margin-left:3px}.quick-link-row,.overdue-row{display:flex;align-items:flex-start;gap:6px;padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:.78rem}.quick-link-row a{color:#1d4ed8;text-decoration:none;overflow-wrap:anywhere;flex:1}.quick-link-row a:hover{text-decoration:underline}.overdue-row button{border:0;background:none;text-align:left;color:#b91c1c;font-size:.78rem;cursor:pointer}.diary-entry{border:1px solid #e2e8f0;background:#f8fafc;border-radius:7px;padding:8px;margin-top:6px;font-size:.78rem;white-space:pre-wrap}.diary-entry time{display:block;color:#64748b;font-size:.68rem;margin-bottom:4px}.small-action{border:1px solid var(--line);border-radius:6px;background:#fff;padding:5px 7px;font-size:.72rem;color:#334155}.event-chip.completed{text-decoration:line-through;opacity:.72;background:#e5e7eb;color:#334155}.event-chip.custom-color{color:#172033!important;border:1px solid #9ca3af}.calendar-cell.other-month .day-num{color:#596579}
-.more-events{font-size:.68rem;color:#64748b;padding-left:3px}
+.more-events{font-size:.76rem;color:#1d4ed8;padding:4px 6px;margin-top:2px;border:1px solid #bfdbfe;border-radius:5px;background:#eff6ff;font-weight:800;text-align:center;cursor:pointer;width:100%}.more-events:hover{background:#dbeafe}.calendar-cell.expanded-day{min-height:220px}.calendar-cell.expanded-day .event-chip{white-space:normal;overflow-wrap:anywhere;line-height:1.3}
 .panel-title{font-size:.98rem;font-weight:850}.subtle{font-size:.75rem;color:var(--muted)}
 .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .summary-card{padding:10px;border:1px solid #e5eaf0;border-radius:8px;background:#fbfdff}.summary-card span{display:block;font-size:.72rem;color:var(--muted)}.summary-card strong{font-size:1.2rem;display:block;margin-top:3px}
@@ -182,11 +182,6 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
     </div>
     <div class="panel-title" id="selectedDateTitle">선택 날짜 업무</div>
     <div class="subtle" id="selectedDateSubtitle"></div>
-    <div class="add-todo-box">
-      <input id="quickTitle" class="field" placeholder="빠른 업무 추가 후 Enter" onkeydown="if(event.key==='Enter')quickAdd()">
-      <select id="quickCategory" class="field"><option>회계</option><option>자금</option><option>인사</option><option>총무</option><option>공통</option></select>
-      <button class="btn btn-primary" onclick="quickAdd()">선택 날짜에 추가</button>
-    </div>
     <ul class="todo-list" id="selectedTasks"></ul>
     <div class="panel-title">다가오는 업무</div>
     <div id="upcomingList"></div>
@@ -379,6 +374,7 @@ let STORAGE_KEY=STORAGE_KEY_BASE;
 const $=id=>document.getElementById(id);
 const today=new Date();
 let viewYear=today.getFullYear(),viewMonth=today.getMonth(),selectedDate=toISO(today),viewMode='month';
+const expandedCalendarDates = new Set();
 let activeQuickFilter='all';
 let profile={name:'사용자',company:'경영전략부',calendarTitle:'경영전략부 업무 캘린더',theme:'blue'};
 let tasks=[];
@@ -593,8 +589,9 @@ function renderCalendar(){
  const day=document.createElement('div');day.className='day-num'+(d.getDay()===0?' sun':d.getDay()===6?' sat':'');day.innerHTML=`<span>${d.getDate()}</span>${iso===todayISO?'<span style="font-size:.62rem;color:#2563eb">오늘</span>':''}`;cell.appendChild(day);
  const dayTasks=all.filter(t=>t.date<=iso&&(t.endDate||t.date)>=iso).sort((a,b)=>priorityOrder(a.priority)-priorityOrder(b.priority));
  if(dayTasks.some(t=>t.priority==='urgent'&&!isOverdue(t)&&t.status!=='완료'))cell.classList.add('has-urgent');
- dayTasks.slice(0,3).forEach(t=>{const chip=document.createElement('button');chip.className=`event-chip cat-${t.category}${t.priority==='urgent'?' urgent':''}${t.status==='완료'?' completed':''}`;chip.title=`${t.title} · ${t.category} · ${t.status}${t.relatedPerson?' · 관련자: '+t.relatedPerson:''}${t.endDate&&t.endDate!==t.date?' · '+t.date+'~'+t.endDate:''}`;const dd=daysUntil(t.date);const emojiStr = t.emoji ? escapeHTML(t.emoji) + ' ' : '';chip.textContent=(isOverdue(t)?'⚠ ':'')+emojiStr+t.title+(dd===0?' · D-Day':dd>0&&dd<=30?` · D-${dd}`:'');if(t.color){chip.style.backgroundColor=t.color;chip.style.color='#172033';chip.classList.add('custom-color')}else{const cat=getCategories().find(c=>c.name===t.category);if(cat){chip.style.backgroundColor=cat.color;chip.style.color='#172033';chip.classList.add('custom-color')}};chip.onclick=e=>{e.stopPropagation();editTask(t.id)};cell.appendChild(chip)});
- if(dayTasks.length>3){const more=document.createElement('div');more.className='more-events';more.textContent=`+${dayTasks.length-3}건`;cell.appendChild(more)}
+ const expanded=expandedCalendarDates.has(iso);if(expanded)cell.classList.add('expanded-day');
+ (expanded?dayTasks:dayTasks.slice(0,3)).forEach(t=>{const chip=document.createElement('button');chip.className=`event-chip cat-${t.category}${t.priority==='urgent'?' urgent':''}${t.status==='완료'?' completed':''}`;chip.title=`${t.title} · ${t.category} · ${t.status}${t.relatedPerson?' · 관련자: '+t.relatedPerson:''}${t.endDate&&t.endDate!==t.date?' · '+t.date+'~'+t.endDate:''}`;const dd=daysUntil(t.date);const emojiStr = t.emoji ? escapeHTML(t.emoji) + ' ' : '';chip.textContent=(isOverdue(t)?'⚠ ':'')+emojiStr+t.title+(dd===0?' · D-Day':dd>0&&dd<=30?` · D-${dd}`:'');if(t.color){chip.style.backgroundColor=t.color;chip.style.color='#172033';chip.classList.add('custom-color')}else{const cat=getCategories().find(c=>c.name===t.category);if(cat){chip.style.backgroundColor=cat.color;chip.style.color='#172033';chip.classList.add('custom-color')}};chip.onclick=e=>{e.stopPropagation();editTask(t.id)};cell.appendChild(chip)});
+ if(dayTasks.length>3){const more=document.createElement('button');more.type='button';more.className='more-events';more.textContent=expanded?'접기':`+${dayTasks.length-3}건 · 전체 일정 보기`;more.title='해당 날짜의 일정을 모두 펼쳐 봅니다';more.onclick=e=>{e.stopPropagation();if(expanded)expandedCalendarDates.delete(iso);else expandedCalendarDates.add(iso);renderCalendar()};cell.appendChild(more)}
  cell.onclick=()=>{selectedDate=iso;openTaskModal(null,iso);renderSidebar()};grid.appendChild(cell);
  }
  root.appendChild(grid);
