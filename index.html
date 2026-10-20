@@ -411,11 +411,28 @@ function manageCategories(){
  else return;
  renderCategoryOptions();renderAll();saveData();
 }
+function syncLegacyTaskLogs(){
+ if(!Array.isArray(diaryRows))diaryRows=[];
+ tasks.forEach(t=>{
+   if(!Array.isArray(t.logs))t.logs=[];
+   t.logs.forEach((log,i)=>{
+     if(!log.id)log.id=`legacy-${t.id}-${i}-${String(log.at||'').replace(/\W/g,'')}`;
+     const linked=diaryRows.some(r=>r.logId===log.id);
+     if(!linked){
+       const stamp=log.at?new Date(log.at):null;
+       const logDate=log.date||((stamp&&!Number.isNaN(stamp.getTime()))?toISO(stamp):(t.date||toISO(new Date())));
+       diaryRows.push({id:`diary-${log.id}`,logId:log.id,taskId:t.id,taskTitle:t.title,date:logDate,status:log.status||t.status||'진행 중',person:log.person||t.relatedPerson||'',content:log.text||'',deadline:t.date||'',note:log.note||('연결 업무: '+t.title),at:log.at||''});
+     }
+   });
+ });
+}
 function loadData(){
- try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);tasks=Array.isArray(data.tasks)?data.tasks:[];diaryRows=Array.isArray(data.diaryRows)?data.diaryRows:[];profile=data.profile||profile}else{tasks=seedTasks.map(t=>({...t}));diaryRows=[];saveData()}}
+ try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);tasks=Array.isArray(data.tasks)?data.tasks:[];diaryRows=Array.isArray(data.diaryRows)?data.diaryRows:[];profile=data.profile||profile}else{tasks=seedTasks.map(t=>({...t}));diaryRows=[]}}
  catch(e){tasks=seedTasks.map(t=>({...t}));diaryRows=[];}
+ syncLegacyTaskLogs();
  $('profileText').textContent=`${profile.name} · ${profile.company}`;
  applyAppearance();
+ saveData();
 }
 function saveData(){
  const data={tasks,diaryRows,profile,updatedAt:new Date().toISOString()};
@@ -456,6 +473,7 @@ async function handleSignedIn(user){
   const snap=await ref.get();
   if(snap.exists){const data=snap.data();localStorage.setItem(STORAGE_KEY,JSON.stringify(data));tasks=Array.isArray(data.tasks)?data.tasks:[];diaryRows=Array.isArray(data.diaryRows)?data.diaryRows:[];profile=data.profile||{name:'사용자',company:'경영전략부',calendarTitle:'경영전략부 업무 캘린더',theme:'blue'};$('profileText').textContent=`${profile.name} · ${profile.company}`;applyAppearance();}
   else {loadData();}
+  syncLegacyTaskLogs();
   cloudLoadComplete=true;
   if(!snap.exists){await ref.set({tasks,diaryRows,profile,updatedAt:new Date().toISOString()});}
   renderAll();renderDiaryTable();renderQuickLinksManager();renderHolidaysManager();setSyncStatus('클라우드 연결됨');
@@ -511,7 +529,22 @@ function addDiaryRow(){
  const body=$('diaryTableBody');if(body.lastElementChild)body.lastElementChild.scrollIntoView({block:'nearest'});
 }
 function removeDiaryRow(id){if(!confirm('이 일지 행을 삭제할까요?'))return;diaryRows=diaryRows.filter(r=>r.id!==id);saveData();renderDiaryTable()}
-function updateDiaryField(id,key,value){const r=diaryRows.find(x=>x.id===id);if(r){r[key]=value;saveData()}}
+function updateDiaryField(id,key,value){
+ const r=diaryRows.find(x=>x.id===id);if(!r)return;
+ r[key]=value;
+ if(r.taskId){
+   const task=tasks.find(t=>t.id===r.taskId);
+   const log=task&&(task.logs||[]).find(l=>l.id===r.logId);
+   if(log){
+     if(key==='content')log.text=value;
+     if(key==='date'){log.date=value;const oldAt=log.at?new Date(log.at):new Date();if(value&& !Number.isNaN(oldAt.getTime())){oldAt.setFullYear(Number(value.slice(0,4)),Number(value.slice(5,7))-1,Number(value.slice(8,10)));log.at=oldAt.toISOString();}}
+     if(key==='person')log.person=value;
+     if(key==='status')log.status=value;
+     if(key==='note')log.note=value;
+   }
+ }
+ saveData();
+}
 function weekday(date){if(!date)return '';return ['일','월','화','수','목','금','토'][parseISO(date).getDay()]}
 function renderDiaryTable(){
  const body=$('diaryTableBody');if(!body)return;
@@ -712,10 +745,29 @@ function openTaskModal(id=null,date=selectedDate){
 function editTask(id){openTaskModal(id)}
 function closeTaskModal(){$('taskModal').classList.remove('open')}
 function saveTask(e){
- e.preventDefault();const id=$('taskId').value,title=$('taskTitle').value.trim(),date=$('taskDate').value,endDate=$('taskEndDate').value;if(!title||!date)return;if(endDate&&endDate<date){alert('종료일은 시작일보다 빠를 수 없어요.');return;}
- const existing=id?tasks.find(t=>t.id===id):null;const logs=existing&&Array.isArray(existing.logs)?[...existing.logs]:[];const diaryText=$('taskDiary').value.trim();if(diaryText)logs.push({at:new Date().toISOString(),text:diaryText});const item={id:id||`${Date.now()}-${Math.random().toString(16).slice(2)}`,title,emoji:$('taskEmoji').value,date,endDate:endDate||date,relatedPerson:$('taskRelatedPerson').value.trim(),category:$('taskCategory').value,status:$('taskStatus').value,priority:$('taskPriority').value,isDday:$('taskIsDday').checked,repeat:$('taskRepeat').value,actualDate:$('taskActualDate').value,memo:$('taskMemo').value.trim(),link:$('taskLink').value.trim(),color:$('taskColor').value,logs};
+ e.preventDefault();
+ const id=$('taskId').value,title=$('taskTitle').value.trim(),date=$('taskDate').value,endDate=$('taskEndDate').value;
+ if(!title||!date)return;
+ if(endDate&&endDate<date){alert('종료일은 시작일보다 빠를 수 없어요.');return;}
+ const existing=id?tasks.find(t=>t.id===id):null;
+ const taskId=id||`${Date.now()}-${Math.random().toString(16).slice(2)}`;
+ const logs=existing&&Array.isArray(existing.logs)?[...existing.logs]:[];
+ const diaryText=$('taskDiary').value.trim();
+ const logAt=new Date().toISOString();
+ let newLog=null;
+ if(diaryText){
+   newLog={id:`log-${Date.now()}-${Math.random().toString(16).slice(2)}`,at:logAt,date:toISO(new Date()),text:diaryText,person:$('taskRelatedPerson').value.trim(),status:$('taskStatus').value};
+   logs.push(newLog);
+ }
+ const item={id:taskId,title,emoji:$('taskEmoji').value,date,endDate:endDate||date,relatedPerson:$('taskRelatedPerson').value.trim(),category:$('taskCategory').value,status:$('taskStatus').value,priority:$('taskPriority').value,isDday:$('taskIsDday').checked,repeat:$('taskRepeat').value,actualDate:$('taskActualDate').value,memo:$('taskMemo').value.trim(),link:$('taskLink').value.trim(),color:$('taskColor').value,logs};
  if(id){const idx=tasks.findIndex(t=>t.id===id);if(idx>=0)tasks[idx]=item}else{tasks.push(item);if(item.repeat!=='none')createRecurring(item)}
- selectedDate=date;const d=parseISO(date);viewYear=d.getFullYear();viewMonth=d.getMonth();saveData();closeTaskModal();renderAll();
+ // 기존 진행일지의 연결 정보도 현재 업무의 담당자·상태·마감일과 동기화
+ diaryRows.filter(r=>r.taskId===taskId).forEach(r=>{r.person=item.relatedPerson;r.status=item.status;r.deadline=item.date;r.taskTitle=item.title;r.note='연결 업무: '+item.title;});
+ if(newLog){
+   diaryRows.push({id:`diary-${newLog.id}`,logId:newLog.id,taskId:taskId,taskTitle:item.title,date:newLog.date,status:item.status,person:item.relatedPerson,content:newLog.text,deadline:item.date,note:'연결 업무: '+item.title,at:newLog.at});
+ }
+ selectedDate=date;const d=parseISO(date);viewYear=d.getFullYear();viewMonth=d.getMonth();
+ saveData();closeTaskModal();renderAll();renderDiaryTable();
 }
 function createRecurring(t){
  const count=t.repeat==='monthly'?11:t.repeat==='quarterly'?3:t.repeat==='yearly'?3:0;const source=parseISO(t.date);
@@ -732,7 +784,10 @@ function exportCSV(){const rows=[['업무명','마감일','분야','상태','중
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 
 function daysUntil(date){return Math.round((parseISO(date)-parseISO(toISO(today)))/86400000)}
-function renderDiaryHistory(logs){if(!logs||!logs.length)return '<div class="subtle" style="margin-top:6px">아직 작성된 진행 일지가 없습니다.</div>';return logs.slice().reverse().map(l=>`<div class="diary-entry"><time>${escapeHTML(new Date(l.at).toLocaleString('ko-KR'))}</time>${escapeHTML(l.text)}</div>`).join('')}
+function renderDiaryHistory(logs){
+ if(!logs||!logs.length)return '<div class="subtle" style="margin-top:6px">아직 작성된 진행 일지가 없습니다.</div>';
+ return logs.slice().reverse().map(l=>{const stamp=l.at?new Date(l.at):null;const label=l.date?`${l.date}${stamp&&!Number.isNaN(stamp.getTime())?' '+stamp.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}):''}`:(stamp&&!Number.isNaN(stamp.getTime())?stamp.toLocaleString('ko-KR'):'기록 날짜 없음');return `<div class="diary-entry"><time>${escapeHTML(label)}</time>${escapeHTML(l.text||'')}</div>`}).join('');
+}
 const baseHolidays={
  '2025-01-01':'신정','2025-01-28':'설날 연휴','2025-01-29':'설날','2025-01-30':'설날 연휴','2025-03-01':'삼일절','2025-05-05':'어린이날·부처님오신날','2025-05-06':'대체공휴일','2025-06-06':'현충일','2025-08-15':'광복절','2025-10-03':'개천절','2025-10-05':'추석 연휴','2025-10-06':'추석','2025-10-07':'추석 연휴','2025-10-08':'대체공휴일','2025-10-09':'한글날','2025-12-25':'성탄절',
  '2026-01-01':'신정','2026-05-01':'근로자의 날','2026-02-16':'설날 연휴','2026-02-17':'설날','2026-02-18':'설날 연휴','2026-03-01':'삼일절','2026-03-02':'삼일절 대체공휴일','2026-05-05':'어린이날','2026-06-03':'전국동시지방선거','2026-05-24':'부처님오신날','2026-05-25':'부처님오신날 대체공휴일','2026-06-06':'현충일','2026-08-15':'광복절','2026-08-17':'광복절 대체공휴일','2026-09-24':'추석 연휴','2026-09-25':'추석','2026-09-26':'추석 연휴','2026-10-03':'개천절','2026-10-05':'개천절 대체공휴일','2026-10-09':'한글날','2026-12-25':'성탄절',
