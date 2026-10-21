@@ -109,6 +109,26 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 .list-row .list-done-check{width:16px;height:16px;accent-color:#24865f;vertical-align:middle;cursor:pointer}
 .list-row .list-status{font-weight:650}
 @media(max-width:720px){.list-row{grid-template-columns:minmax(75px,.7fr) minmax(130px,1.5fr) minmax(55px,.5fr);gap:6px;padding:9px 7px;font-size:.75rem}.list-row .list-status{display:block}.list-row.header{font-size:.72rem}.list-row .list-memo{font-size:.72rem}}
+
+/* 추가 개선: 분야 글씨 확대, 다가오는 업무 표시 설정, 클릭 가능한 요약 카드 */
+.list-row .tag { font-size: .9rem !important; font-weight: 800 !important; padding: 4px 8px !important; line-height: 1.35; display: inline-block; white-space: nowrap; }
+.list-row { color: #26354b; }
+.list-row .list-task-title { font-size: .9rem; }
+.summary-card { appearance:none; width:100%; text-align:left; cursor:pointer; font:inherit; color:#24344f; transition:transform .12s, box-shadow .12s; }
+.summary-card:hover,.summary-card:focus-visible { outline:2px solid #b7c9f4; outline-offset:1px; box-shadow:0 3px 9px rgba(44,54,75,.10); }
+.summary-card:active { transform:scale(.99); }
+.summary-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.upcoming-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.upcoming-heading .panel-title { margin-bottom:0; }
+.upcoming-toggle { display:inline-flex; align-items:center; gap:5px; color:#536176; font-size:.76rem; font-weight:700; white-space:nowrap; cursor:pointer; }
+.upcoming-toggle input { accent-color:#c26f91; }
+.summary-details { margin-top:8px; padding:10px; border:1px solid #dce5f4; border-radius:10px; background:#f8faff; color:#26354b; }
+.summary-details[hidden] { display:none !important; }
+.summary-details-title { font-size:.88rem; font-weight:800; margin-bottom:7px; color:#29436f; }
+.summary-detail-row { display:block; width:100%; text-align:left; border:1px solid #e0e7f1; background:#fff; border-radius:7px; padding:8px; margin-top:5px; color:#26354b; font:inherit; font-size:.78rem; cursor:pointer; }
+.summary-detail-row:hover { background:#eef4ff; }
+.summary-detail-row .detail-meta { display:block; color:#596579; font-size:.72rem; margin-top:3px; }
+@media(max-width:720px){ .list-row .tag{font-size:.82rem!important;padding:3px 5px!important;} }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -205,15 +225,19 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
   <aside class="todo-sidebar">
     <div class="panel-title">업무 현황</div>
     <div class="summary-grid">
-      <div class="summary-card"><span>이번 달 업무</span><strong id="sumTotal">0</strong></div>
-      <div class="summary-card"><span>완료</span><strong id="sumDone">0</strong></div>
-      <div class="summary-card"><span>진행 중</span><strong id="sumDoing">0</strong></div>
-      <div class="summary-card"><span>지연 / 확인 필요</span><strong id="sumAlert">0</strong></div>
+      <button type="button" class="summary-card" onclick="showSummaryDetails('total')"><span>이번 달 업무</span><strong id="sumTotal">0</strong></button>
+      <button type="button" class="summary-card" onclick="showSummaryDetails('done')"><span>완료</span><strong id="sumDone">0</strong></button>
+      <button type="button" class="summary-card" onclick="showSummaryDetails('doing')"><span>진행 중</span><strong id="sumDoing">0</strong></button>
+      <button type="button" class="summary-card" onclick="showSummaryDetails('alert')"><span>지연 / 확인 필요</span><strong id="sumAlert">0</strong></button>
     </div>
+    <div id="summaryDetails" class="summary-details" hidden></div>
     <div class="panel-title" id="selectedDateTitle">선택 날짜 업무</div>
     <div class="subtle" id="selectedDateSubtitle"></div>
     <ul class="todo-list" id="selectedTasks"></ul>
-    <div class="panel-title">다가오는 업무</div>
+    <div class="upcoming-heading">
+      <div class="panel-title">다가오는 업무</div>
+      <label class="upcoming-toggle"><input id="showUpcomingTasks" type="checkbox" checked onchange="setUpcomingVisibility(this.checked)"> 표시</label>
+    </div>
     <div id="upcomingList"></div>
     <div class="panel-title">지연 업무 모아보기 <span id="overdueCount" class="subtle"></span></div>
     <div id="overdueList"></div>
@@ -774,6 +798,27 @@ function renderDdayList() {
   }
 }
 
+function setUpcomingVisibility(visible){
+  profile.showUpcomingTasks = !!visible;
+  saveData();
+  renderSidebar();
+}
+function showSummaryDetails(type){
+  const box=$('summaryDetails');
+  if(!box)return;
+  if(box.dataset.type===type && !box.hidden){box.hidden=true;box.dataset.type='';return;}
+  const start=dateISO(viewYear,viewMonth+1,1),end=dateISO(viewYear,viewMonth+1,new Date(viewYear,viewMonth+1,0).getDate());
+  let rows=tasks.filter(t=>t.date>=start&&t.date<=end);
+  let title='이번 달 업무';
+  if(type==='done'){rows=rows.filter(t=>t.status==='완료');title='이번 달 완료 업무';}
+  else if(type==='doing'){rows=rows.filter(t=>t.status==='진행 중');title='이번 달 진행 중 업무';}
+  else if(type==='alert'){rows=rows.filter(t=>isOverdue(t)||t.status==='결재 대기'||t.status==='자료 대기');title='이번 달 지연 / 확인 필요 업무';}
+  rows.sort((a,b)=>a.date.localeCompare(b.date));
+  box.dataset.type=type;
+  box.innerHTML=`<div class="summary-details-title">${escapeHTML(title)} · ${rows.length}건 <button type="button" class="tiny-btn" style="float:right" onclick="document.getElementById('summaryDetails').hidden=true">닫기 ×</button></div>`+
+    (rows.length?rows.map(t=>`<button type="button" class="summary-detail-row" onclick="editTask('${String(t.id).replace(/'/g,"\\'")}')">${t.emoji?escapeHTML(t.emoji)+' ':''}${escapeHTML(t.title)}<span class="detail-meta">${escapeHTML(t.date)} · ${escapeHTML(t.category)} · ${escapeHTML(isOverdue(t)?'지연':t.status)}${t.memo?' · '+escapeHTML(t.memo):''}</span></button>`).join(''):'<div class="empty-state">해당 업무가 없습니다.</div>');
+  box.hidden=false;
+}
 function renderSidebar(){
  const monthStart=dateISO(viewYear,viewMonth+1,1),monthEnd=dateISO(viewYear,viewMonth+1,new Date(viewYear,viewMonth+1,0).getDate()),monthTasks=tasks.filter(t=>t.date>=monthStart&&t.date<=monthEnd);
  $('sumTotal').textContent=monthTasks.length;$('sumDone').textContent=monthTasks.filter(t=>t.status==='완료').length;$('sumDoing').textContent=monthTasks.filter(t=>t.status==='진행 중').length;$('sumAlert').textContent=monthTasks.filter(t=>isOverdue(t)||t.status==='결재 대기'||t.status==='자료 대기').length;
@@ -785,7 +830,7 @@ function renderSidebar(){
  li.innerHTML=`<input type="checkbox" ${t.status==='완료'?'checked':''} aria-label="완료"><span class="tag ${t.category}">${t.category}</span><span class="todo-text">${emojiStr}${escapeHTML(t.title)}<br><span class="subtle">${escapeHTML(isOverdue(t)?'지연':t.status)}</span></span><span class="todo-actions"><button class="tiny-btn" title="수정">✎</button></span>`;
  li.querySelector('input').onchange=()=>{t.status=li.querySelector('input').checked?'완료':'진행 중';if(t.status==='완료')t.actualDate=toISO(today);saveData();renderAll()};
  li.querySelector('button').onclick=()=>editTask(t.id);list.appendChild(li)});
- const upcoming=$('upcomingList'),next=tasks.filter(t=>t.status!=='완료'&&t.date>=toISO(today)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);upcoming.innerHTML=next.length?next.map(t=>`<div class="status-line"><span><strong>${t.date.slice(5)}</strong> · ${t.emoji ? escapeHTML(t.emoji) + ' ' : ''}${escapeHTML(t.title)}</span><span class="status-pill">${t.priority==='urgent'?'긴급':t.status}</span></div>`).join(''):'<div class="empty-state">다가오는 미완료 업무가 없습니다.</div>';
+ const upcoming=$('upcomingList'),next=tasks.filter(t=>!t.isDday&&t.status!=='완료'&&t.date>=toISO(today)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);upcoming.innerHTML=next.length?next.map(t=>`<div class="status-line"><span><strong>${t.date.slice(5)}</strong> · ${t.emoji ? escapeHTML(t.emoji) + ' ' : ''}${escapeHTML(t.title)}</span><span class="status-pill">${t.priority==='urgent'?'긴급':t.status}</span></div>`).join(''):'<div class="empty-state">다가오는 미완료 업무가 없습니다.</div>';
 }
 function openTaskModal(id=null,date=selectedDate){
  $('taskForm').reset();$('taskId').value='';$('taskDate').value=date||toISO(today);$('taskEndDate').value='';$('taskRelatedPerson').value='';$('taskStatus').value='예정';$('taskRepeat').value='none';$('taskPriority').value='normal';$('taskIsDday').checked=false;$('taskColor').value='';$('taskEmoji').value='';$('taskDiary').value='';$('taskDiaryHistory').innerHTML='';$('modalTitle').textContent=id?'업무 수정':'업무 등록';$('deleteTaskBtn').style.display=id?'inline-block':'none';
@@ -857,7 +902,10 @@ const _renderSidebar=renderSidebar;
 renderSidebar=function(){_renderSidebar();
  const overdue=$('overdueList'),late=tasks.filter(t=>isOverdue(t)).sort((a,b)=>a.date.localeCompare(b.date));$('overdueCount').textContent=`${late.length}건`;overdue.innerHTML=late.length?late.map(t=>`<div class="overdue-row"><span>⚠</span><button onclick="editTask('${String(t.id).replace(/'/g,"\\'")}')">${t.emoji ? escapeHTML(t.emoji) + ' ' : ''}${escapeHTML(t.title)}<br><span class="subtle">마감 ${escapeHTML(t.date)} · ${Math.abs(daysUntil(t.date))}일 지연</span></button></div>`).join(''):'<div class="empty-state">지연된 업무가 없습니다.</div>';
  renderDdayList();
- const upcoming=$('upcomingList');if(upcoming){const next=tasks.filter(t=>t.status!=='완료'&&t.date>=toISO(today)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);upcoming.innerHTML=next.length?next.map(t=>{const dd=daysUntil(t.date);return `<div class="status-line"><span><strong>${escapeHTML(t.date.slice(5))}</strong> · ${t.emoji ? escapeHTML(t.emoji) + ' ' : ''}${escapeHTML(t.title)} <span class="dday">${dd===0?'D-Day':`D-${dd}`}</span></span><span class="status-pill">${t.priority==='urgent'?'긴급':escapeHTML(t.status)}</span></div>`}).join(''):'<div class="empty-state">다가오는 미완료 업무가 없습니다.</div>'}
+ const upcoming=$('upcomingList'),upcomingToggle=$('showUpcomingTasks');
+ const showUpcoming=profile.showUpcomingTasks!==false;
+ if(upcomingToggle)upcomingToggle.checked=showUpcoming;
+ if(upcoming){upcoming.hidden=!showUpcoming;const next=tasks.filter(t=>!t.isDday&&t.status!=='완료'&&t.date>=toISO(today)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);upcoming.innerHTML=next.length?next.map(t=>{return `<div class="status-line"><span><strong>${escapeHTML(t.date.slice(5))}</strong> · ${t.emoji ? escapeHTML(t.emoji) + ' ' : ''}${escapeHTML(t.title)}</span><span class="status-pill">${t.priority==='urgent'?'긴급':escapeHTML(t.status)}</span></div>`}).join(''):'<div class="empty-state">다가오는 미완료 업무가 없습니다.</div>'}
 };
 
 $('taskModal').addEventListener('click',e=>{if(e.target===$('taskModal'))closeTaskModal()});
