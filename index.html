@@ -1042,7 +1042,7 @@ async function saveTask(e){
  const logAt=new Date().toISOString();
  let newLog=null;
  if(diaryText){
-   newLog={id:`log-${Date.now()}-${Math.random().toString(16).slice(2)}`,at:logAt,date:toISO(new Date()),text:diaryText,person:$('taskRelatedPerson').value.trim(),status:$('taskStatus').value};
+   newLog={id:`log-${Date.now()}-${Math.random().toString(16).slice(2)}`,at:logAt,date:date,text:diaryText,person:$('taskRelatedPerson').value.trim(),status:$('taskStatus').value};
    logs.push(newLog);
  }
  const keptAttachments=(existing?.attachments||[]).filter(a=>!removedAttachmentPaths.has(a.path));
