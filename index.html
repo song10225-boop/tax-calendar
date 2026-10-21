@@ -516,6 +516,7 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
     <div class="form-row full"><label for="taskMemo">메모 / 증빙 / 후속 조치</label><textarea class="field" id="taskMemo" placeholder="필요 서류, 타부서 협조, 다음 조치 등을 입력하세요."></textarea></div>
     <div class="form-row full"><label for="taskLink">관련 링크 (선택)</label><input class="field" id="taskLink" type="url" placeholder="https://..."></div>
     <div class="form-row full"><label for="taskDiary">업무 진행 일지 추가</label><textarea class="field" id="taskDiary" placeholder="예: 10/19 거래명세서 수령 요청 완료. 회신 대기 중."></textarea><span class="subtle">저장할 때 작성한 내용이 날짜·시간과 함께 일지 이력에 추가됩니다.</span><div id="taskDiaryHistory"></div></div>
+    <div class="form-row full" id="taskDraftStatus" style="font-size:.78rem;color:#64748b">✍️ 새 일정 작성 내용은 자동으로 임시저장됩니다. 복사하거나 창이 닫혀도 다시 불러올 수 있어요.</div>
    </div>
    <div class="modal-actions"><div><button type="button" class="btn btn-danger" id="deleteTaskBtn" onclick="deleteCurrentTask()" style="display:none">삭제</button></div><div><button type="button" class="btn btn-outline" onclick="closeTaskModal()">취소</button><button type="submit" class="btn btn-primary">저장</button></div></div>
   </form>
@@ -725,12 +726,16 @@ function addDiaryRow(){
  const body=$('diaryTableBody');if(body.lastElementChild)body.lastElementChild.scrollIntoView({block:'nearest'});
 }
 function removeDiaryRow(id){if(!confirm('이 일지 행을 삭제할까요?'))return;diaryRows=diaryRows.filter(r=>r.id!==id);saveData();renderDiaryTable()}
+function openLinkedTask(taskId){const t=tasks.find(x=>String(x.id)===String(taskId));if(!t){alert('연결된 달력 일정이 없습니다.');return;}showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}
 function updateDiaryField(id,key,value){
  const r=diaryRows.find(x=>x.id===id);if(!r)return;
  r[key]=value;
  if(r.taskId){
    const task=tasks.find(t=>t.id===r.taskId);
    const log=task&&(task.logs||[]).find(l=>l.id===r.logId);
+   if(task && key==='deadline' && value){task.date=value; if(!task.endDate || task.endDate<value)task.endDate=value; r.deadline=value;}
+   if(task && key==='person')task.relatedPerson=value;
+   if(task && key==='status')task.status=value;
    if(log){
      if(key==='content')log.text=value;
      if(key==='date'){log.date=value;const oldAt=log.at?new Date(log.at):new Date();if(value&& !Number.isNaN(oldAt.getTime())){oldAt.setFullYear(Number(value.slice(0,4)),Number(value.slice(5,7))-1,Number(value.slice(8,10)));log.at=oldAt.toISOString();}}
@@ -740,6 +745,7 @@ function updateDiaryField(id,key,value){
    }
  }
  saveData();
+ if(r.taskId)renderAll();
 }
 function weekday(date){if(!date)return '';return ['일','월','화','수','목','금','토'][parseISO(date).getDay()]}
 function renderDiaryTable(){
@@ -758,7 +764,7 @@ function renderDiaryTable(){
  <td><textarea placeholder="업무 내용" onchange="updateDiaryField('${r.id}','content',this.value)">${escapeHTML(r.content||'')}</textarea></td>
  <td><input type="date" value="${escapeHTML(r.deadline||'')}" onchange="updateDiaryField('${r.id}','deadline',this.value)"></td>
  <td><textarea placeholder="비고/후속 조치" onchange="updateDiaryField('${r.id}','note',this.value)">${escapeHTML(r.note||'')}</textarea></td>
- <td><button class="small-action" onclick="removeDiaryRow('${r.id}')">삭제</button></td></tr>`).join(''):'<tr><td colspan="9" class="empty-state">표시할 일지가 없습니다. ‘＋ 일지 추가’를 눌러 기록을 시작하세요.</td></tr>';
+ <td style="white-space:nowrap">${r.taskId?`<button class="small-action" onclick="openLinkedTask('${String(r.taskId).replace(/'/g,"\\\\\'")}')">일정 수정</button> `:``}<button class="small-action" onclick="removeDiaryRow('${r.id}')">삭제</button></td></tr>`).join(''):'<tr><td colspan="9" class="empty-state">표시할 일지가 없습니다. ‘＋ 일지 추가’를 눌러 기록을 시작하세요.</td></tr>';
 }
 function clearDiaryFilters(){['diarySearch','diaryPersonFilter','diaryStatusFilter','diaryDateFrom','diaryDateTo'].forEach(id=>{const el=$(id);if(el)el.value=''});renderDiaryTable()}
 function setAllCategories(value){document.querySelectorAll('.cat-filter').forEach(c=>c.checked=value);renderAll()}
@@ -980,11 +986,17 @@ function renderSidebar(){
 }
 function openTaskModal(id=null,date=selectedDate){
  $('taskForm').reset();$('taskId').value='';$('taskDate').value=date||toISO(today);$('taskEndDate').value='';$('taskRelatedPerson').value='';$('taskStatus').value='예정';$('taskRepeat').value='none';$('taskPriority').value='normal';$('taskIsDday').checked=false;$('taskColor').value='';$('taskEmoji').value='';$('taskDiary').value='';$('taskDiaryHistory').innerHTML='';$('modalTitle').textContent=id?'업무 수정':'업무 등록';$('deleteTaskBtn').style.display=id?'inline-block':'none';
+ if(!id)restoreTaskDraft();
  if(id){const t=tasks.find(x=>x.id===id);if(!t)return;$('taskId').value=t.id;$('taskTitle').value=t.title;$('taskDate').value=t.date;$('taskEndDate').value=t.endDate||'';$('taskRelatedPerson').value=t.relatedPerson||'';renderCategoryOptions();$('taskCategory').value=t.category;$('taskStatus').value=t.status;$('taskPriority').value=t.priority||'normal';$('taskIsDday').checked=!!t.isDday;$('taskRepeat').value=t.repeat||'none';$('taskActualDate').value=t.actualDate||'';$('taskMemo').value=t.memo||'';$('taskLink').value=t.link||'';$('taskColor').value=t.color||'';$('taskEmoji').value=t.emoji||'';$('taskDiaryHistory').innerHTML=renderDiaryHistory(t.logs||[])}
  $('taskModal').classList.add('open');$('taskTitle').focus();
 }
 function editTask(id){openTaskModal(id)}
-function closeTaskModal(){$('taskModal').classList.remove('open')}
+const TASK_DRAFT_KEY='management-calendar-task-draft-v1';
+const TASK_DRAFT_FIELDS=['taskTitle','taskDate','taskEndDate','taskEmoji','taskCategory','taskRelatedPerson','taskStatus','taskPriority','taskIsDday','taskRepeat','taskColor','taskActualDate','taskMemo','taskLink','taskDiary'];
+function saveTaskDraft(){if($('taskId')?.value)return;const draft={};TASK_DRAFT_FIELDS.forEach(id=>{const el=$(id);if(el)draft[id]=el.type==='checkbox'?el.checked:el.value});draft.savedAt=new Date().toISOString();try{localStorage.setItem(TASK_DRAFT_KEY,JSON.stringify(draft));const status=$('taskDraftStatus');if(status)status.textContent='✓ 임시저장됨 — '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});}catch(e){}}
+function restoreTaskDraft(){try{const raw=localStorage.getItem(TASK_DRAFT_KEY);if(!raw)return;const draft=JSON.parse(raw);if(!draft||!draft.savedAt)return;TASK_DRAFT_FIELDS.forEach(id=>{const el=$(id);if(!el||draft[id]===undefined)return;if(el.type==='checkbox')el.checked=!!draft[id];else el.value=draft[id]});const status=$('taskDraftStatus');if(status)status.textContent='↩ 이전에 작성하던 임시저장을 불러왔어요. 저장 전까지 계속 자동저장됩니다.';}catch(e){}}
+function clearTaskDraft(){try{localStorage.removeItem(TASK_DRAFT_KEY)}catch(e){}}
+function closeTaskModal(){$('taskModal').classList.remove('open');if(!$('taskId').value)saveTaskDraft()}
 function saveTask(e){
  e.preventDefault();
  const id=$('taskId').value,title=$('taskTitle').value.trim(),date=$('taskDate').value,endDate=$('taskEndDate').value;
@@ -1008,7 +1020,7 @@ function saveTask(e){
    diaryRows.push({id:`diary-${newLog.id}`,logId:newLog.id,taskId:taskId,taskTitle:item.title,date:newLog.date,status:item.status,person:item.relatedPerson,content:newLog.text,deadline:item.date,note:'연결 업무: '+item.title,at:newLog.at});
  }
  selectedDate=date;const d=parseISO(date);viewYear=d.getFullYear();viewMonth=d.getMonth();
- saveData();closeTaskModal();renderAll();renderDiaryTable();
+ saveData();if(!id){clearTaskDraft();$('taskId').value='saved-draft-clear';}closeTaskModal();renderAll();renderDiaryTable();
 }
 function createRecurring(t){
  const count=t.repeat==='monthly'?11:t.repeat==='quarterly'?3:t.repeat==='yearly'?3:0;const source=parseISO(t.date);
@@ -1108,8 +1120,9 @@ renderSidebar=function(){_renderSidebar();
  if(upcoming){upcoming.hidden=!showUpcoming;const next=tasks.filter(t=>!t.isDday&&t.status!=='완료'&&t.date>=toISO(today)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);upcoming.innerHTML=next.length?next.map(t=>{return `<div class="status-line"><span><strong>${escapeHTML(t.date.slice(5))}</strong> · ${t.emoji ? escapeHTML(t.emoji) + ' ' : ''}${escapeHTML(t.title)}</span><span class="status-pill">${t.priority==='urgent'?'긴급':escapeHTML(t.status)}</span></div>`}).join(''):'<div class="empty-state">다가오는 미완료 업무가 없습니다.</div>'}
 };
 
-$('taskModal').addEventListener('click',e=>{if(e.target===$('taskModal'))closeTaskModal()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeTaskModal()});
+$('taskModal').addEventListener('click',e=>{if(e.target===$('taskModal')){saveTaskDraft();const status=$('taskDraftStatus');if(status)status.textContent='✍️ 작성창 바깥을 눌러도 닫히지 않아요. 내용은 자동 임시저장됩니다.';}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape' && $('taskModal').classList.contains('open')){saveTaskDraft();const status=$('taskDraftStatus');if(status)status.textContent='✍️ 임시저장했어요. 취소 버튼으로 닫아도 다시 불러올 수 있습니다.';}});
+TASK_DRAFT_FIELDS.forEach(id=>{const el=$(id);if(el){el.addEventListener('input',saveTaskDraft);el.addEventListener('change',saveTaskDraft);}});
 
 function exportExcel(){
  if(typeof XLSX==='undefined'){alert('엑셀 기능을 불러오지 못했습니다. 인터넷 연결을 확인하거나 기존 CSV 내보내기를 이용해 주세요.');return}
