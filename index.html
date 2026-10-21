@@ -240,6 +240,15 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+.task-attachment-list{display:flex;flex-direction:column;gap:8px;margin-top:9px}
+.task-attachment-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;min-width:0}
+.task-attachment-item img{width:48px;height:48px;object-fit:cover;border-radius:7px;border:1px solid #e2e8f0;flex:0 0 48px}
+.task-attachment-item .attachment-name{flex:1;min-width:0;overflow-wrap:anywhere;font-size:.86rem}
+.task-attachment-item .attachment-meta{font-size:.74rem;color:#64748b;margin-top:2px}
+.task-attachment-item button{flex:0 0 auto;border:0;border-radius:7px;padding:6px 9px;background:#fff1f2;color:#be123c;cursor:pointer}
+.task-attachment-item a{color:#4f46e5;text-decoration:none;font-size:.82rem}
+</style>
 </head>
 <body>
 
@@ -515,6 +524,11 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
     <div class="form-row"><label for="taskActualDate">실제 완료일</label><input class="field" id="taskActualDate" type="date"></div>
     <div class="form-row full"><label for="taskMemo">메모 / 증빙 / 후속 조치</label><textarea class="field" id="taskMemo" placeholder="필요 서류, 타부서 협조, 다음 조치 등을 입력하세요."></textarea></div>
     <div class="form-row full"><label for="taskLink">관련 링크 (선택)</label><input class="field" id="taskLink" type="url" placeholder="https://..."></div>
+    <div class="form-row full"><label for="taskAttachments">📎 첨부파일 / 이미지</label>
+      <input class="field" id="taskAttachments" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip">
+      <span class="subtle">이미지, PDF, Office 문서 등을 첨부할 수 있어요. 파일은 일정 저장 시 클라우드에 업로드됩니다. 파일당 최대 10MB, 한 일정에 최대 5개까지 선택할 수 있어요.</span>
+      <div id="taskAttachmentPreview" class="task-attachment-list"></div>
+    </div>
     <div class="form-row full"><label for="taskDiary">업무 진행 일지 추가</label><textarea class="field" id="taskDiary" placeholder="예: 10/19 거래명세서 수령 요청 완료. 회신 대기 중."></textarea><span class="subtle">저장할 때 작성한 내용이 날짜·시간과 함께 일지 이력에 추가됩니다.</span><div id="taskDiaryHistory"></div></div>
     <div class="form-row full" id="taskDraftStatus" style="font-size:.78rem;color:#64748b">✍️ 새 일정 작성 내용은 자동으로 임시저장됩니다. 복사하거나 창이 닫혀도 다시 불러올 수 있어요.</div>
    </div>
@@ -541,6 +555,7 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyCWwZp44LZj6vsQobyGHR_K5SImIZyQSx8",
@@ -554,6 +569,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const firestore = firebase.firestore();
+const storage = firebase.storage();
 let currentUser = null;
 let cloudLoadComplete = false;
 let saveTimer = null;
@@ -984,10 +1000,21 @@ function renderSidebar(){
  li.querySelector('button').onclick=()=>editTask(t.id);list.appendChild(li)});
  const upcoming=$('upcomingList'),next=tasks.filter(t=>!t.isDday&&t.status!=='완료'&&t.date>=toISO(today)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);upcoming.innerHTML=next.length?next.map(t=>`<div class="status-line"><span><strong>${t.date.slice(5)}</strong> · ${t.emoji ? escapeHTML(t.emoji) + ' ' : ''}${escapeHTML(t.title)}</span><span class="status-pill">${t.priority==='urgent'?'긴급':t.status}</span></div>`).join(''):'<div class="empty-state">다가오는 미완료 업무가 없습니다.</div>';
 }
+const removedAttachmentPaths=new Set();
+function formatAttachmentSize(bytes){if(!Number.isFinite(bytes))return '';return bytes<1024?`${bytes} B`:bytes<1024*1024?`${(bytes/1024).toFixed(0)} KB`:`${(bytes/1024/1024).toFixed(1)} MB`;}
+function renderTaskAttachments(attachments=[]){
+ const box=$('taskAttachmentPreview');if(!box)return;
+ const existing=attachments.filter(a=>!removedAttachmentPaths.has(a.path));
+ const pending=Array.from($('taskAttachments')?.files||[]);
+ box.innerHTML=[...existing.map((a,i)=>`<div class="task-attachment-item">${String(a.type||'').startsWith('image/')?`<img src="${escapeHTML(a.url)}" alt="첨부 이미지 미리보기">`:'<span aria-hidden="true" style="font-size:1.5rem">📄</span>'}<div class="attachment-name"><a href="${escapeHTML(a.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(a.name||'첨부파일')}</a><div class="attachment-meta">저장된 파일 · ${formatAttachmentSize(a.size||0)}</div></div><button type="button" onclick="removeTaskAttachment('${String(a.path||'').replace(/'/g,"\\'")}')">삭제</button></div>`),...pending.map((f,i)=>`<div class="task-attachment-item">${f.type.startsWith('image/')?`<img src="${URL.createObjectURL(f)}" alt="선택한 이미지 미리보기">`:'<span aria-hidden="true" style="font-size:1.5rem">📄</span>'}<div class="attachment-name">${escapeHTML(f.name)}<div class="attachment-meta">업로드 대기 · ${formatAttachmentSize(f.size)}</div></div></div>`)].join('')||'<div class="subtle">아직 첨부파일이 없어요.</div>';
+}
+function removeTaskAttachment(path){if(path)removedAttachmentPaths.add(path);const id=$('taskId').value;const t=id?tasks.find(x=>String(x.id)===String(id)):null;renderTaskAttachments(t?.attachments||[]);}
+$('taskAttachments').addEventListener('change',()=>{const files=Array.from($('taskAttachments').files||[]);if(files.length>5){alert('한 일정에는 파일을 최대 5개까지 선택할 수 있어요.');$('taskAttachments').value='';}else if(files.some(f=>f.size>10*1024*1024)){alert('파일당 최대 크기는 10MB예요. 큰 파일은 줄여서 첨부해 주세요.');$('taskAttachments').value='';}renderTaskAttachments(($('taskId').value&&tasks.find(t=>String(t.id)===String($('taskId').value))?.attachments)||[]);});
 function openTaskModal(id=null,date=selectedDate){
- $('taskForm').reset();$('taskId').value='';$('taskDate').value=date||toISO(today);$('taskEndDate').value='';$('taskRelatedPerson').value='';$('taskStatus').value='예정';$('taskRepeat').value='none';$('taskPriority').value='normal';$('taskIsDday').checked=false;$('taskColor').value='';$('taskEmoji').value='';$('taskDiary').value='';$('taskDiaryHistory').innerHTML='';$('modalTitle').textContent=id?'업무 수정':'업무 등록';$('deleteTaskBtn').style.display=id?'inline-block':'none';
+ removedAttachmentPaths.clear();
+ $('taskForm').reset();$('taskId').value='';$('taskDate').value=date||toISO(today);$('taskEndDate').value='';$('taskRelatedPerson').value='';$('taskStatus').value='예정';$('taskRepeat').value='none';$('taskPriority').value='normal';$('taskIsDday').checked=false;$('taskColor').value='';$('taskEmoji').value='';$('taskDiary').value='';$('taskDiaryHistory').innerHTML='';$('taskAttachments').value='';$('taskAttachmentPreview').innerHTML='';$('modalTitle').textContent=id?'업무 수정':'업무 등록';$('deleteTaskBtn').style.display=id?'inline-block':'none';
  if(!id)restoreTaskDraft();
- if(id){const t=tasks.find(x=>x.id===id);if(!t)return;$('taskId').value=t.id;$('taskTitle').value=t.title;$('taskDate').value=t.date;$('taskEndDate').value=t.endDate||'';$('taskRelatedPerson').value=t.relatedPerson||'';renderCategoryOptions();$('taskCategory').value=t.category;$('taskStatus').value=t.status;$('taskPriority').value=t.priority||'normal';$('taskIsDday').checked=!!t.isDday;$('taskRepeat').value=t.repeat||'none';$('taskActualDate').value=t.actualDate||'';$('taskMemo').value=t.memo||'';$('taskLink').value=t.link||'';$('taskColor').value=t.color||'';$('taskEmoji').value=t.emoji||'';$('taskDiaryHistory').innerHTML=renderDiaryHistory(t.logs||[])}
+ if(id){const t=tasks.find(x=>x.id===id);if(!t)return;$('taskId').value=t.id;$('taskTitle').value=t.title;$('taskDate').value=t.date;$('taskEndDate').value=t.endDate||'';$('taskRelatedPerson').value=t.relatedPerson||'';renderCategoryOptions();$('taskCategory').value=t.category;$('taskStatus').value=t.status;$('taskPriority').value=t.priority||'normal';$('taskIsDday').checked=!!t.isDday;$('taskRepeat').value=t.repeat||'none';$('taskActualDate').value=t.actualDate||'';$('taskMemo').value=t.memo||'';$('taskLink').value=t.link||'';$('taskColor').value=t.color||'';$('taskEmoji').value=t.emoji||'';renderTaskAttachments(t.attachments||[]);$('taskDiaryHistory').innerHTML=renderDiaryHistory(t.logs||[])}
  $('taskModal').classList.add('open');$('taskTitle').focus();
 }
 function editTask(id){openTaskModal(id)}
@@ -997,13 +1024,19 @@ function saveTaskDraft(){if($('taskId')?.value)return;const draft={};TASK_DRAFT_
 function restoreTaskDraft(){try{const raw=localStorage.getItem(TASK_DRAFT_KEY);if(!raw)return;const draft=JSON.parse(raw);if(!draft||!draft.savedAt)return;TASK_DRAFT_FIELDS.forEach(id=>{const el=$(id);if(!el||draft[id]===undefined)return;if(el.type==='checkbox')el.checked=!!draft[id];else el.value=draft[id]});const status=$('taskDraftStatus');if(status)status.textContent='↩ 이전에 작성하던 임시저장을 불러왔어요. 저장 전까지 계속 자동저장됩니다.';}catch(e){}}
 function clearTaskDraft(){try{localStorage.removeItem(TASK_DRAFT_KEY)}catch(e){}}
 function closeTaskModal(){$('taskModal').classList.remove('open');if(!$('taskId').value)saveTaskDraft()}
-function saveTask(e){
+async function saveTask(e){
  e.preventDefault();
  const id=$('taskId').value,title=$('taskTitle').value.trim(),date=$('taskDate').value,endDate=$('taskEndDate').value;
  if(!title||!date)return;
  if(endDate&&endDate<date){alert('종료일은 시작일보다 빠를 수 없어요.');return;}
  const existing=id?tasks.find(t=>t.id===id):null;
  const taskId=id||`${Date.now()}-${Math.random().toString(16).slice(2)}`;
+ const selectedFiles=Array.from($('taskAttachments').files||[]);
+ if(selectedFiles.length+(existing?.attachments||[]).filter(a=>!removedAttachmentPaths.has(a.path)).length>5){alert('한 일정에는 기존 첨부파일을 포함해 최대 5개까지 첨부할 수 있어요.');return;}
+ if(selectedFiles.some(f=>f.size>10*1024*1024)){alert('파일당 최대 크기는 10MB예요. 큰 파일은 줄여서 첨부해 주세요.');return;}
+ const attachStatus=$('taskDraftStatus');
+ if(selectedFiles.length && !currentUser){alert('첨부파일을 클라우드에 저장하려면 먼저 로그인해 주세요.');return;}
+ if(selectedFiles.length){attachStatus.textContent='📎 첨부파일을 클라우드에 업로드하고 있어요…';}
  const logs=existing&&Array.isArray(existing.logs)?[...existing.logs]:[];
  const diaryText=$('taskDiary').value.trim();
  const logAt=new Date().toISOString();
@@ -1012,7 +1045,11 @@ function saveTask(e){
    newLog={id:`log-${Date.now()}-${Math.random().toString(16).slice(2)}`,at:logAt,date:toISO(new Date()),text:diaryText,person:$('taskRelatedPerson').value.trim(),status:$('taskStatus').value};
    logs.push(newLog);
  }
- const item={id:taskId,title,emoji:$('taskEmoji').value,date,endDate:endDate||date,relatedPerson:$('taskRelatedPerson').value.trim(),category:$('taskCategory').value,status:$('taskStatus').value,priority:$('taskPriority').value,isDday:$('taskIsDday').checked,repeat:$('taskRepeat').value,actualDate:$('taskActualDate').value,memo:$('taskMemo').value.trim(),link:$('taskLink').value.trim(),color:$('taskColor').value,logs};
+ const keptAttachments=(existing?.attachments||[]).filter(a=>!removedAttachmentPaths.has(a.path));
+ for(const old of (existing?.attachments||[]).filter(a=>removedAttachmentPaths.has(a.path)&&a.path)){try{await storage.ref().child(old.path).delete();}catch(err){console.warn('첨부파일 삭제 실패',err);}}
+ let uploadedAttachments=[];
+ try{for(const file of selectedFiles){const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100);const path=`users/${currentUser.uid}/tasks/${taskId}/${Date.now()}_${Math.random().toString(16).slice(2)}_${safeName}`;const snap=await storage.ref().child(path).put(file,{contentType:file.type||'application/octet-stream',customMetadata:{originalName:file.name}});const url=await snap.ref.getDownloadURL();uploadedAttachments.push({name:file.name,type:file.type||'',size:file.size,url,path,uploadedAt:new Date().toISOString()});}}catch(err){console.error('첨부 업로드 실패',err);alert('첨부파일 업로드에 실패했어요. Firebase Storage 사용 설정과 보안 규칙, 인터넷 연결을 확인해 주세요.\n파일이 저장되지 않았으니 일정은 아직 저장하지 않았어요.');return;}
+ const item={id:taskId,title,emoji:$('taskEmoji').value,date,endDate:endDate||date,relatedPerson:$('taskRelatedPerson').value.trim(),category:$('taskCategory').value,status:$('taskStatus').value,priority:$('taskPriority').value,isDday:$('taskIsDday').checked,repeat:$('taskRepeat').value,actualDate:$('taskActualDate').value,memo:$('taskMemo').value.trim(),link:$('taskLink').value.trim(),color:$('taskColor').value,logs,attachments:[...keptAttachments,...uploadedAttachments]};
  if(id){const idx=tasks.findIndex(t=>t.id===id);if(idx>=0)tasks[idx]=item}else{tasks.push(item);if(item.repeat!=='none')createRecurring(item)}
  // 기존 진행일지의 연결 정보도 현재 업무의 담당자·상태·마감일과 동기화
  diaryRows.filter(r=>r.taskId===taskId).forEach(r=>{r.person=item.relatedPerson;r.status=item.status;r.deadline=item.date;r.taskTitle=item.title;r.note='연결 업무: '+item.title;});
@@ -1020,7 +1057,7 @@ function saveTask(e){
    diaryRows.push({id:`diary-${newLog.id}`,logId:newLog.id,taskId:taskId,taskTitle:item.title,date:newLog.date,status:item.status,person:item.relatedPerson,content:newLog.text,deadline:item.date,note:'연결 업무: '+item.title,at:newLog.at});
  }
  selectedDate=date;const d=parseISO(date);viewYear=d.getFullYear();viewMonth=d.getMonth();
- saveData();if(!id){clearTaskDraft();$('taskId').value='saved-draft-clear';}closeTaskModal();renderAll();renderDiaryTable();
+ saveData();if(!id){clearTaskDraft();$('taskId').value='saved-draft-clear';}removedAttachmentPaths.clear();closeTaskModal();renderAll();renderDiaryTable();
 }
 function createRecurring(t){
  const count=t.repeat==='monthly'?11:t.repeat==='quarterly'?3:t.repeat==='yearly'?3:0;const source=parseISO(t.date);
