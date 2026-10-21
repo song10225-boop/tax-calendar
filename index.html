@@ -79,6 +79,36 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 .list-view{background:white;border:1px solid var(--line);border-radius:8px;overflow:hidden}.list-row{display:grid;grid-template-columns:100px 1fr 80px 90px;gap:8px;align-items:center;padding:10px;border-bottom:1px solid #eef2f7;font-size:.8rem}.list-row:last-child{border-bottom:0}.list-row.header{background:#f1f5f9;font-weight:800}
 @media(max-width:1100px){.main-container{grid-template-columns:200px minmax(350px,1fr)}.todo-sidebar{display:none}}
 @media(max-width:720px){body{height:auto;min-height:100vh;overflow:auto}.main-container{display:flex;flex-direction:column;overflow:visible}.left-sidebar{display:none}.calendar-area{overflow:visible;padding:8px}.calendar-grid{grid-auto-rows:minmax(78px,auto);min-height:0}.calendar-cell{padding:3px}.event-chip{font-size:.62rem;padding:3px}.calendar-title{font-size:1.1rem}.todo-sidebar{display:flex;border-left:0;border-top:1px solid var(--line)}header{align-items:flex-start;flex-direction:column}.form-grid{grid-template-columns:1fr}.form-row.full{grid-column:auto}.list-row{grid-template-columns:75px 1fr 60px}.list-row .list-status{display:none}}
+
+/* 업무 현황 패널: 색상 대비와 구획 개선 */
+.todo-sidebar{color:#263449;line-height:1.5}
+.todo-sidebar .panel-title{color:#25324a;font-weight:800;letter-spacing:-.2px;margin:14px 0 8px}
+.summary-grid{gap:8px}
+.summary-card{padding:10px 11px;border-radius:11px;background:#fff8f7;border-color:#eadfe5;box-shadow:0 2px 5px rgba(44,54,75,.04)}
+.summary-card:nth-child(1){background:#fff3f4;border-color:#f0d0d8}
+.summary-card:nth-child(2){background:#effaf4;border-color:#cbe9d8}
+.summary-card:nth-child(3){background:#f0f5ff;border-color:#d4e0fb}
+.summary-card:nth-child(4){background:#fff8e9;border-color:#efdfb9}
+.summary-card span{color:#58667b;font-weight:650}
+.summary-card strong{color:#24344f;font-size:1.3rem;font-weight:850}
+.todo-sidebar .subtle{color:#65738a}
+.todo-sidebar .status-line{padding:8px 9px;margin:5px 0;border:1px solid #e2e8f2;border-radius:9px;background:#f8faff;color:#26354b;line-height:1.45}
+.todo-sidebar #overdueList .overdue-row{background:#fff5f4;border-radius:7px;padding:8px;border:1px solid #f1d6d2;margin:5px 0}
+.todo-sidebar #sidebarDdayList .status-line{background:#fff5fa;border-color:#f0d7e5}
+.todo-sidebar .status-pill{font-weight:750}
+.todo-sidebar .dday{color:#bd234c;font-weight:850}
+.todo-sidebar .empty-state{color:#69778c;line-height:1.5}
+.list-view{color:#26354b;border-color:#d8e0ec;box-shadow:0 2px 8px rgba(35,55,85,.04)}
+.list-row{grid-template-columns:minmax(105px, .9fr) minmax(180px, 2fr) minmax(70px, .65fr) minmax(80px, .7fr);gap:10px;padding:11px 12px;color:#29384f;font-size:.82rem;line-height:1.45;background:#fff}
+.list-row.header{background:#eaf1ff;color:#29436f;font-weight:800}
+.list-row .list-task-title{font-size:.82rem;color:#1e4f9a;font-weight:750;text-align:left;white-space:normal;overflow-wrap:anywhere}
+.list-row .list-memo{display:block;margin-top:4px;color:#56647a;font-size:.76rem;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.list-row.list-completed{background:#f3f8f4}
+.list-row.list-completed .list-task-title{color:#64756a;text-decoration:line-through}
+.list-row.list-completed .list-memo{color:#687a70}
+.list-row .list-done-check{width:16px;height:16px;accent-color:#24865f;vertical-align:middle;cursor:pointer}
+.list-row .list-status{font-weight:650}
+@media(max-width:720px){.list-row{grid-template-columns:minmax(75px,.7fr) minmax(130px,1.5fr) minmax(55px,.5fr);gap:6px;padding:9px 7px;font-size:.75rem}.list-row .list-status{display:block}.list-row.header{font-size:.72rem}.list-row .list-memo{font-size:.72rem}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -564,25 +594,48 @@ function clearDiaryFilters(){['diarySearch','diaryPersonFilter','diaryStatusFilt
 function setAllCategories(value){document.querySelectorAll('.cat-filter').forEach(c=>c.checked=value);renderAll()}
 function selectedCategories(){return [...document.querySelectorAll('.cat-filter:checked')].map(c=>c.value)}
 function isOverdue(t){return t.status!=='완료'&&t.date<toISO(today)}
-function visibleTasks(){const cats=selectedCategories(),status=$('statusFilter').value,search=$('searchInput').value.trim().toLowerCase();return tasks.filter(t=>{
- if(!cats.includes(t.category))return false;
- if(t.status==='완료'&&!$('showCompleted').checked)return false;
- if(isOverdue(t)&&!$('showOverdue').checked)return false;
- if(status==='지연'&&!isOverdue(t))return false;
- if(status!=='all'&&status!=='지연'&&t.status!==status)return false;
- if(activeQuickFilter==='week'){
+function visibleTasks(){
+ const cats=selectedCategories(),status=$('statusFilter').value,search=$('searchInput').value.trim().toLowerCase();
+ return tasks.filter(t=>{
+  if(!cats.includes(t.category))return false;
+  if(t.status==='완료'&&!$('showCompleted').checked)return false;
+  if(isOverdue(t)&&!$('showOverdue').checked)return false;
+  if(status==='지연'&&!isOverdue(t))return false;
+  if(status!=='all'&&status!=='지연'&&t.status!==status)return false;
+  // 중요도 버튼은 업무의 priority 값과 실제로 비교한다.
+  if(['normal','important','urgent'].includes(activeQuickFilter)&&t.priority!==activeQuickFilter)return false;
+  if(activeQuickFilter==='week'){
    const d=daysUntil(t.date);
    if(t.status==='완료'||d<0||d>7)return false;
- }
- if(activeQuickFilter==='waiting'&&t.status!=='결재 대기'&&t.status!=='자료 대기')return false;
- if(activeQuickFilter==='overdue'&&!isOverdue(t))return false;
- if(search&&!`${t.title} ${t.memo||''} ${t.category} ${t.relatedPerson||''}`.toLowerCase().includes(search))return false;
- return true;
-})}
+  }
+  if(activeQuickFilter==='waiting'&&t.status!=='결재 대기'&&t.status!=='자료 대기')return false;
+  if(activeQuickFilter==='overdue'&&!isOverdue(t))return false;
+  if(search&&!`${t.title} ${t.memo||''} ${t.category} ${t.relatedPerson||''}`.toLowerCase().includes(search))return false;
+  return true;
+ });
+}
+function setListTaskStatus(id,checked){
+ const task=tasks.find(t=>String(t.id)===String(id));if(!task)return;
+ task.status=checked?'완료':'진행 중';
+ task.actualDate=checked?toISO(today):'';
+ saveData();renderAll();
+}
 function renderAll(){renderCategoryOptions();updateQuickFilterButtons();renderCalendar();renderMini();renderSidebar();$('calendarTitle').textContent=monthLabel(viewYear,viewMonth);$('miniTitle').textContent=monthLabel(viewYear,viewMonth);$('monthViewBtn').style.background=viewMode==='month'?'#dbeafe':'white';$('listViewBtn').style.background=viewMode==='list'?'#dbeafe':'white'}
 function renderCalendar(){
  const root=$('calendarContent'),all=visibleTasks();root.innerHTML='';
- if(viewMode==='list'){const first=dateISO(viewYear,viewMonth+1,1),last=dateISO(viewYear,viewMonth+1,new Date(viewYear,viewMonth+1,0).getDate());const arr=all.filter(t=>(t.endDate||t.date)>=first&&t.date<=last).sort((a,b)=>a.date.localeCompare(b.date));const box=document.createElement('div');box.className='list-view';box.innerHTML='<div class="list-row header"><span>마감일</span><span>업무명</span><span>분야</span><span class="list-status">상태</span></div>'+ (arr.length?arr.map(t=>`<div class="list-row"><span>${t.endDate&&t.endDate!==t.date?`${t.date} ~ ${t.endDate}`:t.date}</span><span><button class="tiny-btn" style="font-size:.8rem;color:#1d4ed8" onclick="editTask('${t.id}')">${t.emoji ? escapeHTML(t.emoji) + ' ' : ''}${escapeHTML(t.title)}</button></span><span><span class="tag ${t.category}">${t.category}</span></span><span class="list-status">${escapeHTML(isOverdue(t)?'지연':t.status)}</span></div>`).join(''):'<div class="empty-state">이번 달 등록된 업무가 없습니다.</div>');root.appendChild(box);return}
+ if(viewMode==='list'){
+  const first=dateISO(viewYear,viewMonth+1,1),last=dateISO(viewYear,viewMonth+1,new Date(viewYear,viewMonth+1,0).getDate());
+  const arr=all.filter(t=>(t.endDate||t.date)>=first&&t.date<=last).sort((a,b)=>a.date.localeCompare(b.date));
+  const box=document.createElement('div');box.className='list-view';
+  box.innerHTML='<div class="list-row header"><span>마감일</span><span>업무명 / 메모</span><span>분야</span><span class="list-status">상태</span></div>'+
+   (arr.length?arr.map(t=>`<div class="list-row ${t.status==='완료'?'list-completed':''}">
+    <span><input type="checkbox" class="list-done-check" ${t.status==='완료'?'checked':''} aria-label="업무 완료 처리" onchange="setListTaskStatus('${String(t.id).replace(/'/g,"\\'")}',this.checked)"><br>${escapeHTML(t.endDate&&t.endDate!==t.date?`${t.date} ~ ${t.endDate}`:t.date)}</span>
+    <span><button class="tiny-btn list-task-title" onclick="editTask('${String(t.id).replace(/'/g,"\\'")}')">${t.emoji?escapeHTML(t.emoji)+' ':''}${escapeHTML(t.title)}</button>${t.memo?`<span class="list-memo">${escapeHTML(t.memo)}</span>`:'<span class="list-memo">메모 없음</span>'}</span>
+    <span><span class="tag ${escapeHTML(t.category)}">${escapeHTML(t.category)}</span></span>
+    <span class="list-status">${escapeHTML(isOverdue(t)?'지연':t.status)}</span>
+   </div>`).join(''):'<div class="empty-state">이번 달 등록된 업무가 없습니다.</div>');
+  root.appendChild(box);return;
+ }
  const grid=document.createElement('div');grid.className='calendar-grid';['일','월','화','수','목','금','토'].forEach(d=>{const h=document.createElement('div');h.className='day-header';h.textContent=d;grid.appendChild(h)});
  const first=new Date(viewYear,viewMonth,1),start=new Date(viewYear,viewMonth,1-first.getDay()),todayISO=toISO(today);
  for(let i=0;i<42;i++){const d=new Date(start);d.setDate(start.getDate()+i);const iso=toISO(d),cell=document.createElement('div');cell.className='calendar-cell'+(d.getMonth()!==viewMonth?' other-month':'')+(iso===todayISO?' today-cell':'');cell.dataset.date=iso;const holiday=getHoliday(iso);if(holiday){const hl=document.createElement('div');hl.className='holiday-label';hl.textContent=holiday;cell.appendChild(hl);}
