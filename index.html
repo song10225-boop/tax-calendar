@@ -213,6 +213,31 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 .favorites-page-heading .subtle{margin-top:4px;color:#65586b;font-size:.82rem;line-height:1.5}
 @media(max-width:560px){.favorites-page-heading{padding:9px 10px}.favorites-title-heart{width:34px;height:34px;flex-basis:34px}}
 
+
+/* 즐겨찾기·투데이리스트 본문 글씨를 업무일지 내용 크기에 맞춤 */
+.favorites-page-heading .panel-title,.today-heading .diary-title{font-size:.98rem!important;line-height:1.35}
+.favorites-page-heading .subtle,.today-heading .diary-subtitle{font-size:.75rem!important;line-height:1.5}
+.favorites-form label,.today-form label{font-size:.75rem!important}
+.favorites-form input,.today-form input,.today-form select{font-size:.78rem!important;min-height:34px;padding:7px 8px}
+.favorites-form{padding:13px;margin:12px 0}
+.favorites-form button,.today-add-btn{font-size:.78rem!important;padding:8px 12px;min-height:34px}
+.favorites-toolbar{margin:12px 0 8px}
+.favorites-toolbar input,.today-tools>input{font-size:.78rem!important;padding:8px 10px}
+.favorites-count,.today-count{font-size:.75rem!important;padding:6px 9px}
+.favorites-table{font-size:.78rem!important}
+.favorites-table th{font-size:.78rem!important;padding:8px 9px}
+.favorites-table td{font-size:.78rem!important;padding:8px 9px;line-height:1.45}
+.favorites-table .favorite-actions button{font-size:.72rem;padding:4px 6px}
+.today-filter{font-size:.75rem!important}
+.today-item{grid-template-columns:30px minmax(0,1fr) auto;gap:8px;padding:9px 10px}
+.today-item-emoji{width:28px;height:28px;border-radius:8px;font-size:1rem}
+.today-item-title{font-size:.8rem!important;font-weight:700;line-height:1.45}
+.today-item-note{font-size:.75rem!important;line-height:1.45}
+.today-item-date{font-size:.68rem!important}
+.today-item-actions button{font-size:.7rem!important;padding:4px 6px}
+.today-empty{font-size:.78rem;padding:22px}
+@media(max-width:560px){.today-item{grid-template-columns:28px minmax(0,1fr)}.favorites-table th,.favorites-table td{padding:7px 8px}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
