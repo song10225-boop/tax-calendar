@@ -154,6 +154,56 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 .favorites-table .favorite-actions .delete-fav{color:#b42335;border-color:#f0caca}
 .favorites-note{margin-top:12px}
 
+
+/* 섬세한 메뉴·제목 스타일 */
+.nav-link{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:700;color:#536174;transition:background .15s,color .15s}
+.nav-link:hover{background:#f7f8ff;color:#263f70}
+.nav-link.active{background:linear-gradient(180deg,#fff 0%,#f2f5ff 100%);color:#294b86;font-weight:850}
+.nav-icon{font-size:1rem;line-height:1;filter:saturate(.9)}
+.diary-heading{border-left-color:#6687c7;background:linear-gradient(90deg,#f3f6ff 0%,rgba(255,255,255,0) 100%);border-radius:0 10px 10px 0;padding:9px 14px}
+.diary-title{font-family:Dotum,"돋움",sans-serif;font-size:1.35rem;letter-spacing:-.025em;color:#203a63}
+.diary-title-mark{background:linear-gradient(135deg,#6388cb,#8d83d9);box-shadow:0 3px 8px #607fc42b}
+.diary-subtitle{color:#58677d}
+/* 검색 필터를 즐겨찾기처럼 눈에 띄게 */
+.filters{padding:9px;background:linear-gradient(100deg,#f0f5ff,#fdf3f8);border:1px solid #dce5f7;border-radius:12px}
+.filters select,.filters .search-input{border:1px solid #bfcfed;background:#fff;color:#263b5d;min-height:36px;font-weight:600;box-shadow:0 1px 2px #3445630a}
+.filters .search-input{min-width:220px}
+.diary-filters{padding:10px;background:linear-gradient(100deg,#f1f6ff,#fff4f8);border:1px solid #dce5f4;border-radius:12px}
+.diary-filters input,.diary-filters select{border-color:#c7d5ee;color:#263b5d;font-weight:600;min-height:36px}
+.favorites-toolbar input:focus,.filters input:focus,.filters select:focus,.diary-filters input:focus,.diary-filters select:focus{outline:2px solid #b9c9f0;outline-offset:1px}
+.todo-sidebar>.panel-title:first-child{font-size:1.02rem;font-weight:800;letter-spacing:-.02em;color:#2e4265;margin-bottom:-3px}
+/* 투데이리스트 */
+.today-list-page{background:linear-gradient(180deg,#fffafd,#f9fbff 45%,#fff)}
+.today-heading{border-left-color:#d879a5;background:linear-gradient(90deg,#fff0f7 0%,rgba(255,255,255,0) 100%)}
+.today-heading .diary-title{color:#873d65}
+.today-heading .diary-title-mark{background:linear-gradient(135deg,#d96f9c,#a68be5)}
+.today-count{border-radius:999px;background:#fff0f7;color:#97456f;border:1px solid #f0cfe0;padding:8px 12px;font-weight:800;font-size:.84rem}
+.today-form{display:grid;grid-template-columns:100px minmax(220px,1.5fr) minmax(180px,1fr) auto;gap:10px;align-items:end;background:linear-gradient(120deg,#fff4fa,#f4f7ff);border:1px solid #efd6e5;border-radius:15px;padding:15px}
+.today-form label{display:flex;flex-direction:column;gap:6px;color:#5d4660;font-size:.8rem;font-weight:800;min-width:0}
+.today-form input,.today-form select{width:100%;min-width:0;min-height:40px;padding:9px 10px;border:1px solid #e4cbdc;border-radius:9px;background:white;color:#29364b}
+.today-emoji-label select{font-size:1.05rem;text-align:center}
+.today-add-btn{background:linear-gradient(135deg,#d85f98,#9b82df);color:#fff;border:0;border-radius:10px;min-height:40px;font-weight:850;white-space:nowrap}
+.today-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.today-tools>input{min-width:220px;max-width:440px;flex:1;padding:10px 12px;border:1px solid #d7c8e7;border-radius:10px;background:#fff;color:#29364b}
+.today-filter{color:#58677d;font-size:.82rem;font-weight:650}
+.today-filter input{accent-color:#d66d9b;vertical-align:middle}
+.today-list-items{display:flex;flex-direction:column;gap:9px}
+.today-item{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:10px;align-items:start;padding:13px 14px;border:1px solid #e7dce9;border-radius:13px;background:#fff;box-shadow:0 3px 10px #38415c08}
+.today-item:nth-child(even){background:#fdfbff}
+.today-item.done{background:#f4f8f5;border-color:#d6e6da}
+.today-item.done .today-item-title{text-decoration:line-through;color:#718078}
+.today-item-emoji{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:#fff0f7;font-size:1.2rem}
+.today-item-main{min-width:0}
+.today-item-title{font-weight:800;color:#2c3d5b;line-height:1.5;overflow-wrap:anywhere}
+.today-item-note{color:#5e6c80;font-size:.83rem;line-height:1.5;margin-top:3px;white-space:pre-wrap;overflow-wrap:anywhere}
+.today-item-date{font-size:.72rem;color:#8993a5;margin-top:5px}
+.today-item-actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.today-item-actions button{border:1px solid #e3d5e4;background:#fff;color:#6b4d68;border-radius:8px;padding:6px 8px;font-size:.76rem;font-weight:750}
+.today-item-actions .today-complete{background:#eaf7ef;border-color:#c6e7d1;color:#21734b}
+.today-empty{padding:30px;text-align:center;border:1px dashed #ddcfe3;border-radius:12px;color:#778398;background:#fff}
+@media(max-width:850px){.today-form{grid-template-columns:90px 1fr}.today-note-label{grid-column:1 / -1}.today-add-btn{grid-column:1 / -1}.nav-link{padding:0 9px}}
+@media(max-width:560px){.today-form{grid-template-columns:1fr}.today-note-label,.today-add-btn{grid-column:auto}.today-item{grid-template-columns:34px minmax(0,1fr)}.today-item-actions{grid-column:2;justify-content:flex-start}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -190,11 +240,12 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 </header>
 <nav class="topnav" aria-label="주 메뉴">
   <div class="nav-brand"><span class="brand-mark">✓</span>TaxDiary</div>
-  <button class="nav-link active" data-page="calendarPage" onclick="showPage('calendarPage',this)">세무 달력</button>
-  <button class="nav-link" data-page="diaryPage" onclick="showPage('diaryPage',this)">업무 일지</button>
-  <button class="nav-link" data-page="quickLinksPage" onclick="showPage('quickLinksPage',this)">♡ 즐겨찾기</button>
-  <button class="nav-link" data-page="holidaysPage" onclick="showPage('holidaysPage',this)">공휴일 관리</button>
-  <button class="nav-link" data-page="ddayPage" onclick="showPage('ddayPage',this)">디데이 목록</button>
+  <button class="nav-link active" data-page="calendarPage" onclick="showPage('calendarPage',this)"><span class="nav-icon">🗓️</span> 세무 달력</button>
+  <button class="nav-link" data-page="diaryPage" onclick="showPage('diaryPage',this)"><span class="nav-icon">📒</span> 업무일지</button>
+  <button class="nav-link" data-page="quickLinksPage" onclick="showPage('quickLinksPage',this)"><span class="nav-icon">💗</span> 즐겨찾기</button>
+  <button class="nav-link" data-page="ddayPage" onclick="showPage('ddayPage',this)"><span class="nav-icon">💝</span> 디데이 목록</button>
+  <button class="nav-link" data-page="todayListPage" onclick="showPage('todayListPage',this)"><span class="nav-icon">📝</span> 투데이리스트</button>
+  <button class="nav-link" data-page="holidaysPage" onclick="showPage('holidaysPage',this)"><span class="nav-icon">🌷</span> 공휴일 관리</button>
   <button class="nav-link" onclick="document.getElementById('excelImportFile').click()">엑셀 복원</button>
   <button class="nav-link" onclick="exportExcel()">엑셀 백업</button>
   <input type="file" id="excelImportFile" accept=".xlsx,.xls,.csv" hidden onchange="importExcel(event)">
@@ -273,7 +324,7 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 </div>
 <section id="diaryPage" class="page-panel diary-page">
   <div class="diary-toolbar">
-    <div class="diary-heading"><div class="diary-title"><span class="diary-title-mark">▤</span>업무일지</div><div class="diary-subtitle">업무 진행 내역을 기록하고, 상태별 색상과 필터로 필요한 기록을 빠르게 확인하세요.</div></div>
+    <div class="diary-heading"><div class="diary-title"><span class="diary-title-mark">📒</span>업무일지</div><div class="diary-subtitle">업무 진행 내역을 기록하고, 상태별 색상과 필터로 필요한 기록을 빠르게 확인하세요.</div></div>
     <div class="diary-actions">
       <button class="btn btn-primary" onclick="addDiaryRow()">＋ 일지 추가</button>
       <button class="btn btn-outline" onclick="exportExcel()">엑셀 백업</button>
@@ -305,6 +356,26 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
   <div class="favorites-toolbar"><div class="favorites-count" id="favoriteCount">등록 0개</div><input id="favoriteSearch" type="search" placeholder="🔎 이름·링크·아이디·메모 검색" oninput="renderQuickLinksManager()"></div>
   <div class="favorites-table-wrap"><table class="favorites-table"><thead><tr><th>번호</th><th>이름</th><th>사이트 링크</th><th>아이디</th><th>비고 / 메모</th><th>등록일</th><th>관리</th></tr></thead><tbody id="quickLinksManagerList"></tbody></table></div>
   <div class="subtle favorites-note">※ 즐겨찾기는 계정 데이터에 저장됩니다. 아이디와 메모만 기록하고 비밀번호 등 인증정보는 저장하지 마세요.</div>
+</section>
+<section id="todayListPage" class="page-panel diary-page today-list-page">
+  <div class="diary-toolbar">
+    <div class="diary-heading today-heading"><div class="diary-title"><span class="diary-title-mark">📝</span>투데이리스트</div><div class="diary-subtitle">달력에 등록하기엔 사소하지만 잊지 말아야 할 전화 메모와 간단한 할 일을 기록해요.</div></div>
+    <div class="today-count" id="todayListCount">오늘의 메모 0개</div>
+  </div>
+  <form class="today-form" id="todayListForm" onsubmit="addTodayItem(event)">
+    <label class="today-emoji-label">이모티콘
+      <select id="todayEmoji"><option>📝</option><option>📞</option><option>💗</option><option>⭐</option><option>📌</option><option>💡</option><option>📦</option><option>✅</option><option>🌷</option><option>✨</option></select>
+    </label>
+    <label class="today-text-label">간단한 메모 / 할 일 *
+      <input id="todayText" required maxlength="300" placeholder="예: 거래처에서 전화 옴, 오후에 다시 연락하기">
+    </label>
+    <label class="today-note-label">비고 (선택)
+      <input id="todayNote" maxlength="500" placeholder="추가 내용이나 후속 조치">
+    </label>
+    <button class="btn today-add-btn" type="submit">＋ 메모 등록</button>
+  </form>
+  <div class="today-tools"><input id="todaySearch" type="search" placeholder="🔎 메모·비고 검색" oninput="renderTodayList()"><div class="today-filter"><label><input type="checkbox" id="todayShowCompleted" checked onchange="renderTodayList()"> 완료한 항목도 보기</label></div></div>
+  <div id="todayListItems" class="today-list-items"></div>
 </section>
 <section id="holidaysPage" class="page-panel diary-page">
   <div class="diary-toolbar"><div><div class="panel-title">공휴일·임시공휴일 관리</div><div class="subtle">회사 휴무일이나 임시공휴일을 추가하면 달력에 표시됩니다.</div></div></div>
@@ -550,7 +621,7 @@ async function handleSignedIn(user){
   syncLegacyTaskLogs();
   cloudLoadComplete=true;
   if(!snap.exists){await ref.set({tasks,diaryRows,profile,updatedAt:new Date().toISOString()});}
-  renderAll();renderDiaryTable();renderQuickLinksManager();renderHolidaysManager();setSyncStatus('클라우드 연결됨');
+  renderAll();renderDiaryTable();renderQuickLinksManager();renderHolidaysManager();renderTodayList();setSyncStatus('클라우드 연결됨');
  }catch(e){cloudLoadComplete=false;setSyncStatus('클라우드 연결 오류');alert('로그인은 되었지만 클라우드 데이터를 불러오지 못했습니다. Firestore 규칙이 게시되었는지 확인해 주세요.\n'+(e.message||''));}
 }
 async function signOutTaxDiary(){cloudLoadComplete=false;currentUser=null;await auth.signOut();}
@@ -596,6 +667,7 @@ function showPage(pageId,button){
  if(pageId==='quickLinksPage')renderQuickLinksManager();
  if(pageId==='holidaysPage')renderHolidaysManager();
  if(pageId==='ddayPage')renderDdayList();
+ if(pageId==='todayListPage')renderTodayList();
 }
 function addDiaryRow(){
  diaryRows.push({id:`d-${Date.now()}-${Math.random().toString(16).slice(2)}`,date:toISO(new Date()),status:'진행 중',person:'',content:'',deadline:'',note:''});
@@ -896,7 +968,7 @@ function createRecurring(t){
 }
 function deleteCurrentTask(){const id=$('taskId').value;if(!id)return;if(confirm('이 업무를 삭제할까요?')){tasks=tasks.filter(t=>t.id!==id);saveData();closeTaskModal();renderAll()}}
 function quickAdd(){const title=$('quickTitle').value.trim();if(!title)return;tasks.push({id:`${Date.now()}-${Math.random().toString(16).slice(2)}`,title,emoji:'',date:selectedDate,category:$('quickCategory').value,status:'예정',priority:'normal',repeat:'none',memo:''});$('quickTitle').value='';saveData();renderAll()}
-function editProfile(){const name=prompt('이름 또는 별칭을 입력하세요.',profile.name);if(name===null)return;const company=prompt('회사 / 부서명을 입력하세요.',profile.company);if(company===null)return;profile={name:name.trim()||'사용자',company:company.trim()||'경영전략부'};saveData();$('profileText').textContent=`${profile.name} · ${profile.company}`}
+function editProfile(){const name=prompt('이름 또는 별칭을 입력하세요.',profile.name);if(name===null)return;const company=prompt('회사 / 부서명을 입력하세요.',profile.company);if(company===null)return;profile={...profile,name:name.trim()||'사용자',company:company.trim()||'경영전략부'};saveData();$('profileText').textContent=`${profile.name} · ${profile.company}`}
 function exportJSON(){const blob=new Blob([JSON.stringify({tasks,diaryRows,profile,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});downloadBlob(blob,`업무캘린더_백업_${toISO(today)}.json`)}
 function importJSON(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);if(!Array.isArray(data.tasks))throw new Error('tasks');if(!confirm('현재 데이터를 가져온 백업 데이터로 교체할까요? 먼저 현재 데이터를 백업하는 것을 권장합니다.'))return;tasks=data.tasks;diaryRows=Array.isArray(data.diaryRows)?data.diaryRows:[];profile=data.profile||profile;saveData();renderAll();renderDiaryTable();alert('백업 데이터를 복원했습니다.')}catch(err){alert('올바른 업무 캘린더 백업 파일이 아닙니다.')}finally{e.target.value=''}};reader.readAsText(file)}
 function exportCSV(){const rows=[['업무명','마감일','분야','상태','중요도','반복주기','실제완료일','메모','관련링크','달력색상','진행일지'],...tasks.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(t=>[t.title,t.date,t.category,t.status,t.priority,t.repeat,t.actualDate||'',t.memo||'',t.link||'',t.color||'',(t.logs||[]).map(l=>`${l.at}: ${l.text}`).join(' | ')])];const csv='\uFEFF'+rows.map(row=>row.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');downloadBlob(new Blob([csv],{type:'text/csv;charset=utf-8;'}),`업무캘린더_목록_${toISO(today)}.csv`)}
@@ -947,6 +1019,30 @@ function editQuickLink(i){
  catch(e){alert('올바른 http:// 또는 https:// 사이트 주소를 입력해 주세요.')}
 }
 function deleteQuickLink(i){if(!confirm('이 바로가기를 삭제할까요?'))return;profile.quickLinks=profile.quickLinks||[];profile.quickLinks.splice(i,1);saveData();renderQuickLinksManager();renderAll()}
+function addTodayItem(e){
+ e.preventDefault();
+ const text=$('todayText').value.trim(),note=$('todayNote').value.trim(),emoji=$('todayEmoji').value||'📝';
+ if(!text)return;
+ profile.todoItems=Array.isArray(profile.todoItems)?profile.todoItems:[];
+ profile.todoItems.unshift({id:`todo-${Date.now()}-${Math.random().toString(16).slice(2)}`,text,note,emoji,done:false,createdAt:new Date().toISOString()});
+ saveData();e.target.reset();$('todayEmoji').value=emoji;renderTodayList();
+}
+function renderTodayList(){
+ const box=$('todayListItems');if(!box)return;
+ profile.todoItems=Array.isArray(profile.todoItems)?profile.todoItems:[];
+ const query=($('todaySearch')?.value||'').trim().toLowerCase();
+ const showCompleted=$('todayShowCompleted')?.checked!==false;
+ const items=profile.todoItems.filter(t=>(showCompleted||!t.done)&&[t.text,t.note,t.emoji].some(v=>String(v||'').toLowerCase().includes(query)));
+ const count=$('todayListCount');if(count)count.textContent=`전체 ${profile.todoItems.length}개 · 미완료 ${profile.todoItems.filter(t=>!t.done).length}개`;
+ box.innerHTML=items.length?items.map(t=>`<article class="today-item ${t.done?'done':''}">
+  <div class="today-item-emoji">${escapeHTML(t.emoji||'📝')}</div>
+  <div class="today-item-main"><div class="today-item-title">${escapeHTML(t.text||'')}</div>${t.note?`<div class="today-item-note">${escapeHTML(t.note)}</div>`:''}<div class="today-item-date">등록 ${escapeHTML(t.createdAt?new Date(t.createdAt).toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'날짜 없음')} · ${t.done?'완료':'미완료'}</div></div>
+  <div class="today-item-actions"><button type="button" class="today-complete" onclick="toggleTodayItem('${String(t.id).replace(/'/g,"\'")}')">${t.done?'↩ 미완료':'✓ 완료'}</button><button type="button" onclick="editTodayItem('${String(t.id).replace(/'/g,"\'")}')">수정</button><button type="button" onclick="deleteTodayItem('${String(t.id).replace(/'/g,"\'")}')">삭제</button></div>
+ </article>`).join(''):'<div class="today-empty">아직 등록한 메모가 없어요. 작은 전화 메모부터 기록해 보세요 💗</div>';
+}
+function toggleTodayItem(id){const t=(profile.todoItems||[]).find(x=>String(x.id)===String(id));if(!t)return;t.done=!t.done;saveData();renderTodayList()}
+function editTodayItem(id){const t=(profile.todoItems||[]).find(x=>String(x.id)===String(id));if(!t)return;const text=prompt('메모 / 할 일',t.text||'');if(text===null)return;if(!text.trim()){alert('메모 내용을 입력해 주세요.');return}const note=prompt('비고 / 후속 조치',t.note||'');if(note===null)return;const emoji=prompt('이모티콘을 입력해 주세요. (예: 📞 💗 ⭐)',t.emoji||'📝');if(emoji===null)return;t.text=text.trim();t.note=note.trim();t.emoji=emoji.trim()||'📝';saveData();renderTodayList()}
+function deleteTodayItem(id){const t=(profile.todoItems||[]).find(x=>String(x.id)===String(id));if(!t)return;if(!confirm(`'${t.text}' 메모를 삭제할까요?`))return;profile.todoItems=profile.todoItems.filter(x=>String(x.id)!==String(id));saveData();renderTodayList()}
 function addHolidayFromForm(e){e.preventDefault();const date=$('holidayDate').value,name=$('holidayName').value.trim();if(!date||!name)return;profile.customHolidays=profile.customHolidays||[];profile.customHolidays=profile.customHolidays.filter(h=>h.date!==date);profile.customHolidays.push({date,name});profile.customHolidays.sort((a,b)=>a.date.localeCompare(b.date));saveData();e.target.reset();renderHolidaysManager();renderAll();alert(`${date} ${name} 날짜를 달력에 추가했습니다.`)}
 function renderHolidaysManager(){const box=$('holidaysManagerList');if(!box)return;const holidays=(profile.customHolidays||[]).slice().sort((a,b)=>a.date.localeCompare(b.date));box.innerHTML=holidays.length?holidays.map((h,i)=>`<div class="settings-row"><div class="settings-row-main"><strong>${escapeHTML(h.date)} · ${escapeHTML(weekday(h.date))}요일</strong><span>${escapeHTML(h.name)}</span></div><button class="btn btn-danger" onclick="deleteCustomHoliday(${i})">삭제</button></div>`).join(''):'<div class="empty-state">직접 추가한 공휴일이 없습니다. 위에서 날짜와 이름을 입력해 추가하세요.'}
 function deleteCustomHoliday(i){if(!confirm('이 날짜를 직접 추가한 공휴일 목록에서 삭제할까요?'))return;profile.customHolidays=profile.customHolidays||[];const sorted=profile.customHolidays.slice().sort((a,b)=>a.date.localeCompare(b.date));const target=sorted[i];profile.customHolidays=profile.customHolidays.filter(h=>h!==target);saveData();renderHolidaysManager();renderAll()}
