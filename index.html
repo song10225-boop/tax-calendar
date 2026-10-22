@@ -266,6 +266,8 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 .retirement-page{gap:14px;background:linear-gradient(145deg,#f7fbff,#fffaf4);border-radius:16px}.retirement-heading{border-left-color:#3b82f6}.retirement-heading .diary-title-mark{background:linear-gradient(135deg,#60a5fa,#818cf8)}
 .retire-panel{background:#fff;border:1px solid #dbeafe;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 6px 20px #1d4ed808}.retire-grid{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:11px}.retire-grid label{display:flex;flex-direction:column;gap:5px;font-size:.79rem;font-weight:800;color:#475569;min-width:0}.retire-grid input,.retire-grid select{box-sizing:border-box;width:100%;min-width:0;padding:9px 10px;border:1px solid #d5e2f2;border-radius:8px;background:#fff;font:inherit;color:#263249}.retire-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.retire-card{background:#fff;border:1px solid #dbeafe;border-radius:13px;padding:14px}.retire-card span{display:block;color:#64748b;font-size:.8rem;margin-bottom:7px}.retire-card strong{font-size:1.25rem;color:#1d4ed8}.retire-note{font-size:.78rem;line-height:1.65;color:#64748b;background:#f8fafc;border-radius:9px;padding:11px}
 @media(max-width:800px){.retire-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.retire-cards{grid-template-columns:1fr}}@media(max-width:520px){.retire-grid{grid-template-columns:1fr}}
+.contacts-form select{width:100%;min-width:0;box-sizing:border-box;padding:9px 10px;border:1px solid #e3d7f3;border-radius:8px;background:#fff;font:inherit;color:#263249}
+.retire-wage-heading{display:flex;flex-direction:column;gap:3px;margin-top:4px}.retire-wage-heading h3{margin:0;color:#1e40af;font-size:.98rem}.retire-wage-heading p{margin:0;color:#64748b;font-size:.78rem;line-height:1.5}.retire-wage-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.retire-wage-grid label{display:flex;flex-direction:column;gap:5px;min-width:0;padding:10px;border:1px solid #dbeafe;border-radius:10px;background:#f8fbff;font-size:.78rem;font-weight:800;color:#475569}.retire-wage-grid input{box-sizing:border-box;width:100%;min-width:0;padding:9px 10px;border:1px solid #d5e2f2;border-radius:8px;background:#fff;font:inherit;text-align:right;font-variant-numeric:tabular-nums}.retire-wage-grid input:focus,.retire-extra-grid input:focus{outline:2px solid #bfdbfe;border-color:#60a5fa}.retire-summary-cards{grid-template-columns:repeat(3,minmax(0,1fr))}.retire-summary-cards .retire-card:first-child{background:#eff6ff;border-color:#bfdbfe}.retire-card small{display:block;margin-top:7px;color:#64748b;font-size:.72rem;line-height:1.45}.retire-extra-grid{margin-top:2px}@media(max-width:800px){.retire-wage-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.retire-wage-grid{grid-template-columns:1fr}.retire-summary-cards{grid-template-columns:1fr}}
 /* 연차관리 */
 .leave-page{gap:14px}.leave-heading{border-left-color:#24856b}.leave-heading .diary-title-mark{background:#24856b}.leave-cloud-status{font-size:.82rem;font-weight:800;color:#17654f;background:#e8f7f1;border-radius:9px;padding:8px 12px}
 .leave-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.leave-card{background:#fff;border:1px solid #dcebe5;border-radius:13px;padding:15px;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}.leave-card span{width:100%;font-size:.82rem;color:#64748b}.leave-card strong{font-size:1.8rem;color:#17654f}.leave-card small{color:#64748b}
@@ -450,7 +452,9 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
   </div>
   <form class="settings-form contacts-form" id="contactForm" onsubmit="saveContact(event)">
     <input type="hidden" id="contactEditId">
-    <label>이모지 / 아이콘<input id="contactEmoji" maxlength="12" placeholder="예: 🏢 🌷 ⭐"></label>
+    <label>거래처 아이콘<select id="contactEmoji" aria-label="거래처 아이콘">
+     <option value="🏢">🏢 회사</option><option value="🏭">🏭 공장</option><option value="🏦">🏦 은행</option><option value="🧾">🧾 세무·회계</option><option value="📦">📦 물류·배송</option><option value="🚚">🚚 운송</option><option value="🛒">🛒 구매</option><option value="💼">💼 업무</option><option value="🤝">🤝 협력사</option><option value="🌷">🌷 기타</option><option value="⭐">⭐ 중요</option><option value="❤️">❤️ 즐겨찾기</option><option value="⚖️">⚖️ 법무</option><option value="💻">💻 IT</option><option value="🏥">🏥 의료</option><option value="🏠">🏠 개인·주소</option><option value="📞">📞 연락처</option><option value="✉️">✉️ 이메일</option><option value="📌">📌 기타 표시</option><option value="">아이콘 없음</option>
+    </select></label>
     <label>거래처명 *<input id="contactCompany" required maxlength="150" placeholder="거래처명"></label>
     <label>담당자<input id="contactPerson" maxlength="100" placeholder="담당자 이름"></label>
     <label>연락처<input id="contactPhone" maxlength="60" placeholder="전화번호"></label>
@@ -471,7 +475,7 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 </section>
 
 <section id="retirementPage" class="page-panel diary-page retirement-page">
- <div class="diary-toolbar"><div class="diary-heading retirement-heading"><div class="diary-title"><span class="diary-title-mark">🏦</span>DC형 퇴직연금 관리</div><div class="diary-subtitle">첨부 엑셀의 연도별 임금총액 ÷ 12 방식으로 참고 추정액을 계산하고, 직원별 IRP 정보를 관리해요.</div></div><span id="retireCloudStatus" class="leave-cloud-status">클라우드 연결 대기</span></div>
+ <div class="diary-toolbar"><div class="diary-heading retirement-heading"><div class="diary-title"><span class="diary-title-mark">🏦</span>DC형 퇴직연금 관리</div><div class="diary-subtitle">연도별 임금총액을 입력하면 회사 부담금(임금총액 ÷ 12)과 운용수익을 제외한 예상 누적 부담금을 계산해요.</div></div><span id="retireCloudStatus" class="leave-cloud-status">클라우드 연결 대기</span></div>
  <div class="retire-panel">
   <div class="retire-grid">
    <label>관리 대상<select id="retireSlot" onchange="loadRetireProfile()"><option value="self">직원 1 · 내 정보</option><option value="other">직원 2 · 추가 관리</option></select></label>
@@ -481,22 +485,32 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
    <label>가입 금융기관 / 운용사<input id="retireProvider" maxlength="100" value="우리" placeholder="예: 우리은행"></label>
    <label>IRP 은행명<input id="retireBank" maxlength="100" placeholder="IRP 계좌 은행"></label>
    <label>IRP 계좌번호<input id="retireIpr" maxlength="100" placeholder="계좌번호"></label>
-   <label>입사일<input id="retireHireDate" type="date" value="2025-08-18"></label>
-   <label>퇴직 예정일 / 산정 기준일<input id="retireEndDate" type="date" value="2026-12-31"></label>
-   <label>2025년 임금총액 (원)<input id="retireWage2025" type="number" min="0" step="1" value="12788886" oninput="calcRetirement()"></label>
-   <label>2026년 임금총액 (원)<input id="retireWage2026" type="number" min="0" step="1" value="36099992" oninput="calcRetirement()"></label>
-   <label>기존 누적 불입액 (2025·2026년 제외, 원)<input id="retireBalance" type="number" min="0" step="1" value="0" oninput="calcRetirement()"></label>
-   <label>추가 납입·승계액 (원)<input id="retireExtra" type="number" min="0" step="1" value="0" oninput="calcRetirement()"></label>
-   <label>운용손익 조정액 (원, 손실은 음수)<input id="retireReturn" type="number" step="1" value="0" oninput="calcRetirement()"></label>
+   <label>입사일<input id="retireHireDate" type="date" value="2025-08-18" onchange="calcRetirement()"></label>
+   <label>퇴직 예정일 / 산정 기준일<input id="retireEndDate" type="date" value="2026-12-31" onchange="calcRetirement()"></label>
+  </div>
+  <div class="retire-wage-heading"><h3>연도별 임금총액</h3><p>해당 연도에 실제 지급된 임금총액을 입력해 주세요. 숫자는 자동으로 천 단위 쉼표가 표시돼요.</p></div>
+  <div class="retire-wage-grid">
+   <label>2022년 임금총액 (원)<input id="retireWage2022" class="retire-money-input" type="text" inputmode="numeric" autocomplete="off" value="0" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>
+   <label>2023년 임금총액 (원)<input id="retireWage2023" class="retire-money-input" type="text" inputmode="numeric" autocomplete="off" value="0" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>
+   <label>2024년 임금총액 (원)<input id="retireWage2024" class="retire-money-input" type="text" inputmode="numeric" autocomplete="off" value="0" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>
+   <label>2025년 임금총액 (원)<input id="retireWage2025" class="retire-money-input" type="text" inputmode="numeric" autocomplete="off" value="12788886" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>
+   <label>2026년 임금총액 (원)<input id="retireWage2026" class="retire-money-input" type="text" inputmode="numeric" autocomplete="off" value="36099992" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>
+   <label>2027년 임금총액 (원)<input id="retireWage2027" class="retire-money-input" type="text" inputmode="numeric" autocomplete="off" value="0" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>
+   <label>2028년 임금총액 (원)<input id="retireWage2028" class="retire-money-input" type="text" inputmode="numeric" autocomplete="off" value="0" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>
+   <label>2029년 임금총액 (원)<input id="retireWage2029" class="retire-money-input" type="text" inputmode="numeric" autocomplete="off" value="0" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>
+  </div>
+  <div class="retire-grid retire-extra-grid">
+   <label>과거 회사 불입액 합계 (선택)<input id="retireBalance" class="retire-money-input" type="text" inputmode="numeric" value="0" oninput="formatRetireMoney(this);calcRetirement()" placeholder="이미 납입한 금액"></label>
+   <label>추가 납입·승계액 (선택)<input id="retireExtra" class="retire-money-input" type="text" inputmode="numeric" value="0" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>
   </div>
   <div class="leave-actions"><button type="button" class="btn btn-primary" onclick="saveRetireProfile()">💾 직원 정보 저장</button><button type="button" class="btn btn-outline" onclick="calcRetirement()">다시 계산</button></div>
  </div>
- <div class="retire-cards">
-  <div class="retire-card"><span>2025년 참고 산정액 (임금총액 ÷ 12)</span><strong id="retireCalc2025">₩0</strong></div>
-  <div class="retire-card"><span>2026년 참고 산정액 (임금총액 ÷ 12)</span><strong id="retireCalc2026">₩0</strong></div>
-  <div class="retire-card"><span>참고 합계 (연도별 산정액 + 기존 누적액 + 조정)</span><strong id="retireCalcTotal">₩0</strong></div>
+ <div class="retire-cards retire-summary-cards">
+  <div class="retire-card"><span>회사 부담금 예상 합계</span><strong id="retireCalcTotal">₩0</strong><small>입력한 연도별 임금총액 ÷ 12 합산</small></div>
+  <div class="retire-card"><span>기존 회사 불입액 포함 예상액</span><strong id="retireCalcWithBalance">₩0</strong><small>회사 부담금 예상 합계 + 기존 불입액 + 추가 납입</small></div>
+  <div class="retire-card"><span>산정 대상 연도</span><strong id="retireYearsCount">0년</strong><small>입사일·퇴직 예정일 범위 내 입력 연도</small></div>
  </div>
- <div class="retire-note">📌 첨부 엑셀의 계산 흐름을 참고해 연도별 임금총액을 12로 나눈 값을 합산하고, 별도로 입력한 기존 누적액·추가 납입·운용손익 조정액을 더합니다. 중복 계산을 피하려면 기존 누적액에는 2025·2026년 산정액을 포함하지 않은 금액을 입력하세요. DC형 퇴직연금의 실제 퇴직 시 수령액은 회사의 실제 납입 내역과 운용손익에 따라 달라질 수 있어요. 위 합계는 법정 지급액이나 금융기관 잔액을 확정하는 값이 아니며, IRP 계좌번호 등 개인정보는 본인 계정에 저장됩니다. 2026년 임금총액은 첨부 파일의 1~12월 자료 합계를 기본값으로 넣었으니 실제 확정 자료에 맞게 수정해 주세요.</div>
+ <div class="retire-note">📌 계산 기준: DC형은 회사가 부담하는 연간 부담금의 기본 기준을 해당 연도 임금총액의 1/12 이상으로 보고 추정합니다. 운용수익·손실은 계산에서 제외했어요. 퇴직연도 임금총액은 실제 지급액에 맞춰 입력하고, 입사 전 연도나 퇴직 예정일 이후 연도는 계산에서 제외됩니다. 실제 회사 납입 시기·대상 임금 및 중도 입·퇴사 기간에 따른 정산은 회사 규약과 실제 납입 내역을 확인해 주세요. 이 값은 참고 추정치이며 금융기관 잔액이나 법정 확정액이 아닙니다. IRP 계좌번호 등 개인정보는 로그인한 계정의 Firebase에 저장됩니다.</div>
 </section>
 
 <section id="leavePage" class="page-panel diary-page leave-page">
@@ -882,7 +896,7 @@ async function loadContactsCloud(){
  else {
   // 이전 버전에서 브라우저에 저장한 연락망이 있으면 최초 1회 클라우드로 옮긴다.
   let old=[];try{const raw=JSON.parse(localStorage.getItem(CONTACTS_STORAGE_KEY)||'[]');if(Array.isArray(raw))old=raw;}catch(e){}
-  if(old.length){const batch=firestore.batch();old.forEach(c=>{const id=String(c.id||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)));batch.set(ref.doc(id),{company:c.company||'',person:c.person||'',phone:c.phone||'',fax:c.fax||'',email:c.email||'',bizNo:c.bizNo||'',ceo:c.ceo||'',address:c.address||'',note:c.note||'',updatedAt:c.updatedAt||new Date().toISOString()});});await batch.commit();contactsCache=old;}
+  if(old.length){const batch=firestore.batch();old.forEach(c=>{const id=String(c.id||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)));batch.set(ref.doc(id),{emoji:c.emoji||'🏢',company:c.company||'',person:c.person||'',phone:c.phone||'',fax:c.fax||'',email:c.email||'',bizNo:c.bizNo||'',ceo:c.ceo||'',address:c.address||'',note:c.note||'',updatedAt:c.updatedAt||new Date().toISOString()});});await batch.commit();contactsCache=old;}
   else contactsCache=[];
  }
  saveContactsLocal(contactsCache);contactsCloudReady=true;
@@ -1010,13 +1024,16 @@ function renderLeaveManager(){
 
 
 // ===== DC형 퇴직연금 개인별 정보 저장 =====
-const retireDefaults={self:{name:'한송희',dept:'경영전략부',rank:'대리',provider:'우리',bank:'',ipr:'',hireDate:'2025-08-18',endDate:'2026-12-31',wage2025:12788886,wage2026:36099992,balance:0,extra:0,returns:0},other:{name:'',dept:'',rank:'',provider:'',bank:'',ipr:'',hireDate:'',endDate:'',wage2025:0,wage2026:0,balance:0,extra:0,returns:0}};
+const retireYears=[2022,2023,2024,2025,2026,2027,2028,2029];
+const retireDefaults={self:{name:'한송희',dept:'경영전략부',rank:'대리',provider:'우리',bank:'',ipr:'',hireDate:'2025-08-18',endDate:'2026-12-31',wages:{2022:0,2023:0,2024:0,2025:12788886,2026:36099992,2027:0,2028:0,2029:0},balance:0,extra:0},other:{name:'',dept:'',rank:'',provider:'',bank:'',ipr:'',hireDate:'',endDate:'',wages:{2022:0,2023:0,2024:0,2025:0,2026:0,2027:0,2028:0,2029:0},balance:0,extra:0}};
 let retireCache={};
-function retireFieldData(){return {name:$('retireName').value.trim(),dept:$('retireDept').value.trim(),rank:$('retireRank').value.trim(),provider:$('retireProvider').value.trim(),bank:$('retireBank').value.trim(),ipr:$('retireIpr').value.trim(),hireDate:$('retireHireDate').value,endDate:$('retireEndDate').value,wage2025:Number($('retireWage2025').value)||0,wage2026:Number($('retireWage2026').value)||0,balance:Number($('retireBalance').value)||0,extra:Number($('retireExtra').value)||0,returns:Number($('retireReturn').value)||0};}
-function putRetireFields(d){d={...retireDefaults[$('retireSlot').value||'self'],...(d||{})};for(const [k,id] of Object.entries({name:'retireName',dept:'retireDept',rank:'retireRank',provider:'retireProvider',bank:'retireBank',ipr:'retireIpr',hireDate:'retireHireDate',endDate:'retireEndDate',wage2025:'retireWage2025',wage2026:'retireWage2026',balance:'retireBalance',extra:'retireExtra',returns:'retireReturn'})){if($(id))$(id).value=d[k]??'';}calcRetirement();}
-async function loadRetireProfile(){const slot=$('retireSlot').value;let d=retireCache[slot]||retireDefaults[slot];if(currentUser){try{const snap=await firestore.collection('users').doc(currentUser.uid).collection('retirementProfiles').doc(slot).get();if(snap.exists){d=snap.data();retireCache[slot]=d;} $('retireCloudStatus').textContent='클라우드 연결됨';}catch(e){$('retireCloudStatus').textContent='클라우드 읽기 실패';}}putRetireFields(d);}
+function parseRetireMoney(v){return Math.max(0,Number(String(v??'').replace(/[^0-9.-]/g,''))||0)}
+function formatRetireMoney(el){const raw=String(el.value||'').replace(/[^0-9]/g,'');el.value=raw?Number(raw).toLocaleString('en-US'):''}
+function retireFieldData(){const wages={};retireYears.forEach(y=>wages[y]=parseRetireMoney($('retireWage'+y).value));return {name:$('retireName').value.trim(),dept:$('retireDept').value.trim(),rank:$('retireRank').value.trim(),provider:$('retireProvider').value.trim(),bank:$('retireBank').value.trim(),ipr:$('retireIpr').value.trim(),hireDate:$('retireHireDate').value,endDate:$('retireEndDate').value,wages,balance:parseRetireMoney($('retireBalance').value),extra:parseRetireMoney($('retireExtra').value)}}
+function putRetireFields(d){d={...retireDefaults[$('retireSlot').value||'self'],...(d||{})};d.wages={...retireDefaults[$('retireSlot').value||'self'].wages,...(d.wages||{})};for(const [k,id] of Object.entries({name:'retireName',dept:'retireDept',rank:'retireRank',provider:'retireProvider',bank:'retireBank',ipr:'retireIpr',hireDate:'retireHireDate',endDate:'retireEndDate',balance:'retireBalance',extra:'retireExtra'})){if($(id))$(id).value=k==='balance'||k==='extra'?Number(d[k]||0).toLocaleString('en-US'):(d[k]??'');}retireYears.forEach(y=>{const el=$('retireWage'+y);if(el)el.value=Number(d.wages[y]||0).toLocaleString('en-US')});calcRetirement()}
+async function loadRetireProfile(){const slot=$('retireSlot').value;let d=retireCache[slot]||retireDefaults[slot];if(currentUser){try{const snap=await firestore.collection('users').doc(currentUser.uid).collection('retirementProfiles').doc(slot).get();if(snap.exists){d=snap.data();retireCache[slot]=d;} $('retireCloudStatus').textContent='클라우드 연결됨';}catch(e){$('retireCloudStatus').textContent='클라우드 읽기 실패';}}putRetireFields(d)}
 async function saveRetireProfile(){if(!currentUser){alert('먼저 로그인해 주세요.');return;}const slot=$('retireSlot').value;const d=retireFieldData();try{await firestore.collection('users').doc(currentUser.uid).collection('retirementProfiles').doc(slot).set({...d,updatedAt:new Date().toISOString()},{merge:true});retireCache[slot]=d;$('retireCloudStatus').textContent='저장 완료 · 클라우드';alert('직원 정보를 클라우드에 저장했어요.');}catch(e){alert('저장하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''));}}
-function calcRetirement(){const a=Number($('retireWage2025')?.value)||0,b=Number($('retireWage2026')?.value)||0,bal=Number($('retireBalance')?.value)||0,extra=Number($('retireExtra')?.value)||0,ret=Number($('retireReturn')?.value)||0;const f=n=>'₩'+Math.round(n).toLocaleString('ko-KR');if($('retireCalc2025'))$('retireCalc2025').textContent=f(a/12);if($('retireCalc2026'))$('retireCalc2026').textContent=f(b/12);if($('retireCalcTotal'))$('retireCalcTotal').textContent=f(a/12+b/12+bal+extra+ret);}
+function calcRetirement(){if(!$('retireHireDate'))return;const hire=$('retireHireDate').value,end=$('retireEndDate').value;const bal=parseRetireMoney($('retireBalance').value),extra=parseRetireMoney($('retireExtra').value);let total=0,yearsCount=0;retireYears.forEach(y=>{const wage=parseRetireMoney($('retireWage'+y)?.value);const start=`${y}-01-01`,finish=`${y}-12-31`;const inScope=(!hire||finish>=hire)&&(!end||start<=end);if(inScope&&wage>0){total+=wage/12;yearsCount++;}});const f=n=>'₩'+Math.round(n).toLocaleString('ko-KR');$('retireCalcTotal').textContent=f(total);$('retireCalcWithBalance').textContent=f(total+bal+extra);$('retireYearsCount').textContent=yearsCount+'년';}
 
 function showPage(pageId,button){
  document.querySelectorAll('.page-panel').forEach(p=>p.classList.toggle('active',p.id===pageId));
