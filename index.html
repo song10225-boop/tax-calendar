@@ -255,6 +255,14 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 @media(max-width:850px){.contacts-form{grid-template-columns:repeat(2,minmax(140px,1fr))}.contact-address-label{grid-column:span 2}}
 @media(max-width:560px){.contacts-page{padding:9px}.contacts-form{grid-template-columns:1fr}.contact-address-label{grid-column:auto}.contacts-toolbar input{min-width:100%}}
 
+
+/* 연차관리 */
+.leave-page{gap:14px}.leave-heading{border-left-color:#24856b}.leave-heading .diary-title-mark{background:#24856b}.leave-cloud-status{font-size:.82rem;font-weight:800;color:#17654f;background:#e8f7f1;border-radius:9px;padding:8px 12px}
+.leave-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.leave-card{background:#fff;border:1px solid #dcebe5;border-radius:13px;padding:15px;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}.leave-card span{width:100%;font-size:.82rem;color:#64748b}.leave-card strong{font-size:1.8rem;color:#17654f}.leave-card small{color:#64748b}
+.leave-panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}.leave-panel h3{margin:0;color:#244c40;font-size:1rem}.leave-form-grid{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:11px}.leave-form-grid label,.leave-entry-form label{display:flex;flex-direction:column;gap:5px;font-size:.78rem;font-weight:800;color:#475569;min-width:0}.leave-form-grid input,.leave-form-grid select,.leave-entry-form input,.leave-entry-form select{box-sizing:border-box;width:100%;min-width:0;padding:9px 10px;border:1px solid #d6e2dc;border-radius:8px;background:#fff;font:inherit;color:#263249}.leave-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.leave-caveat{font-size:.78rem;color:#64748b;margin:0;line-height:1.6}.leave-entry-form{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px;align-items:end}.leave-entry-form .leave-actions{grid-column:1/-1}.leave-table-wrap{overflow:auto;border:1px solid #e1e8e4;border-radius:9px;max-height:420px}.leave-table{border-collapse:collapse;width:100%;min-width:680px;font-size:.8rem}.leave-table th{position:sticky;top:0;background:#eaf5f0;color:#285646;padding:10px;text-align:left}.leave-table td{padding:9px 10px;border-top:1px solid #edf1ef}.leave-table td:last-child{white-space:nowrap}.leave-pay-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.leave-pay-summary>div{background:#f5faf7;border-radius:9px;padding:12px;display:flex;flex-direction:column;gap:7px}.leave-pay-summary span{font-size:.78rem;color:#64748b}.leave-pay-summary strong{font-size:1.1rem;color:#17654f}.leave-hidden{display:none!important}
+@media(max-width:800px){.leave-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.leave-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.leave-entry-form{grid-template-columns:repeat(2,minmax(0,1fr))}.leave-pay-summary{grid-template-columns:1fr}}
+@media(max-width:520px){.leave-form-grid,.leave-entry-form{grid-template-columns:1fr}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
@@ -304,6 +312,7 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
   <button class="nav-link" data-page="diaryPage" onclick="showPage('diaryPage',this)"><span class="nav-icon">📒</span> 업무일지</button>
   <button class="nav-link" data-page="quickLinksPage" onclick="showPage('quickLinksPage',this)"><span class="nav-icon">💗</span> 즐겨찾기</button>
   <button class="nav-link" data-page="contactsPage" onclick="showPage('contactsPage',this)"><span class="nav-icon">📇</span> 연락망</button>
+  <button class="nav-link" data-page="leavePage" onclick="showPage('leavePage',this)"><span class="nav-icon">🌿</span> 연차관리</button>
   <button class="nav-link" data-page="todayListPage" onclick="showPage('todayListPage',this)"><span class="nav-icon">📝</span> 투데이리스트</button>
   <button class="nav-link" data-page="ddayPage" onclick="showPage('ddayPage',this)"><span class="nav-icon">💝</span> 디데이 목록</button>
   <button class="nav-link" data-page="holidaysPage" onclick="showPage('holidaysPage',this)"><span class="nav-icon">🌷</span> 공휴일 관리</button>
@@ -433,19 +442,65 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
     <label>거래처명 *<input id="contactCompany" required maxlength="150" placeholder="거래처명"></label>
     <label>담당자<input id="contactPerson" maxlength="100" placeholder="담당자 이름"></label>
     <label>연락처<input id="contactPhone" maxlength="60" placeholder="전화번호"></label>
+    <label>팩스번호<input id="contactFax" maxlength="60" placeholder="팩스번호"></label>
     <label>이메일주소<input id="contactEmail" type="email" maxlength="200" placeholder="이메일"></label>
     <label>사업자등록번호<input id="contactBizNo" maxlength="30" placeholder="000-00-00000"></label>
     <label>대표자명<input id="contactCEO" maxlength="100" placeholder="대표자명"></label>
     <label class="contact-address-label">주소<input id="contactAddress" maxlength="500" placeholder="주소"></label>
+    <label>비고 / 간단 메모<input id="contactNote" maxlength="300" placeholder="예: 매출거래처, 매입거래처"></label>
     <div class="contacts-form-actions"><button class="btn btn-primary" id="contactSubmitBtn" type="submit">＋ 연락처 등록</button><button class="btn btn-outline" type="button" onclick="resetContactForm()">초기화</button></div>
   </form>
   <div class="contacts-toolbar">
     <input id="contactSearch" type="search" placeholder="🔎 거래처명·담당자·연락처·이메일 등 검색" oninput="renderContacts()">
     <select id="contactFilter" aria-label="연락망 필터" onchange="renderContacts()"><option value="all">전체 보기</option><option value="hasEmail">이메일 있는 거래처</option><option value="noEmail">이메일 없는 거래처</option><option value="hasPhone">연락처 있는 거래처</option><option value="noPhone">연락처 없는 거래처</option></select>
   </div>
-  <div class="contacts-table-wrap"><table class="contacts-table"><thead><tr><th>번호</th><th>거래처명</th><th>담당자</th><th>연락처</th><th>이메일주소</th><th>사업자등록번호</th><th>대표자명</th><th>주소</th><th>관리</th></tr></thead><tbody id="contactsTableBody"></tbody></table></div>
-  <div class="subtle contacts-note">※ 연락망은 이 브라우저에 저장됩니다. 브라우저 초기화나 다른 PC 사용 전에 별도 백업이 필요할 수 있어요.</div>
+  <div class="contacts-table-wrap"><table class="contacts-table"><thead><tr><th>번호</th><th>거래처명</th><th>담당자</th><th>연락처</th><th>팩스번호</th><th>이메일주소</th><th>사업자등록번호</th><th>대표자명</th><th>주소</th><th>비고</th><th>관리</th></tr></thead><tbody id="contactsTableBody"></tbody></table></div>
+  <div class="subtle contacts-note">※ 연락망은 로그인한 계정의 Firebase 클라우드에 저장됩니다.</div>
 </section>
+
+<section id="leavePage" class="page-panel diary-page leave-page">
+ <div class="diary-toolbar"><div class="diary-heading leave-heading"><div class="diary-title"><span class="diary-title-mark">🌿</span>연차관리</div><div class="diary-subtitle">기본은 내 연차만 관리하고, 필요할 때 이름·입사일을 바꿔 한 명씩 계산할 수 있어요. 다른 사람의 자료와 섞이지 않습니다.</div></div><div class="leave-cloud-status" id="leaveCloudStatus">클라우드 연결 대기</div></div>
+ <div class="leave-cards">
+  <div class="leave-card"><span>기준일까지 발생</span><strong id="leaveAccrued">—</strong><small>일</small></div>
+  <div class="leave-card"><span>사용 완료</span><strong id="leaveUsed">—</strong><small>일</small></div>
+  <div class="leave-card"><span>남은 연차</span><strong id="leaveRemaining">—</strong><small>일</small></div>
+  <div class="leave-card"><span>사용 예정</span><strong id="leavePlanned">—</strong><small>일</small></div>
+ </div>
+ <div class="leave-panel">
+  <h3>① 개인 기본정보</h3>
+  <div class="leave-form-grid">
+   <label>성명<input id="leaveName" value="한송희" maxlength="80"></label>
+   <label>입사일<input id="leaveHireDate" type="date" value="2025-08-18"></label>
+   <label>기준일<input id="leaveAsOf" type="date"></label>
+   <label>보수월액 (원)<input id="leaveMonthlyPay" type="number" min="0" step="1" value="2916666"></label>
+   <label>월 소정근로시간<input id="leaveMonthlyHours" type="number" min="1" step="1" value="209"></label>
+   <label>1일 근로시간<input id="leaveDailyHours" type="number" min="1" step="0.5" value="8"></label>
+   <label>1년 출근율 80% 이상 여부<select id="leaveAttendance"><option value="yes">예 — 15일 발생 적용</option><option value="no">아니오 — 확인 필요</option><option value="unknown">아직 확인하지 않음</option></select></label>
+   <label>연차 발생 방식<select id="leaveMethod"><option value="hire">입사일 기준 (기본)</option><option value="manual">회사에서 실제 부여한 일수 직접 입력</option></select></label>
+   <label id="leaveManualWrap" class="leave-hidden">실제 부여 일수<input id="leaveManualDays" type="number" min="0" step="0.25" value="0"></label>
+  </div>
+  <div class="leave-actions"><button class="btn btn-primary" type="button" onclick="saveLeaveProfile()">기본정보 저장</button><button class="btn btn-outline" type="button" onclick="resetLeaveProfile()">내 기준으로 되돌리기</button></div>
+  <p class="leave-caveat">계산은 참고용입니다. 출근율, 회사의 부여 방식, 사용촉진 여부 및 퇴사 정산 기준에 따라 실제 잔여일수·수당이 달라질 수 있어요.</p>
+ </div>
+ <div class="leave-panel">
+  <h3>② 연차 사용 / 예정 내역</h3>
+  <form class="leave-entry-form" id="leaveEntryForm" onsubmit="saveLeaveEntry(event)">
+   <input type="hidden" id="leaveEntryId">
+   <label>날짜<input id="leaveEntryDate" type="date" required></label>
+   <label>구분<select id="leaveEntryType"><option value="연차">연차 (1일)</option><option value="반차">반차 (0.5일)</option><option value="반반차">반반차 (0.25일)</option></select></label>
+   <label>상태<select id="leaveEntryStatus"><option value="used">사용 완료</option><option value="planned">사용 예정 / 신청 중</option></select></label>
+   <label>메모<input id="leaveEntryMemo" maxlength="200" placeholder="선택 입력"></label>
+   <div class="leave-actions"><button class="btn btn-primary" id="leaveEntrySubmit" type="submit">＋ 내역 추가</button><button class="btn btn-outline" type="button" onclick="resetLeaveEntryForm()">초기화</button></div>
+  </form>
+  <div class="leave-table-wrap"><table class="leave-table"><thead><tr><th>날짜</th><th>구분</th><th>일수</th><th>상태</th><th>메모</th><th>관리</th></tr></thead><tbody id="leaveEntriesBody"></tbody></table></div>
+ </div>
+ <div class="leave-panel">
+  <h3>③ 미사용 연차수당 참고 계산</h3>
+  <div class="leave-pay-summary"><div><span>추정 통상시급</span><strong id="leaveHourly">—</strong></div><div><span>추정 1일 통상임금</span><strong id="leaveDailyPay">—</strong></div><div><span>잔여일수 기준 단순 추정액</span><strong id="leaveAllowance">—</strong></div></div>
+  <p class="leave-caveat">수당은 법정 지급 대상 여부와 실제 통상임금·회사 연차사용촉진 절차 등을 확인해야 합니다. 위 금액은 잔여일수 × 월급 ÷ 월 소정근로시간 × 1일 근로시간의 단순 추정치이며, 확정 지급액이 아닙니다.</p>
+ </div>
+</section>
+
 <section id="todayListPage" class="page-panel diary-page today-list-page">
   <div class="diary-toolbar">
     <div class="diary-heading today-heading"><div class="diary-title"><span class="diary-title-mark">📝</span>투데이리스트</div><div class="diary-subtitle">달력에 등록하기엔 사소하지만 잊지 말아야 할 전화 메모와 간단한 할 일을 기록해요.</div></div>
@@ -718,6 +773,7 @@ async function handleSignedIn(user){
   cloudLoadComplete=true;
   if(!snap.exists){await ref.set({tasks,diaryRows,profile,updatedAt:new Date().toISOString()});}
   await loadContactsCloud();
+  await loadLeaveCloud();
   renderAll();renderDiaryTable();renderQuickLinksManager();renderHolidaysManager();renderTodayList();renderContacts();setSyncStatus('클라우드 연결됨');
  }catch(e){cloudLoadComplete=false;contactsCloudReady=false;setSyncStatus('클라우드 연결 오류');alert('로그인은 되었지만 클라우드 데이터를 불러오지 못했습니다. Firestore 규칙이 게시되었는지 확인해 주세요.\n'+(e.message||''));}
 }
@@ -785,7 +841,7 @@ async function loadContactsCloud(){
  else {
   // 이전 버전에서 브라우저에 저장한 연락망이 있으면 최초 1회 클라우드로 옮긴다.
   let old=[];try{const raw=JSON.parse(localStorage.getItem(CONTACTS_STORAGE_KEY)||'[]');if(Array.isArray(raw))old=raw;}catch(e){}
-  if(old.length){const batch=firestore.batch();old.forEach(c=>{const id=String(c.id||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)));batch.set(ref.doc(id),{company:c.company||'',person:c.person||'',phone:c.phone||'',email:c.email||'',bizNo:c.bizNo||'',ceo:c.ceo||'',address:c.address||'',updatedAt:c.updatedAt||new Date().toISOString()});});await batch.commit();contactsCache=old;}
+  if(old.length){const batch=firestore.batch();old.forEach(c=>{const id=String(c.id||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)));batch.set(ref.doc(id),{company:c.company||'',person:c.person||'',phone:c.phone||'',fax:c.fax||'',email:c.email||'',bizNo:c.bizNo||'',ceo:c.ceo||'',address:c.address||'',note:c.note||'',updatedAt:c.updatedAt||new Date().toISOString()});});await batch.commit();contactsCache=old;}
   else contactsCache=[];
  }
  saveContactsLocal(contactsCache);contactsCloudReady=true;
@@ -800,10 +856,115 @@ async function saveContactsData(items){
  await batch.commit();contactsCache=items;saveContactsLocal(items);
 }
 function resetContactForm(){const f=$('contactForm');if(f)f.reset();$('contactEditId').value='';$('contactSubmitBtn').textContent='＋ 연락처 등록'}
-async function saveContact(event){event.preventDefault();const company=contactVal('contactCompany');if(!company){alert('거래처명을 입력해 주세요.');return}const editId=contactVal('contactEditId');const items=getContacts();const data={id:editId||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)),company,person:contactVal('contactPerson'),phone:contactVal('contactPhone'),email:contactVal('contactEmail'),bizNo:contactVal('contactBizNo'),ceo:contactVal('contactCEO'),address:contactVal('contactAddress'),updatedAt:new Date().toISOString()};const idx=items.findIndex(x=>String(x.id)===String(editId));if(idx>=0)items[idx]=data;else items.unshift(data);try{await saveContactsData(items);resetContactForm();renderContacts();}catch(e){alert('연락망을 클라우드에 저장하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''));}}
-function editContact(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;$('contactEditId').value=c.id;$('contactCompany').value=c.company||'';$('contactPerson').value=c.person||'';$('contactPhone').value=c.phone||'';$('contactEmail').value=c.email||'';$('contactBizNo').value=c.bizNo||'';$('contactCEO').value=c.ceo||'';$('contactAddress').value=c.address||'';$('contactSubmitBtn').textContent='✓ 수정 저장';$('contactForm').scrollIntoView({behavior:'smooth',block:'start'});$('contactCompany').focus()}
+async function saveContact(event){event.preventDefault();const company=contactVal('contactCompany');if(!company){alert('거래처명을 입력해 주세요.');return}const editId=contactVal('contactEditId');const items=getContacts();const data={id:editId||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)),company,person:contactVal('contactPerson'),phone:contactVal('contactPhone'),fax:contactVal('contactFax'),email:contactVal('contactEmail'),bizNo:contactVal('contactBizNo'),ceo:contactVal('contactCEO'),address:contactVal('contactAddress'),note:contactVal('contactNote'),updatedAt:new Date().toISOString()};const idx=items.findIndex(x=>String(x.id)===String(editId));if(idx>=0)items[idx]=data;else items.unshift(data);try{await saveContactsData(items);resetContactForm();renderContacts();}catch(e){alert('연락망을 클라우드에 저장하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''));}}
+function editContact(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;$('contactEditId').value=c.id;$('contactCompany').value=c.company||'';$('contactPerson').value=c.person||'';$('contactPhone').value=c.phone||'';$('contactFax').value=c.fax||'';$('contactEmail').value=c.email||'';$('contactBizNo').value=c.bizNo||'';$('contactCEO').value=c.ceo||'';$('contactAddress').value=c.address||'';$('contactNote').value=c.note||'';$('contactSubmitBtn').textContent='✓ 수정 저장';$('contactForm').scrollIntoView({behavior:'smooth',block:'start'});$('contactCompany').focus()}
 async function deleteContact(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;if(!confirm('「'+c.company+'」 연락처를 삭제할까요?'))return;try{await firestore.collection('users').doc(currentUser.uid).collection('contacts').doc(String(id)).delete();contactsCache=getContacts().filter(x=>String(x.id)!==String(id));saveContactsLocal(contactsCache);if($('contactEditId').value===String(id))resetContactForm();renderContacts()}catch(e){alert('연락처를 클라우드에서 삭제하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''))}}
-function renderContacts(){const body=$('contactsTableBody');if(!body)return;const q=contactVal('contactSearch').toLocaleLowerCase();const filter=$('contactFilter')?.value||'all';const all=getContacts();let rows=all.filter(c=>{const text=[c.company,c.person,c.phone,c.email,c.bizNo,c.ceo,c.address].join(' ').toLocaleLowerCase();if(q&&!text.includes(q))return false;if(filter==='hasEmail'&&!c.email)return false;if(filter==='noEmail'&&c.email)return false;if(filter==='hasPhone'&&!c.phone)return false;if(filter==='noPhone'&&c.phone)return false;return true});$('contactsCount').textContent=`등록 ${all.length}개 · 표시 ${rows.length}개${contactsCloudReady?' · 클라우드 연결됨':' · 클라우드 연결 중'}`;if(!rows.length){body.innerHTML=`<tr><td colspan="9" class="contacts-empty">${all.length?'검색 조건에 맞는 연락처가 없습니다.':'등록된 거래처가 없습니다. 위 입력란에서 등록해 주세요.'}</td></tr>`;return}body.innerHTML=rows.map((c,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHTML(c.company||'')}</strong></td><td>${escapeHTML(c.person||'—')}</td><td>${c.phone?`<a href="tel:${escapeHTML(c.phone)}">${escapeHTML(c.phone)}</a>`:'—'}</td><td>${c.email?`<a href="mailto:${escapeHTML(c.email)}">${escapeHTML(c.email)}</a>`:'—'}</td><td>${escapeHTML(c.bizNo||'—')}</td><td>${escapeHTML(c.ceo||'—')}</td><td>${escapeHTML(c.address||'—')}</td><td><div class="contacts-actions"><button type="button" onclick="editContact('${String(c.id).replace(/'/g,"\\'")}')">수정</button><button type="button" class="contact-delete" onclick="deleteContact('${String(c.id).replace(/'/g,"\\'")}')">삭제</button></div></td></tr>`).join('')}
+function renderContacts(){const body=$('contactsTableBody');if(!body)return;const q=contactVal('contactSearch').toLocaleLowerCase();const filter=$('contactFilter')?.value||'all';const all=getContacts();let rows=all.filter(c=>{const text=[c.company,c.person,c.phone,c.fax,c.email,c.bizNo,c.ceo,c.address,c.note].join(' ').toLocaleLowerCase();if(q&&!text.includes(q))return false;if(filter==='hasEmail'&&!c.email)return false;if(filter==='noEmail'&&c.email)return false;if(filter==='hasPhone'&&!c.phone)return false;if(filter==='noPhone'&&c.phone)return false;return true});$('contactsCount').textContent=`등록 ${all.length}개 · 표시 ${rows.length}개${contactsCloudReady?' · 클라우드 연결됨':' · 클라우드 연결 중'}`;if(!rows.length){body.innerHTML=`<tr><td colspan="11" class="contacts-empty">${all.length?'검색 조건에 맞는 연락처가 없습니다.':'등록된 거래처가 없습니다. 위 입력란에서 등록해 주세요.'}</td></tr>`;return}body.innerHTML=rows.map((c,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHTML(c.company||'')}</strong></td><td>${escapeHTML(c.person||'—')}</td><td>${c.phone?`<a href="tel:${escapeHTML(c.phone)}">${escapeHTML(c.phone)}</a>`:'—'}</td><td>${escapeHTML(c.fax||'—')}</td><td>${c.email?`<a href="mailto:${escapeHTML(c.email)}">${escapeHTML(c.email)}</a>`:'—'}</td><td>${escapeHTML(c.bizNo||'—')}</td><td>${escapeHTML(c.ceo||'—')}</td><td>${escapeHTML(c.address||'—')}</td><td>${escapeHTML(c.note||'—')}</td><td><div class="contacts-actions"><button type="button" onclick="editContact('${String(c.id).replace(/'/g,"\\'")}')">수정</button><button type="button" class="contact-delete" onclick="deleteContact('${String(c.id).replace(/'/g,"\\'")}')">삭제</button></div></td></tr>`).join('')}
+
+
+// ===== 연차관리: 로그인 사용자별 Firestore 저장 =====
+const LEAVE_DEFAULT_PROFILE={name:'한송희',hireDate:'2025-08-18',asOf:'',monthlyPay:2916666,monthlyHours:209,dailyHours:8,attendance:'yes',method:'hire',manualDays:0};
+let leaveProfile={...LEAVE_DEFAULT_PROFILE};
+let leaveEntries=[];
+let leaveCloudReady=false;
+function leaveRef(){if(!currentUser)throw new Error('먼저 로그인해 주세요.');return firestore.collection('users').doc(currentUser.uid).collection('leaveData');}
+function leaveDays(type){return type==='반차'?0.5:type==='반반차'?0.25:1;}
+function isoToday(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function datePlusMonths(iso,n){const d=new Date(iso+'T12:00:00');const day=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+n);const last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();d.setDate(Math.min(day,last));return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function calcLeaveAccrued(){
+ const p=leaveProfile, asOf=p.asOf||isoToday(), hire=p.hireDate;
+ if(p.method==='manual')return Math.max(0,Number(p.manualDays)||0);
+ if(!hire||asOf<hire)return 0;
+ let total=0;
+ // 입사 1년 미만: 1개월 개근마다 1일, 최대 11일
+ for(let m=1;m<=11;m++){if(datePlusMonths(hire,m)<=asOf)total+=1;}
+ const firstAnniv=datePlusMonths(hire,12);
+ if(asOf>=firstAnniv && p.attendance==='yes'){
+   const years=Math.max(1,Math.floor((new Date(asOf+'T12:00:00')-new Date(hire+'T12:00:00'))/(365.2425*86400000)));
+   // 첫 1주년 15일, 3년차 도래부터 2년마다 1일 가산, 최대 25일
+   const serviceYears=Math.max(1,years);
+   total+=Math.min(25,15+Math.floor((serviceYears-1)/2));
+ }
+ return total;
+}
+function leaveEntriesSeed(){
+ const rows=[
+ ['2025-11-20','연차','used','엑셀 사용내역'],['2025-11-21','연차','used','엑셀 사용내역'],
+ ['2025-12-19','연차','used','엑셀 사용내역'],['2026-01-20','연차','used','엑셀 사용내역'],
+ ['2026-03-27','연차','used','엑셀 사용내역'],['2026-04-20','연차','used','엑셀 사용내역'],
+ ['2026-05-15','연차','used','엑셀 사용내역'],['2026-05-20','반차','used','엑셀 사용내역'],
+ ['2026-06-18','연차','used','엑셀 사용내역'],['2026-06-19','연차','used','엑셀 사용내역'],
+ ['2026-07-16','연차','used','엑셀 사용내역'],['2026-07-23','반차','used','엑셀 사용내역'],
+ ['2026-08-14','연차','used','엑셀 사용내역'],['2026-09-21','연차','used','엑셀 사용내역'],
+ ['2026-11-18','연차','planned','엑셀: 신청 중'],['2026-11-19','연차','planned','엑셀: 신청 중'],['2026-11-20','연차','planned','엑셀: 신청 중']
+ ];
+ return rows.map((r,i)=>({id:'seed-'+r[0]+'-'+i,date:r[0],type:r[1],status:r[2],memo:r[3],updatedAt:new Date().toISOString()}));
+}
+async function loadLeaveCloud(){
+ if(!currentUser)return;
+ leaveCloudReady=false;
+ const ref=leaveRef();
+ const ps=await ref.doc('profile').get();
+ leaveProfile=ps.exists?{...LEAVE_DEFAULT_PROFILE,...ps.data()}:{...LEAVE_DEFAULT_PROFILE};
+ const snap=await ref.doc('entries').collection('items').get();
+ if(!snap.empty){leaveEntries=snap.docs.map(d=>({...d.data(),id:d.id}));}
+ else {
+   leaveEntries=leaveEntriesSeed();
+   const batch=firestore.batch();leaveEntries.forEach(e=>{const {id,...data}=e;batch.set(ref.doc('entries').collection('items').doc(id),data);});
+   await batch.commit();
+ }
+ leaveCloudReady=true;
+ fillLeaveProfile();renderLeaveManager();
+}
+function fillLeaveProfile(){
+ const p=leaveProfile;
+ if($('leaveName'))$('leaveName').value=p.name||'';
+ if($('leaveHireDate'))$('leaveHireDate').value=p.hireDate||'';
+ if($('leaveAsOf'))$('leaveAsOf').value=p.asOf||isoToday();
+ if($('leaveMonthlyPay'))$('leaveMonthlyPay').value=Number(p.monthlyPay)||0;
+ if($('leaveMonthlyHours'))$('leaveMonthlyHours').value=Number(p.monthlyHours)||209;
+ if($('leaveDailyHours'))$('leaveDailyHours').value=Number(p.dailyHours)||8;
+ if($('leaveAttendance'))$('leaveAttendance').value=p.attendance||'unknown';
+ if($('leaveMethod'))$('leaveMethod').value=p.method||'hire';
+ if($('leaveManualDays'))$('leaveManualDays').value=Number(p.manualDays)||0;
+ $('leaveManualWrap')?.classList.toggle('leave-hidden',p.method!=='manual');
+}
+async function saveLeaveProfile(){
+ const p={name:$('leaveName').value.trim()||'이름 미입력',hireDate:$('leaveHireDate').value,asOf:$('leaveAsOf').value||isoToday(),monthlyPay:Number($('leaveMonthlyPay').value)||0,monthlyHours:Number($('leaveMonthlyHours').value)||209,dailyHours:Number($('leaveDailyHours').value)||8,attendance:$('leaveAttendance').value,method:$('leaveMethod').value,manualDays:Number($('leaveManualDays').value)||0,updatedAt:new Date().toISOString()};
+ if(!p.hireDate){alert('입사일을 입력해 주세요.');return}
+ if(!currentUser||!leaveCloudReady){alert('연차 클라우드 연결을 기다린 뒤 다시 시도해 주세요.');return}
+ try{await leaveRef().doc('profile').set(p,{merge:true});leaveProfile=p;renderLeaveManager();alert('연차 기본정보를 클라우드에 저장했어요.')}catch(e){alert('연차 기본정보 저장 실패: '+(e.message||e))}
+}
+function resetLeaveProfile(){leaveProfile={...LEAVE_DEFAULT_PROFILE,asOf:isoToday()};fillLeaveProfile();renderLeaveManager();}
+function resetLeaveEntryForm(){const f=$('leaveEntryForm');f?.reset();$('leaveEntryId').value='';$('leaveEntryDate').value=isoToday();$('leaveEntryStatus').value='used';$('leaveEntrySubmit').textContent='＋ 내역 추가';}
+async function saveLeaveEntry(event){
+ event.preventDefault();if(!currentUser||!leaveCloudReady){alert('연차 클라우드 연결을 기다린 뒤 다시 시도해 주세요.');return}
+ const id=$('leaveEntryId').value||('leave-'+Date.now()+'-'+Math.random().toString(16).slice(2));
+ const entry={id,date:$('leaveEntryDate').value,type:$('leaveEntryType').value,status:$('leaveEntryStatus').value,memo:$('leaveEntryMemo').value.trim(),updatedAt:new Date().toISOString()};
+ if(!entry.date){alert('날짜를 선택해 주세요.');return}
+ try{const {id:docId,...data}=entry;await leaveRef().doc('entries').collection('items').doc(docId).set(data,{merge:true});const i=leaveEntries.findIndex(x=>x.id===docId);if(i>=0)leaveEntries[i]=entry;else leaveEntries.push(entry);resetLeaveEntryForm();renderLeaveManager();}catch(e){alert('연차 내역 저장 실패: '+(e.message||e))}
+}
+function editLeaveEntry(id){const e=leaveEntries.find(x=>x.id===id);if(!e)return;$('leaveEntryId').value=e.id;$('leaveEntryDate').value=e.date;$('leaveEntryType').value=e.type;$('leaveEntryStatus').value=e.status;$('leaveEntryMemo').value=e.memo||'';$('leaveEntrySubmit').textContent='✓ 수정 저장';$('leaveEntryForm').scrollIntoView({behavior:'smooth',block:'center'});}
+async function deleteLeaveEntry(id){const e=leaveEntries.find(x=>x.id===id);if(!e||!confirm(`${e.date} 연차 내역을 삭제할까요?`))return;try{await leaveRef().doc('entries').collection('items').doc(id).delete();leaveEntries=leaveEntries.filter(x=>x.id!==id);renderLeaveManager();}catch(err){alert('연차 내역 삭제 실패: '+(err.message||err))}}
+function moneyKRW(n){return Math.round(n||0).toLocaleString('ko-KR')+'원';}
+function renderLeaveManager(){
+ if(!$('leaveEntriesBody'))return;
+ const accrued=calcLeaveAccrued();
+ const used=leaveEntries.filter(e=>e.status==='used'&&(e.date||'')<=(leaveProfile.asOf||isoToday())).reduce((a,e)=>a+leaveDays(e.type),0);
+ const planned=leaveEntries.filter(e=>e.status==='planned').reduce((a,e)=>a+leaveDays(e.type),0);
+ const remaining=accrued-used;
+ $('leaveAccrued').textContent=accrued.toFixed(2).replace(/\.00$/,'');
+ $('leaveUsed').textContent=used.toFixed(2).replace(/\.00$/,'');
+ $('leaveRemaining').textContent=remaining.toFixed(2).replace(/\.00$/,'');
+ $('leavePlanned').textContent=planned.toFixed(2).replace(/\.00$/,'');
+ $('leaveCloudStatus').textContent=leaveCloudReady?'개인 계정 클라우드 연결됨':'클라우드 연결 중';
+ const body=$('leaveEntriesBody');
+ const rows=[...leaveEntries].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+ body.innerHTML=rows.map(e=>`<tr><td>${escapeHTML(e.date||'')}</td><td>${escapeHTML(e.type||'연차')}</td><td>${leaveDays(e.type).toFixed(2).replace(/\.00$/,'')}일</td><td>${e.status==='used'?'사용 완료':'사용 예정'}</td><td>${escapeHTML(e.memo||'—')}</td><td><button type="button" class="btn btn-outline" onclick="editLeaveEntry('${String(e.id).replace(/'/g,"\\'")}')">수정</button> <button type="button" class="btn btn-outline" onclick="deleteLeaveEntry('${String(e.id).replace(/'/g,"\\'")}')">삭제</button></td></tr>`).join('')||'<tr><td colspan="6">연차 내역이 없습니다.</td></tr>';
+ const hours=Number(leaveProfile.monthlyHours)||209, dailyHours=Number(leaveProfile.dailyHours)||8, pay=Number(leaveProfile.monthlyPay)||0;
+ const hourly=pay/hours, daily=hourly*dailyHours;
+ $('leaveHourly').textContent=moneyKRW(hourly);$('leaveDailyPay').textContent=moneyKRW(daily);$('leaveAllowance').textContent=moneyKRW(Math.max(0,remaining)*daily);
+}
 
 function showPage(pageId,button){
  document.querySelectorAll('.page-panel').forEach(p=>p.classList.toggle('active',p.id===pageId));
@@ -811,6 +972,7 @@ function showPage(pageId,button){
  if(pageId==='diaryPage')renderDiaryTable();
  if(pageId==='quickLinksPage')renderQuickLinksManager();
  if(pageId==='contactsPage')renderContacts();
+ if(pageId==='leavePage'){fillLeaveProfile();renderLeaveManager();}
  if(pageId==='holidaysPage')renderHolidaysManager();
  if(pageId==='ddayPage')renderDdayList();
  if(pageId==='todayListPage')renderTodayList();
@@ -1279,6 +1441,13 @@ function excelDate(value){
  const s=String(value).trim();if(/^\\d{4}-\\d{2}-\\d{2}$/.test(s))return s;
  const m=s.match(/^(\\d{4})[./년-]\\s*(\\d{1,2})[./월-]\\s*(\\d{1,2})/);return m?`${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`:'';
 }
+
+document.addEventListener('DOMContentLoaded',()=>{
+ const method=$('leaveMethod');if(method)method.addEventListener('change',()=>{$('leaveManualWrap').classList.toggle('leave-hidden',method.value!=='manual');renderLeaveManager();});
+ ['leaveAsOf','leaveAttendance','leaveMethod','leaveManualDays','leaveMonthlyPay','leaveMonthlyHours','leaveDailyHours','leaveHireDate'].forEach(id=>$(id)?.addEventListener('change',()=>{const p={...leaveProfile,asOf:$('leaveAsOf').value||isoToday(),hireDate:$('leaveHireDate').value,attendance:$('leaveAttendance').value,method:$('leaveMethod').value,manualDays:Number($('leaveManualDays').value)||0,monthlyPay:Number($('leaveMonthlyPay').value)||0,monthlyHours:Number($('leaveMonthlyHours').value)||209,dailyHours:Number($('leaveDailyHours').value)||8};leaveProfile=p;renderLeaveManager();}));
+ if($('leaveEntryDate'))$('leaveEntryDate').value=isoToday();
+});
+
 </script>
 </body>
 </html>
