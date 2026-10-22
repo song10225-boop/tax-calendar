@@ -256,6 +256,16 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 @media(max-width:560px){.contacts-page{padding:9px}.contacts-form{grid-template-columns:1fr}.contact-address-label{grid-column:auto}.contacts-toolbar input{min-width:100%}}
 
 
+/* 연락망 디자인 */
+.contacts-page{background:linear-gradient(145deg,#fffaff 0%,#f8fbff 55%,#f5fffb 100%);border-radius:16px}
+.contacts-heading{border-left-color:#c084fc}.contacts-heading .diary-title-mark{background:linear-gradient(135deg,#a78bfa,#f0abfc);box-shadow:0 4px 12px #c084fc33}
+.contacts-form{background:linear-gradient(135deg,#ffffff,#fbf8ff);border:1px solid #e9d5ff;border-radius:16px;padding:16px;box-shadow:0 8px 24px #6b21a10a}
+.contacts-form label{font-weight:800;color:#51446d}.contacts-form input{border-color:#e3d7f3;background:#fff}.contacts-form input:focus{outline:2px solid #e9d5ff!important;border-color:#c084fc}
+.contacts-table-wrap{border-color:#eadcf6;box-shadow:0 8px 24px #6b21a108}.contacts-table th{background:#f2eaff;color:#65418b}.contacts-table tbody tr:nth-child(even){background:#fdfaff}.contacts-table tbody tr:hover{background:#f5efff}.contact-company-emoji{display:inline-flex;align-items:center;justify-content:center;min-width:27px;height:27px;margin-right:6px;border-radius:8px;background:#f3e8ff;font-size:1.05rem;vertical-align:middle}
+/* DC형 퇴직연금 관리 */
+.retirement-page{gap:14px;background:linear-gradient(145deg,#f7fbff,#fffaf4);border-radius:16px}.retirement-heading{border-left-color:#3b82f6}.retirement-heading .diary-title-mark{background:linear-gradient(135deg,#60a5fa,#818cf8)}
+.retire-panel{background:#fff;border:1px solid #dbeafe;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 6px 20px #1d4ed808}.retire-grid{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:11px}.retire-grid label{display:flex;flex-direction:column;gap:5px;font-size:.79rem;font-weight:800;color:#475569;min-width:0}.retire-grid input,.retire-grid select{box-sizing:border-box;width:100%;min-width:0;padding:9px 10px;border:1px solid #d5e2f2;border-radius:8px;background:#fff;font:inherit;color:#263249}.retire-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.retire-card{background:#fff;border:1px solid #dbeafe;border-radius:13px;padding:14px}.retire-card span{display:block;color:#64748b;font-size:.8rem;margin-bottom:7px}.retire-card strong{font-size:1.25rem;color:#1d4ed8}.retire-note{font-size:.78rem;line-height:1.65;color:#64748b;background:#f8fafc;border-radius:9px;padding:11px}
+@media(max-width:800px){.retire-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.retire-cards{grid-template-columns:1fr}}@media(max-width:520px){.retire-grid{grid-template-columns:1fr}}
 /* 연차관리 */
 .leave-page{gap:14px}.leave-heading{border-left-color:#24856b}.leave-heading .diary-title-mark{background:#24856b}.leave-cloud-status{font-size:.82rem;font-weight:800;color:#17654f;background:#e8f7f1;border-radius:9px;padding:8px 12px}
 .leave-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.leave-card{background:#fff;border:1px solid #dcebe5;border-radius:13px;padding:15px;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}.leave-card span{width:100%;font-size:.82rem;color:#64748b}.leave-card strong{font-size:1.8rem;color:#17654f}.leave-card small{color:#64748b}
@@ -310,10 +320,11 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
   <div class="nav-brand"><span class="brand-mark">✓</span>TaxDiary</div>
   <button class="nav-link active" data-page="calendarPage" onclick="showPage('calendarPage',this)"><span class="nav-icon">🗓️</span> 세무 달력</button>
   <button class="nav-link" data-page="diaryPage" onclick="showPage('diaryPage',this)"><span class="nav-icon">📒</span> 업무일지</button>
+  <button class="nav-link" data-page="todayListPage" onclick="showPage('todayListPage',this)"><span class="nav-icon">📝</span> 투데이리스트</button>
   <button class="nav-link" data-page="quickLinksPage" onclick="showPage('quickLinksPage',this)"><span class="nav-icon">💗</span> 즐겨찾기</button>
   <button class="nav-link" data-page="contactsPage" onclick="showPage('contactsPage',this)"><span class="nav-icon">📇</span> 연락망</button>
   <button class="nav-link" data-page="leavePage" onclick="showPage('leavePage',this)"><span class="nav-icon">🌿</span> 연차관리</button>
-  <button class="nav-link" data-page="todayListPage" onclick="showPage('todayListPage',this)"><span class="nav-icon">📝</span> 투데이리스트</button>
+  <button class="nav-link" data-page="retirementPage" onclick="showPage('retirementPage',this)"><span class="nav-icon">🏦</span> 퇴직금 관리</button>
   <button class="nav-link" data-page="ddayPage" onclick="showPage('ddayPage',this)"><span class="nav-icon">💝</span> 디데이 목록</button>
   <button class="nav-link" data-page="holidaysPage" onclick="showPage('holidaysPage',this)"><span class="nav-icon">🌷</span> 공휴일 관리</button>
   <button class="nav-link" onclick="document.getElementById('excelImportFile').click()">엑셀 복원</button>
@@ -439,6 +450,7 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
   </div>
   <form class="settings-form contacts-form" id="contactForm" onsubmit="saveContact(event)">
     <input type="hidden" id="contactEditId">
+    <label>이모지 / 아이콘<input id="contactEmoji" maxlength="12" placeholder="예: 🏢 🌷 ⭐"></label>
     <label>거래처명 *<input id="contactCompany" required maxlength="150" placeholder="거래처명"></label>
     <label>담당자<input id="contactPerson" maxlength="100" placeholder="담당자 이름"></label>
     <label>연락처<input id="contactPhone" maxlength="60" placeholder="전화번호"></label>
@@ -455,7 +467,36 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
     <select id="contactFilter" aria-label="연락망 필터" onchange="renderContacts()"><option value="all">전체 보기</option><option value="hasEmail">이메일 있는 거래처</option><option value="noEmail">이메일 없는 거래처</option><option value="hasPhone">연락처 있는 거래처</option><option value="noPhone">연락처 없는 거래처</option></select>
   </div>
   <div class="contacts-table-wrap"><table class="contacts-table"><thead><tr><th>번호</th><th>거래처명</th><th>담당자</th><th>연락처</th><th>팩스번호</th><th>이메일주소</th><th>사업자등록번호</th><th>대표자명</th><th>주소</th><th>비고</th><th>관리</th></tr></thead><tbody id="contactsTableBody"></tbody></table></div>
-  <div class="subtle contacts-note">※ 연락망은 로그인한 계정의 Firebase 클라우드에 저장됩니다.</div>
+  <div class="subtle contacts-note">✨ 거래처마다 이모지를 붙여 구분할 수 있어요. 연락처와 이메일은 클릭 링크 없이 일반 텍스트로 표시됩니다. 연락망은 로그인한 계정의 Firebase 클라우드에 저장됩니다.</div>
+</section>
+
+<section id="retirementPage" class="page-panel diary-page retirement-page">
+ <div class="diary-toolbar"><div class="diary-heading retirement-heading"><div class="diary-title"><span class="diary-title-mark">🏦</span>DC형 퇴직연금 관리</div><div class="diary-subtitle">첨부 엑셀의 연도별 임금총액 ÷ 12 방식으로 참고 추정액을 계산하고, 직원별 IRP 정보를 관리해요.</div></div><span id="retireCloudStatus" class="leave-cloud-status">클라우드 연결 대기</span></div>
+ <div class="retire-panel">
+  <div class="retire-grid">
+   <label>관리 대상<select id="retireSlot" onchange="loadRetireProfile()"><option value="self">직원 1 · 내 정보</option><option value="other">직원 2 · 추가 관리</option></select></label>
+   <label>성명<input id="retireName" maxlength="100" value="한송희" placeholder="성명"></label>
+   <label>소속 / 부서<input id="retireDept" maxlength="100" value="경영전략부" placeholder="소속"></label>
+   <label>직급<input id="retireRank" maxlength="60" value="대리" placeholder="직급"></label>
+   <label>가입 금융기관 / 운용사<input id="retireProvider" maxlength="100" value="우리" placeholder="예: 우리은행"></label>
+   <label>IRP 은행명<input id="retireBank" maxlength="100" placeholder="IRP 계좌 은행"></label>
+   <label>IRP 계좌번호<input id="retireIpr" maxlength="100" placeholder="계좌번호"></label>
+   <label>입사일<input id="retireHireDate" type="date" value="2025-08-18"></label>
+   <label>퇴직 예정일 / 산정 기준일<input id="retireEndDate" type="date" value="2026-12-31"></label>
+   <label>2025년 임금총액 (원)<input id="retireWage2025" type="number" min="0" step="1" value="12788886" oninput="calcRetirement()"></label>
+   <label>2026년 임금총액 (원)<input id="retireWage2026" type="number" min="0" step="1" value="36099992" oninput="calcRetirement()"></label>
+   <label>기존 누적 불입액 (2025·2026년 제외, 원)<input id="retireBalance" type="number" min="0" step="1" value="0" oninput="calcRetirement()"></label>
+   <label>추가 납입·승계액 (원)<input id="retireExtra" type="number" min="0" step="1" value="0" oninput="calcRetirement()"></label>
+   <label>운용손익 조정액 (원, 손실은 음수)<input id="retireReturn" type="number" step="1" value="0" oninput="calcRetirement()"></label>
+  </div>
+  <div class="leave-actions"><button type="button" class="btn btn-primary" onclick="saveRetireProfile()">💾 직원 정보 저장</button><button type="button" class="btn btn-outline" onclick="calcRetirement()">다시 계산</button></div>
+ </div>
+ <div class="retire-cards">
+  <div class="retire-card"><span>2025년 참고 산정액 (임금총액 ÷ 12)</span><strong id="retireCalc2025">₩0</strong></div>
+  <div class="retire-card"><span>2026년 참고 산정액 (임금총액 ÷ 12)</span><strong id="retireCalc2026">₩0</strong></div>
+  <div class="retire-card"><span>참고 합계 (연도별 산정액 + 기존 누적액 + 조정)</span><strong id="retireCalcTotal">₩0</strong></div>
+ </div>
+ <div class="retire-note">📌 첨부 엑셀의 계산 흐름을 참고해 연도별 임금총액을 12로 나눈 값을 합산하고, 별도로 입력한 기존 누적액·추가 납입·운용손익 조정액을 더합니다. 중복 계산을 피하려면 기존 누적액에는 2025·2026년 산정액을 포함하지 않은 금액을 입력하세요. DC형 퇴직연금의 실제 퇴직 시 수령액은 회사의 실제 납입 내역과 운용손익에 따라 달라질 수 있어요. 위 합계는 법정 지급액이나 금융기관 잔액을 확정하는 값이 아니며, IRP 계좌번호 등 개인정보는 본인 계정에 저장됩니다. 2026년 임금총액은 첨부 파일의 1~12월 자료 합계를 기본값으로 넣었으니 실제 확정 자료에 맞게 수정해 주세요.</div>
 </section>
 
 <section id="leavePage" class="page-panel diary-page leave-page">
@@ -856,10 +897,10 @@ async function saveContactsData(items){
  await batch.commit();contactsCache=items;saveContactsLocal(items);
 }
 function resetContactForm(){const f=$('contactForm');if(f)f.reset();$('contactEditId').value='';$('contactSubmitBtn').textContent='＋ 연락처 등록'}
-async function saveContact(event){event.preventDefault();const company=contactVal('contactCompany');if(!company){alert('거래처명을 입력해 주세요.');return}const editId=contactVal('contactEditId');const items=getContacts();const data={id:editId||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)),company,person:contactVal('contactPerson'),phone:contactVal('contactPhone'),fax:contactVal('contactFax'),email:contactVal('contactEmail'),bizNo:contactVal('contactBizNo'),ceo:contactVal('contactCEO'),address:contactVal('contactAddress'),note:contactVal('contactNote'),updatedAt:new Date().toISOString()};const idx=items.findIndex(x=>String(x.id)===String(editId));if(idx>=0)items[idx]=data;else items.unshift(data);try{await saveContactsData(items);resetContactForm();renderContacts();}catch(e){alert('연락망을 클라우드에 저장하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''));}}
-function editContact(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;$('contactEditId').value=c.id;$('contactCompany').value=c.company||'';$('contactPerson').value=c.person||'';$('contactPhone').value=c.phone||'';$('contactFax').value=c.fax||'';$('contactEmail').value=c.email||'';$('contactBizNo').value=c.bizNo||'';$('contactCEO').value=c.ceo||'';$('contactAddress').value=c.address||'';$('contactNote').value=c.note||'';$('contactSubmitBtn').textContent='✓ 수정 저장';$('contactForm').scrollIntoView({behavior:'smooth',block:'start'});$('contactCompany').focus()}
+async function saveContact(event){event.preventDefault();const company=contactVal('contactCompany');if(!company){alert('거래처명을 입력해 주세요.');return}const editId=contactVal('contactEditId');const items=getContacts();const data={id:editId||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)),emoji:contactVal('contactEmoji'),company,person:contactVal('contactPerson'),phone:contactVal('contactPhone'),fax:contactVal('contactFax'),email:contactVal('contactEmail'),bizNo:contactVal('contactBizNo'),ceo:contactVal('contactCEO'),address:contactVal('contactAddress'),note:contactVal('contactNote'),updatedAt:new Date().toISOString()};const idx=items.findIndex(x=>String(x.id)===String(editId));if(idx>=0)items[idx]=data;else items.unshift(data);try{await saveContactsData(items);resetContactForm();renderContacts();}catch(e){alert('연락망을 클라우드에 저장하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''));}}
+function editContact(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;$('contactEditId').value=c.id;$('contactEmoji').value=c.emoji||'';$('contactCompany').value=c.company||'';$('contactPerson').value=c.person||'';$('contactPhone').value=c.phone||'';$('contactFax').value=c.fax||'';$('contactEmail').value=c.email||'';$('contactBizNo').value=c.bizNo||'';$('contactCEO').value=c.ceo||'';$('contactAddress').value=c.address||'';$('contactNote').value=c.note||'';$('contactSubmitBtn').textContent='✓ 수정 저장';$('contactForm').scrollIntoView({behavior:'smooth',block:'start'});$('contactCompany').focus()}
 async function deleteContact(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;if(!confirm('「'+c.company+'」 연락처를 삭제할까요?'))return;try{await firestore.collection('users').doc(currentUser.uid).collection('contacts').doc(String(id)).delete();contactsCache=getContacts().filter(x=>String(x.id)!==String(id));saveContactsLocal(contactsCache);if($('contactEditId').value===String(id))resetContactForm();renderContacts()}catch(e){alert('연락처를 클라우드에서 삭제하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''))}}
-function renderContacts(){const body=$('contactsTableBody');if(!body)return;const q=contactVal('contactSearch').toLocaleLowerCase();const filter=$('contactFilter')?.value||'all';const all=getContacts();let rows=all.filter(c=>{const text=[c.company,c.person,c.phone,c.fax,c.email,c.bizNo,c.ceo,c.address,c.note].join(' ').toLocaleLowerCase();if(q&&!text.includes(q))return false;if(filter==='hasEmail'&&!c.email)return false;if(filter==='noEmail'&&c.email)return false;if(filter==='hasPhone'&&!c.phone)return false;if(filter==='noPhone'&&c.phone)return false;return true});$('contactsCount').textContent=`등록 ${all.length}개 · 표시 ${rows.length}개${contactsCloudReady?' · 클라우드 연결됨':' · 클라우드 연결 중'}`;if(!rows.length){body.innerHTML=`<tr><td colspan="11" class="contacts-empty">${all.length?'검색 조건에 맞는 연락처가 없습니다.':'등록된 거래처가 없습니다. 위 입력란에서 등록해 주세요.'}</td></tr>`;return}body.innerHTML=rows.map((c,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHTML(c.company||'')}</strong></td><td>${escapeHTML(c.person||'—')}</td><td>${c.phone?`<a href="tel:${escapeHTML(c.phone)}">${escapeHTML(c.phone)}</a>`:'—'}</td><td>${escapeHTML(c.fax||'—')}</td><td>${c.email?`<a href="mailto:${escapeHTML(c.email)}">${escapeHTML(c.email)}</a>`:'—'}</td><td>${escapeHTML(c.bizNo||'—')}</td><td>${escapeHTML(c.ceo||'—')}</td><td>${escapeHTML(c.address||'—')}</td><td>${escapeHTML(c.note||'—')}</td><td><div class="contacts-actions"><button type="button" onclick="editContact('${String(c.id).replace(/'/g,"\\'")}')">수정</button><button type="button" class="contact-delete" onclick="deleteContact('${String(c.id).replace(/'/g,"\\'")}')">삭제</button></div></td></tr>`).join('')}
+function renderContacts(){const body=$('contactsTableBody');if(!body)return;const q=contactVal('contactSearch').toLocaleLowerCase();const filter=$('contactFilter')?.value||'all';const all=getContacts();let rows=all.filter(c=>{const text=[c.emoji,c.company,c.person,c.phone,c.fax,c.email,c.bizNo,c.ceo,c.address,c.note].join(' ').toLocaleLowerCase();if(q&&!text.includes(q))return false;if(filter==='hasEmail'&&!c.email)return false;if(filter==='noEmail'&&c.email)return false;if(filter==='hasPhone'&&!c.phone)return false;if(filter==='noPhone'&&c.phone)return false;return true});$('contactsCount').textContent=`등록 ${all.length}개 · 표시 ${rows.length}개${contactsCloudReady?' · 클라우드 연결됨':' · 클라우드 연결 중'}`;if(!rows.length){body.innerHTML=`<tr><td colspan="11" class="contacts-empty">${all.length?'검색 조건에 맞는 연락처가 없습니다.':'등록된 거래처가 없습니다. 위 입력란에서 등록해 주세요.'}</td></tr>`;return}body.innerHTML=rows.map((c,i)=>`<tr><td>${i+1}</td><td><strong>${c.emoji?`<span class="contact-company-emoji">${escapeHTML(c.emoji)}</span>`:''}${escapeHTML(c.company||'')}</strong></td><td>${escapeHTML(c.person||'—')}</td><td>${escapeHTML(c.phone||'—')}</td><td>${escapeHTML(c.fax||'—')}</td><td>${escapeHTML(c.email||'—')}</td><td>${escapeHTML(c.bizNo||'—')}</td><td>${escapeHTML(c.ceo||'—')}</td><td>${escapeHTML(c.address||'—')}</td><td>${escapeHTML(c.note||'—')}</td><td><div class="contacts-actions"><button type="button" onclick="editContact('${String(c.id).replace(/'/g,"\\'")}')">수정</button><button type="button" class="contact-delete" onclick="deleteContact('${String(c.id).replace(/'/g,"\\'")}')">삭제</button></div></td></tr>`).join('')}
 
 
 // ===== 연차관리: 로그인 사용자별 Firestore 저장 =====
@@ -967,6 +1008,16 @@ function renderLeaveManager(){
  $('leaveHourly').textContent=moneyKRW(hourly);$('leaveDailyPay').textContent=moneyKRW(daily);$('leaveAllowance').textContent=moneyKRW(Math.max(0,remaining)*daily);
 }
 
+
+// ===== DC형 퇴직연금 개인별 정보 저장 =====
+const retireDefaults={self:{name:'한송희',dept:'경영전략부',rank:'대리',provider:'우리',bank:'',ipr:'',hireDate:'2025-08-18',endDate:'2026-12-31',wage2025:12788886,wage2026:36099992,balance:0,extra:0,returns:0},other:{name:'',dept:'',rank:'',provider:'',bank:'',ipr:'',hireDate:'',endDate:'',wage2025:0,wage2026:0,balance:0,extra:0,returns:0}};
+let retireCache={};
+function retireFieldData(){return {name:$('retireName').value.trim(),dept:$('retireDept').value.trim(),rank:$('retireRank').value.trim(),provider:$('retireProvider').value.trim(),bank:$('retireBank').value.trim(),ipr:$('retireIpr').value.trim(),hireDate:$('retireHireDate').value,endDate:$('retireEndDate').value,wage2025:Number($('retireWage2025').value)||0,wage2026:Number($('retireWage2026').value)||0,balance:Number($('retireBalance').value)||0,extra:Number($('retireExtra').value)||0,returns:Number($('retireReturn').value)||0};}
+function putRetireFields(d){d={...retireDefaults[$('retireSlot').value||'self'],...(d||{})};for(const [k,id] of Object.entries({name:'retireName',dept:'retireDept',rank:'retireRank',provider:'retireProvider',bank:'retireBank',ipr:'retireIpr',hireDate:'retireHireDate',endDate:'retireEndDate',wage2025:'retireWage2025',wage2026:'retireWage2026',balance:'retireBalance',extra:'retireExtra',returns:'retireReturn'})){if($(id))$(id).value=d[k]??'';}calcRetirement();}
+async function loadRetireProfile(){const slot=$('retireSlot').value;let d=retireCache[slot]||retireDefaults[slot];if(currentUser){try{const snap=await firestore.collection('users').doc(currentUser.uid).collection('retirementProfiles').doc(slot).get();if(snap.exists){d=snap.data();retireCache[slot]=d;} $('retireCloudStatus').textContent='클라우드 연결됨';}catch(e){$('retireCloudStatus').textContent='클라우드 읽기 실패';}}putRetireFields(d);}
+async function saveRetireProfile(){if(!currentUser){alert('먼저 로그인해 주세요.');return;}const slot=$('retireSlot').value;const d=retireFieldData();try{await firestore.collection('users').doc(currentUser.uid).collection('retirementProfiles').doc(slot).set({...d,updatedAt:new Date().toISOString()},{merge:true});retireCache[slot]=d;$('retireCloudStatus').textContent='저장 완료 · 클라우드';alert('직원 정보를 클라우드에 저장했어요.');}catch(e){alert('저장하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''));}}
+function calcRetirement(){const a=Number($('retireWage2025')?.value)||0,b=Number($('retireWage2026')?.value)||0,bal=Number($('retireBalance')?.value)||0,extra=Number($('retireExtra')?.value)||0,ret=Number($('retireReturn')?.value)||0;const f=n=>'₩'+Math.round(n).toLocaleString('ko-KR');if($('retireCalc2025'))$('retireCalc2025').textContent=f(a/12);if($('retireCalc2026'))$('retireCalc2026').textContent=f(b/12);if($('retireCalcTotal'))$('retireCalcTotal').textContent=f(a/12+b/12+bal+extra+ret);}
+
 function showPage(pageId,button){
  document.querySelectorAll('.page-panel').forEach(p=>p.classList.toggle('active',p.id===pageId));
  document.querySelectorAll('.nav-link[data-page]').forEach(b=>b.classList.toggle('active',b===button||b.dataset.page===pageId));
@@ -974,6 +1025,7 @@ function showPage(pageId,button){
  if(pageId==='quickLinksPage')renderQuickLinksManager();
  if(pageId==='contactsPage')renderContacts();
  if(pageId==='leavePage'){fillLeaveProfile();renderLeaveManager();}
+ if(pageId==='retirementPage'){loadRetireProfile();}
  if(pageId==='holidaysPage')renderHolidaysManager();
  if(pageId==='ddayPage')renderDdayList();
  if(pageId==='todayListPage')renderTodayList();
