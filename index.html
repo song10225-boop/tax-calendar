@@ -241,6 +241,20 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 
 /* 투데이리스트 등록 날짜 가독성 개선 */
 .today-item-date{color:#475569!important;font-size:.76rem!important;font-weight:750!important;background:#f1f5f9;border:1px solid #dbe3ee;border-radius:6px;padding:3px 7px;display:inline-block;margin-top:7px;line-height:1.4}
+
+/* 거래처 연락망 */
+.contacts-page{gap:14px}.contacts-heading{border-left-color:#6477bd}.contacts-heading .diary-title-mark{background:#6477bd}
+.contacts-count{font-size:.82rem;font-weight:850;color:#4055a1;background:#eef1ff;border-radius:9px;padding:8px 12px;white-space:nowrap}
+.contacts-form{display:grid;grid-template-columns:repeat(3,minmax(170px,1fr));align-items:end;gap:11px;background:linear-gradient(135deg,#f7f8ff,#fff);border-color:#dfe4fb}
+.contacts-form label{display:flex;flex-direction:column;gap:5px;min-width:0;font-size:.78rem;font-weight:800;color:#46516f}
+.contacts-form input{width:100%;min-width:0;box-sizing:border-box;padding:9px 10px;border:1px solid #d6dcf0;border-radius:8px;background:#fff;font:inherit;color:#263249}
+.contacts-form input:focus,.contacts-toolbar input:focus,.contacts-toolbar select:focus{outline:2px solid #c5cdfa;outline-offset:1px}
+.contact-address-label{grid-column:span 2}.contacts-form-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.contacts-toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.contacts-toolbar input{flex:1;min-width:240px;padding:10px 12px;border:1px solid #d8deef;border-radius:9px;background:#fff}.contacts-toolbar select{padding:10px;border:1px solid #d8deef;border-radius:9px;background:#fff;color:#344054}
+.contacts-table-wrap{overflow:auto;background:#fff;border:1px solid #e1e5f0;border-radius:11px;flex:1;min-height:150px}.contacts-table{border-collapse:collapse;width:100%;min-width:1250px;font-size:.79rem}.contacts-table th{position:sticky;top:0;background:#eef1ff;color:#354887;padding:10px 9px;text-align:left;white-space:nowrap;z-index:1}.contacts-table td{padding:9px;border-bottom:1px solid #edf0f7;vertical-align:top;overflow-wrap:anywhere;max-width:260px}.contacts-table tbody tr:nth-child(even){background:#fafbff}.contacts-table tbody tr:hover{background:#f2f5ff}.contacts-actions{display:flex;gap:5px;white-space:nowrap}.contacts-actions button{border:1px solid #d6dcf0;background:#fff;color:#4055a1;border-radius:6px;padding:5px 8px;cursor:pointer;font-weight:700}.contacts-actions .contact-delete{color:#b42335;border-color:#f0caca}.contacts-empty{text-align:center!important;color:#718096;padding:28px!important}
+@media(max-width:850px){.contacts-form{grid-template-columns:repeat(2,minmax(140px,1fr))}.contact-address-label{grid-column:span 2}}
+@media(max-width:560px){.contacts-page{padding:9px}.contacts-form{grid-template-columns:1fr}.contact-address-label{grid-column:auto}.contacts-toolbar input{min-width:100%}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
@@ -289,6 +303,7 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
   <button class="nav-link active" data-page="calendarPage" onclick="showPage('calendarPage',this)"><span class="nav-icon">🗓️</span> 세무 달력</button>
   <button class="nav-link" data-page="diaryPage" onclick="showPage('diaryPage',this)"><span class="nav-icon">📒</span> 업무일지</button>
   <button class="nav-link" data-page="quickLinksPage" onclick="showPage('quickLinksPage',this)"><span class="nav-icon">💗</span> 즐겨찾기</button>
+  <button class="nav-link" data-page="contactsPage" onclick="showPage('contactsPage',this)"><span class="nav-icon">📇</span> 연락망</button>
   <button class="nav-link" data-page="todayListPage" onclick="showPage('todayListPage',this)"><span class="nav-icon">📝</span> 투데이리스트</button>
   <button class="nav-link" data-page="ddayPage" onclick="showPage('ddayPage',this)"><span class="nav-icon">💝</span> 디데이 목록</button>
   <button class="nav-link" data-page="holidaysPage" onclick="showPage('holidaysPage',this)"><span class="nav-icon">🌷</span> 공휴일 관리</button>
@@ -407,6 +422,29 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
   <div class="favorites-toolbar"><div class="favorites-count" id="favoriteCount">등록 0개</div><input id="favoriteSearch" type="search" placeholder="🔎 이름·링크·아이디·메모 검색" oninput="renderQuickLinksManager()"></div>
   <div class="favorites-table-wrap"><table class="favorites-table"><thead><tr><th>번호</th><th>이름</th><th>사이트 링크</th><th>아이디</th><th>비고 / 메모</th><th>등록일</th><th>관리</th></tr></thead><tbody id="quickLinksManagerList"></tbody></table></div>
   <div class="subtle favorites-note">※ 즐겨찾기는 계정 데이터에 저장됩니다. 아이디와 메모만 기록하고 비밀번호 등 인증정보는 저장하지 마세요.</div>
+</section>
+<section id="contactsPage" class="page-panel diary-page contacts-page">
+  <div class="diary-toolbar">
+    <div class="diary-heading contacts-heading"><div class="diary-title"><span class="diary-title-mark">📇</span>거래처 연락망</div><div class="diary-subtitle">거래처와 담당자 정보를 등록하고 검색·필터링할 수 있어요.</div></div>
+    <div class="contacts-count" id="contactsCount">등록 0개</div>
+  </div>
+  <form class="settings-form contacts-form" id="contactForm" onsubmit="saveContact(event)">
+    <input type="hidden" id="contactEditId">
+    <label>거래처명 *<input id="contactCompany" required maxlength="150" placeholder="거래처명"></label>
+    <label>담당자<input id="contactPerson" maxlength="100" placeholder="담당자 이름"></label>
+    <label>연락처<input id="contactPhone" maxlength="60" placeholder="전화번호"></label>
+    <label>이메일주소<input id="contactEmail" type="email" maxlength="200" placeholder="이메일"></label>
+    <label>사업자등록번호<input id="contactBizNo" maxlength="30" placeholder="000-00-00000"></label>
+    <label>대표자명<input id="contactCEO" maxlength="100" placeholder="대표자명"></label>
+    <label class="contact-address-label">주소<input id="contactAddress" maxlength="500" placeholder="주소"></label>
+    <div class="contacts-form-actions"><button class="btn btn-primary" id="contactSubmitBtn" type="submit">＋ 연락처 등록</button><button class="btn btn-outline" type="button" onclick="resetContactForm()">초기화</button></div>
+  </form>
+  <div class="contacts-toolbar">
+    <input id="contactSearch" type="search" placeholder="🔎 거래처명·담당자·연락처·이메일 등 검색" oninput="renderContacts()">
+    <select id="contactFilter" aria-label="연락망 필터" onchange="renderContacts()"><option value="all">전체 보기</option><option value="hasEmail">이메일 있는 거래처</option><option value="noEmail">이메일 없는 거래처</option><option value="hasPhone">연락처 있는 거래처</option><option value="noPhone">연락처 없는 거래처</option></select>
+  </div>
+  <div class="contacts-table-wrap"><table class="contacts-table"><thead><tr><th>번호</th><th>거래처명</th><th>담당자</th><th>연락처</th><th>이메일주소</th><th>사업자등록번호</th><th>대표자명</th><th>주소</th><th>관리</th></tr></thead><tbody id="contactsTableBody"></tbody></table></div>
+  <div class="subtle contacts-note">※ 연락망은 이 브라우저에 저장됩니다. 브라우저 초기화나 다른 PC 사용 전에 별도 백업이 필요할 수 있어요.</div>
 </section>
 <section id="todayListPage" class="page-panel diary-page today-list-page">
   <div class="diary-toolbar">
@@ -679,8 +717,9 @@ async function handleSignedIn(user){
   syncLegacyTaskLogs();
   cloudLoadComplete=true;
   if(!snap.exists){await ref.set({tasks,diaryRows,profile,updatedAt:new Date().toISOString()});}
-  renderAll();renderDiaryTable();renderQuickLinksManager();renderHolidaysManager();renderTodayList();setSyncStatus('클라우드 연결됨');
- }catch(e){cloudLoadComplete=false;setSyncStatus('클라우드 연결 오류');alert('로그인은 되었지만 클라우드 데이터를 불러오지 못했습니다. Firestore 규칙이 게시되었는지 확인해 주세요.\n'+(e.message||''));}
+  await loadContactsCloud();
+  renderAll();renderDiaryTable();renderQuickLinksManager();renderHolidaysManager();renderTodayList();renderContacts();setSyncStatus('클라우드 연결됨');
+ }catch(e){cloudLoadComplete=false;contactsCloudReady=false;setSyncStatus('클라우드 연결 오류');alert('로그인은 되었지만 클라우드 데이터를 불러오지 못했습니다. Firestore 규칙이 게시되었는지 확인해 주세요.\n'+(e.message||''));}
 }
 async function changeTaxDiaryPassword(){
  if(!auth.currentUser){alert('먼저 로그인해 주세요.');return;}
@@ -730,11 +769,48 @@ function quickFilter(mode){
 function updateQuickFilterButtons(){
  ['all','normal','important','urgent'].forEach(k=>{const b=$('qf-'+k);if(b)b.classList.toggle('active',activeQuickFilter===k)});
 }
+
+const CONTACTS_STORAGE_KEY = 'taxDiaryContacts_v1';
+let contactsCache=[];
+let contactsCloudReady=false;
+function getContacts(){return Array.isArray(contactsCache)?contactsCache:[]}
+function saveContactsLocal(items){try{localStorage.setItem(CONTACTS_STORAGE_KEY,JSON.stringify(items))}catch(e){}}
+function contactVal(id){return $(id)?.value?.trim()||''}
+async function loadContactsCloud(){
+ if(!currentUser)throw new Error('먼저 로그인해 주세요.');
+ contactsCloudReady=false;
+ const ref=firestore.collection('users').doc(currentUser.uid).collection('contacts');
+ const snap=await ref.get();
+ if(!snap.empty){contactsCache=snap.docs.map(d=>({...d.data(),id:d.id}));}
+ else {
+  // 이전 버전에서 브라우저에 저장한 연락망이 있으면 최초 1회 클라우드로 옮긴다.
+  let old=[];try{const raw=JSON.parse(localStorage.getItem(CONTACTS_STORAGE_KEY)||'[]');if(Array.isArray(raw))old=raw;}catch(e){}
+  if(old.length){const batch=firestore.batch();old.forEach(c=>{const id=String(c.id||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)));batch.set(ref.doc(id),{company:c.company||'',person:c.person||'',phone:c.phone||'',email:c.email||'',bizNo:c.bizNo||'',ceo:c.ceo||'',address:c.address||'',updatedAt:c.updatedAt||new Date().toISOString()});});await batch.commit();contactsCache=old;}
+  else contactsCache=[];
+ }
+ saveContactsLocal(contactsCache);contactsCloudReady=true;
+}
+async function saveContactsData(items){
+ if(!currentUser||!contactsCloudReady)throw new Error('연락망 클라우드가 아직 연결되지 않았어요. 잠시 후 다시 시도해 주세요.');
+ const ref=firestore.collection('users').doc(currentUser.uid).collection('contacts');
+ const batch=firestore.batch();
+ const keep=new Set(items.map(c=>String(c.id)));
+ items.forEach(c=>{const {id,...data}=c;batch.set(ref.doc(String(id)),data,{merge:true});});
+ contactsCache.filter(c=>!keep.has(String(c.id))).forEach(c=>batch.delete(ref.doc(String(c.id))));
+ await batch.commit();contactsCache=items;saveContactsLocal(items);
+}
+function resetContactForm(){const f=$('contactForm');if(f)f.reset();$('contactEditId').value='';$('contactSubmitBtn').textContent='＋ 연락처 등록'}
+async function saveContact(event){event.preventDefault();const company=contactVal('contactCompany');if(!company){alert('거래처명을 입력해 주세요.');return}const editId=contactVal('contactEditId');const items=getContacts();const data={id:editId||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)),company,person:contactVal('contactPerson'),phone:contactVal('contactPhone'),email:contactVal('contactEmail'),bizNo:contactVal('contactBizNo'),ceo:contactVal('contactCEO'),address:contactVal('contactAddress'),updatedAt:new Date().toISOString()};const idx=items.findIndex(x=>String(x.id)===String(editId));if(idx>=0)items[idx]=data;else items.unshift(data);try{await saveContactsData(items);resetContactForm();renderContacts();}catch(e){alert('연락망을 클라우드에 저장하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''));}}
+function editContact(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;$('contactEditId').value=c.id;$('contactCompany').value=c.company||'';$('contactPerson').value=c.person||'';$('contactPhone').value=c.phone||'';$('contactEmail').value=c.email||'';$('contactBizNo').value=c.bizNo||'';$('contactCEO').value=c.ceo||'';$('contactAddress').value=c.address||'';$('contactSubmitBtn').textContent='✓ 수정 저장';$('contactForm').scrollIntoView({behavior:'smooth',block:'start'});$('contactCompany').focus()}
+async function deleteContact(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;if(!confirm('「'+c.company+'」 연락처를 삭제할까요?'))return;try{await firestore.collection('users').doc(currentUser.uid).collection('contacts').doc(String(id)).delete();contactsCache=getContacts().filter(x=>String(x.id)!==String(id));saveContactsLocal(contactsCache);if($('contactEditId').value===String(id))resetContactForm();renderContacts()}catch(e){alert('연락처를 클라우드에서 삭제하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''))}}
+function renderContacts(){const body=$('contactsTableBody');if(!body)return;const q=contactVal('contactSearch').toLocaleLowerCase();const filter=$('contactFilter')?.value||'all';const all=getContacts();let rows=all.filter(c=>{const text=[c.company,c.person,c.phone,c.email,c.bizNo,c.ceo,c.address].join(' ').toLocaleLowerCase();if(q&&!text.includes(q))return false;if(filter==='hasEmail'&&!c.email)return false;if(filter==='noEmail'&&c.email)return false;if(filter==='hasPhone'&&!c.phone)return false;if(filter==='noPhone'&&c.phone)return false;return true});$('contactsCount').textContent=`등록 ${all.length}개 · 표시 ${rows.length}개${contactsCloudReady?' · 클라우드 연결됨':' · 클라우드 연결 중'}`;if(!rows.length){body.innerHTML=`<tr><td colspan="9" class="contacts-empty">${all.length?'검색 조건에 맞는 연락처가 없습니다.':'등록된 거래처가 없습니다. 위 입력란에서 등록해 주세요.'}</td></tr>`;return}body.innerHTML=rows.map((c,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHTML(c.company||'')}</strong></td><td>${escapeHTML(c.person||'—')}</td><td>${c.phone?`<a href="tel:${escapeHTML(c.phone)}">${escapeHTML(c.phone)}</a>`:'—'}</td><td>${c.email?`<a href="mailto:${escapeHTML(c.email)}">${escapeHTML(c.email)}</a>`:'—'}</td><td>${escapeHTML(c.bizNo||'—')}</td><td>${escapeHTML(c.ceo||'—')}</td><td>${escapeHTML(c.address||'—')}</td><td><div class="contacts-actions"><button type="button" onclick="editContact('${String(c.id).replace(/'/g,"\\'")}')">수정</button><button type="button" class="contact-delete" onclick="deleteContact('${String(c.id).replace(/'/g,"\\'")}')">삭제</button></div></td></tr>`).join('')}
+
 function showPage(pageId,button){
  document.querySelectorAll('.page-panel').forEach(p=>p.classList.toggle('active',p.id===pageId));
  document.querySelectorAll('.nav-link[data-page]').forEach(b=>b.classList.toggle('active',b===button||b.dataset.page===pageId));
  if(pageId==='diaryPage')renderDiaryTable();
  if(pageId==='quickLinksPage')renderQuickLinksManager();
+ if(pageId==='contactsPage')renderContacts();
  if(pageId==='holidaysPage')renderHolidaysManager();
  if(pageId==='ddayPage')renderDdayList();
  if(pageId==='todayListPage')renderTodayList();
