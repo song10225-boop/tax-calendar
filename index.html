@@ -327,6 +327,18 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 .calculator-bottom>div:first-child{background:linear-gradient(120deg,#fff8e8,#fff);border-color:#f2dfb1}.calculator-bottom>div:last-child{background:linear-gradient(120deg,#f1efff,#fff);border-color:#ddd5ff}.calculator-bottom b{color:#4e4a91;font-size:.88rem}
 @media(max-width:850px){.simple-sum-rows{display:flex;flex-direction:column}}
 @media(max-width:520px){.calculator-page{padding:10px}.simple-sum-rows{grid-template-columns:1fr}.calculator-summary{grid-template-columns:1fr 1fr}.calculator-detail-panel,.simple-sum-panel{padding:10px}}
+
+/* 2026-10 계산기·업무일지 가독성 보완 */
+.diary-table tbody tr.diary-done td{background:#e7eaee!important;color:#303946!important;border-top:1px solid #d4d9e0!important;border-bottom:1px solid #d4d9e0!important}
+.diary-table tbody tr.diary-done td .diary-preview{color:#303946!important;font-weight:500}
+.diary-table tbody tr.diary-done td .priority-pill{font-size:.78rem!important;font-weight:850;padding:5px 9px}
+.diary-table td .priority-pill{font-size:.78rem!important;padding:5px 9px}
+.calculator-table tfoot th{font-size:.9rem!important;font-weight:900!important;color:#243b7a!important;background:#dce5ff!important;border-top:2px solid #8499e8!important;padding:12px 9px!important;font-variant-numeric:tabular-nums}
+.calculator-table .calc-result,.calculator-table .calc-gross{font-size:.92rem!important;font-weight:850!important;color:#263b80!important;font-variant-numeric:tabular-nums}
+.calculator-table .calc-gross{background:#e6f8ef!important;color:#08784f!important}
+.calculator-summary-card strong{font-size:clamp(1.25rem,2.1vw,1.7rem)!important;color:#1f2e49!important}
+.calculator-table input.calc-qty,.calculator-table input.calc-unit{font-size:.9rem!important;font-weight:650!important;text-align:right;font-variant-numeric:tabular-nums}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
@@ -394,7 +406,7 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
       <table><thead><tr><th style="color:#dc2626">일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th style="color:#2563eb">토</th></tr></thead><tbody id="miniBody"></tbody></table>
     </div>
     <div class="cal-group">
-      <div class="cal-group-header"><span>업무 분야</span><button class="edit-btn" onclick="setAllCategories(true)">전체 선택</button></div>
+      <div class="cal-group-header"><span>업무 분야</span><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="edit-btn" id="catToggleAllBtn" onclick="toggleAllCategories()">전체 해제</button><button class="edit-btn" onclick="setAllCategories(true)">전체 선택</button></div></div>
       <label class="cal-item"><input type="checkbox" class="cat-filter" value="회계" checked onchange="renderAll()"><span class="color-dot" style="background:#93c5fd"></span>회계</label>
       <label class="cal-item"><input type="checkbox" class="cat-filter" value="자금" checked onchange="renderAll()"><span class="color-dot" style="background:#86efac"></span>자금</label>
       <label class="cal-item"><input type="checkbox" class="cat-filter" value="인사" checked onchange="renderAll()"><span class="color-dot" style="background:#fdba74"></span>인사</label>
@@ -518,7 +530,7 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
   </div>
   <div class="calculator-help"><b>계산 방식</b><span>단가 × 수량 = 공급가액 · 부가세 = 공급가액 × 10% · 공급대가 = 공급가액 + 부가세</span><span>예: 500원 × 20개 = 공급가액 10,000원 + 부가세 1,000원 = 공급대가 11,000원</span></div>
   <div class="calculator-actions"><button type="button" class="btn btn-outline" onclick="addCalcRow()">＋ 품목 행 추가</button><button type="button" class="btn btn-danger" onclick="resetCalcRows()">↺ 검산표 초기화</button></div>
-  <div class="calculator-table-wrap"><table class="calculator-table"><thead><tr><th>번호</th><th>품목 / 내용</th><th>단가</th><th>수량</th><th>단가 × 수량</th><th>공급가액</th><th>부가세</th><th>공급대가 합계</th><th>관리</th></tr></thead><tbody id="calcRows"></tbody><tfoot><tr><th colspan="3">합계</th><th id="calcFootQty">0</th><th id="calcFootE">0</th><th id="calcFootK">0</th><th id="calcFootL">0</th><th id="calcFootM">0</th><th></th></tr></tfoot></table></div>
+  <div class="calculator-table-wrap"><table class="calculator-table"><thead><tr><th>번호</th><th>품목 / 내용</th><th>수량</th><th>단가</th><th>단가 × 수량</th><th>공급가액</th><th>부가세</th><th>공급대가 합계</th><th>관리</th></tr></thead><tbody id="calcRows"></tbody><tfoot><tr><th colspan="3">합계</th><th id="calcFootQty">0</th><th id="calcFootE">0</th><th id="calcFootK">0</th><th id="calcFootL">0</th><th id="calcFootM">0</th><th></th></tr></tfoot></table></div>
   <div class="calculator-bottom"><div><b>💡 검토 팁</b><p>단가 또는 수량을 수정하면 품목별 합계와 전체 합계가 자동으로 바뀝니다. 제출된 문서의 금액과 비교해 보세요.</p></div><div><b>🎨 보기 쉽게 정리했어요</b><p>각 합계 항목에 색을 적용했고, 공급가액은 파랑, 부가세는 보라, 공급대가 합계는 초록으로 구분했어요. 수량 합계도 표 아래에 표시됩니다.</p></div></div>
  </section>
 </section>
@@ -1154,11 +1166,11 @@ const CALC_INITIAL_ROWS=8;
 let calcRowId=0;
 function calcMoney(n){return Math.round(Number(n)||0).toLocaleString('ko-KR')}
 function calcNum(v){const n=Number(String(v??'').replace(/[^0-9.-]/g,''));return Number.isFinite(n)?n:0}
-function addCalcRow(data={}){const body=$('calcRows');if(!body)return;const id=++calcRowId;const tr=document.createElement('tr');tr.dataset.calcId=id;tr.innerHTML=`<td class="calc-no"></td><td><input class="calc-name" type="text" maxlength="120" placeholder="품목명 / 검토 내용" value="${String(data.name||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}" aria-label="품목명" onkeydown="handleCalcEnter(event,this)"></td><td><input class="calc-unit" type="text" inputmode="numeric" placeholder="단가" value="${data.unit??''}" oninput="formatCalcInput(this);renderCalcTotals()" aria-label="단가" onkeydown="handleCalcEnter(event,this)"></td><td><input class="calc-qty" type="text" inputmode="decimal" placeholder="수량" value="${data.qty??''}" oninput="formatCalcInput(this,true);renderCalcTotals()" aria-label="수량" onkeydown="handleCalcEnter(event,this)"></td><td class="calc-result calc-e">0</td><td class="calc-result calc-k">0</td><td class="calc-result calc-l">0</td><td class="calc-gross calc-m">0</td><td><button type="button" class="calc-remove" onclick="removeCalcRow(this)">삭제</button></td>`;body.appendChild(tr);renderCalcTotals();}
+function addCalcRow(data={}){const body=$('calcRows');if(!body)return;const id=++calcRowId;const tr=document.createElement('tr');tr.dataset.calcId=id;tr.innerHTML=`<td class="calc-no"></td><td><input class="calc-name" type="text" maxlength="120" placeholder="품목명 / 검토 내용" value="${String(data.name||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}" aria-label="품목명" onkeydown="handleCalcEnter(event,this)"></td><td><input class="calc-qty" type="text" inputmode="decimal" placeholder="수량" value="${data.qty??''}" oninput="formatCalcInput(this,true);renderCalcTotals()" aria-label="수량" onkeydown="handleCalcEnter(event,this)"></td><td><input class="calc-unit" type="text" inputmode="numeric" placeholder="단가" value="${data.unit??''}" oninput="formatCalcInput(this);renderCalcTotals()" aria-label="단가" onkeydown="handleCalcEnter(event,this)"></td><td class="calc-result calc-e">0</td><td class="calc-result calc-k">0</td><td class="calc-result calc-l">0</td><td class="calc-gross calc-m">0</td><td><button type="button" class="calc-remove" onclick="removeCalcRow(this)">삭제</button></td>`;body.appendChild(tr);renderCalcTotals();}
 function formatCalcInput(el,decimal=false){const raw=String(el.value||'').replace(/,/g,'').replace(decimal?/[^0-9.]/g:/[^0-9]/g,'');if(decimal){const parts=raw.split('.');el.value=parts.length>1?parts.shift()+'.'+parts.join(''):raw;}else{el.value=raw?Number(raw).toLocaleString('en-US'):''}}
 function removeCalcRow(btn){btn.closest('tr')?.remove();renderCalcTotals()}
 function resetCalcRows(){if(!confirm('계산기 입력 내용을 모두 초기화할까요?'))return;$('calcRows').innerHTML='';calcRowId=0;for(let i=0;i<CALC_INITIAL_ROWS;i++)addCalcRow();renderCalcTotals()}
-function handleCalcEnter(event,el){if(event.key!=='Enter')return;event.preventDefault();const current=el.closest('tr');addCalcRow();const next=$('calcRows').lastElementChild;if(next){const target=next.querySelector('.calc-name');target?.focus();}}
+function handleCalcEnter(event,el){if(event.key!=='Enter')return;event.preventDefault();const row=el.closest('tr');const fields=[...row.querySelectorAll('.calc-name,.calc-qty,.calc-unit')];const idx=fields.indexOf(el);if(idx<fields.length-1){fields[idx+1].focus();fields[idx+1].select?.();return;}let next=row.nextElementSibling;if(!next){addCalcRow();next=$('calcRows').lastElementChild;}const target=next?.querySelector('.calc-name');target?.focus();target?.select?.();}
 function renderCalcTotals(){const body=$('calcRows');if(!body)return;let eSum=0,kSum=0,lSum=0,mSum=0,qtySum=0;[...body.rows].forEach((tr,i)=>{tr.querySelector('.calc-no').textContent=i+1;const unit=calcNum(tr.querySelector('.calc-unit').value),qty=calcNum(tr.querySelector('.calc-qty').value);const e=Math.round(unit*qty);const k=e;const l=Math.round(k*0.1);const m=k+l;eSum+=e;kSum+=k;lSum+=l;mSum+=m;qtySum+=qty;tr.querySelector('.calc-e').textContent=calcMoney(e);tr.querySelector('.calc-k').textContent=calcMoney(k);tr.querySelector('.calc-l').textContent=calcMoney(l);tr.querySelector('.calc-m').textContent=calcMoney(m)});for(const [id,val] of Object.entries({calcSumE:eSum,calcSumK:kSum,calcSumL:lSum,calcSumM:mSum,calcFootQty:qtySum,calcFootE:eSum,calcFootK:kSum,calcFootL:lSum,calcFootM:mSum}))$(id).textContent=calcMoney(val)}
 let simpleSumId=0;
 function addSimpleSumRow(data={}){const box=$('simpleSumRows');if(!box)return;const id=++simpleSumId;const row=document.createElement('div');row.className='simple-sum-row';row.dataset.sumId=id;row.innerHTML=`<input class="sum-amount" type="text" inputmode="numeric" placeholder="금액 입력" aria-label="합산 금액" oninput="formatCalcInput(this);renderSimpleSum()" onkeydown="if(event.key==='Enter'){event.preventDefault();addSimpleSumRow();document.querySelector('#simpleSumRows .simple-sum-row:last-child .sum-amount')?.focus()}"><button type="button" title="이 금액 삭제" aria-label="이 금액 삭제" onclick="this.closest('.simple-sum-row').remove();renderSimpleSum()">×</button>`;row.querySelector('.sum-amount').value=data.amount?calcMoney(data.amount):'';box.appendChild(row);renderSimpleSum();}
@@ -1227,7 +1239,9 @@ function renderDiaryTable(){
  <td style="white-space:nowrap">${editing?`<button class="small-action diary-save-btn" onclick="saveDiaryEdit('${String(r.id).replace(/'/g,"\\'")}')">저장</button> <button class="small-action" onclick="cancelDiaryEdit('${String(r.id).replace(/'/g,"\\'")}')">취소</button>`:`<button class="small-action diary-edit-btn" onclick="toggleDiaryEdit('${String(r.id).replace(/'/g,"\\'")}')">수정</button> `}${r.taskId?`<button class="small-action" onclick="openLinkedTask('${String(r.taskId).replace(/'/g,"\\'")}')">일정 수정</button> `:``}<button class="small-action" onclick="removeDiaryRow('${String(r.id).replace(/'/g,"\\'")}')">삭제</button></td></tr>`}).join(''):'<tr><td colspan="9" class="empty-state">표시할 일지가 없습니다. ‘＋ 일지 추가’를 눌러 기록을 시작하세요.</td></tr>';
 }
 function clearDiaryFilters(){['diarySearch','diaryPersonFilter','diaryStatusFilter','diaryDateFrom','diaryDateTo'].forEach(id=>{const el=$(id);if(el)el.value=''});renderDiaryTable()}
-function setAllCategories(value){document.querySelectorAll('.cat-filter').forEach(c=>c.checked=value);renderAll()}
+function setAllCategories(value){document.querySelectorAll('.cat-filter').forEach(c=>c.checked=value);updateCategoryToggleLabel();renderAll()}
+function toggleAllCategories(){const boxes=[...document.querySelectorAll('.cat-filter')];const allChecked=boxes.length>0&&boxes.every(c=>c.checked);setAllCategories(!allChecked)}
+function updateCategoryToggleLabel(){const boxes=[...document.querySelectorAll('.cat-filter')];const btn=$('catToggleAllBtn');if(btn)btn.textContent=boxes.length&&boxes.every(c=>c.checked)?'전체 해제':'전체 선택'}
 function selectedCategories(){return [...document.querySelectorAll('.cat-filter:checked')].map(c=>String(c.value||'').trim()).filter(Boolean)}
 function isOverdue(t){return t.status!=='완료'&&t.date<toISO(today)}
 function visibleTasks(){
@@ -1645,7 +1659,7 @@ function excelDate(value){
  const m=s.match(/^(\\d{4})[./년-]\\s*(\\d{1,2})[./월-]\\s*(\\d{1,2})/);return m?`${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`:'';
 }
 
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded',()=>{document.addEventListener('change',e=>{if(e.target?.classList?.contains('cat-filter'))updateCategoryToggleLabel()});
  const method=$('leaveMethod');if(method)method.addEventListener('change',()=>{$('leaveManualWrap').classList.toggle('leave-hidden',method.value!=='manual');renderLeaveManager();});
  ['leaveAsOf','leaveAttendance','leaveMethod','leaveManualDays','leaveMonthlyPay','leaveMonthlyHours','leaveDailyHours','leaveHireDate','leaveExpiry'].forEach(id=>$(id)?.addEventListener('change',()=>{const p={...leaveProfile,asOf:$('leaveAsOf').value||isoToday(),hireDate:$('leaveHireDate').value,attendance:$('leaveAttendance').value,method:$('leaveMethod').value,manualDays:Number($('leaveManualDays').value)||0,monthlyPay:Number($('leaveMonthlyPay').value)||0,monthlyHours:Number($('leaveMonthlyHours').value)||209,dailyHours:Number($('leaveDailyHours').value)||8,expiry:$('leaveExpiry')?.value||'none'};leaveProfile=p;renderLeaveManager();}));
  if($('leaveEntryDate'))$('leaveEntryDate').value=isoToday();
