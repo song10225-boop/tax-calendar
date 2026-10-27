@@ -25,7 +25,14 @@ body{height:100vh;min-height:620px;display:flex;flex-direction:column;background
 .diary-edit-btn{background:#e0e7ff!important;color:#3730a3!important;border:1px solid #c7d2fe!important;font-weight:800}
 .diary-save-btn{background:#d1fae5!important;color:#065f46!important;border:1px solid #a7f3d0!important;font-weight:800}
 .diary-edit-row td{background:#fffbeb!important}
-.diary-table tbody tr.diary-progress td{background:#fff0f3}.diary-table tbody tr.diary-done td{background:#f1f3f5;color:#596273}.diary-table tbody tr.diary-late td{background:#fbdce5;color:#7f1238;font-weight:600}.diary-table tbody tr.diary-wait td{background:#fff7e6}.diary-table tbody tr.diary-planned td{background:#f2f7ff}.diary-table tbody tr td:first-child{border-left:4px solid transparent}.diary-table tbody tr.diary-progress td:first-child{border-left-color:#e8799a}.diary-table tbody tr.diary-done td:first-child{border-left-color:#aeb6c2}.diary-table tbody tr.diary-late td:first-child{border-left-color:#c2185b}.diary-table tbody tr.diary-wait td:first-child{border-left-color:#e6a23c}.diary-table tbody tr.diary-planned td:first-child{border-left-color:#7aa7e8}.diary-table tbody tr:hover td{filter:brightness(.985)}.diary-table td select.diary-status{font-weight:800;border-width:1px}.diary-table td select.diary-status.status-progress{background:#ffe0e8;color:#9d174d;border-color:#f5a6bc}.diary-table td select.diary-status.status-done{background:#e5e7eb;color:#374151;border-color:#cbd5e1}.diary-table td select.diary-status.status-late{background:#f5b9cb;color:#831843;border-color:#df6b91}.diary-table td select.diary-status.status-wait{background:#ffedc2;color:#92400e;border-color:#f4cd76}.diary-table td select.diary-status.status-planned{background:#dbeafe;color:#1e40af;border-color:#93c5fd}.diary-actions{display:flex;gap:7px;flex-wrap:wrap}.priority-pill{display:inline-block;padding:3px 7px;border-radius:5px;font-size:.68rem;font-weight:800}.priority-normal{background:#f1f5f9;color:#475569}.priority-important{background:#fef3c7;color:#92400e}.priority-urgent{background:#fee2e2;color:#b91c1c}
+.diary-table tbody tr.diary-progress td{background:#fff0f3}.diary-table tbody tr.diary-done td{background:#f1f3f5;color:#596273}.diary-table tbody tr.diary-late td{background:#fbdce5;color:#7f1238;font-weight:600}.diary-table tbody tr.diary-wait td{background:#fff7e6}.diary-table tbody tr.diary-planned td{background:#f2f7ff}.diary-table tbody tr td:first-child{border-left:4px solid transparent}.diary-table tbody tr.diary-progress td:first-child{border-left-color:#e8799a}.diary-table tbody tr.diary-done td:first-child{border-left-color:#aeb6c2}.diary-table tbody tr.diary-late td:first-child{border-left-color:#c2185b}.diary-table tbody tr.diary-wait td:first-child{border-left-color:#e6a23c}.diary-table tbody tr.diary-planned td:first-child{border-left-color:#7aa7e8}.diary-table tbody tr:hover td{filter:brightness(.985)}.diary-table td select.diary-status{font-weight:800;border-width:1px}
+/* 업무일지 상태 배지 색상 */
+.diary-table .priority-pill.status-progress{background:#ffe0e8!important;color:#9d174d!important;border:1px solid #f5a6bc;padding:5px 9px;font-size:.78rem}
+.diary-table .priority-pill.status-done{background:#e5e7eb!important;color:#374151!important;border:1px solid #cbd5e1;padding:5px 9px;font-size:.78rem}
+.diary-table .priority-pill.status-planned{background:#dbeafe!important;color:#1e40af!important;border:1px solid #93c5fd;padding:5px 9px;font-size:.78rem}
+.diary-table .priority-pill.status-late{background:#fce7f3!important;color:#9d174d!important;border:1px solid #f9a8d4;padding:5px 9px;font-size:.78rem}
+.diary-table .priority-pill.status-wait{background:#fef3c7!important;color:#92400e!important;border:1px solid #fcd34d;padding:5px 9px;font-size:.78rem}
+.diary-table td select.diary-status.status-progress{background:#ffe0e8;color:#9d174d;border-color:#f5a6bc}.diary-table td select.diary-status.status-done{background:#e5e7eb;color:#374151;border-color:#cbd5e1}.diary-table td select.diary-status.status-late{background:#f5b9cb;color:#831843;border-color:#df6b91}.diary-table td select.diary-status.status-wait{background:#ffedc2;color:#92400e;border-color:#f4cd76}.diary-table td select.diary-status.status-planned{background:#dbeafe;color:#1e40af;border-color:#93c5fd}.diary-actions{display:flex;gap:7px;flex-wrap:wrap}.priority-pill{display:inline-block;padding:3px 7px;border-radius:5px;font-size:.68rem;font-weight:800}.priority-normal{background:#f1f5f9;color:#475569}.priority-important{background:#fef3c7;color:#92400e}.priority-urgent{background:#fee2e2;color:#b91c1c}
 @media(max-width:720px){.topnav{padding:0 8px}.nav-brand{margin-right:8px}.nav-link{padding:0 10px}.diary-page{padding:9px}.settings-form label{min-width:100%;}.settings-row{align-items:flex-start}}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
@@ -873,7 +880,7 @@ function syncLegacyTaskLogs(){
      if(!linked){
        const stamp=log.at?new Date(log.at):null;
        const logDate=log.date||((stamp&&!Number.isNaN(stamp.getTime()))?toISO(stamp):(t.date||toISO(new Date())));
-       diaryRows.push({id:`diary-${log.id}`,logId:log.id,taskId:t.id,taskTitle:t.title,date:logDate,status:log.status||t.status||'진행 중',person:log.person||t.relatedPerson||'',content:log.text||'',deadline:t.date||'',note:log.note||('연결 업무: '+t.title),at:log.at||''});
+       diaryRows.push({id:`diary-${log.id}`,logId:log.id,taskId:t.id,taskTitle:t.title,date:logDate,status:log.status||t.status||'진행 중',person:log.person||t.relatedPerson||'',content:log.text||'',deadline:t.date||'',note:log.note||('연결 업무: '+t.title),at:log.at||'',createdAt:log.at||null});
      }
    });
  });
@@ -1181,7 +1188,7 @@ function initCalcPage(){if($('calcRows')&&!$('calcRows').children.length){for(le
 function showPage(pageId,button){
  document.querySelectorAll('.page-panel').forEach(p=>p.classList.toggle('active',p.id===pageId));
  document.querySelectorAll('.nav-link[data-page]').forEach(b=>b.classList.toggle('active',b===button||b.dataset.page===pageId));
- if(pageId==='diaryPage')renderDiaryTable();
+ if(pageId==='diaryPage'){renderDiaryTable();requestAnimationFrame(()=>{const wrap=document.querySelector('.diary-table-wrap');if(wrap)wrap.scrollTop=wrap.scrollHeight;});}
  if(pageId==='quickLinksPage')renderQuickLinksManager();
  if(pageId==='contactsPage')renderContacts();
  if(pageId==='leavePage'){fillLeaveProfile();refreshLeaveDraftSelect();renderLeaveManager();}
@@ -1194,7 +1201,7 @@ const diaryEditingIds = new Set();
 function addDiaryRow(){
  const now=new Date();diaryRows.push({id:`d-${Date.now()}-${Math.random().toString(16).slice(2)}`,date:toISO(now),createdAt:now.toISOString(),status:'진행 중',person:'',content:'',deadline:'',note:''});
  const newRow=diaryRows[diaryRows.length-1];diaryEditingIds.add(newRow.id);saveData();renderDiaryTable();
- const body=$('diaryTableBody');if(body.lastElementChild)body.lastElementChild.scrollIntoView({block:'nearest'});
+ const wrap=document.querySelector('.diary-table-wrap');if(wrap)wrap.scrollTop=wrap.scrollHeight;const row=document.querySelector(`[data-diary-row="${CSS.escape(String(newRow.id))}"]`);if(row)row.scrollIntoView({block:'nearest'});
 }
 function removeDiaryRow(id){if(!confirm('이 일지 행을 삭제할까요?'))return;diaryRows=diaryRows.filter(r=>r.id!==id);saveData();renderDiaryTable()}
 function openLinkedTask(taskId){const t=tasks.find(x=>String(x.id)===String(taskId));if(!t){alert('연결된 달력 일정이 없습니다.');return;}showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}
@@ -1229,8 +1236,8 @@ function saveDiaryEdit(id){
 function renderDiaryTable(){
  const body=$('diaryTableBody');if(!body)return;
  const search=($('diarySearch')?.value||'').trim().toLowerCase(),personFilter=($('diaryPersonFilter')?.value||'').trim().toLowerCase(),status=$('diaryStatusFilter')?.value||'',from=$('diaryDateFrom')?.value||'',to=$('diaryDateTo')?.value||'';
- const rows=diaryRows.filter(r=>{if(status&&r.status!==status)return false;if(from&&r.date<from)return false;if(to&&r.date>to)return false;if(personFilter&&!(r.person||'').toLowerCase().includes(personFilter))return false;return !search||[r.date,r.status,r.person,r.content,r.deadline,r.note].join(' ').toLowerCase().includes(search)}).sort((a,b)=>(b.createdAt||b.date||'').localeCompare(a.createdAt||a.date||''));
- body.innerHTML=rows.length?rows.map((r,i)=>{const editing=diaryEditingIds.has(r.id);const created=r.createdAt?new Date(r.createdAt):null;const updated=r.updatedAt?new Date(r.updatedAt):null;const hasUpdate=updated&&!Number.isNaN(updated.getTime())&&(!created||updated.getTime()>created.getTime()+1000);const stamp=hasUpdate?updated:created;const stampText=stamp&&!Number.isNaN(stamp.getTime())?stamp.toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):(r.date||'날짜 없음');const stampLabel=hasUpdate?'수정':'작성';
+ const rows=diaryRows.filter(r=>{if(status&&r.status!==status)return false;if(from&&r.date<from)return false;if(to&&r.date>to)return false;if(personFilter&&!(r.person||'').toLowerCase().includes(personFilter))return false;return !search||[r.date,r.status,r.person,r.content,r.deadline,r.note].join(' ').toLowerCase().includes(search)}).sort((a,b)=>{const byDate=String(a.date||'').localeCompare(String(b.date||''));if(byDate)return byDate;return String(a.createdAt||a.at||'').localeCompare(String(b.createdAt||b.at||''));});
+ body.innerHTML=rows.length?rows.map((r,i)=>{const editing=diaryEditingIds.has(r.id);const createdSource=r.createdAt||r.at||null;const created=createdSource?new Date(createdSource):null;const updated=r.updatedAt?new Date(r.updatedAt):null;const hasUpdate=updated&&!Number.isNaN(updated.getTime())&&(!created||updated.getTime()>created.getTime()+1000);const stamp=hasUpdate?updated:created;const stampText=stamp&&!Number.isNaN(stamp.getTime())?stamp.toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:true}):(r.date||'날짜 없음');const stampLabel=hasUpdate?'수정':'작성';
  const statusClass=r.status==='완료'?'status-done':r.status==='진행 중'?'status-progress':r.status==='지연'?'status-late':(['결재 대기','자료 대기'].includes(r.status)?'status-wait':'status-planned');
  return `<tr data-diary-row="${escapeHTML(r.id)}" class="diary-row ${editing?'diary-edit-row ':''}${r.status==='완료'?'diary-done':r.status==='진행 중'?'diary-progress':r.status==='지연'?'diary-late':(['결재 대기','자료 대기'].includes(r.status)?'diary-wait':'diary-planned')}">
  <td>${i+1}</td>
