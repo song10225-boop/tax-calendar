@@ -563,11 +563,6 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     </div>
     <div class="cal-group">
       <div class="cal-group-header"><span>업무 분야</span><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="edit-btn" id="catToggleAllBtn" onclick="toggleAllCategories()">전체 해제</button></div></div>
-      <label class="cal-item"><input type="checkbox" class="cat-filter" value="회계" checked onchange="renderAll()"><span class="color-dot" style="background:#93c5fd"></span>회계</label>
-      <label class="cal-item"><input type="checkbox" class="cat-filter" value="자금" checked onchange="renderAll()"><span class="color-dot" style="background:#86efac"></span>자금</label>
-      <label class="cal-item"><input type="checkbox" class="cat-filter" value="인사" checked onchange="renderAll()"><span class="color-dot" style="background:#fdba74"></span>인사</label>
-      <label class="cal-item"><input type="checkbox" class="cat-filter" value="총무" checked onchange="renderAll()"><span class="color-dot" style="background:#c4b5fd"></span>총무</label>
-      <label class="cal-item"><input type="checkbox" class="cat-filter" value="공통" checked onchange="renderAll()"><span class="color-dot" style="background:#fda4af"></span>공통</label>
       <div id="customCategoryFilters"></div>
       <button class="small-action" onclick="manageCategories()">＋ 분야 추가·수정</button>
     </div>
@@ -1047,15 +1042,34 @@ function escapeHTML(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;',
 function renderCategoryOptions(){
  const cats=getCategories();
  const previousChecks=new Map([...document.querySelectorAll('.cat-filter')].map(el=>[el.value,el.checked]));
- const filters=$('customCategoryFilters');if(filters)filters.innerHTML=cats.filter(c=>!DEFAULT_CATEGORIES.some(d=>d.name===c.name)).map(c=>`<label class="cal-item"><input type="checkbox" class="cat-filter" value="${escapeHTML(c.name)}" ${previousChecks.has(c.name)?(previousChecks.get(c.name)?'checked':''):'checked'} onchange="renderAll()"><span class="color-dot" style="background:${escapeHTML(c.color)}"></span>${escapeHTML(c.name)}</label>`).join('');
+ const filters=$('customCategoryFilters');
+ if(filters) filters.innerHTML=cats.map(c=>`<label class="cal-item"><input type="checkbox" class="cat-filter" value="${escapeHTML(c.name)}" ${previousChecks.has(c.name)?(previousChecks.get(c.name)?'checked':''):'checked'} onchange="renderAll()"><span class="color-dot" style="background:${escapeHTML(c.color)}"></span>${escapeHTML(c.name)}</label>`).join('');
  ['taskCategory','quickCategory'].forEach(id=>{const el=$(id);if(!el)return;const current=el.value;el.innerHTML=cats.map(c=>`<option value="${escapeHTML(c.name)}">${escapeHTML(c.name)}</option>`).join('');if(cats.some(c=>c.name===current))el.value=current;});
 }
 function manageCategories(){
- const cats=getCategories();const action=prompt('업무 분야 관리\n1 = 분야 추가\n2 = 이름/색상 수정\n3 = 사용자 지정 분야 삭제');if(!action)return;
- if(action==='1'){const name=(prompt('새 분야 이름 (예: 송송)')||'').trim();if(!name)return;if(cats.some(c=>c.name===name)){alert('이미 있는 분야 이름이에요.');return;}const color=prompt('분야 색상 HEX (예: #fbcfe8)','#fbcfe8')||'#fbcfe8';if(!/^#[0-9a-fA-F]{6}$/.test(color)){alert('색상은 #RRGGBB 형식으로 입력해 주세요.');return;}cats.push({name,color});}
- else if(action==='2'){if(!cats.length)return;const idx=Number(prompt('수정할 분야 번호를 입력하세요.\n'+cats.map((c,i)=>`${i+1}. ${c.name} (${c.color})`).join('\n')))-1;if(!Number.isInteger(idx)||idx<0||idx>=cats.length)return;const name=(prompt('새 이름',cats[idx].name)||'').trim();if(!name)return;const color=prompt('새 HEX 색상',cats[idx].color)||cats[idx].color;if(!/^#[0-9a-fA-F]{6}$/.test(color)){alert('색상은 #RRGGBB 형식으로 입력해 주세요.');return;}const old=cats[idx].name;cats[idx]={name,color};tasks.forEach(t=>{if(t.category===old)t.category=name;});}
- else if(action==='3'){const custom=cats.filter(c=>!DEFAULT_CATEGORIES.some(d=>d.name===c.name));if(!custom.length){alert('삭제할 사용자 지정 분야가 없습니다.');return;}const idx=Number(prompt('삭제할 사용자 지정 분야 번호를 입력하세요.\n'+custom.map((c,i)=>`${i+1}. ${c.name}`).join('\n')))-1;if(!Number.isInteger(idx)||idx<0||idx>=custom.length)return;const name=custom[idx].name;if(!confirm(`'${name}' 분야를 삭제할까요? 해당 업무는 공통 분야로 바뀝니다.`))return;profile.categories=cats.filter(c=>c.name!==name);tasks.forEach(t=>{if(t.category===name)t.category='공통';});}
- else return;
+ const cats=getCategories();
+ const action=prompt('업무 분야 관리\n1 = 분야 추가\n2 = 기존 분야 이름/색상 변경\n3 = 기존 분야 포함 삭제');if(!action)return;
+ if(action==='1'){
+  const name=(prompt('새 분야 이름 (예: 송송)')||'').trim();if(!name)return;
+  if(cats.some(c=>c.name===name)){alert('이미 있는 분야 이름이에요.');return;}
+  const color=prompt('분야 색상 HEX (예: #fbcfe8)','#fbcfe8')||'#fbcfe8';if(!/^#[0-9a-fA-F]{6}$/.test(color)){alert('색상은 #RRGGBB 형식으로 입력해 주세요.');return;}cats.push({name,color});
+ }else if(action==='2'){
+  if(!cats.length)return;
+  const idx=Number(prompt('수정할 분야 번호를 입력하세요.\n'+cats.map((c,i)=>`${i+1}. ${c.name} (${c.color})`).join('\n')))-1;
+  if(!Number.isInteger(idx)||idx<0||idx>=cats.length)return;
+  const name=(prompt('새 이름',cats[idx].name)||'').trim();if(!name)return;
+  if(cats.some((c,i)=>i!==idx&&c.name===name)){alert('이미 있는 분야 이름이에요.');return;}
+  const color=prompt('새 HEX 색상',cats[idx].color)||cats[idx].color;if(!/^#[0-9a-fA-F]{6}$/.test(color)){alert('색상은 #RRGGBB 형식으로 입력해 주세요.');return;}
+  const old=cats[idx].name;cats[idx]={name,color};tasks.forEach(t=>{if(t.category===old)t.category=name;});
+ }else if(action==='3'){
+  if(!cats.length){alert('삭제할 분야가 없습니다.');return;}
+  const idx=Number(prompt('삭제할 분야 번호를 입력하세요.\n'+cats.map((c,i)=>`${i+1}. ${c.name}`).join('\n')))-1;
+  if(!Number.isInteger(idx)||idx<0||idx>=cats.length)return;
+  if(cats.length===1){alert('분야는 최소 1개 이상 있어야 합니다. 다른 분야를 추가한 뒤 삭제해 주세요.');return;}
+  const name=cats[idx].name;const fallback=cats.find(c=>c.name==='공통'&&c.name!==name)?.name||cats.find(c=>c.name!==name).name;
+  if(!confirm(`'${name}' 분야를 삭제할까요? 이 분야의 업무는 '${fallback}' 분야로 변경됩니다.`))return;
+  profile.categories=cats.filter(c=>c.name!==name);tasks.forEach(t=>{if(t.category===name)t.category=fallback;});
+ }else return;
  renderCategoryOptions();renderAll();saveData();
 }
 function syncLinkedDiaryStatus(task){
@@ -1781,7 +1795,17 @@ function ensureRecurringTasks(){
  changed=tasks.length!==before;
  if(changed)saveData();
 }
-function deleteCurrentTask(){const id=$('taskId').value;if(!id)return;if(confirm('이 업무를 삭제할까요?')){tasks=tasks.filter(t=>t.id!==id);saveData();closeTaskModal();renderAll()}}
+function deleteCurrentTask(){
+ const id=String($('taskId').value||'');if(!id)return;
+ const task=tasks.find(t=>String(t.id)===id);if(!task)return;
+ const rootId=id.replace(/-r\d+$/,'');
+ const isRecurring=task.repeat&&task.repeat!=='none'||tasks.some(t=>String(t.id).startsWith(rootId+'-r'));
+ const message=isRecurring?'반복 업무를 삭제할까요? 원본과 이미 생성된 모든 반복 업무가 함께 삭제되며 다시 나타나지 않습니다.':'이 업무를 삭제할까요?';
+ if(confirm(message)){
+  tasks=tasks.filter(t=>String(t.id)!==rootId&&!String(t.id).startsWith(rootId+'-r'));
+  saveData();closeTaskModal();renderAll();
+ }
+}
 function quickAdd(){const title=$('quickTitle').value.trim();if(!title)return;tasks.push({id:`${Date.now()}-${Math.random().toString(16).slice(2)}`,title,emoji:'',date:selectedDate,category:$('quickCategory').value,status:'예정',priority:'normal',repeat:'none',memo:''});$('quickTitle').value='';saveData();renderAll()}
 function editProfile(){const name=prompt('이름 또는 별칭을 입력하세요.',profile.name);if(name===null)return;const company=prompt('회사 / 부서명을 입력하세요.',profile.company);if(company===null)return;profile={...profile,name:name.trim()||'사용자',company:company.trim()||'경영전략부'};saveData();$('profileText').textContent=`${profile.name} · ${profile.company}`}
 function exportJSON(){const blob=new Blob([JSON.stringify({tasks,diaryRows,profile,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});downloadBlob(blob,`업무캘린더_백업_${toISO(today)}.json`)}
