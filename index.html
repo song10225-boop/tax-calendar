@@ -394,6 +394,13 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .sticky-note-actions button{border:1px solid #8d7b4538;border-radius:7px;background:#ffffffa8;padding:5px 9px;font-size:.76rem;font-weight:800;cursor:pointer;color:#594d2a}
 .sticky-empty{grid-column:1/-1;padding:35px 15px;text-align:center;border:1px dashed var(--line);border-radius:12px;background:#ffffff9c;color:#64748b}
 @media(max-width:600px){.sticky-memo-grid{grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px}.sticky-note{padding:15px 12px}.sticky-memo-form label{min-width:100%}}
+
+/* 업무일지: 상태별 왼쪽 세로선과 행 아래 가로선을 같은 색상으로 표시 */
+.diary-table tbody tr.diary-progress td{border-bottom:2px solid #e8799a!important}
+.diary-table tbody tr.diary-done td{border-bottom:2px solid #aeb6c2!important}
+.diary-table tbody tr.diary-late td{border-bottom:2px solid #c2185b!important}
+.diary-table tbody tr.diary-wait td{border-bottom:2px solid #e6a23c!important}
+.diary-table tbody tr.diary-planned td{border-bottom:2px solid #7aa7e8!important}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
