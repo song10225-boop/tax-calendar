@@ -456,6 +456,13 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 #authLoginBtn{background:#2563eb;color:#fff}#authResetBtn{background:#f1f5f9;color:#334155}
 #authMessage{font-size:.82rem;color:#b91c1c;min-height:1.3em;margin-top:10px;white-space:pre-wrap}#accountBar{font-size:.75rem;opacity:.95;display:flex;align-items:center;gap:8px}#accountBar button{border:0;border-radius:6px;padding:5px 8px;cursor:pointer}
 .calendar-cell.calendar-blank{background:#f8fafc;cursor:default}.calendar-cell.calendar-blank:hover{background:#f8fafc}
+
+/* FIX: 기본 포스트잇에는 도라에몽 배경 이미지가 절대 표시되지 않도록 함.
+   기존 nth-child 장식 규칙보다 뒤에서 덮어씀. */
+.sticky-note:not(.doraemon-note) {
+  background-image: none !important;
+}
+
 </style>
 <div id="authGate">
  <div class="auth-card">
