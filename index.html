@@ -395,6 +395,12 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .sticky-empty{grid-column:1/-1;padding:35px 15px;text-align:center;border:1px dashed var(--line);border-radius:12px;background:#ffffff9c;color:#64748b}
 @media(max-width:600px){.sticky-memo-grid{grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px}.sticky-note{padding:15px 12px}.sticky-memo-form label{min-width:100%}}
 
+
+/* 포스트잇 편집창: 줄바꿈·공백 유지 및 커서 위치 이모티콘 삽입 */
+.sticky-edit-modal .sticky-edit-emojis{display:flex;gap:6px;flex-wrap:wrap}
+.sticky-edit-modal .sticky-edit-emojis button{min-width:38px;padding:7px 9px;font-size:1.05rem}
+.sticky-edit-modal #stickyMemoEditText{box-sizing:border-box;font-family:inherit}
+
 /* 업무일지: 상태별 왼쪽 세로선과 행 아래 가로선을 같은 색상으로 표시 */
 .diary-table tbody tr.diary-progress td{border-bottom:2px solid #e8799a!important}
 .diary-table tbody tr.diary-done td{border-bottom:2px solid #aeb6c2!important}
@@ -1732,7 +1738,17 @@ function renderStickyMemos(){
  const escAttr=v=>String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
  grid.innerHTML=filtered.map(m=>{const d=new Date(m.createdAt||Date.now());const stamp=isNaN(d.getTime())?'입력일 미상':d.toLocaleString('ko-KR',{year:'2-digit',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});const st=m.style||{};const color=st.color||'#fff4a8';const font=st.font||'inherit';const size=st.size||'15px';const bold=st.bold!==false;const underline=!!st.underline;return `<article class="sticky-note" title="포스트잇" style="background:${escAttr(color)};border-color:#00000018;color:#51461c" onclick="editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')"><div class="sticky-note-emoji">${escapeHTML(m.emoji||"📌")}</div><div class="sticky-note-text" style="font-family:${escAttr(font)};font-size:${escAttr(size)};font-weight:${bold?'700':'400'};text-decoration:${underline?'underline':'none'}">${escapeHTML(m.text||'')}</div><div class="sticky-note-date">🕒 입력일자 ${escapeHTML(stamp)}</div><div class="sticky-note-actions"><button type="button" onclick="event.stopPropagation();editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">수정</button><button type="button" onclick="event.stopPropagation();styleStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">꾸미기</button><button type="button" onclick="event.stopPropagation();deleteStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">삭제</button></div></article>`}).join('');
 }
-function editStickyMemo(id){const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;const next=prompt('메모 내용을 수정해 주세요.',m.text||'');if(next===null)return;if(!next.trim()){alert('메모 내용을 입력해 주세요.');return;}m.text=next.trim();m.updatedAt=new Date().toISOString();saveData();renderStickyMemos();}
+function editStickyMemo(id){
+ const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;
+ const old=document.getElementById('stickyMemoEditModal');if(old)old.remove();
+ const backdrop=document.createElement('div');backdrop.id='stickyMemoEditModal';backdrop.className='modal-backdrop open';backdrop.style.zIndex='100';backdrop.setAttribute('role','dialog');backdrop.setAttribute('aria-modal','true');
+ backdrop.innerHTML=`<div class="modal sticky-edit-modal" style="width:min(760px,100%)"><div class="modal-header"><h2>📝 포스트잇 수정</h2><button type="button" class="close-btn" id="stickyEditClose" aria-label="닫기">×</button></div><p class="subtle" style="margin:-5px 0 10px">줄바꿈은 Enter, 띄어쓰기는 원하는 만큼 입력할 수 있어요. 이모티콘은 커서가 있는 위치에 삽입돼요.</p><div class="sticky-edit-emojis" aria-label="이모티콘 삽입">${['😀','📌','❤️','⭐','✅','⚠️','💡','📅','💰','🌷','🧾','☎️','🎯','📝'].map(e=>`<button type="button" class="btn btn-white" data-emoji="${e}" aria-label="${e} 삽입">${e}</button>`).join('')}</div><textarea id="stickyMemoEditText" class="field" rows="12" maxlength="1000" style="min-height:260px;resize:vertical;white-space:pre-wrap;line-height:1.7;background:#fffef5;margin-top:10px" aria-label="포스트잇 내용 수정"></textarea><div class="modal-actions"><div><span class="subtle">최대 1,000자</span></div><div><button type="button" class="btn btn-outline" id="stickyEditCancel">취소</button><button type="button" class="btn btn-primary" id="stickyEditSave">저장</button></div></div></div>`;
+ document.body.appendChild(backdrop);const area=backdrop.querySelector('#stickyMemoEditText');area.value=m.text||'';area.focus();area.setSelectionRange(area.value.length,area.value.length);
+ const close=()=>backdrop.remove();backdrop.querySelector('#stickyEditClose').onclick=close;backdrop.querySelector('#stickyEditCancel').onclick=close;backdrop.addEventListener('click',e=>{if(e.target===backdrop)close();});
+ backdrop.querySelectorAll('[data-emoji]').forEach(btn=>btn.addEventListener('click',()=>{const start=area.selectionStart,end=area.selectionEnd,emoji=btn.dataset.emoji;area.setRangeText(emoji,start,end,'end');area.focus();}));
+ backdrop.querySelector('#stickyEditSave').onclick=()=>{const next=area.value;if(!next.trim()){alert('메모 내용을 입력해 주세요.');area.focus();return;}m.text=next;m.updatedAt=new Date().toISOString();saveData();close();renderStickyMemos();};
+ area.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')backdrop.querySelector('#stickyEditSave').click();if(e.key==='Escape')close();});
+}
 function styleStickyMemo(id){
  const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;m.style=m.style||{};
  const colors=[['레몬 노랑','#fff4a8'],['딸기 핑크','#ffe0e8'],['민트 그린','#dff3dc'],['하늘 블루','#dcecff'],['라벤더','#eadfff'],['살구','#ffe8cc'],['화이트','#ffffff']];
