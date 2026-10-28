@@ -463,6 +463,58 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
   background-image: none !important;
 }
 
+
+/* FIX: 기본 포스트잇의 색상/배경 이미지가 nth-child 장식에 덮이지 않도록 강제 */
+.sticky-note:not(.doraemon-note){
+  background-image:none !important;
+  background-color:var(--sticky-note-color,#fff4a8) !important;
+}
+.sticky-note.doraemon-note{
+  background-color:var(--sticky-note-color,#eaf7ff) !important;
+}
+.sticky-edit-modal .sticky-edit-settings{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:10px;
+  padding:12px;
+  border:1px solid #dbe2ef;
+  border-radius:10px;
+  background:#f8faff;
+}
+.sticky-edit-modal .sticky-edit-settings label{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  font-size:.76rem;
+  font-weight:800;
+  color:#475569;
+}
+.sticky-edit-modal .sticky-edit-settings select{
+  width:100%;
+  padding:8px;
+  border:1px solid #d8dee8;
+  border-radius:7px;
+  background:#fff;
+  font:inherit;
+}
+.sticky-edit-modal .sticky-edit-checks{
+  grid-column:1/-1;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.sticky-edit-modal .sticky-edit-checks label{
+  flex-direction:row;
+  align-items:center;
+  gap:5px;
+}
+@media(max-width:600px){
+  .sticky-edit-modal .sticky-edit-settings{grid-template-columns:1fr}
+  .sticky-edit-modal .sticky-edit-checks{grid-column:auto}
+}
+
 </style>
 <div id="authGate">
  <div class="auth-card">
@@ -1758,7 +1810,7 @@ function stickyStyleFromControls(){
 function addStickyMemo(e){
  e.preventDefault();const input=$('stickyMemoText');const text=(input?.value||'').trim();if(!text)return;
  profile.stickyNotes=Array.isArray(profile.stickyNotes)?profile.stickyNotes:[];
- profile.stickyNotes.unshift({id:`memo-${Date.now()}-${Math.random().toString(16).slice(2)}`,text,emoji:$('stickyMemoEmoji')?.value||'📌',design:$('stickyMemoDesign')?.value==='doraemon'?'doraemon':'original',createdAt:new Date().toISOString(),style:stickyStyleFromControls()});
+ profile.stickyNotes.unshift({id:`memo-${Date.now()}-${Math.random().toString(16).slice(2)}`,text,emoji:$('stickyMemoEmoji')?.value||'📌',design:$('stickyMemoDesign')?.value==='doraemon'?'doraemon':'original',createdAt:new Date().toISOString(),style:{...stickyStyleFromControls(),emojiSize:'1.35rem'}});
  saveData();input.value='';renderStickyMemos();
 }
 function clearStickyMemoSearch(){const input=$('stickyMemoSearch');if(input)input.value='';renderStickyMemos();}
@@ -1774,32 +1826,102 @@ function renderStickyMemos(){
  if(!all.length){grid.innerHTML='<div class="sticky-empty">📌 아직 메모가 없어요.<br>위에 내용을 적고 포스트잇을 만들어 보세요!</div>';return;}
  if(!filtered.length){grid.innerHTML='<div class="sticky-empty">🔎 검색 결과가 없어요.<br>다른 단어로 검색해 보세요.</div>';return;}
  const escAttr=v=>String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
- grid.innerHTML=filtered.map(m=>{const d=new Date(m.createdAt||Date.now());const stamp=isNaN(d.getTime())?'입력일 미상':d.toLocaleString('ko-KR',{year:'2-digit',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});const st=m.style||{};const color=st.color||'#fff4a8';const font=st.font||'inherit';const size=st.size||'15px';const bold=st.bold!==false;const underline=!!st.underline;return `<article class="sticky-note${m.design==='doraemon'?' doraemon-note':''}" title="포스트잇" style="background-color:${escAttr(color)};border-color:transparent;color:#254c70" onclick="editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')"><div class="sticky-note-emoji">${escapeHTML(m.emoji||"📌")}</div><div class="sticky-note-text" style="font-family:${escAttr(font)};font-size:${escAttr(size)};font-weight:${bold?'700':'400'};text-decoration:${underline?'underline':'none'}">${escapeHTML(m.text||'')}</div><div class="sticky-note-date">🕒 입력일자 ${escapeHTML(stamp)}</div><div class="sticky-note-actions"><button type="button" onclick="event.stopPropagation();editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">수정</button><button type="button" onclick="event.stopPropagation();styleStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">꾸미기</button><button type="button" onclick="event.stopPropagation();deleteStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">삭제</button></div></article>`}).join('');
+ grid.innerHTML=filtered.map(m=>{
+   const d=new Date(m.createdAt||Date.now());
+   const stamp=isNaN(d.getTime())?'입력일 미상':d.toLocaleString('ko-KR',{year:'2-digit',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+   const st=m.style||{};
+   const isDoraemon=m.design==='doraemon';
+   const color=st.color||(isDoraemon?'#eaf7ff':'#fff4a8');
+   const font=st.font||'inherit';
+   const size=st.size||'15px';
+   const emojiSize=st.emojiSize||(isDoraemon?'1.05rem':'1.35rem');
+   const bold=st.bold!==false;
+   const underline=!!st.underline;
+   const bgStyle=`--sticky-note-color:${escAttr(color)};background-color:${escAttr(color)} !important;${isDoraemon?'':'background-image:none !important;'}`;
+   const id=String(m.id).replace(/'/g,"\\'");
+   return `<article class="sticky-note${isDoraemon?' doraemon-note':''}" title="포스트잇" style="${bgStyle};border-color:transparent;color:#254c70" onclick="editStickyMemo('${id}')"><div class="sticky-note-emoji" style="font-size:${escAttr(emojiSize)}">${escapeHTML(m.emoji||"📌")}</div><div class="sticky-note-text" style="font-family:${escAttr(font)};font-size:${escAttr(size)};font-weight:${bold?'700':'400'};text-decoration:${underline?'underline':'none'}">${escapeHTML(m.text||'')}</div><div class="sticky-note-date">🕒 입력일자 ${escapeHTML(stamp)}</div><div class="sticky-note-actions"><button type="button" onclick="event.stopPropagation();editStickyMemo('${id}')">수정</button><button type="button" onclick="event.stopPropagation();styleStickyMemo('${id}')">꾸미기</button><button type="button" onclick="event.stopPropagation();deleteStickyMemo('${id}')">삭제</button></div></article>`;
+ }).join('');
 }
+
 function editStickyMemo(id){
  const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;
  const old=document.getElementById('stickyMemoEditModal');if(old)old.remove();
- const backdrop=document.createElement('div');backdrop.id='stickyMemoEditModal';backdrop.className='modal-backdrop open';backdrop.style.zIndex='100';backdrop.setAttribute('role','dialog');backdrop.setAttribute('aria-modal','true');
- backdrop.innerHTML=`<div class="modal sticky-edit-modal" style="width:min(760px,100%)"><div class="modal-header"><h2>📝 포스트잇 수정</h2><button type="button" class="close-btn" id="stickyEditClose" aria-label="닫기">×</button></div><p class="subtle" style="margin:-5px 0 10px">줄바꿈은 Enter, 띄어쓰기는 원하는 만큼 입력할 수 있어요. 이모티콘은 커서가 있는 위치에 삽입돼요.</p><div class="sticky-edit-emojis" aria-label="이모티콘 삽입">${['😀','📌','❤️','⭐','✅','⚠️','💡','📅','💰','🌷','🧾','☎️','🎯','📝'].map(e=>`<button type="button" class="btn btn-white" data-emoji="${e}" aria-label="${e} 삽입">${e}</button>`).join('')}</div><textarea id="stickyMemoEditText" class="field" rows="12" maxlength="1000" style="min-height:260px;resize:vertical;white-space:pre-wrap;line-height:1.7;background:#fffef5;margin-top:10px" aria-label="포스트잇 내용 수정"></textarea><div class="modal-actions"><div><span class="subtle">최대 1,000자</span></div><div><button type="button" class="btn btn-outline" id="stickyEditCancel">취소</button><button type="button" class="btn btn-primary" id="stickyEditSave">저장</button></div></div></div>`;
- document.body.appendChild(backdrop);const area=backdrop.querySelector('#stickyMemoEditText');area.value=m.text||'';area.focus();area.setSelectionRange(area.value.length,area.value.length);
- const close=()=>backdrop.remove();backdrop.querySelector('#stickyEditClose').onclick=close;backdrop.querySelector('#stickyEditCancel').onclick=close;backdrop.addEventListener('click',e=>{if(e.target===backdrop)close();});
- backdrop.querySelectorAll('[data-emoji]').forEach(btn=>btn.addEventListener('click',()=>{const start=area.selectionStart,end=area.selectionEnd,emoji=btn.dataset.emoji;area.setRangeText(emoji,start,end,'end');area.focus();}));
- backdrop.querySelector('#stickyEditSave').onclick=()=>{const next=area.value;if(!next.trim()){alert('메모 내용을 입력해 주세요.');area.focus();return;}m.text=next;m.updatedAt=new Date().toISOString();saveData();close();renderStickyMemos();};
+ const st=m.style||{};
+ const backdrop=document.createElement('div');
+ backdrop.id='stickyMemoEditModal';backdrop.className='modal-backdrop open';backdrop.style.zIndex='100';backdrop.setAttribute('role','dialog');backdrop.setAttribute('aria-modal','true');
+
+ const emojiOptions=['😀','📌','❤️','⭐','✅','⚠️','💡','📅','💰','🌷','🧾','☎️','🎯','📝'];
+ const colorOptions=[['#fff4a8','레몬 노랑'],['#ffe0e8','딸기 핑크'],['#dff3dc','민트 그린'],['#dcecff','하늘 블루'],['#eadfff','라벤더'],['#ffe8cc','살구'],['#ffffff','화이트']];
+ const fontOptions=[['inherit','기본 글씨체'],['Malgun Gothic, 맑은 고딕, sans-serif','맑은 고딕'],['Gulim, 굴림, sans-serif','굴림'],['Batang, 바탕, serif','바탕'],['Georgia, serif','Georgia'],['monospace','고정폭']];
+ const sizeOptions=[['13px','작게'],['15px','보통'],['17px','크게'],['20px','아주 크게'],['24px','특대']];
+ const emojiSizeOptions=[['1rem','작게'],['1.35rem','보통'],['1.7rem','크게'],['2.1rem','아주 크게']];
+
+ backdrop.innerHTML=`<div class="modal sticky-edit-modal" style="width:min(760px,100%)">
+   <div class="modal-header"><h2>📝 포스트잇 수정 · 꾸미기</h2><button type="button" class="close-btn" id="stickyEditClose" aria-label="닫기">×</button></div>
+   <p class="subtle" style="margin:-5px 0 10px">내용뿐 아니라 이모티콘, 포스트잇 색상, 글씨체·크기까지 한 번에 바꿀 수 있어요.</p>
+   <div class="sticky-edit-emojis" aria-label="이모티콘 삽입">${emojiOptions.map(e=>`<button type="button" class="btn btn-white" data-emoji="${e}" aria-label="${e} 삽입">${e}</button>`).join('')}</div>
+   <div class="sticky-edit-settings">
+     <label>상단 이모티콘<select id="stickyEditEmoji">${emojiOptions.map(e=>`<option value="${e}">${e}</option>`).join('')}</select></label>
+     <label>포스트잇 디자인<select id="stickyEditDesign"><option value="original">📝 기본 포스트잇</option><option value="doraemon">💙 도라에몽 스케치북</option></select></label>
+     <label>포스트잇 색상<select id="stickyEditColor">${colorOptions.map(([v,n])=>`<option value="${v}">${n}</option>`).join('')}</select></label>
+     <label>글씨체<select id="stickyEditFont">${fontOptions.map(([v,n])=>`<option value="${v}">${n}</option>`).join('')}</select></label>
+     <label>글씨 크기<select id="stickyEditSize">${sizeOptions.map(([v,n])=>`<option value="${v}">${n}</option>`).join('')}</select></label>
+     <label>이모티콘 크기<select id="stickyEditEmojiSize">${emojiSizeOptions.map(([v,n])=>`<option value="${v}">${n}</option>`).join('')}</select></label>
+     <div class="sticky-edit-checks">
+       <label><input id="stickyEditBold" type="checkbox"> 굵게</label>
+       <label><input id="stickyEditUnderline" type="checkbox"> 밑줄</label>
+     </div>
+   </div>
+   <textarea id="stickyMemoEditText" class="field" rows="12" maxlength="1000" style="min-height:260px;resize:vertical;white-space:pre-wrap;line-height:1.7;background:#fffef5;margin-top:10px" aria-label="포스트잇 내용 수정"></textarea>
+   <div class="modal-actions"><div><span class="subtle">최대 1,000자</span></div><div><button type="button" class="btn btn-outline" id="stickyEditCancel">취소</button><button type="button" class="btn btn-primary" id="stickyEditSave">저장</button></div></div>
+ </div>`;
+
+ document.body.appendChild(backdrop);
+ const area=backdrop.querySelector('#stickyMemoEditText');
+ area.value=m.text||'';
+ backdrop.querySelector('#stickyEditEmoji').value=m.emoji||'📌';
+ backdrop.querySelector('#stickyEditDesign').value=m.design==='doraemon'?'doraemon':'original';
+ backdrop.querySelector('#stickyEditColor').value=st.color||'#fff4a8';
+ backdrop.querySelector('#stickyEditFont').value=st.font||'inherit';
+ backdrop.querySelector('#stickyEditSize').value=st.size||'15px';
+ backdrop.querySelector('#stickyEditEmojiSize').value=st.emojiSize||(m.design==='doraemon'?'1.05rem':'1.35rem');
+ backdrop.querySelector('#stickyEditBold').checked=st.bold!==false;
+ backdrop.querySelector('#stickyEditUnderline').checked=!!st.underline;
+ area.focus();area.setSelectionRange(area.value.length,area.value.length);
+
+ const close=()=>backdrop.remove();
+ backdrop.querySelector('#stickyEditClose').onclick=close;
+ backdrop.querySelector('#stickyEditCancel').onclick=close;
+ backdrop.addEventListener('click',e=>{if(e.target===backdrop)close();});
+ backdrop.querySelectorAll('[data-emoji]').forEach(btn=>btn.addEventListener('click',()=>{
+   const start=area.selectionStart,end=area.selectionEnd,emoji=btn.dataset.emoji;
+   area.setRangeText(emoji,start,end,'end');
+   backdrop.querySelector('#stickyEditEmoji').value=emoji;
+   area.focus();
+ }));
+ backdrop.querySelector('#stickyEditEmoji').addEventListener('change',e=>{});
+ backdrop.querySelector('#stickyEditSave').onclick=()=>{
+   const next=area.value;
+   if(!next.trim()){alert('메모 내용을 입력해 주세요.');area.focus();return;}
+   m.text=next;
+   m.emoji=backdrop.querySelector('#stickyEditEmoji').value||'📌';
+   m.design=backdrop.querySelector('#stickyEditDesign').value==='doraemon'?'doraemon':'original';
+   m.style={
+     color:backdrop.querySelector('#stickyEditColor').value||'#fff4a8',
+     font:backdrop.querySelector('#stickyEditFont').value||'inherit',
+     size:backdrop.querySelector('#stickyEditSize').value||'15px',
+     emojiSize:backdrop.querySelector('#stickyEditEmojiSize').value||'1.35rem',
+     bold:backdrop.querySelector('#stickyEditBold').checked,
+     underline:backdrop.querySelector('#stickyEditUnderline').checked
+   };
+   m.updatedAt=new Date().toISOString();
+   saveData();close();renderStickyMemos();
+ };
  area.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')backdrop.querySelector('#stickyEditSave').click();if(e.key==='Escape')close();});
 }
+
 function styleStickyMemo(id){
- const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;m.style=m.style||{};
- const colors=[['레몬 노랑','#fff4a8'],['딸기 핑크','#ffe0e8'],['민트 그린','#dff3dc'],['하늘 블루','#dcecff'],['라벤더','#eadfff'],['살구','#ffe8cc'],['화이트','#ffffff']];
- const colorChoice=prompt('포스트잇 색상 번호를 선택하세요.\n'+colors.map((c,i)=>`${i+1}. ${c[0]}`).join('\n'),String(Math.max(1,colors.findIndex(c=>c[1]===m.style.color)+1)));
- if(colorChoice===null)return;const ci=Number(colorChoice)-1;if(!Number.isInteger(ci)||ci<0||ci>=colors.length){alert('색상 번호를 확인해 주세요.');return;}m.style.color=colors[ci][1];
- const fonts=[['기본 글씨체','inherit'],['맑은 고딕','Malgun Gothic, 맑은 고딕, sans-serif'],['굴림','Gulim, 굴림, sans-serif'],['바탕','Batang, 바탕, serif'],['Georgia','Georgia, serif'],['고정폭','monospace']];
- const fi=prompt('글씨체 번호를 선택하세요.\n'+fonts.map((f,i)=>`${i+1}. ${f[0]}`).join('\n'),String(Math.max(1,fonts.findIndex(f=>f[1]===m.style.font)+1)));
- if(fi===null)return;const fn=Number(fi)-1;if(!Number.isInteger(fn)||fn<0||fn>=fonts.length){alert('글씨체 번호를 확인해 주세요.');return;}m.style.font=fonts[fn][1];
- const sizes=[['작게','13px'],['보통','15px'],['크게','17px'],['아주 크게','20px'],['특대','24px']];
- const si=prompt('글씨 크기 번호를 선택하세요.\n'+sizes.map((v,i)=>`${i+1}. ${v[0]}`).join('\n'),String(Math.max(1,sizes.findIndex(v=>v[1]===(m.style.size||'15px'))+1)));
- if(si===null)return;const sn=Number(si)-1;if(!Number.isInteger(sn)||sn<0||sn>=sizes.length){alert('글씨 크기 번호를 확인해 주세요.');return;}m.style.size=sizes[sn][1];
- m.style.bold=confirm('글씨를 굵게 표시할까요?');m.style.underline=confirm('글씨에 밑줄을 표시할까요?');
- saveData();renderStickyMemos();
+ editStickyMemo(id);
 }
 function deleteStickyMemo(id){const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;if(!confirm('이 포스트잇 메모를 삭제할까요?'))return;profile.stickyNotes=profile.stickyNotes.filter(x=>String(x.id)!==String(id));saveData();renderStickyMemos();}
 
