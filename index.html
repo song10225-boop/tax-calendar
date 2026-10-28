@@ -961,7 +961,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     <div class="form-row"><label for="taskStatus">진행 상태</label><select class="field" id="taskStatus"><option>예정</option><option>진행 중</option><option>결재 대기</option><option>자료 대기</option><option>완료</option></select></div>
     <div class="form-row"><label for="taskPriority">중요도</label><select class="field" id="taskPriority"><option value="normal">보통</option><option value="important">중요</option><option value="urgent">긴급</option></select></div>
     <div class="form-row"><label for="taskIsDday">디데이 목록</label><label style="display:flex;align-items:center;gap:8px;font-weight:600"><input id="taskIsDday" type="checkbox" style="width:auto"> 디데이 목록에 표시</label></div>
-    <div class="form-row"><label for="taskRepeat">반복 주기</label><select class="field" id="taskRepeat"><option value="none">반복 없음</option><option value="monthly">매월</option><option value="quarterly">분기별</option><option value="yearly">매년</option></select></div>
+    <div class="form-row"><label for="taskRepeat">반복 주기</label><select class="field" id="taskRepeat"><option value="none">반복 없음</option><option value="monthly">매월 (같은 날짜)</option><option value="quarterly">분기별 (같은 날짜)</option><option value="yearly">매년 (같은 날짜)</option></select></div>
     <div class="form-row"><label for="taskColor">달력 형광펜 / 배경색</label><select class="field" id="taskColor"><option value="">기본 색상(분야별)</option><option value="#fff3a3">노랑 형광펜</option><option value="#d9f99d">연두 형광펜</option><option value="#fecdd3">분홍</option><option value="#bfdbfe">하늘색</option><option value="#ddd6fe">연보라</option><option value="#fed7aa">살구색</option></select></div>
     <div class="form-row"><label for="taskActualDate">실제 완료일</label><input class="field" id="taskActualDate" type="date"></div>
     <div class="form-row full"><label for="taskMemo">메모 / 증빙 / 후속 조치</label><textarea class="field" id="taskMemo" placeholder="필요 서류, 타부서 협조, 다음 조치 등을 입력하세요."></textarea></div>
@@ -1479,7 +1479,7 @@ function setListTaskStatus(id,checked){
  syncLinkedDiaryStatus(task);
  saveData();renderAll();renderDiaryTable();
 }
-function renderAll(){renderCategoryOptions();updateQuickFilterButtons();renderCalendar();renderMini();renderSidebar();if(viewMode==='week'){const a=new Date((selectedDate||toISO(today))+'T12:00:00');a.setDate(a.getDate()-a.getDay());const b=new Date(a);b.setDate(a.getDate()+6);$('calendarTitle').textContent=`${a.getFullYear()}년 ${a.getMonth()+1}월 ${a.getDate()}일 ~ ${b.getMonth()+1}월 ${b.getDate()}일`; }else $('calendarTitle').textContent=monthLabel(viewYear,viewMonth);$('miniTitle').textContent=monthLabel(viewYear,viewMonth);$('monthViewBtn').style.background=viewMode==='month'?'#dbeafe':'white';$('weekViewBtn').style.background=viewMode==='week'?'#dbeafe':'white';$('listViewBtn').style.background=viewMode==='list'?'#dbeafe':'white';$('monthViewBtn').style.fontWeight=viewMode==='month'?'900':'600';$('weekViewBtn').style.fontWeight=viewMode==='week'?'900':'600';$('listViewBtn').style.fontWeight=viewMode==='list'?'900':'600'}
+function renderAll(){ensureRecurringTasks();renderCategoryOptions();updateQuickFilterButtons();renderCalendar();renderMini();renderSidebar();if(viewMode==='week'){const a=new Date((selectedDate||toISO(today))+'T12:00:00');a.setDate(a.getDate()-a.getDay());const b=new Date(a);b.setDate(a.getDate()+6);$('calendarTitle').textContent=`${a.getFullYear()}년 ${a.getMonth()+1}월 ${a.getDate()}일 ~ ${b.getMonth()+1}월 ${b.getDate()}일`; }else $('calendarTitle').textContent=monthLabel(viewYear,viewMonth);$('miniTitle').textContent=monthLabel(viewYear,viewMonth);$('monthViewBtn').style.background=viewMode==='month'?'#dbeafe':'white';$('weekViewBtn').style.background=viewMode==='week'?'#dbeafe':'white';$('listViewBtn').style.background=viewMode==='list'?'#dbeafe':'white';$('monthViewBtn').style.fontWeight=viewMode==='month'?'900':'600';$('weekViewBtn').style.fontWeight=viewMode==='week'?'900':'600';$('listViewBtn').style.fontWeight=viewMode==='list'?'900':'600'}
 function renderCalendar(){
  const root=$('calendarContent'),all=visibleTasks();root.innerHTML='';
  if(viewMode==='list'){
@@ -1727,7 +1727,7 @@ async function saveTask(e){
  let uploadedAttachments=[];
  try{for(const file of selectedFiles){const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100);const path=`users/${currentUser.uid}/tasks/${taskId}/${Date.now()}_${Math.random().toString(16).slice(2)}_${safeName}`;const snap=await storage.ref().child(path).put(file,{contentType:file.type||'application/octet-stream',customMetadata:{originalName:file.name}});const url=await snap.ref.getDownloadURL();uploadedAttachments.push({name:file.name,type:file.type||'',size:file.size,url,path,uploadedAt:new Date().toISOString()});}}catch(err){console.error('첨부 업로드 실패',err);alert('첨부파일 업로드에 실패했어요. Firebase Storage 사용 설정과 보안 규칙, 인터넷 연결을 확인해 주세요.\n파일이 저장되지 않았으니 일정은 아직 저장하지 않았어요.');return;}
  const item={id:taskId,title,emoji:$('taskEmoji').value,date,endDate:endDate||date,relatedPerson:$('taskRelatedPerson').value.trim(),category:$('taskCategory').value,status:$('taskStatus').value,priority:$('taskPriority').value,isDday:$('taskIsDday').checked,repeat:$('taskRepeat').value,actualDate:$('taskActualDate').value,memo:$('taskMemo').value.trim(),link:$('taskLink').value.trim(),color:$('taskColor').value,logs,attachments:[...keptAttachments,...uploadedAttachments]};
- if(id){const idx=tasks.findIndex(t=>t.id===id);if(idx>=0)tasks[idx]=item}else{tasks.push(item);if(item.repeat!=='none')createRecurring(item)}
+ if(id){const idx=tasks.findIndex(t=>t.id===id);if(idx>=0)tasks[idx]=item}else{tasks.push(item)}if(item.repeat!=='none')createRecurring(item)
  // 기존 진행일지의 연결 정보도 현재 업무의 담당자·상태·마감일과 동기화
  diaryRows.filter(r=>r.taskId===taskId).forEach(r=>{r.person=item.relatedPerson;r.status=item.status;r.deadline=item.date;r.taskTitle=item.title;r.note='연결 업무: '+item.title;});
  if(newLog){
@@ -1736,11 +1736,50 @@ async function saveTask(e){
  selectedDate=date;const d=parseISO(date);viewYear=d.getFullYear();viewMonth=d.getMonth();
  saveData();if(!id){clearTaskDraft();$('taskId').value='saved-draft-clear';}removedAttachmentPaths.clear();closeTaskModal();renderAll();renderDiaryTable();
 }
+function isNonBusinessDate(iso){
+ const d=parseISO(iso),day=d.getDay();
+ return day===0||day===6||!!getHoliday(iso);
+}
+function nextBusinessDate(iso){
+ let d=parseISO(iso);
+ while(isNonBusinessDate(toISO(d))) d.setDate(d.getDate()+1);
+ return toISO(d);
+}
+function recurringBaseDate(source, repeat, i){
+ const y=source.getFullYear(),m=source.getMonth(),day=source.getDate();
+ let d;
+ if(repeat==='monthly'){
+   d=new Date(y,m+i,1,12);
+   d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));
+ }else if(repeat==='quarterly'){
+   d=new Date(y,m+(3*i),1,12);
+   d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));
+ }else{
+   d=new Date(y+i,m,1,12);
+   d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));
+ }
+ return toISO(d);
+}
 function createRecurring(t){
- const count=t.repeat==='monthly'?11:t.repeat==='quarterly'?3:t.repeat==='yearly'?3:0;const source=parseISO(t.date);
- for(let i=1;i<=count;i++){let d=new Date(source);if(t.repeat==='monthly')d.setMonth(d.getMonth()+i);if(t.repeat==='quarterly')d.setMonth(d.getMonth()+3*i);if(t.repeat==='yearly')d.setFullYear(d.getFullYear()+i);
- const day=source.getDate();if(d.getDate()!==day)d.setDate(0);
- const date=toISO(d);if(!tasks.some(x=>x.title===t.title&&x.date===date))tasks.push({...t,id:`${t.id}-r${i}`,date,status:'예정',actualDate:''})}
+ // 반복 업무는 앞으로 36회까지 미리 만들어 두고, 달력에서 즉시 보이도록 합니다.
+ const count=t.repeat==='monthly'?36:t.repeat==='quarterly'?12:t.repeat==='yearly'?5:0;
+ const source=parseISO(t.date);
+ for(let i=1;i<=count;i++){
+   const baseDate=recurringBaseDate(source,t.repeat,i);
+   // 원천세처럼 매월 특정일이 법정기한인 업무는 토·일·공휴일이면 다음 영업일로 이동
+   const date=nextBusinessDate(baseDate);
+   if(!tasks.some(x=>x.title===t.title&&x.date===date)){
+     tasks.push({...t,id:`${t.id}-r${i}`,date,status:'예정',actualDate:''});
+   }
+ }
+}
+function ensureRecurringTasks(){
+ const roots=tasks.filter(t=>t.repeat&&t.repeat!=='none'&&!/-r\d+$/.test(String(t.id)));
+ let changed=false;
+ const before=tasks.length;
+ roots.forEach(t=>createRecurring(t));
+ changed=tasks.length!==before;
+ if(changed)saveData();
 }
 function deleteCurrentTask(){const id=$('taskId').value;if(!id)return;if(confirm('이 업무를 삭제할까요?')){tasks=tasks.filter(t=>t.id!==id);saveData();closeTaskModal();renderAll()}}
 function quickAdd(){const title=$('quickTitle').value.trim();if(!title)return;tasks.push({id:`${Date.now()}-${Math.random().toString(16).slice(2)}`,title,emoji:'',date:selectedDate,category:$('quickCategory').value,status:'예정',priority:'normal',repeat:'none',memo:''});$('quickTitle').value='';saveData();renderAll()}
