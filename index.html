@@ -375,6 +375,23 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .event-chip.range-end{border-radius:0 6px 6px 0!important;margin-left:-6px!important;width:calc(100% + 6px)!important;position:relative;z-index:1}
 @media(max-width:720px){.week-calendar-grid{grid-auto-rows:minmax(230px,auto);grid-template-rows:38px minmax(230px,auto)}.week-calendar-grid .calendar-cell{min-height:230px}.quick-filter.active{box-shadow:0 0 0 1px currentColor}}
 
+
+/* 포스트잇 메모장 */
+.sticky-memo-form{display:flex;align-items:end;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px}
+.sticky-memo-form label{display:flex;flex-direction:column;gap:7px;flex:1;min-width:240px;font-weight:800;color:#475569;font-size:.85rem}
+.sticky-memo-form textarea{width:100%;resize:vertical;min-height:76px;padding:11px 12px;border:1px solid #e4d58b;border-radius:8px;background:#fffef5;font:inherit;line-height:1.55}
+.sticky-memo-hint{font-size:.8rem;color:#64748b}
+.sticky-memo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;align-items:start;padding:4px 2px 18px}
+.sticky-note{position:relative;min-height:150px;padding:18px 16px 13px;background:#fff4a8;border:1px solid #eadb78;border-radius:3px 3px 12px 3px;box-shadow:2px 5px 12px #6b5b2518;transform:rotate(-.5deg);white-space:pre-wrap;overflow-wrap:anywhere;cursor:pointer;color:#51461c;line-height:1.65}
+.sticky-note:nth-child(3n+2){background:#ffe0e8;border-color:#efc1ce;transform:rotate(.7deg);color:#633d49}
+.sticky-note:nth-child(3n){background:#dff3dc;border-color:#b9dbb4;transform:rotate(-.2deg);color:#315438}
+.sticky-note:before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:56px;height:12px;background:#ffffff80;border-radius:0 0 5px 5px}
+.sticky-note-text{font-size:.96rem;font-weight:700;margin:5px 0 17px;min-height:48px}
+.sticky-note-date{font-size:.72rem;color:#766b47;border-top:1px dashed #9d8d574d;padding-top:7px}
+.sticky-note-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:9px}
+.sticky-note-actions button{border:1px solid #8d7b4538;border-radius:7px;background:#ffffffa8;padding:5px 9px;font-size:.76rem;font-weight:800;cursor:pointer;color:#594d2a}
+.sticky-empty{grid-column:1/-1;padding:35px 15px;text-align:center;border:1px dashed var(--line);border-radius:12px;background:#ffffff9c;color:#64748b}
+@media(max-width:600px){.sticky-memo-grid{grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px}.sticky-note{padding:15px 12px}.sticky-memo-form label{min-width:100%}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
@@ -414,9 +431,9 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 <header>
   <div class="logo-area"><span>📅</span><span id="appTitleText">경영전략부 업무 캘린더</span></div>
   <div class="header-actions">
-    <span id="accountBar" style="display:none"></span>
     <button class="btn btn-white" onclick="openAppearanceSettings()">제목·색상 설정</button>
     <button class="btn btn-white" onclick="openTaskModal()">＋ 업무 추가</button>
+    <span id="accountBar" style="display:none"></span>
   </div>
 </header>
 <nav class="topnav" aria-label="주 메뉴">
@@ -424,6 +441,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
   <button class="nav-link active" data-page="calendarPage" onclick="showPage('calendarPage',this)"><span class="nav-icon">🗓️</span> 세무 달력</button>
   <button class="nav-link" data-page="diaryPage" onclick="showPage('diaryPage',this)"><span class="nav-icon">📒</span> 업무일지</button>
   <button class="nav-link" data-page="todayListPage" onclick="showPage('todayListPage',this)"><span class="nav-icon">📝</span> 투데이리스트</button>
+  <button class="nav-link" data-page="memoPage" onclick="showPage('memoPage',this)"><span class="nav-icon">📌</span> 메모장</button>
   <button class="nav-link" data-page="calculatorPage" onclick="showPage('calculatorPage',this)"><span class="nav-icon">🧮</span> 계산기</button>
   <button class="nav-link" data-page="quickLinksPage" onclick="showPage('quickLinksPage',this)"><span class="nav-icon">💗</span> 즐겨찾기</button>
   <button class="nav-link" data-page="contactsPage" onclick="showPage('contactsPage',this)"><span class="nav-icon">📇</span> 연락망</button>
@@ -712,6 +730,18 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
   <div class="today-tools"><input id="todaySearch" type="search" placeholder="🔎 메모·비고 검색" oninput="renderTodayList()"><div class="today-filter"><label><input type="checkbox" id="todayShowCompleted" checked onchange="renderTodayList()"> 완료한 항목도 보기</label></div></div>
   <div id="todayListItems" class="today-list-items"></div>
 </section>
+<section id="memoPage" class="page-panel diary-page sticky-memo-page">
+  <div class="diary-toolbar">
+    <div class="diary-heading"><div class="diary-title"><span class="diary-title-mark">📌</span>메모장</div><div class="diary-subtitle">잊지 말아야 할 회계 처리 기준이나 키워드를 포스트잇처럼 간단히 적어두세요.</div></div>
+    <div class="today-count" id="stickyMemoCount">메모 0개</div>
+  </div>
+  <form class="sticky-memo-form" onsubmit="addStickyMemo(event)">
+    <label>메모 내용<textarea id="stickyMemoText" required maxlength="1000" rows="3" placeholder="예: 단기금융상품으로 처리하기 (26년 4월~)"></textarea></label>
+    <button class="btn btn-primary" type="submit">📌 포스트잇 만들기</button>
+  </form>
+  <div class="sticky-memo-hint">💡 입력일자는 자동으로 기록돼요. 메모를 눌러 수정하거나 삭제할 수 있어요.</div>
+  <div id="stickyMemoGrid" class="sticky-memo-grid"></div>
+</section>
 <section id="holidaysPage" class="page-panel diary-page">
   <div class="diary-toolbar"><div><div class="panel-title">🌷 공휴일·임시공휴일 관리</div><div class="subtle">회사 휴무일이나 임시공휴일을 추가하면 달력에 표시됩니다.</div></div></div>
   <form class="settings-form" onsubmit="addHolidayFromForm(event)">
@@ -974,7 +1004,7 @@ async function handleSignedIn(user){
   if(!snap.exists){await ref.set({tasks,diaryRows,profile,updatedAt:new Date().toISOString()});}
   await loadContactsCloud();
   await loadLeaveCloud();
-  renderAll();renderDiaryTable();renderQuickLinksManager();renderHolidaysManager();renderTodayList();renderContacts();setSyncStatus('클라우드 연결됨');
+  renderAll();renderDiaryTable();renderQuickLinksManager();renderHolidaysManager();renderTodayList();renderStickyMemos();renderContacts();setSyncStatus('클라우드 연결됨');
  }catch(e){cloudLoadComplete=false;contactsCloudReady=false;setSyncStatus('클라우드 연결 오류');alert('로그인은 되었지만 클라우드 데이터를 불러오지 못했습니다. Firestore 규칙이 게시되었는지 확인해 주세요.\n'+(e.message||''));}
 }
 async function changeTaxDiaryPassword(){
@@ -1240,6 +1270,7 @@ function showPage(pageId,button){
  if(pageId==='holidaysPage')renderHolidaysManager();
  if(pageId==='ddayPage')renderDdayList();
  if(pageId==='todayListPage')renderTodayList();
+ if(pageId==='memoPage')renderStickyMemos();
 }
 const diaryEditingIds = new Set();
 function addDiaryRow(){
@@ -1638,6 +1669,21 @@ function editQuickLink(i){
  catch(e){alert('올바른 http:// 또는 https:// 사이트 주소를 입력해 주세요.')}
 }
 function deleteQuickLink(i){if(!confirm('이 바로가기를 삭제할까요?'))return;profile.quickLinks=profile.quickLinks||[];profile.quickLinks.splice(i,1);saveData();renderQuickLinksManager();renderAll()}
+function addStickyMemo(e){
+ e.preventDefault();const input=$('stickyMemoText');const text=(input?.value||'').trim();if(!text)return;
+ profile.stickyNotes=Array.isArray(profile.stickyNotes)?profile.stickyNotes:[];
+ profile.stickyNotes.unshift({id:`memo-${Date.now()}-${Math.random().toString(16).slice(2)}`,text,createdAt:new Date().toISOString()});
+ saveData();input.value='';renderStickyMemos();
+}
+function renderStickyMemos(){
+ const grid=$('stickyMemoGrid');if(!grid)return;profile.stickyNotes=Array.isArray(profile.stickyNotes)?profile.stickyNotes:[];
+ const count=$('stickyMemoCount');if(count)count.textContent=`메모 ${profile.stickyNotes.length}개`;
+ if(!profile.stickyNotes.length){grid.innerHTML='<div class="sticky-empty">📌 아직 메모가 없어요.<br>위에 내용을 적고 포스트잇을 만들어 보세요!</div>';return;}
+ grid.innerHTML=profile.stickyNotes.map(m=>{const d=new Date(m.createdAt||Date.now());const stamp=isNaN(d.getTime())?'입력일 미상':d.toLocaleString('ko-KR',{year:'2-digit',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});return `<article class="sticky-note" title="눌러서 메모 수정" onclick="editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')"><div class="sticky-note-text">${escapeHTML(m.text||'')}</div><div class="sticky-note-date">🕒 입력일자 ${escapeHTML(stamp)}</div><div class="sticky-note-actions"><button type="button" onclick="event.stopPropagation();editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">수정</button><button type="button" onclick="event.stopPropagation();deleteStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">삭제</button></div></article>`}).join('');
+}
+function editStickyMemo(id){const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;const next=prompt('메모 내용을 수정해 주세요.',m.text||'');if(next===null)return;if(!next.trim()){alert('메모 내용을 입력해 주세요.');return;}m.text=next.trim();m.updatedAt=new Date().toISOString();saveData();renderStickyMemos();}
+function deleteStickyMemo(id){const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;if(!confirm('이 포스트잇 메모를 삭제할까요?'))return;profile.stickyNotes=profile.stickyNotes.filter(x=>String(x.id)!==String(id));saveData();renderStickyMemos();}
+
 function addTodayItem(e){
  e.preventDefault();
  const text=$('todayText').value.trim(),note=$('todayNote').value.trim(),emoji=$('todayEmoji').value||'📝';
