@@ -389,7 +389,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .sticky-note:nth-child(3n){background:#dff3dc;border-color:#b9dbb4;transform:rotate(-.2deg);color:#315438}
 .sticky-note:before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:56px;height:12px;background:#ffffff80;border-radius:0 0 5px 5px}
 .sticky-note-text{font-size:.96rem;font-weight:700;margin:5px 0 17px;min-height:48px}
-.sticky-note-date{font-size:.72rem;color:#766b47;border-top:1px dashed #9d8d574d;padding-top:7px;line-height:1.45;overflow-wrap:anywhere}
+.sticky-note-date{font-size:.76rem;font-weight:900;color:#3f3a2a;border-top:1px solid #c9b85a;border-radius:5px;background:#fffdf0;padding:5px 7px;line-height:1.35;overflow-wrap:anywhere;box-shadow:0 1px 3px #6b5b2518}
 .sticky-note-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:9px}
 .sticky-note-actions button{border:1px solid #8d7b4538;border-radius:7px;background:#ffffffa8;padding:5px 9px;font-size:.76rem;font-weight:800;cursor:pointer;color:#594d2a}
 .sticky-empty{grid-column:1/-1;padding:35px 15px;text-align:center;border:1px dashed var(--line);border-radius:12px;background:#ffffff9c;color:#64748b}
@@ -433,6 +433,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .diary-table tbody tr.diary-late td{border-bottom:2px solid #c2185b!important}
 .diary-table tbody tr.diary-wait td{border-bottom:2px solid #e6a23c!important}
 .diary-table tbody tr.diary-planned td{border-bottom:2px solid #7aa7e8!important}
+.font-dotum{font-family:Dotum,"돋움",Arial,sans-serif!important}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
@@ -856,7 +857,8 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
   </form>
   <div class="sticky-style-tools">
     <label>포스트잇 색상<select id="stickyColor"><option value="#fff4a8">레몬 노랑</option><option value="#ffe0e8">딸기 핑크</option><option value="#dff3dc">민트 그린</option><option value="#dcecff">하늘 블루</option><option value="#eadfff">라벤더</option><option value="#ffe8cc">살구</option><option value="#ffffff">화이트</option></select></label>
-    <label>글씨체<select id="stickyFont"><option value="inherit">기본 글씨체</option><option value="Malgun Gothic, 맑은 고딕, sans-serif">맑은 고딕</option><option value="Gulim, 굴림, sans-serif">굴림</option><option value="Batang, 바탕, serif">바탕</option><option value="Georgia, serif">Georgia</option><option value="monospace">고정폭 글씨체</option></select></label>
+    <label>글씨체<select id="stickyFont"><option value="inherit">기본 글씨체</option><option value="Malgun Gothic, 맑은 고딕, sans-serif">맑은 고딕</option><option value="Gulim, 굴림, sans-serif">굴림</option><option value="Batang, 바탕, serif">바탕</option><option value="Georgia, serif">Georgia</option><option value="monospace">고정폭 글씨체</option>
+<option value="Dotum, 돋움, Arial, sans-serif">돋움</option></select></label>
     <label>글씨 크기<select id="stickySize"><option value="13px">작게</option><option value="15px" selected>보통</option><option value="17px">크게</option><option value="20px">아주 크게</option><option value="24px">특대</option></select></label>
     <label class="style-check"><input id="stickyBold" type="checkbox" checked> 굵게</label>
     <label class="style-check"><input id="stickyUnderline" type="checkbox"> 밑줄</label>
