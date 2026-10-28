@@ -357,6 +357,24 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 .calculator-summary-card strong{font-size:clamp(1.25rem,2.1vw,1.7rem)!important;color:#1f2e49!important}
 .calculator-table input.calc-qty,.calculator-table input.calc-unit{font-size:.9rem!important;font-weight:650!important;text-align:right;font-variant-numeric:tabular-nums}
 
+
+/* 주간 보기와 선택 상태 강조 */
+.week-calendar-grid{grid-template-rows:44px minmax(360px,1fr);grid-auto-rows:minmax(360px,1fr);min-height:430px}
+.week-calendar-grid .calendar-cell{min-height:360px}
+.calendar-cell.selected-week-day{box-shadow:inset 0 0 0 2px #8b9cf6;background:#f5f3ff}
+.view-controls .btn{transition:background .15s ease,box-shadow .15s ease,border-color .15s ease}
+.quick-filter{transition:background .15s ease,box-shadow .15s ease,transform .15s ease}
+.quick-filter.active{box-shadow:0 0 0 2px rgba(255,255,255,.95),0 0 0 4px currentColor;font-weight:900;transform:translateY(-1px)}
+body.theme-blue .quick-filter.active{background:#dbeafe;border-color:#60a5fa;color:#1d4ed8}
+body.theme-rose .quick-filter.active{background:#fce7f3;border-color:#e879a8;color:#9d174d}
+body.theme-beige .quick-filter.active{background:#fef3c7;border-color:#d6b94e;color:#854d0e}
+body.theme-lavender .quick-filter.active{background:#ede9fe;border-color:#a78bfa;color:#5b21b6}
+body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;color:#166534}
+.event-chip.range-start{border-radius:6px 0 0 6px!important;margin-right:-6px!important;width:calc(100% + 6px)!important;position:relative;z-index:1}
+.event-chip.range-middle{border-radius:0!important;margin-left:-6px!important;margin-right:-6px!important;width:calc(100% + 12px)!important;position:relative;z-index:1;opacity:.92}
+.event-chip.range-end{border-radius:0 6px 6px 0!important;margin-left:-6px!important;width:calc(100% + 6px)!important;position:relative;z-index:1}
+@media(max-width:720px){.week-calendar-grid{grid-auto-rows:minmax(230px,auto);grid-template-rows:38px minmax(230px,auto)}.week-calendar-grid .calendar-cell{min-height:230px}.quick-filter.active{box-shadow:0 0 0 1px currentColor}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
@@ -453,7 +471,7 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
   <section class="calendar-area">
     <div class="calendar-header">
       <div class="month-controls"><button class="icon-btn" onclick="changeMonth(-1)">‹</button><div class="calendar-title" id="calendarTitle"></div><button class="icon-btn" onclick="changeMonth(1)">›</button><button class="icon-btn" onclick="goToday()">오늘</button></div>
-      <div class="view-controls"><button class="btn btn-outline" id="monthViewBtn" onclick="setView('month')">월간</button><button class="btn btn-outline" id="listViewBtn" onclick="setView('list')">목록</button></div>
+      <div class="view-controls"><button class="btn btn-outline" id="monthViewBtn" onclick="setView('month')">월간</button><button class="btn btn-outline" id="weekViewBtn" onclick="setView('week')">주간</button><button class="btn btn-outline" id="listViewBtn" onclick="setView('list')">목록</button></div>
     </div>
     <div class="filters">
       <select id="statusFilter" onchange="clearQuickFilter();renderAll()"><option value="all">모든 상태</option><option value="예정">예정</option><option value="진행 중">진행 중</option><option value="결재 대기">결재 대기</option><option value="자료 대기">타부서 자료 대기</option><option value="완료">완료</option><option value="지연">지연</option></select>
@@ -1294,7 +1312,7 @@ function setListTaskStatus(id,checked){
  task.actualDate=checked?toISO(today):'';
  saveData();renderAll();
 }
-function renderAll(){renderCategoryOptions();updateQuickFilterButtons();renderCalendar();renderMini();renderSidebar();$('calendarTitle').textContent=monthLabel(viewYear,viewMonth);$('miniTitle').textContent=monthLabel(viewYear,viewMonth);$('monthViewBtn').style.background=viewMode==='month'?'#dbeafe':'white';$('listViewBtn').style.background=viewMode==='list'?'#dbeafe':'white'}
+function renderAll(){renderCategoryOptions();updateQuickFilterButtons();renderCalendar();renderMini();renderSidebar();if(viewMode==='week'){const a=new Date((selectedDate||toISO(today))+'T12:00:00');a.setDate(a.getDate()-a.getDay());const b=new Date(a);b.setDate(a.getDate()+6);$('calendarTitle').textContent=`${a.getFullYear()}년 ${a.getMonth()+1}월 ${a.getDate()}일 ~ ${b.getMonth()+1}월 ${b.getDate()}일`; }else $('calendarTitle').textContent=monthLabel(viewYear,viewMonth);$('miniTitle').textContent=monthLabel(viewYear,viewMonth);$('monthViewBtn').style.background=viewMode==='month'?'#dbeafe':'white';$('weekViewBtn').style.background=viewMode==='week'?'#dbeafe':'white';$('listViewBtn').style.background=viewMode==='list'?'#dbeafe':'white';$('monthViewBtn').style.fontWeight=viewMode==='month'?'900':'600';$('weekViewBtn').style.fontWeight=viewMode==='week'?'900':'600';$('listViewBtn').style.fontWeight=viewMode==='list'?'900':'600'}
 function renderCalendar(){
  const root=$('calendarContent'),all=visibleTasks();root.innerHTML='';
  if(viewMode==='list'){
@@ -1310,19 +1328,24 @@ function renderCalendar(){
    </div>`).join(''):'<div class="empty-state">이번 달 등록된 업무가 없습니다.</div>');
   root.appendChild(box);return;
  }
- const grid=document.createElement('div');grid.className='calendar-grid';['일','월','화','수','목','금','토'].forEach(d=>{const h=document.createElement('div');h.className='day-header';h.textContent=d;grid.appendChild(h)});
+ const grid=document.createElement('div');grid.className='calendar-grid'+(viewMode==='week'?' week-calendar-grid':'');['일','월','화','수','목','금','토'].forEach(d=>{const h=document.createElement('div');h.className='day-header';h.textContent=d;grid.appendChild(h)});
  const first=new Date(viewYear,viewMonth,1),lastDay=new Date(viewYear,viewMonth+1,0).getDate(),todayISO=toISO(today);
- // 현재 달의 날짜만 표시하고, 앞뒤 달의 날짜는 빈칸으로 둡니다. 대부분 5주, 필요한 달만 6주 표시합니다.
- const leadingBlanks=first.getDay(),totalCells=Math.ceil((leadingBlanks+lastDay)/7)*7;
- for(let i=0;i<totalCells;i++){
-  if(i<leadingBlanks){const blank=document.createElement('div');blank.className='calendar-cell calendar-blank';blank.setAttribute('aria-hidden','true');grid.appendChild(blank);continue;}
-  const dayOfMonth=i-leadingBlanks+1;if(dayOfMonth>lastDay){const blank=document.createElement('div');blank.className='calendar-cell calendar-blank';blank.setAttribute('aria-hidden','true');grid.appendChild(blank);continue;}
-  const d=new Date(viewYear,viewMonth,dayOfMonth),iso=toISO(d),cell=document.createElement('div');cell.className='calendar-cell'+(iso===todayISO?' today-cell':'');cell.dataset.date=iso;const holiday=getHoliday(iso);if(holiday){const hl=document.createElement('div');hl.className='holiday-label';hl.textContent=holiday;cell.appendChild(hl);}
+ let dates=[];
+ if(viewMode==='week'){
+  const anchor=new Date((selectedDate||todayISO)+'T12:00:00');const weekStart=new Date(anchor);weekStart.setDate(anchor.getDate()-anchor.getDay());
+  for(let i=0;i<7;i++){const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);dates.push(d)}
+ }else{
+  const leadingBlanks=first.getDay(),totalCells=Math.ceil((leadingBlanks+lastDay)/7)*7;
+  for(let i=0;i<totalCells;i++){const dayOfMonth=i-leadingBlanks+1;if(dayOfMonth>=1&&dayOfMonth<=lastDay)dates.push(new Date(viewYear,viewMonth,dayOfMonth));else dates.push(null)}
+ }
+ for(const d of dates){
+  if(!d){const blank=document.createElement('div');blank.className='calendar-cell calendar-blank';blank.setAttribute('aria-hidden','true');grid.appendChild(blank);continue;}
+  const iso=toISO(d),cell=document.createElement('div');cell.className='calendar-cell'+(iso===todayISO?' today-cell':'')+(viewMode==='week'&&iso===selectedDate?' selected-week-day':'');cell.dataset.date=iso;const holiday=getHoliday(iso);if(holiday){const hl=document.createElement('div');hl.className='holiday-label';hl.textContent=holiday;cell.appendChild(hl);}
  const day=document.createElement('div');day.className='day-num'+(d.getDay()===0?' sun':d.getDay()===6?' sat':'');day.innerHTML=`<span>${d.getDate()}</span>${iso===todayISO?'<span style="font-size:.62rem;color:#2563eb">오늘</span>':''}`;cell.appendChild(day);
  const dayTasks=all.filter(t=>t.date<=iso&&(t.endDate||t.date)>=iso).sort((a,b)=>priorityOrder(a.priority)-priorityOrder(b.priority));
  if(dayTasks.some(t=>t.priority==='urgent'&&!isOverdue(t)&&t.status!=='완료'))cell.classList.add('has-urgent');
  const expanded=expandedCalendarDates.has(iso);if(expanded)cell.classList.add('expanded-day');
- (expanded?dayTasks:dayTasks.slice(0,3)).forEach(t=>{const chip=document.createElement('button');chip.className=`event-chip cat-${t.category}${t.priority==='urgent'?' urgent':''}${t.status==='완료'?' completed':''}`;chip.title=`${t.title} · ${t.category} · ${t.status}${t.relatedPerson?' · 관련자: '+t.relatedPerson:''}${t.endDate&&t.endDate!==t.date?' · '+t.date+'~'+t.endDate:''}`;const dd=daysUntil(t.date);const emojiStr = t.emoji ? escapeHTML(t.emoji) + ' ' : '';chip.textContent=(isOverdue(t)?'⚠ ':'')+emojiStr+t.title+(dd===0?' · D-Day':dd>0&&dd<=30?` · D-${dd}`:'');if(t.color){chip.style.backgroundColor=t.color;chip.style.color='#172033';chip.classList.add('custom-color')}else{const cat=getCategories().find(c=>c.name===t.category);if(cat){chip.style.backgroundColor=cat.color;chip.style.color='#172033';chip.classList.add('custom-color')}};chip.onclick=e=>{e.stopPropagation();editTask(t.id)};cell.appendChild(chip)});
+ (expanded?dayTasks:dayTasks.slice(0,3)).forEach(t=>{const chip=document.createElement('button');const rangeStart=t.date,rangeEnd=t.endDate||t.date,isRange=rangeEnd>rangeStart;chip.className=`event-chip cat-${t.category}${t.priority==='urgent'?' urgent':''}${t.status==='완료'?' completed':''}${isRange?(iso===rangeStart?' range-start':iso===rangeEnd?' range-end':' range-middle'):''}`;chip.title=`${t.title} · ${t.category} · ${t.status}${t.relatedPerson?' · 관련자: '+t.relatedPerson:''}${isRange?' · '+rangeStart+'~'+rangeEnd:''}`;const dd=daysUntil(t.date);const emojiStr = t.emoji ? escapeHTML(t.emoji) + ' ' : '';chip.textContent=(isOverdue(t)?'⚠ ':'')+(iso===rangeStart?emojiStr+t.title+(dd===0?' · D-Day':dd>0&&dd<=30?` · D-${dd}`:''):isRange?'　':'') ;if(t.color){chip.style.backgroundColor=t.color;chip.style.color='#172033';chip.classList.add('custom-color')}else{const cat=getCategories().find(c=>c.name===t.category);if(cat){chip.style.backgroundColor=cat.color;chip.style.color='#172033';chip.classList.add('custom-color')}};chip.onclick=e=>{e.stopPropagation();editTask(t.id)};cell.appendChild(chip)});
  if(dayTasks.length>3){const more=document.createElement('button');more.type='button';more.className='more-events';more.textContent=expanded?'접기':`+${dayTasks.length-3}건 · 전체 일정 보기`;more.title='해당 날짜의 일정을 모두 펼쳐 봅니다';more.onclick=e=>{e.stopPropagation();if(expanded)expandedCalendarDates.delete(iso);else expandedCalendarDates.add(iso);renderCalendar()};cell.appendChild(more)}
  cell.onclick=()=>{selectedDate=iso;openTaskModal(null,iso);renderSidebar()};grid.appendChild(cell);
  }
