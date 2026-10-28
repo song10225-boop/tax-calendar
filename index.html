@@ -380,7 +380,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .sticky-memo-form{display:flex;align-items:end;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px}
 .sticky-memo-form label{display:flex;flex-direction:column;gap:7px;flex:1;min-width:240px;font-weight:800;color:#475569;font-size:.85rem}
 .sticky-memo-form textarea{width:100%;resize:vertical;min-height:76px;padding:11px 12px;border:1px solid #e4d58b;border-radius:8px;background:#fffef5;font:inherit;line-height:1.55}
-.sticky-memo-hint{font-size:.8rem;color:#64748b}
+.sticky-memo-hint{font-size:.8rem;color:#64748b}\n.sticky-search{display:flex;gap:8px;align-items:center;margin:12px 0 16px}.sticky-search input{flex:1;min-width:0;padding:10px 12px;border:1px solid #d8dee8;border-radius:9px;font:inherit}.sticky-search button{white-space:nowrap}\n.sticky-style-tools{display:flex;gap:9px;flex-wrap:wrap;align-items:end;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px}\n.sticky-style-tools label{display:flex;flex-direction:column;gap:5px;font-size:.76rem;font-weight:800;color:#475569}\n.sticky-style-tools select{padding:8px;border:1px solid #d8dee8;border-radius:7px;background:#fff;font:inherit}\n.sticky-style-tools .style-check{display:flex;flex-direction:row;align-items:center;gap:5px;padding:8px 4px}
 .sticky-memo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;align-items:start;padding:4px 2px 18px}
 .sticky-note{position:relative;min-height:150px;padding:18px 16px 13px;background:#fff4a8;border:1px solid #eadb78;border-radius:3px 3px 12px 3px;box-shadow:2px 5px 12px #6b5b2518;transform:rotate(-.5deg);white-space:pre-wrap;overflow-wrap:anywhere;cursor:pointer;color:#51461c;line-height:1.65}
 .sticky-note:nth-child(3n+2){background:#ffe0e8;border-color:#efc1ce;transform:rotate(.7deg);color:#633d49}
@@ -739,7 +739,15 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     <label>메모 내용<textarea id="stickyMemoText" required maxlength="1000" rows="3" placeholder="예: 단기금융상품으로 처리하기 (26년 4월~)"></textarea></label>
     <button class="btn btn-primary" type="submit">📌 포스트잇 만들기</button>
   </form>
-  <div class="sticky-memo-hint">💡 입력일자는 자동으로 기록돼요. 메모를 눌러 수정하거나 삭제할 수 있어요.</div>
+  <div class="sticky-style-tools">
+    <label>포스트잇 색상<select id="stickyColor"><option value="#fff4a8">레몬 노랑</option><option value="#ffe0e8">딸기 핑크</option><option value="#dff3dc">민트 그린</option><option value="#dcecff">하늘 블루</option><option value="#eadfff">라벤더</option><option value="#ffe8cc">살구</option><option value="#ffffff">화이트</option></select></label>
+    <label>글씨체<select id="stickyFont"><option value="inherit">기본 글씨체</option><option value="Malgun Gothic, 맑은 고딕, sans-serif">맑은 고딕</option><option value="Gulim, 굴림, sans-serif">굴림</option><option value="Batang, 바탕, serif">바탕</option><option value="Georgia, serif">Georgia</option><option value="monospace">고정폭 글씨체</option></select></label>
+    <label>글씨 크기<select id="stickySize"><option value="13px">작게</option><option value="15px" selected>보통</option><option value="17px">크게</option><option value="20px">아주 크게</option><option value="24px">특대</option></select></label>
+    <label class="style-check"><input id="stickyBold" type="checkbox" checked> 굵게</label>
+    <label class="style-check"><input id="stickyUnderline" type="checkbox"> 밑줄</label>
+  </div>
+  <div class="sticky-memo-hint">💡 위 꾸미기 설정은 새 포스트잇에 적용돼요. 기존 메모는 각 포스트잇의 ‘꾸미기’에서 바꿀 수 있어요.</div>
+  <div class="sticky-search"><input id="stickyMemoSearch" type="search" placeholder="🔎 메모 내용 검색..." oninput="renderStickyMemos()" aria-label="메모 검색"><button type="button" class="btn btn-white" onclick="clearStickyMemoSearch()">초기화</button></div>
   <div id="stickyMemoGrid" class="sticky-memo-grid"></div>
 </section>
 <section id="holidaysPage" class="page-panel diary-page">
@@ -1669,19 +1677,41 @@ function editQuickLink(i){
  catch(e){alert('올바른 http:// 또는 https:// 사이트 주소를 입력해 주세요.')}
 }
 function deleteQuickLink(i){if(!confirm('이 바로가기를 삭제할까요?'))return;profile.quickLinks=profile.quickLinks||[];profile.quickLinks.splice(i,1);saveData();renderQuickLinksManager();renderAll()}
+function stickyStyleFromControls(){
+ return {color:$('stickyColor')?.value||'#fff4a8',font:$('stickyFont')?.value||'inherit',size:$('stickySize')?.value||'15px',bold:!!$('stickyBold')?.checked,underline:!!$('stickyUnderline')?.checked};
+}
 function addStickyMemo(e){
  e.preventDefault();const input=$('stickyMemoText');const text=(input?.value||'').trim();if(!text)return;
  profile.stickyNotes=Array.isArray(profile.stickyNotes)?profile.stickyNotes:[];
- profile.stickyNotes.unshift({id:`memo-${Date.now()}-${Math.random().toString(16).slice(2)}`,text,createdAt:new Date().toISOString()});
+ profile.stickyNotes.unshift({id:`memo-${Date.now()}-${Math.random().toString(16).slice(2)}`,text,createdAt:new Date().toISOString(),style:stickyStyleFromControls()});
  saveData();input.value='';renderStickyMemos();
 }
+function clearStickyMemoSearch(){const input=$('stickyMemoSearch');if(input)input.value='';renderStickyMemos();}
 function renderStickyMemos(){
  const grid=$('stickyMemoGrid');if(!grid)return;profile.stickyNotes=Array.isArray(profile.stickyNotes)?profile.stickyNotes:[];
- const count=$('stickyMemoCount');if(count)count.textContent=`메모 ${profile.stickyNotes.length}개`;
- if(!profile.stickyNotes.length){grid.innerHTML='<div class="sticky-empty">📌 아직 메모가 없어요.<br>위에 내용을 적고 포스트잇을 만들어 보세요!</div>';return;}
- grid.innerHTML=profile.stickyNotes.map(m=>{const d=new Date(m.createdAt||Date.now());const stamp=isNaN(d.getTime())?'입력일 미상':d.toLocaleString('ko-KR',{year:'2-digit',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});return `<article class="sticky-note" title="눌러서 메모 수정" onclick="editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')"><div class="sticky-note-text">${escapeHTML(m.text||'')}</div><div class="sticky-note-date">🕒 입력일자 ${escapeHTML(stamp)}</div><div class="sticky-note-actions"><button type="button" onclick="event.stopPropagation();editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">수정</button><button type="button" onclick="event.stopPropagation();deleteStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">삭제</button></div></article>`}).join('');
+ const all=profile.stickyNotes;const query=($('stickyMemoSearch')?.value||'').trim().toLocaleLowerCase('ko-KR');
+ const filtered=all.filter(m=>String(m.text||'').toLocaleLowerCase('ko-KR').includes(query));
+ const count=$('stickyMemoCount');if(count)count.textContent=query?`검색 결과 ${filtered.length}개 / 전체 ${all.length}개`:`메모 ${all.length}개`;
+ if(!all.length){grid.innerHTML='<div class="sticky-empty">📌 아직 메모가 없어요.<br>위에 내용을 적고 포스트잇을 만들어 보세요!</div>';return;}
+ if(!filtered.length){grid.innerHTML='<div class="sticky-empty">🔎 검색 결과가 없어요.<br>다른 단어로 검색해 보세요.</div>';return;}
+ const escAttr=v=>String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+ grid.innerHTML=filtered.map(m=>{const d=new Date(m.createdAt||Date.now());const stamp=isNaN(d.getTime())?'입력일 미상':d.toLocaleString('ko-KR',{year:'2-digit',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});const st=m.style||{};const color=st.color||'#fff4a8';const font=st.font||'inherit';const size=st.size||'15px';const bold=st.bold!==false;const underline=!!st.underline;return `<article class="sticky-note" title="포스트잇" style="background:${escAttr(color)};border-color:#00000018;color:#51461c" onclick="editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')"><div class="sticky-note-text" style="font-family:${escAttr(font)};font-size:${escAttr(size)};font-weight:${bold?'700':'400'};text-decoration:${underline?'underline':'none'}">${escapeHTML(m.text||'')}</div><div class="sticky-note-date">🕒 입력일자 ${escapeHTML(stamp)}</div><div class="sticky-note-actions"><button type="button" onclick="event.stopPropagation();editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">수정</button><button type="button" onclick="event.stopPropagation();styleStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">꾸미기</button><button type="button" onclick="event.stopPropagation();deleteStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">삭제</button></div></article>`}).join('');
 }
 function editStickyMemo(id){const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;const next=prompt('메모 내용을 수정해 주세요.',m.text||'');if(next===null)return;if(!next.trim()){alert('메모 내용을 입력해 주세요.');return;}m.text=next.trim();m.updatedAt=new Date().toISOString();saveData();renderStickyMemos();}
+function styleStickyMemo(id){
+ const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;m.style=m.style||{};
+ const colors=[['레몬 노랑','#fff4a8'],['딸기 핑크','#ffe0e8'],['민트 그린','#dff3dc'],['하늘 블루','#dcecff'],['라벤더','#eadfff'],['살구','#ffe8cc'],['화이트','#ffffff']];
+ const colorChoice=prompt('포스트잇 색상 번호를 선택하세요.\n'+colors.map((c,i)=>`${i+1}. ${c[0]}`).join('\n'),String(Math.max(1,colors.findIndex(c=>c[1]===m.style.color)+1)));
+ if(colorChoice===null)return;const ci=Number(colorChoice)-1;if(!Number.isInteger(ci)||ci<0||ci>=colors.length){alert('색상 번호를 확인해 주세요.');return;}m.style.color=colors[ci][1];
+ const fonts=[['기본 글씨체','inherit'],['맑은 고딕','Malgun Gothic, 맑은 고딕, sans-serif'],['굴림','Gulim, 굴림, sans-serif'],['바탕','Batang, 바탕, serif'],['Georgia','Georgia, serif'],['고정폭','monospace']];
+ const fi=prompt('글씨체 번호를 선택하세요.\n'+fonts.map((f,i)=>`${i+1}. ${f[0]}`).join('\n'),String(Math.max(1,fonts.findIndex(f=>f[1]===m.style.font)+1)));
+ if(fi===null)return;const fn=Number(fi)-1;if(!Number.isInteger(fn)||fn<0||fn>=fonts.length){alert('글씨체 번호를 확인해 주세요.');return;}m.style.font=fonts[fn][1];
+ const sizes=[['작게','13px'],['보통','15px'],['크게','17px'],['아주 크게','20px'],['특대','24px']];
+ const si=prompt('글씨 크기 번호를 선택하세요.\n'+sizes.map((v,i)=>`${i+1}. ${v[0]}`).join('\n'),String(Math.max(1,sizes.findIndex(v=>v[1]===(m.style.size||'15px'))+1)));
+ if(si===null)return;const sn=Number(si)-1;if(!Number.isInteger(sn)||sn<0||sn>=sizes.length){alert('글씨 크기 번호를 확인해 주세요.');return;}m.style.size=sizes[sn][1];
+ m.style.bold=confirm('글씨를 굵게 표시할까요?');m.style.underline=confirm('글씨에 밑줄을 표시할까요?');
+ saveData();renderStickyMemos();
+}
 function deleteStickyMemo(id){const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;if(!confirm('이 포스트잇 메모를 삭제할까요?'))return;profile.stickyNotes=profile.stickyNotes.filter(x=>String(x.id)!==String(id));saveData();renderStickyMemos();}
 
 function addTodayItem(e){
