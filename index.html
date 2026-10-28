@@ -903,6 +903,11 @@ function manageCategories(){
  else return;
  renderCategoryOptions();renderAll();saveData();
 }
+function syncLinkedDiaryStatus(task){
+ if(!task)return;
+ const nextStatus=task.status==='완료'?'완료':task.status||'진행 중';
+ diaryRows.filter(r=>String(r.taskId)===String(task.id)).forEach(r=>{r.status=nextStatus;r.taskTitle=task.title;r.person=task.relatedPerson||r.person||'';r.deadline=task.date||r.deadline||'';r.note='연결 업무: '+task.title;});
+}
 function syncLegacyTaskLogs(){
  if(!Array.isArray(diaryRows))diaryRows=[];
  tasks.forEach(t=>{
@@ -1314,7 +1319,8 @@ function setListTaskStatus(id,checked){
  const task=tasks.find(t=>String(t.id)===String(id));if(!task)return;
  task.status=checked?'완료':'진행 중';
  task.actualDate=checked?toISO(today):'';
- saveData();renderAll();
+ syncLinkedDiaryStatus(task);
+ saveData();renderAll();renderDiaryTable();
 }
 function renderAll(){renderCategoryOptions();updateQuickFilterButtons();renderCalendar();renderMini();renderSidebar();if(viewMode==='week'){const a=new Date((selectedDate||toISO(today))+'T12:00:00');a.setDate(a.getDate()-a.getDay());const b=new Date(a);b.setDate(a.getDate()+6);$('calendarTitle').textContent=`${a.getFullYear()}년 ${a.getMonth()+1}월 ${a.getDate()}일 ~ ${b.getMonth()+1}월 ${b.getDate()}일`; }else $('calendarTitle').textContent=monthLabel(viewYear,viewMonth);$('miniTitle').textContent=monthLabel(viewYear,viewMonth);$('monthViewBtn').style.background=viewMode==='month'?'#dbeafe':'white';$('weekViewBtn').style.background=viewMode==='week'?'#dbeafe':'white';$('listViewBtn').style.background=viewMode==='list'?'#dbeafe':'white';$('monthViewBtn').style.fontWeight=viewMode==='month'?'900':'600';$('weekViewBtn').style.fontWeight=viewMode==='week'?'900':'600';$('listViewBtn').style.fontWeight=viewMode==='list'?'900':'600'}
 function renderCalendar(){
@@ -1510,7 +1516,7 @@ function renderSidebar(){
  arr.forEach(t=>{const li=document.createElement('li');li.className='todo-item'+(t.status==='완료'?' completed':'');
  const emojiStr = t.emoji ? escapeHTML(t.emoji) + ' ' : '';
  li.innerHTML=`<input type="checkbox" ${t.status==='완료'?'checked':''} aria-label="완료"><span class="tag ${t.category}">${t.category}</span><span class="todo-text">${emojiStr}${escapeHTML(t.title)}<br><span class="subtle">${escapeHTML(isOverdue(t)?'지연':t.status)}</span></span><span class="todo-actions"><button class="tiny-btn" title="수정">✎</button></span>`;
- li.querySelector('input').onchange=()=>{t.status=li.querySelector('input').checked?'완료':'진행 중';if(t.status==='완료')t.actualDate=toISO(today);saveData();renderAll()};
+ li.querySelector('input').onchange=()=>{t.status=li.querySelector('input').checked?'완료':'진행 중';t.actualDate=t.status==='완료'?toISO(today):'';syncLinkedDiaryStatus(t);saveData();renderAll();renderDiaryTable()};
  li.querySelector('button').onclick=()=>editTask(t.id);list.appendChild(li)});
  const upcoming=$('upcomingList'),next=tasks.filter(t=>!t.isDday&&t.status!=='완료'&&t.date>=toISO(today)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);upcoming.innerHTML=next.length?next.map(t=>`<div class="status-line"><span><strong>${t.date.slice(5)}</strong> · ${t.emoji ? escapeHTML(t.emoji) + ' ' : ''}${escapeHTML(t.title)}</span><span class="status-pill">${t.priority==='urgent'?'긴급':t.status}</span></div>`).join(''):'<div class="empty-state">다가오는 미완료 업무가 없습니다.</div>';
 }
