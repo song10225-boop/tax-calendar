@@ -275,6 +275,8 @@ textarea.field{min-height:76px;resize:vertical}.modal-actions{display:flex;justi
 /* 투데이리스트 등록 날짜 가독성 개선 */
 .today-item-date{color:#475569!important;font-size:.76rem!important;font-weight:750!important;background:#f1f5f9;border:1px solid #dbe3ee;border-radius:6px;padding:3px 7px;display:inline-block;margin-top:7px;line-height:1.4}
 
+.sticky-emoji-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1 1 100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:9px;background:#fafbff}.sticky-emoji-tools-label{font-size:.8rem;font-weight:800;color:#64748b;margin-right:3px}.sticky-emoji-tools button{border:1px solid #dbe2ef;background:#fff;border-radius:7px;min-width:34px;min-height:32px;padding:4px 7px;font-size:1.1rem;cursor:pointer;transition:background .15s,border-color .15s}.sticky-emoji-tools button:hover{background:#fff4c2;border-color:#e8c85a}.sticky-emoji-tools button:focus-visible{outline:2px solid #647de0;outline-offset:2px}
+.sticky-note-emoji{font-size:1.35rem;margin-bottom:5px}.contact-pin{border:1px solid #d6dcf0;background:#fff;border-radius:7px;padding:5px 7px;cursor:pointer}.contacts-table th:first-child,.contacts-table td:first-child{width:60px;text-align:center}
 /* 거래처 연락망 */
 .contacts-page{gap:14px}.contacts-heading{border-left-color:#6477bd}.contacts-heading .diary-title-mark{background:#6477bd}
 .contacts-count{font-size:.82rem;font-weight:850;color:#4055a1;background:#eef1ff;border-radius:9px;padding:8px 12px;white-space:nowrap}
@@ -615,7 +617,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     <input id="contactSearch" type="search" placeholder="🔎 거래처명·담당자·연락처·이메일 등 검색" oninput="renderContacts()">
     <select id="contactFilter" aria-label="연락망 필터" onchange="renderContacts()"><option value="all">전체 보기</option><option value="hasEmail">이메일 있는 거래처</option><option value="noEmail">이메일 없는 거래처</option><option value="hasPhone">연락처 있는 거래처</option><option value="noPhone">연락처 없는 거래처</option></select>
   </div>
-  <div class="contacts-table-wrap"><table class="contacts-table"><thead><tr><th>번호</th><th>거래처명</th><th>담당자</th><th>연락처</th><th>팩스번호</th><th>이메일주소</th><th>사업자등록번호</th><th>대표자명</th><th>주소</th><th>비고</th><th>관리</th></tr></thead><tbody id="contactsTableBody"></tbody></table></div>
+  <div class="contacts-table-wrap"><table class="contacts-table"><thead><tr><th>고정</th><th>거래처명</th><th>담당자</th><th>연락처</th><th>팩스번호</th><th>이메일주소</th><th>사업자등록번호</th><th>대표자명</th><th>주소</th><th>비고</th><th>관리</th></tr></thead><tbody id="contactsTableBody"></tbody></table></div>
   <div class="subtle contacts-note">✨ 거래처마다 이모지를 붙여 구분할 수 있어요. 연락처와 이메일은 클릭 링크 없이 일반 텍스트로 표시됩니다. 연락망은 로그인한 계정의 Firebase 클라우드에 저장됩니다.</div>
 </section>
 
@@ -736,7 +738,21 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     <div class="today-count" id="stickyMemoCount">메모 0개</div>
   </div>
   <form class="sticky-memo-form" onsubmit="addStickyMemo(event)">
+    <label>이모티콘<select id="stickyMemoEmoji" class="field"><option value="📌">📌 기본</option><option value="⭐">⭐ 중요</option><option value="💡">💡 아이디어</option><option value="💰">💰 자금</option><option value="🧾">🧾 회계</option><option value="📅">📅 일정</option><option value="☎️">☎️ 연락</option><option value="⚠️">⚠️ 주의</option><option value="✅">✅ 완료</option><option value="❤️">❤️ 개인</option><option value="🎯">🎯 목표</option><option value="📝">📝 메모</option></select></label>
     <label>메모 내용<textarea id="stickyMemoText" required maxlength="1000" rows="3" placeholder="예: 단기금융상품으로 처리하기 (26년 4월~)"></textarea></label>
+    <div class="sticky-emoji-tools" aria-label="메모 내용에 이모티콘 삽입">
+      <span class="sticky-emoji-tools-label">이모티콘 삽입</span>
+      <button type="button" onclick="insertStickyEmoji('😀')" title="웃는 얼굴">😀</button>
+      <button type="button" onclick="insertStickyEmoji('📌')" title="고정">📌</button>
+      <button type="button" onclick="insertStickyEmoji('❤️')" title="하트">❤️</button>
+      <button type="button" onclick="insertStickyEmoji('⭐')" title="별">⭐</button>
+      <button type="button" onclick="insertStickyEmoji('✅')" title="완료">✅</button>
+      <button type="button" onclick="insertStickyEmoji('⚠️')" title="주의">⚠️</button>
+      <button type="button" onclick="insertStickyEmoji('💡')" title="아이디어">💡</button>
+      <button type="button" onclick="insertStickyEmoji('📅')" title="일정">📅</button>
+      <button type="button" onclick="insertStickyEmoji('💰')" title="자금">💰</button>
+      <button type="button" onclick="insertStickyEmoji('🌷')" title="꽃">🌷</button>
+    </div>
     <button class="btn btn-primary" type="submit">📌 포스트잇 만들기</button>
   </form>
   <div class="sticky-style-tools">
@@ -1103,7 +1119,8 @@ function resetContactForm(){const f=$('contactForm');if(f)f.reset();$('contactEd
 async function saveContact(event){event.preventDefault();const company=contactVal('contactCompany');if(!company){alert('거래처명을 입력해 주세요.');return}const editId=contactVal('contactEditId');const items=getContacts();const data={id:editId||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)),emoji:contactVal('contactEmoji'),company,person:contactVal('contactPerson'),phone:contactVal('contactPhone'),fax:contactVal('contactFax'),email:contactVal('contactEmail'),bizNo:contactVal('contactBizNo'),ceo:contactVal('contactCEO'),address:contactVal('contactAddress'),note:contactVal('contactNote'),updatedAt:new Date().toISOString()};const idx=items.findIndex(x=>String(x.id)===String(editId));if(idx>=0)items[idx]=data;else items.unshift(data);try{await saveContactsData(items);resetContactForm();renderContacts();}catch(e){alert('연락망을 클라우드에 저장하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''));}}
 function editContact(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;$('contactEditId').value=c.id;$('contactEmoji').value=c.emoji||'';$('contactCompany').value=c.company||'';$('contactPerson').value=c.person||'';$('contactPhone').value=c.phone||'';$('contactFax').value=c.fax||'';$('contactEmail').value=c.email||'';$('contactBizNo').value=c.bizNo||'';$('contactCEO').value=c.ceo||'';$('contactAddress').value=c.address||'';$('contactNote').value=c.note||'';$('contactSubmitBtn').textContent='✓ 수정 저장';$('contactForm').scrollIntoView({behavior:'smooth',block:'start'});$('contactCompany').focus()}
 async function deleteContact(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;if(!confirm('「'+c.company+'」 연락처를 삭제할까요?'))return;try{await firestore.collection('users').doc(currentUser.uid).collection('contacts').doc(String(id)).delete();contactsCache=getContacts().filter(x=>String(x.id)!==String(id));saveContactsLocal(contactsCache);if($('contactEditId').value===String(id))resetContactForm();renderContacts()}catch(e){alert('연락처를 클라우드에서 삭제하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''))}}
-function renderContacts(){const body=$('contactsTableBody');if(!body)return;const q=contactVal('contactSearch').toLocaleLowerCase();const filter=$('contactFilter')?.value||'all';const all=getContacts();let rows=all.filter(c=>{const text=[c.emoji,c.company,c.person,c.phone,c.fax,c.email,c.bizNo,c.ceo,c.address,c.note].join(' ').toLocaleLowerCase();if(q&&!text.includes(q))return false;if(filter==='hasEmail'&&!c.email)return false;if(filter==='noEmail'&&c.email)return false;if(filter==='hasPhone'&&!c.phone)return false;if(filter==='noPhone'&&c.phone)return false;return true});$('contactsCount').textContent=`등록 ${all.length}개 · 표시 ${rows.length}개${contactsCloudReady?' · 클라우드 연결됨':' · 클라우드 연결 중'}`;if(!rows.length){body.innerHTML=`<tr><td colspan="11" class="contacts-empty">${all.length?'검색 조건에 맞는 연락처가 없습니다.':'등록된 거래처가 없습니다. 위 입력란에서 등록해 주세요.'}</td></tr>`;return}body.innerHTML=rows.map((c,i)=>`<tr><td>${i+1}</td><td><strong>${c.emoji?`<span class="contact-company-emoji">${escapeHTML(c.emoji)}</span>`:''}${escapeHTML(c.company||'')}</strong></td><td>${escapeHTML(c.person||'—')}</td><td>${escapeHTML(c.phone||'—')}</td><td>${escapeHTML(c.fax||'—')}</td><td>${escapeHTML(c.email||'—')}</td><td>${escapeHTML(c.bizNo||'—')}</td><td>${escapeHTML(c.ceo||'—')}</td><td>${escapeHTML(c.address||'—')}</td><td>${escapeHTML(c.note||'—')}</td><td><div class="contacts-actions"><button type="button" onclick="editContact('${String(c.id).replace(/'/g,"\\'")}')">수정</button><button type="button" class="contact-delete" onclick="deleteContact('${String(c.id).replace(/'/g,"\\'")}')">삭제</button></div></td></tr>`).join('')}
+function toggleContactPin(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;c.pinned=!c.pinned;saveContactsData(getContacts()).then(renderContacts).catch(e=>alert(e.message||'저장 실패'));}
+function renderContacts(){const body=$('contactsTableBody');if(!body)return;const q=contactVal('contactSearch').toLocaleLowerCase();const filter=$('contactFilter')?.value||'all';const all=getContacts();let rows=all.filter(c=>{const text=[c.emoji,c.company,c.person,c.phone,c.fax,c.email,c.bizNo,c.ceo,c.address,c.note].join(' ').toLocaleLowerCase();if(q&&!text.includes(q))return false;if(filter==='hasEmail'&&!c.email)return false;if(filter==='noEmail'&&c.email)return false;if(filter==='hasPhone'&&!c.phone)return false;if(filter==='noPhone'&&c.phone)return false;return true}).sort((a,b)=>Number(!!b.pinned)-Number(!!a.pinned));$('contactsCount').textContent=`등록 ${all.length}개 · 표시 ${rows.length}개${contactsCloudReady?' · 클라우드 연결됨':' · 클라우드 연결 중'}`;if(!rows.length){body.innerHTML=`<tr><td colspan="11" class="contacts-empty">${all.length?'검색 조건에 맞는 연락처가 없습니다.':'등록된 거래처가 없습니다. 위 입력란에서 등록해 주세요.'}</td></tr>`;return}body.innerHTML=rows.map((c,i)=>`<tr><td><button type="button" class="contact-pin" onclick="toggleContactPin(&quot;${escapeHTML(c.id)}&quot;)">${c.pinned?"📌":"📍"}</button></td><td><strong>${c.emoji?`<span class="contact-company-emoji">${escapeHTML(c.emoji)}</span>`:''}${escapeHTML(c.company||'')}</strong></td><td>${escapeHTML(c.person||'—')}</td><td>${escapeHTML(c.phone||'—')}</td><td>${escapeHTML(c.fax||'—')}</td><td>${escapeHTML(c.email||'—')}</td><td>${escapeHTML(c.bizNo||'—')}</td><td>${escapeHTML(c.ceo||'—')}</td><td>${escapeHTML(c.address||'—')}</td><td>${escapeHTML(c.note||'—')}</td><td><div class="contacts-actions"><button type="button" onclick="editContact('${String(c.id).replace(/'/g,"\\'")}')">수정</button><button type="button" class="contact-delete" onclick="deleteContact('${String(c.id).replace(/'/g,"\\'")}')">삭제</button></div></td></tr>`).join('')}
 
 
 // ===== 연차관리: 로그인 사용자별 Firestore 저장 =====
@@ -1658,15 +1675,16 @@ function addQuickLinkFromForm(e){
 function renderQuickLinksManager(){
  const box=$('quickLinksManagerList');if(!box)return;
  const all=profile.quickLinks||[],query=($('favoriteSearch')?.value||'').trim().toLowerCase();
- const links=all.map((l,i)=>({...l,_index:i})).filter(l=>[l.name,l.url,l.loginId,l.memo].some(v=>String(v||'').toLowerCase().includes(query)));
+ const links=all.map((l,i)=>({...l,_index:i})).filter(l=>[l.name,l.url,l.loginId,l.memo].some(v=>String(v||'').toLowerCase().includes(query))).sort((a,b)=>Number(!!b.pinned)-Number(!!a.pinned));
  const count=$('favoriteCount');if(count)count.textContent=`등록 ${all.length}개 · 검색 결과 ${links.length}개`;
  box.innerHTML=links.length?links.map((l,n)=>`<tr>
   <td>${n+1}</td><td><strong>${escapeHTML(l.name||'')}</strong></td>
   <td><a href="${escapeHTML(l.url||'')}" target="_blank" rel="noopener noreferrer">사이트 열기 ↗</a><div class="subtle" style="font-size:.76rem;overflow-wrap:anywhere">${escapeHTML(l.url||'')}</div></td>
   <td>${escapeHTML(l.loginId||'—')}</td><td>${escapeHTML(l.memo||'—')}</td><td>${escapeHTML(l.createdAt||'—')}</td>
-  <td><div class="favorite-actions"><button type="button" onclick="editQuickLink(${l._index})">수정</button><button type="button" class="delete-fav" onclick="deleteQuickLink(${l._index})">삭제</button></div></td>
+  <td><div class="favorite-actions"><button type="button" onclick="toggleQuickLinkPin(${l._index})">${l.pinned?"📌 고정됨":"📍 상단 고정"}</button><button type="button" onclick="editQuickLink(${l._index})">수정</button><button type="button" class="delete-fav" onclick="deleteQuickLink(${l._index})">삭제</button></div></td>
  </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;padding:28px;color:#718096">검색 결과가 없어요. 즐겨찾기를 등록해 주세요 💗</td></tr>';
 }
+function toggleQuickLinkPin(i){const l=(profile.quickLinks||[])[i];if(!l)return;l.pinned=!l.pinned;saveData();renderQuickLinksManager();}
 function editQuickLink(i){
  const l=(profile.quickLinks||[])[i];if(!l)return;
  const name=prompt('사이트 이름',l.name||'');if(name===null)return;
@@ -1677,13 +1695,23 @@ function editQuickLink(i){
  catch(e){alert('올바른 http:// 또는 https:// 사이트 주소를 입력해 주세요.')}
 }
 function deleteQuickLink(i){if(!confirm('이 바로가기를 삭제할까요?'))return;profile.quickLinks=profile.quickLinks||[];profile.quickLinks.splice(i,1);saveData();renderQuickLinksManager();renderAll()}
+function insertStickyEmoji(emoji){
+ const input=$('stickyMemoText');if(!input)return;
+ const start=Number.isInteger(input.selectionStart)?input.selectionStart:input.value.length;
+ const end=Number.isInteger(input.selectionEnd)?input.selectionEnd:start;
+ const value=input.value;
+ input.value=value.slice(0,start)+emoji+value.slice(end);
+ const cursor=start+emoji.length;
+ input.focus();input.setSelectionRange(cursor,cursor);
+ input.dispatchEvent(new Event('input',{bubbles:true}));
+}
 function stickyStyleFromControls(){
  return {color:$('stickyColor')?.value||'#fff4a8',font:$('stickyFont')?.value||'inherit',size:$('stickySize')?.value||'15px',bold:!!$('stickyBold')?.checked,underline:!!$('stickyUnderline')?.checked};
 }
 function addStickyMemo(e){
  e.preventDefault();const input=$('stickyMemoText');const text=(input?.value||'').trim();if(!text)return;
  profile.stickyNotes=Array.isArray(profile.stickyNotes)?profile.stickyNotes:[];
- profile.stickyNotes.unshift({id:`memo-${Date.now()}-${Math.random().toString(16).slice(2)}`,text,createdAt:new Date().toISOString(),style:stickyStyleFromControls()});
+ profile.stickyNotes.unshift({id:`memo-${Date.now()}-${Math.random().toString(16).slice(2)}`,text,emoji:$('stickyMemoEmoji')?.value||'📌',createdAt:new Date().toISOString(),style:stickyStyleFromControls()});
  saveData();input.value='';renderStickyMemos();
 }
 function clearStickyMemoSearch(){const input=$('stickyMemoSearch');if(input)input.value='';renderStickyMemos();}
@@ -1695,7 +1723,7 @@ function renderStickyMemos(){
  if(!all.length){grid.innerHTML='<div class="sticky-empty">📌 아직 메모가 없어요.<br>위에 내용을 적고 포스트잇을 만들어 보세요!</div>';return;}
  if(!filtered.length){grid.innerHTML='<div class="sticky-empty">🔎 검색 결과가 없어요.<br>다른 단어로 검색해 보세요.</div>';return;}
  const escAttr=v=>String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
- grid.innerHTML=filtered.map(m=>{const d=new Date(m.createdAt||Date.now());const stamp=isNaN(d.getTime())?'입력일 미상':d.toLocaleString('ko-KR',{year:'2-digit',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});const st=m.style||{};const color=st.color||'#fff4a8';const font=st.font||'inherit';const size=st.size||'15px';const bold=st.bold!==false;const underline=!!st.underline;return `<article class="sticky-note" title="포스트잇" style="background:${escAttr(color)};border-color:#00000018;color:#51461c" onclick="editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')"><div class="sticky-note-text" style="font-family:${escAttr(font)};font-size:${escAttr(size)};font-weight:${bold?'700':'400'};text-decoration:${underline?'underline':'none'}">${escapeHTML(m.text||'')}</div><div class="sticky-note-date">🕒 입력일자 ${escapeHTML(stamp)}</div><div class="sticky-note-actions"><button type="button" onclick="event.stopPropagation();editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">수정</button><button type="button" onclick="event.stopPropagation();styleStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">꾸미기</button><button type="button" onclick="event.stopPropagation();deleteStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">삭제</button></div></article>`}).join('');
+ grid.innerHTML=filtered.map(m=>{const d=new Date(m.createdAt||Date.now());const stamp=isNaN(d.getTime())?'입력일 미상':d.toLocaleString('ko-KR',{year:'2-digit',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});const st=m.style||{};const color=st.color||'#fff4a8';const font=st.font||'inherit';const size=st.size||'15px';const bold=st.bold!==false;const underline=!!st.underline;return `<article class="sticky-note" title="포스트잇" style="background:${escAttr(color)};border-color:#00000018;color:#51461c" onclick="editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')"><div class="sticky-note-emoji">${escapeHTML(m.emoji||"📌")}</div><div class="sticky-note-text" style="font-family:${escAttr(font)};font-size:${escAttr(size)};font-weight:${bold?'700':'400'};text-decoration:${underline?'underline':'none'}">${escapeHTML(m.text||'')}</div><div class="sticky-note-date">🕒 입력일자 ${escapeHTML(stamp)}</div><div class="sticky-note-actions"><button type="button" onclick="event.stopPropagation();editStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">수정</button><button type="button" onclick="event.stopPropagation();styleStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">꾸미기</button><button type="button" onclick="event.stopPropagation();deleteStickyMemo('${String(m.id).replace(/'/g, "\\'")}')">삭제</button></div></article>`}).join('');
 }
 function editStickyMemo(id){const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;const next=prompt('메모 내용을 수정해 주세요.',m.text||'');if(next===null)return;if(!next.trim()){alert('메모 내용을 입력해 주세요.');return;}m.text=next.trim();m.updatedAt=new Date().toISOString();saveData();renderStickyMemos();}
 function styleStickyMemo(id){
