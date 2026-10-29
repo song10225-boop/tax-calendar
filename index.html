@@ -1025,6 +1025,8 @@ let activeQuickFilter='all';
 let profile={name:'사용자',company:'경영전략부',calendarTitle:'경영전략부 업무 캘린더',theme:'blue'};
 let tasks=[];
 let diaryRows=[];
+// 사용자가 개별 삭제한 반복 회차는 다시 자동 생성하지 않도록 ID를 보관합니다.
+let deletedRecurringIds=[];
 const DEFAULT_CATEGORIES=[{name:'회계',color:'#93c5fd'},{name:'자금',color:'#86efac'},{name:'인사',color:'#fdba74'},{name:'총무',color:'#c4b5fd'},{name:'공통',color:'#fda4af'}];
 function getCategories(){if(!Array.isArray(profile.categories))profile.categories=DEFAULT_CATEGORIES.map(x=>({...x}));return profile.categories;}
 const seedTasks=[
@@ -1094,7 +1096,7 @@ function syncLegacyTaskLogs(){
  });
 }
 function loadData(){
- try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);tasks=Array.isArray(data.tasks)?data.tasks:[];diaryRows=Array.isArray(data.diaryRows)?data.diaryRows:[];profile=data.profile||profile}else{tasks=seedTasks.map(t=>({...t}));diaryRows=[]}}
+ try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);tasks=Array.isArray(data.tasks)?data.tasks:[];diaryRows=Array.isArray(data.diaryRows)?data.diaryRows:[];deletedRecurringIds=Array.isArray(data.deletedRecurringIds)?data.deletedRecurringIds:[];profile=data.profile||profile}else{tasks=seedTasks.map(t=>({...t}));diaryRows=[]}}
  catch(e){tasks=seedTasks.map(t=>({...t}));diaryRows=[];}
  syncLegacyTaskLogs();
  $('profileText').textContent=`${profile.name} · ${profile.company}`;
@@ -1102,7 +1104,7 @@ function loadData(){
  saveData();
 }
 function saveData(){
- const data={tasks,diaryRows,profile,updatedAt:new Date().toISOString()};
+ const data={tasks,diaryRows,profile,deletedRecurringIds,updatedAt:new Date().toISOString()};
  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){alert('브라우저 저장에 실패했습니다. 저장 공간을 확인하고 백업해 주세요.')}
  if(currentUser && cloudLoadComplete){
   clearTimeout(saveTimer);
@@ -1782,7 +1784,7 @@ function createRecurring(t){
  const source=parseISO(t.date);
  for(let i=1;i<=count;i++){
    const id=`${t.id}-r${i}`;
-   if(tasks.some(x=>String(x.id)===id))continue;
+   if(deletedRecurringIds.includes(id)||tasks.some(x=>String(x.id)===id))continue;
    const baseDate=recurringBaseDate(source,t.repeat,i);
    // 주말/공휴일은 다음 영업일로 이동
    const date=nextBusinessDate(baseDate);
@@ -2030,24 +2032,25 @@ renderSidebar=function(){_renderSidebar();
  if(upcomingToggle)upcomingToggle.checked=showUpcoming;
  if(upcoming){upcoming.hidden=!showUpcoming;const next=tasks.filter(t=>!t.isDday&&t.status!=='완료'&&t.date>=toISO(today)).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);upcoming.innerHTML=next.length?next.map(t=>{const safeId=String(t.id).replace(/\\/g,'\\\\').replace(/'/g,"\\'");return `<div class="status-line upcoming-task-line"><span class="upcoming-task-main"><strong>${escapeHTML(t.date.slice(5))}</strong> · ${t.emoji ? escapeHTML(t.emoji) + ' ' : ''}${escapeHTML(t.title)}<br><span class="status-pill">${t.priority==='urgent'?'긴급':escapeHTML(t.status)}</span></span><button type="button" class="upcoming-delete-btn" title="다가오는 업무에서 삭제" aria-label="${escapeHTML(t.title)} 삭제" onclick="deleteUpcomingTask('${safeId}')">삭제</button></div>`}).join(''):'<div class="empty-state">다가오는 미완료 업무가 없습니다.</div>'}
 };
-function deleteUpcomingTask(id){
+function deleteOneTaskOccurrence(id, sourceLabel){
  const task=tasks.find(t=>String(t.id)===String(id));if(!task)return;
- const rootId=String(task.id).replace(/-r\d+$/,'');
- const isRecurring=(task.repeat&&task.repeat!=='none')||tasks.some(t=>String(t.id).startsWith(rootId+'-r'));
- const message=isRecurring?'반복 업무를 삭제할까요? 원본과 이미 생성된 모든 반복 업무가 함께 삭제되며 다시 나타나지 않습니다.':'이 업무를 삭제할까요?';
+ const taskId=String(task.id),isGenerated=/-r\d+$/.test(taskId);
+ const isSeries=(task.repeat&&task.repeat!=='none')||tasks.some(t=>String(t.id).startsWith(taskId+'-r'))||isGenerated;
+ const message=isSeries
+  ? `${sourceLabel}에서 이 반복 일정(${task.date})만 삭제할까요? 다른 달의 반복 일정은 유지됩니다.`
+  : `${sourceLabel}에서 이 업무를 삭제할까요?`;
  if(!confirm(message))return;
- tasks=tasks.filter(t=>String(t.id)!==rootId&&!String(t.id).startsWith(rootId+'-r'));
+ if(isGenerated){
+   if(!deletedRecurringIds.includes(taskId))deletedRecurringIds.push(taskId);
+   tasks=tasks.filter(t=>String(t.id)!==taskId);
+ }else{
+   // 원본을 지우더라도 이미 생성된 미래 회차는 유지합니다.
+   tasks=tasks.filter(t=>String(t.id)!==taskId);
+ }
  saveData();renderAll();
 }
-function deleteOverdueTask(id){
- const task=tasks.find(t=>String(t.id)===String(id));if(!task)return;
- const rootId=String(task.id).replace(/-r\d+$/,'');
- const isRecurring=(task.repeat&&task.repeat!=='none')||tasks.some(t=>String(t.id).startsWith(rootId+'-r'));
- const message=isRecurring?'지연된 반복 업무를 삭제할까요? 원본과 이미 생성된 모든 반복 회차가 함께 삭제됩니다.':'지연된 업무를 삭제할까요?';
- if(!confirm(message))return;
- tasks=tasks.filter(t=>String(t.id)!==rootId&&!String(t.id).startsWith(rootId+'-r'));
- saveData();renderAll();
-}
+function deleteUpcomingTask(id){deleteOneTaskOccurrence(id,'다가오는 업무')}
+function deleteOverdueTask(id){deleteOneTaskOccurrence(id,'지연 업무')}
 
 $('taskModal').addEventListener('click',e=>{if(e.target===$('taskModal')){saveTaskDraft();const status=$('taskDraftStatus');if(status)status.textContent='✍️ 작성창 바깥을 눌러도 닫히지 않아요. 내용은 자동 임시저장됩니다.';}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape' && $('taskModal').classList.contains('open')){saveTaskDraft();const status=$('taskDraftStatus');if(status)status.textContent='✍️ 임시저장했어요. 취소 버튼으로 닫아도 다시 불러올 수 있습니다.';}});
