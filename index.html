@@ -1776,16 +1776,17 @@ function recurringBaseDate(source, repeat, i){
  return toISO(d);
 }
 function createRecurring(t){
- // 반복 업무는 앞으로 36회까지 미리 만들어 두고, 달력에서 즉시 보이도록 합니다.
+ // 반복 업무는 원본 ID를 기준으로 생성 여부를 판단해, 같은 제목의 다른 일정 때문에
+ // 반복 회차가 누락되어 다가오는 업무에만 보이는 현상을 방지합니다.
  const count=t.repeat==='monthly'?36:t.repeat==='quarterly'?12:t.repeat==='yearly'?5:0;
  const source=parseISO(t.date);
  for(let i=1;i<=count;i++){
+   const id=`${t.id}-r${i}`;
+   if(tasks.some(x=>String(x.id)===id))continue;
    const baseDate=recurringBaseDate(source,t.repeat,i);
-   // 원천세처럼 매월 특정일이 법정기한인 업무는 토·일·공휴일이면 다음 영업일로 이동
+   // 주말/공휴일은 다음 영업일로 이동
    const date=nextBusinessDate(baseDate);
-   if(!tasks.some(x=>x.title===t.title&&x.date===date)){
-     tasks.push({...t,id:`${t.id}-r${i}`,date,status:'예정',actualDate:''});
-   }
+   tasks.push({...t,id,date,status:'예정',actualDate:''});
  }
 }
 function ensureRecurringTasks(){
@@ -2022,7 +2023,7 @@ function manageHolidays(){const current=profile.customHolidays||[];const action=
 function manageQuickLinks(){profile.quickLinks=profile.quickLinks||[];const action=prompt('바로가기 관리\n1 = 추가\n2 = 삭제\n3 = 전체 초기화\n\n사이트 링크와 로그인 ID 메모만 저장할 수 있어요. 실제 비밀번호는 저장하지 마세요.');if(action==='1'){const name=prompt('바로가기 이름 (예: 더존 아마란스)');if(!name)return;const url=prompt('접속 주소(URL, https:// 포함)');if(!url)return;const loginId=prompt('로그인 아이디(선택, 비밀번호는 입력하지 마세요)')||'';try{const u=new URL(url);if(!['http:','https:'].includes(u.protocol))throw 0;profile.quickLinks.push({name:name.trim(),url:u.href,loginId:loginId.trim()});}catch(e){alert('http:// 또는 https:// 주소를 입력해 주세요.');return}}else if(action==='2'){if(!profile.quickLinks.length){alert('등록된 바로가기가 없습니다.');return}const names=profile.quickLinks.map((l,i)=>`${i+1}. ${l.name}`).join('\n');const n=Number(prompt('삭제할 번호를 입력하세요.\n'+names));if(!Number.isInteger(n)||n<1||n>profile.quickLinks.length)return;profile.quickLinks.splice(n-1,1)}else if(action==='3'){if(confirm('등록된 바로가기를 모두 삭제할까요?'))profile.quickLinks=[]}else return;saveData();renderAll()}
 const _renderSidebar=renderSidebar;
 renderSidebar=function(){_renderSidebar();
- const overdue=$('overdueList'),late=tasks.filter(t=>isOverdue(t)).sort((a,b)=>a.date.localeCompare(b.date));$('overdueCount').textContent=`${late.length}건`;overdue.innerHTML=late.length?late.map(t=>`<div class="overdue-row"><span>⚠</span><button onclick="editTask('${String(t.id).replace(/'/g,"\\'")}')">${t.emoji ? escapeHTML(t.emoji) + ' ' : ''}${escapeHTML(t.title)}<br><span class="subtle">마감 ${escapeHTML(t.date)} · ${Math.abs(daysUntil(t.date))}일 지연</span></button></div>`).join(''):'<div class="empty-state">지연된 업무가 없습니다.</div>';
+ const overdue=$('overdueList'),late=tasks.filter(t=>isOverdue(t)).sort((a,b)=>a.date.localeCompare(b.date));$('overdueCount').textContent=`${late.length}건`;overdue.innerHTML=late.length?late.map(t=>{const safeId=String(t.id).replace(/\\/g,'\\\\').replace(/'/g,"\\'");return `<div class="overdue-row"><span>⚠</span><button onclick="editTask('${safeId}')">${t.emoji ? escapeHTML(t.emoji) + ' ' : ''}${escapeHTML(t.title)}<br><span class="subtle">마감 ${escapeHTML(t.date)} · ${Math.abs(daysUntil(t.date))}일 지연</span></button><button type="button" class="upcoming-delete-btn" onclick="deleteOverdueTask('${safeId}')" aria-label="${escapeHTML(t.title)} 삭제">삭제</button></div>`}).join(''):'<div class="empty-state">지연된 업무가 없습니다.</div>';
  renderDdayList();
  const upcoming=$('upcomingList'),upcomingToggle=$('showUpcomingTasks');
  const showUpcoming=profile.showUpcomingTasks!==false;
@@ -2034,6 +2035,15 @@ function deleteUpcomingTask(id){
  const rootId=String(task.id).replace(/-r\d+$/,'');
  const isRecurring=(task.repeat&&task.repeat!=='none')||tasks.some(t=>String(t.id).startsWith(rootId+'-r'));
  const message=isRecurring?'반복 업무를 삭제할까요? 원본과 이미 생성된 모든 반복 업무가 함께 삭제되며 다시 나타나지 않습니다.':'이 업무를 삭제할까요?';
+ if(!confirm(message))return;
+ tasks=tasks.filter(t=>String(t.id)!==rootId&&!String(t.id).startsWith(rootId+'-r'));
+ saveData();renderAll();
+}
+function deleteOverdueTask(id){
+ const task=tasks.find(t=>String(t.id)===String(id));if(!task)return;
+ const rootId=String(task.id).replace(/-r\d+$/,'');
+ const isRecurring=(task.repeat&&task.repeat!=='none')||tasks.some(t=>String(t.id).startsWith(rootId+'-r'));
+ const message=isRecurring?'지연된 반복 업무를 삭제할까요? 원본과 이미 생성된 모든 반복 회차가 함께 삭제됩니다.':'지연된 업무를 삭제할까요?';
  if(!confirm(message))return;
  tasks=tasks.filter(t=>String(t.id)!==rootId&&!String(t.id).startsWith(rootId+'-r'));
  saveData();renderAll();
