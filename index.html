@@ -1746,7 +1746,23 @@ async function saveTask(e){
  let uploadedAttachments=[];
  try{for(const file of selectedFiles){const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100);const path=`users/${currentUser.uid}/tasks/${taskId}/${Date.now()}_${Math.random().toString(16).slice(2)}_${safeName}`;const snap=await storage.ref().child(path).put(file,{contentType:file.type||'application/octet-stream',customMetadata:{originalName:file.name}});const url=await snap.ref.getDownloadURL();uploadedAttachments.push({name:file.name,type:file.type||'',size:file.size,url,path,uploadedAt:new Date().toISOString()});}}catch(err){console.error('첨부 업로드 실패',err);alert('첨부파일 업로드에 실패했어요. Firebase Storage 사용 설정과 보안 규칙, 인터넷 연결을 확인해 주세요.\n파일이 저장되지 않았으니 일정은 아직 저장하지 않았어요.');return;}
  const item={id:taskId,title,emoji:$('taskEmoji').value,date,endDate:endDate||date,relatedPerson:$('taskRelatedPerson').value.trim(),category:$('taskCategory').value,status:$('taskStatus').value,priority:$('taskPriority').value,isDday:$('taskIsDday').checked,repeat:$('taskRepeat').value,repeatUntil:$('taskRepeatUntil').value||'',actualDate:$('taskActualDate').value,memo:$('taskMemo').value.trim(),link:$('taskLink').value.trim(),color:$('taskColor').value,logs,attachments:[...keptAttachments,...uploadedAttachments]};
- if(id){const idx=tasks.findIndex(t=>t.id===id);if(idx>=0)tasks[idx]=item}else{tasks.push(item)}if(item.repeat!=='none')createRecurring(item)
+ let propagateEdit=false;
+ if(id && existing && ((existing.repeat&&existing.repeat!=='none')||/-r\d+$/.test(String(id)))){
+   propagateEdit=confirm('반복 일정도 수정할까요?\n\n[확인] 현재 일정과 이후 반복 일정을 함께 수정\n[취소] 현재 일정만 수정');
+ }
+ if(id){
+   const idx=tasks.findIndex(t=>String(t.id)===String(id));if(idx>=0)tasks[idx]=item;
+   if(propagateEdit){
+     const rootId=String(id).replace(/-r\d+$/,'');
+     const root=tasks.find(t=>String(t.id)===rootId);
+     const cutoff=item.date;
+     const shared={...item};delete shared.id;delete shared.date;delete shared.endDate;delete shared.actualDate;delete shared.status;
+     if(root){Object.assign(root,shared,{repeat:item.repeat,repeatUntil:item.repeatUntil});}
+     tasks.forEach(t=>{if(String(t.id).startsWith(rootId+'-r')&&t.date>=cutoff){Object.assign(t,shared);t.endDate=t.date;t.status=item.status;t.actualDate='';}});
+     if(root && root.date>=cutoff){Object.assign(root,item,{id:rootId});}
+   }
+ }else{tasks.push(item)}
+ if(item.repeat!=='none' && !/-r\d+$/.test(String(item.id)))createRecurring(item)
  // 기존 진행일지의 연결 정보도 현재 업무의 담당자·상태·마감일과 동기화
  diaryRows.filter(r=>r.taskId===taskId).forEach(r=>{r.person=item.relatedPerson;r.status=item.status;r.deadline=item.date;r.taskTitle=item.title;r.note='연결 업무: '+item.title;});
  if(newLog){
@@ -1808,12 +1824,29 @@ function ensureRecurringTasks(){
 function deleteCurrentTask(){
  const id=String($('taskId').value||'');if(!id)return;
  const task=tasks.find(t=>String(t.id)===id);if(!task)return;
+ const rootId=id.replace(/-r\d+$/,'');
  const isGenerated=/-r\d+$/.test(id);
- const isRecurring=(task.repeat&&task.repeat!=='none')||isGenerated||tasks.some(t=>String(t.id).startsWith(id+'-r'));
- const message=isRecurring?`이 반복 일정(${task.date})만 삭제할까요? 다른 달의 반복 일정은 유지됩니다.`:'이 업무를 삭제할까요?';
- if(!confirm(message))return;
- if(isGenerated&&!deletedRecurringIds.includes(id))deletedRecurringIds.push(id);
- tasks=tasks.filter(t=>String(t.id)!==id);
+ const isRecurring=(task.repeat&&task.repeat!=='none')||isGenerated||tasks.some(t=>String(t.id).startsWith(rootId+'-r'));
+ if(!isRecurring){if(!confirm('이 업무를 삭제할까요?'))return;tasks=tasks.filter(t=>String(t.id)!==id);}
+ else {
+   const choice=prompt('반복 일정 삭제 범위를 선택해 주세요.\n\n1 = 현재 일정만 삭제\n2 = 현재 일정과 이후 반복 일정 삭제\n3 = 전체 반복 일정 삭제\n\n번호를 입력하세요.','1');
+   if(choice===null)return;
+   if(!['1','2','3'].includes(choice)){alert('1, 2, 3 중에서 선택해 주세요.');return;}
+   const cutoff=task.date;
+   if(choice==='1'){
+     if(isGenerated&&!deletedRecurringIds.includes(id))deletedRecurringIds.push(id);
+     tasks=tasks.filter(t=>String(t.id)!==id);
+   } else if(choice==='2'){
+     tasks=tasks.filter(t=>{const belongs=String(t.id)===rootId||String(t.id).startsWith(rootId+'-r');return !belongs || t.date<cutoff;});
+     // 원본이 남아 있으면 삭제한 미래 회차가 다시 생성되므로 원본도 제거
+     tasks=tasks.filter(t=>String(t.id)!==rootId);
+     tasks.filter(t=>String(t.id).startsWith(rootId+'-r')).forEach(t=>{});
+     const max=recurringCount(task);for(let i=1;i<=max;i++){const rid=rootId+'-r'+i;const d=recurringBaseDate(parseISO(task.date),task.repeat,i);if(nextBusinessDate(d)>=cutoff&&!deletedRecurringIds.includes(rid))deletedRecurringIds.push(rid);}
+   } else {
+     tasks=tasks.filter(t=>String(t.id)!==rootId&&!String(t.id).startsWith(rootId+'-r'));
+     const max=recurringCount(task);for(let i=1;i<=max;i++){const rid=rootId+'-r'+i;if(!deletedRecurringIds.includes(rid))deletedRecurringIds.push(rid);}
+   }
+ }
  saveData();closeTaskModal();renderAll();
 }
 function quickAdd(){const title=$('quickTitle').value.trim();if(!title)return;tasks.push({id:`${Date.now()}-${Math.random().toString(16).slice(2)}`,title,emoji:'',date:selectedDate,category:$('quickCategory').value,status:'예정',priority:'normal',repeat:'none',memo:''});$('quickTitle').value='';saveData();renderAll()}
@@ -2040,18 +2073,17 @@ renderSidebar=function(){_renderSidebar();
 };
 function deleteOneTaskOccurrence(id, sourceLabel){
  const task=tasks.find(t=>String(t.id)===String(id));if(!task)return;
- const taskId=String(task.id),isGenerated=/-r\d+$/.test(taskId);
- const isSeries=(task.repeat&&task.repeat!=='none')||tasks.some(t=>String(t.id).startsWith(taskId+'-r'))||isGenerated;
- const message=isSeries
-  ? `${sourceLabel}에서 이 반복 일정(${task.date})만 삭제할까요? 다른 달의 반복 일정은 유지됩니다.`
-  : `${sourceLabel}에서 이 업무를 삭제할까요?`;
- if(!confirm(message))return;
- if(isGenerated){
-   if(!deletedRecurringIds.includes(taskId))deletedRecurringIds.push(taskId);
-   tasks=tasks.filter(t=>String(t.id)!==taskId);
- }else{
-   // 원본을 지우더라도 이미 생성된 미래 회차는 유지합니다.
-   tasks=tasks.filter(t=>String(t.id)!==taskId);
+ const taskId=String(task.id),rootId=taskId.replace(/-r\d+$/,''),isGenerated=/-r\d+$/.test(taskId);
+ const isSeries=(task.repeat&&task.repeat!=='none')||tasks.some(t=>String(t.id).startsWith(rootId+'-r'))||isGenerated;
+ if(!isSeries){if(!confirm(`${sourceLabel}에서 이 업무를 삭제할까요?`))return;tasks=tasks.filter(t=>String(t.id)!==taskId);}
+ else {
+  const choice=prompt(`${sourceLabel} — 반복 일정 삭제 범위\n\n1 = 현재 일정만 삭제\n2 = 현재 일정과 이후 반복 일정 삭제\n3 = 전체 반복 일정 삭제\n\n번호를 입력하세요.`, '1');
+  if(choice===null)return;if(!['1','2','3'].includes(choice)){alert('1, 2, 3 중에서 선택해 주세요.');return;}
+  if(choice==='1'){if(isGenerated&&!deletedRecurringIds.includes(taskId))deletedRecurringIds.push(taskId);tasks=tasks.filter(t=>String(t.id)!==taskId);}
+  else if(choice==='2'){
+   const cutoff=task.date;tasks=tasks.filter(t=>{const belongs=String(t.id)===rootId||String(t.id).startsWith(rootId+'-r');return !belongs||t.date<cutoff;});
+   const max=recurringCount(task);for(let i=1;i<=max;i++){const rid=rootId+'-r'+i;const d=nextBusinessDate(recurringBaseDate(parseISO(task.date),task.repeat,i));if(d>=cutoff&&!deletedRecurringIds.includes(rid))deletedRecurringIds.push(rid);}
+  } else {tasks=tasks.filter(t=>String(t.id)!==rootId&&!String(t.id).startsWith(rootId+'-r'));const max=recurringCount(task);for(let i=1;i<=max;i++){const rid=rootId+'-r'+i;if(!deletedRecurringIds.includes(rid))deletedRecurringIds.push(rid);}}
  }
  saveData();renderAll();
 }
