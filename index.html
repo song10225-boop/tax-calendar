@@ -958,6 +958,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     <div class="form-row"><label for="taskPriority">중요도</label><select class="field" id="taskPriority"><option value="normal">보통</option><option value="important">중요</option><option value="urgent">긴급</option></select></div>
     <div class="form-row"><label for="taskIsDday">디데이 목록</label><label style="display:flex;align-items:center;gap:8px;font-weight:600"><input id="taskIsDday" type="checkbox" style="width:auto"> 디데이 목록에 표시</label></div>
     <div class="form-row"><label for="taskRepeat">반복 주기</label><select class="field" id="taskRepeat"><option value="none">반복 없음</option><option value="monthly">매월 (같은 날짜)</option><option value="quarterly">분기별 (같은 날짜)</option><option value="yearly">매년 (같은 날짜)</option></select></div>
+    <div class="form-row" id="repeatUntilRow"><label for="taskRepeatUntil">반복 종료일 (선택)</label><input class="field" id="taskRepeatUntil" type="date"><span class="subtle">예: 2026-11-15부터 2027-05-15까지 매월 반복하려면 시작일을 2026-11-15, 종료일을 2027-05-15로 설정하세요. 비워두면 기본 3년간 생성됩니다.</span></div>
     <div class="form-row"><label for="taskColor">달력 형광펜 / 배경색</label><select class="field" id="taskColor"><option value="">기본 색상(분야별)</option><option value="#fff3a3">노랑 형광펜</option><option value="#d9f99d">연두 형광펜</option><option value="#fecdd3">분홍</option><option value="#bfdbfe">하늘색</option><option value="#ddd6fe">연보라</option><option value="#fed7aa">살구색</option></select></div>
     <div class="form-row"><label for="taskActualDate">실제 완료일</label><input class="field" id="taskActualDate" type="date"></div>
     <div class="form-row full"><label for="taskMemo">메모 / 증빙 / 후속 조치</label><textarea class="field" id="taskMemo" placeholder="필요 서류, 타부서 협조, 다음 조치 등을 입력하세요."></textarea></div>
@@ -1706,14 +1707,14 @@ function removeTaskAttachment(path){if(path)removedAttachmentPaths.add(path);con
 $('taskAttachments').addEventListener('change',()=>{const files=Array.from($('taskAttachments').files||[]);if(files.length>5){alert('한 일정에는 파일을 최대 5개까지 선택할 수 있어요.');$('taskAttachments').value='';}else if(files.some(f=>f.size>10*1024*1024)){alert('파일당 최대 크기는 10MB예요. 큰 파일은 줄여서 첨부해 주세요.');$('taskAttachments').value='';}renderTaskAttachments(($('taskId').value&&tasks.find(t=>String(t.id)===String($('taskId').value))?.attachments)||[]);});
 function openTaskModal(id=null,date=selectedDate){
  removedAttachmentPaths.clear();
- $('taskForm').reset();$('taskId').value='';$('taskDate').value=date||toISO(today);$('taskEndDate').value='';$('taskRelatedPerson').value='';$('taskStatus').value='예정';$('taskRepeat').value='none';$('taskPriority').value='normal';$('taskIsDday').checked=false;$('taskColor').value='';$('taskEmoji').value='';$('taskDiary').value='';$('taskDiaryHistory').innerHTML='';$('taskAttachments').value='';$('taskAttachmentPreview').innerHTML='';$('modalTitle').textContent=id?'업무 수정':'업무 등록';$('deleteTaskBtn').style.display=id?'inline-block':'none';
+ $('taskForm').reset();$('taskId').value='';$('taskDate').value=date||toISO(today);$('taskEndDate').value='';$('taskRelatedPerson').value='';$('taskStatus').value='예정';$('taskRepeat').value='none';$('taskRepeatUntil').value='';$('taskPriority').value='normal';$('taskIsDday').checked=false;$('taskColor').value='';$('taskEmoji').value='';$('taskDiary').value='';$('taskDiaryHistory').innerHTML='';$('taskAttachments').value='';$('taskAttachmentPreview').innerHTML='';$('modalTitle').textContent=id?'업무 수정':'업무 등록';$('deleteTaskBtn').style.display=id?'inline-block':'none';
  if(!id)restoreTaskDraft();
- if(id){const t=tasks.find(x=>x.id===id);if(!t)return;$('taskId').value=t.id;$('taskTitle').value=t.title;$('taskDate').value=t.date;$('taskEndDate').value=t.endDate||'';$('taskRelatedPerson').value=t.relatedPerson||'';renderCategoryOptions();$('taskCategory').value=t.category;$('taskStatus').value=t.status;$('taskPriority').value=t.priority||'normal';$('taskIsDday').checked=!!t.isDday;$('taskRepeat').value=t.repeat||'none';$('taskActualDate').value=t.actualDate||'';$('taskMemo').value=t.memo||'';$('taskLink').value=t.link||'';$('taskColor').value=t.color||'';$('taskEmoji').value=t.emoji||'';renderTaskAttachments(t.attachments||[]);$('taskDiaryHistory').innerHTML=renderDiaryHistory(t.logs||[])}
- $('taskModal').classList.add('open');$('taskTitle').focus();
+ if(id){const t=tasks.find(x=>x.id===id);if(!t)return;$('taskId').value=t.id;$('taskTitle').value=t.title;$('taskDate').value=t.date;$('taskEndDate').value=t.endDate||'';$('taskRelatedPerson').value=t.relatedPerson||'';renderCategoryOptions();$('taskCategory').value=t.category;$('taskStatus').value=t.status;$('taskPriority').value=t.priority||'normal';$('taskIsDday').checked=!!t.isDday;$('taskRepeat').value=t.repeat||'none';$('taskRepeatUntil').value=t.repeatUntil||'';$('taskActualDate').value=t.actualDate||'';$('taskMemo').value=t.memo||'';$('taskLink').value=t.link||'';$('taskColor').value=t.color||'';$('taskEmoji').value=t.emoji||'';renderTaskAttachments(t.attachments||[]);$('taskDiaryHistory').innerHTML=renderDiaryHistory(t.logs||[])}
+ updateRepeatUntilVisibility();$('taskModal').classList.add('open');$('taskTitle').focus();
 }
 function editTask(id){openTaskModal(id)}
 const TASK_DRAFT_KEY='management-calendar-task-draft-v1';
-const TASK_DRAFT_FIELDS=['taskTitle','taskDate','taskEndDate','taskEmoji','taskCategory','taskRelatedPerson','taskStatus','taskPriority','taskIsDday','taskRepeat','taskColor','taskActualDate','taskMemo','taskLink','taskDiary'];
+const TASK_DRAFT_FIELDS=['taskTitle','taskDate','taskEndDate','taskEmoji','taskCategory','taskRelatedPerson','taskStatus','taskPriority','taskIsDday','taskRepeat','taskRepeatUntil','taskColor','taskActualDate','taskMemo','taskLink','taskDiary'];
 function saveTaskDraft(){if($('taskId')?.value)return;const draft={};TASK_DRAFT_FIELDS.forEach(id=>{const el=$(id);if(el)draft[id]=el.type==='checkbox'?el.checked:el.value});draft.savedAt=new Date().toISOString();try{localStorage.setItem(TASK_DRAFT_KEY,JSON.stringify(draft));const status=$('taskDraftStatus');if(status)status.textContent='✓ 임시저장됨 — '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});}catch(e){}}
 function restoreTaskDraft(){try{const raw=localStorage.getItem(TASK_DRAFT_KEY);if(!raw)return;const draft=JSON.parse(raw);if(!draft||!draft.savedAt)return;TASK_DRAFT_FIELDS.forEach(id=>{const el=$(id);if(!el||draft[id]===undefined)return;if(el.type==='checkbox')el.checked=!!draft[id];else el.value=draft[id]});const status=$('taskDraftStatus');if(status)status.textContent='↩ 이전에 작성하던 임시저장을 불러왔어요. 저장 전까지 계속 자동저장됩니다.';}catch(e){}}
 function clearTaskDraft(){try{localStorage.removeItem(TASK_DRAFT_KEY)}catch(e){}}
@@ -1723,6 +1724,7 @@ async function saveTask(e){
  const id=$('taskId').value,title=$('taskTitle').value.trim(),date=$('taskDate').value,endDate=$('taskEndDate').value;
  if(!title||!date)return;
  if(endDate&&endDate<date){alert('종료일은 시작일보다 빠를 수 없어요.');return;}
+ const repeatUntil=$('taskRepeatUntil').value;if(repeatUntil&&repeatUntil<date){alert('반복 종료일은 시작일보다 빠를 수 없어요.');return;}
  const existing=id?tasks.find(t=>t.id===id):null;
  const taskId=id||`${Date.now()}-${Math.random().toString(16).slice(2)}`;
  const selectedFiles=Array.from($('taskAttachments').files||[]);
@@ -1743,7 +1745,7 @@ async function saveTask(e){
  for(const old of (existing?.attachments||[]).filter(a=>removedAttachmentPaths.has(a.path)&&a.path)){try{await storage.ref().child(old.path).delete();}catch(err){console.warn('첨부파일 삭제 실패',err);}}
  let uploadedAttachments=[];
  try{for(const file of selectedFiles){const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100);const path=`users/${currentUser.uid}/tasks/${taskId}/${Date.now()}_${Math.random().toString(16).slice(2)}_${safeName}`;const snap=await storage.ref().child(path).put(file,{contentType:file.type||'application/octet-stream',customMetadata:{originalName:file.name}});const url=await snap.ref.getDownloadURL();uploadedAttachments.push({name:file.name,type:file.type||'',size:file.size,url,path,uploadedAt:new Date().toISOString()});}}catch(err){console.error('첨부 업로드 실패',err);alert('첨부파일 업로드에 실패했어요. Firebase Storage 사용 설정과 보안 규칙, 인터넷 연결을 확인해 주세요.\n파일이 저장되지 않았으니 일정은 아직 저장하지 않았어요.');return;}
- const item={id:taskId,title,emoji:$('taskEmoji').value,date,endDate:endDate||date,relatedPerson:$('taskRelatedPerson').value.trim(),category:$('taskCategory').value,status:$('taskStatus').value,priority:$('taskPriority').value,isDday:$('taskIsDday').checked,repeat:$('taskRepeat').value,actualDate:$('taskActualDate').value,memo:$('taskMemo').value.trim(),link:$('taskLink').value.trim(),color:$('taskColor').value,logs,attachments:[...keptAttachments,...uploadedAttachments]};
+ const item={id:taskId,title,emoji:$('taskEmoji').value,date,endDate:endDate||date,relatedPerson:$('taskRelatedPerson').value.trim(),category:$('taskCategory').value,status:$('taskStatus').value,priority:$('taskPriority').value,isDday:$('taskIsDday').checked,repeat:$('taskRepeat').value,repeatUntil:$('taskRepeatUntil').value||'',actualDate:$('taskActualDate').value,memo:$('taskMemo').value.trim(),link:$('taskLink').value.trim(),color:$('taskColor').value,logs,attachments:[...keptAttachments,...uploadedAttachments]};
  if(id){const idx=tasks.findIndex(t=>t.id===id);if(idx>=0)tasks[idx]=item}else{tasks.push(item)}if(item.repeat!=='none')createRecurring(item)
  // 기존 진행일지의 연결 정보도 현재 업무의 담당자·상태·마감일과 동기화
  diaryRows.filter(r=>r.taskId===taskId).forEach(r=>{r.person=item.relatedPerson;r.status=item.status;r.deadline=item.date;r.taskTitle=item.title;r.note='연결 업무: '+item.title;});
@@ -1764,31 +1766,33 @@ function nextBusinessDate(iso){
 }
 function recurringBaseDate(source, repeat, i){
  const y=source.getFullYear(),m=source.getMonth(),day=source.getDate();
- let d;
- if(repeat==='monthly'){
-   d=new Date(y,m+i,1,12);
-   d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));
- }else if(repeat==='quarterly'){
-   d=new Date(y,m+(3*i),1,12);
-   d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));
- }else{
-   d=new Date(y+i,m,1,12);
-   d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));
- }
+ const offset=repeat==='monthly'?i:repeat==='quarterly'?3*i:12*i;
+ const d=new Date(y,m+offset,1,12);
+ d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));
  return toISO(d);
 }
+function recurringCount(t){
+ const source=parseISO(t.date),until=t.repeatUntil?parseISO(t.repeatUntil):null;
+ const max=t.repeat==='monthly'?36:t.repeat==='quarterly'?12:t.repeat==='yearly'?5:0;
+ if(!until)return max;
+ if(toISO(until)<t.date)return 0;
+ let count=0;
+ for(let i=1;i<=max;i++){
+  const candidate=recurringBaseDate(source,t.repeat,i);
+  if(candidate>t.repeatUntil)break;
+  count++;
+ }
+ return count;
+}
 function createRecurring(t){
- // 반복 업무는 원본 ID를 기준으로 생성 여부를 판단해, 같은 제목의 다른 일정 때문에
- // 반복 회차가 누락되어 다가오는 업무에만 보이는 현상을 방지합니다.
- const count=t.repeat==='monthly'?36:t.repeat==='quarterly'?12:t.repeat==='yearly'?5:0;
- const source=parseISO(t.date);
+ const count=recurringCount(t),source=parseISO(t.date);
  for(let i=1;i<=count;i++){
    const id=`${t.id}-r${i}`;
    if(deletedRecurringIds.includes(id)||tasks.some(x=>String(x.id)===id))continue;
    const baseDate=recurringBaseDate(source,t.repeat,i);
-   // 주말/공휴일은 다음 영업일로 이동
    const date=nextBusinessDate(baseDate);
-   tasks.push({...t,id,date,status:'예정',actualDate:''});
+   // 각 반복 회차는 해당 날짜 하루짜리 일정으로 저장해야 달력/주간/목록에 표시됩니다.
+   tasks.push({...t,id,date,endDate:date,status:'예정',actualDate:''});
  }
 }
 function ensureRecurringTasks(){
@@ -1796,19 +1800,21 @@ function ensureRecurringTasks(){
  let changed=false;
  const before=tasks.length;
  roots.forEach(t=>createRecurring(t));
- changed=tasks.length!==before;
+ // 이전 버전에서 생성된 회차가 원본의 종료일을 물려받아 달력에서 사라지는 문제 보정
+ tasks.forEach(t=>{if(/-r\d+$/.test(String(t.id))&&t.endDate&&t.endDate<t.date){t.endDate=t.date;changed=true;}});
+ changed=changed||tasks.length!==before;
  if(changed)saveData();
 }
 function deleteCurrentTask(){
  const id=String($('taskId').value||'');if(!id)return;
  const task=tasks.find(t=>String(t.id)===id);if(!task)return;
- const rootId=id.replace(/-r\d+$/,'');
- const isRecurring=task.repeat&&task.repeat!=='none'||tasks.some(t=>String(t.id).startsWith(rootId+'-r'));
- const message=isRecurring?'반복 업무를 삭제할까요? 원본과 이미 생성된 모든 반복 업무가 함께 삭제되며 다시 나타나지 않습니다.':'이 업무를 삭제할까요?';
- if(confirm(message)){
-  tasks=tasks.filter(t=>String(t.id)!==rootId&&!String(t.id).startsWith(rootId+'-r'));
-  saveData();closeTaskModal();renderAll();
- }
+ const isGenerated=/-r\d+$/.test(id);
+ const isRecurring=(task.repeat&&task.repeat!=='none')||isGenerated||tasks.some(t=>String(t.id).startsWith(id+'-r'));
+ const message=isRecurring?`이 반복 일정(${task.date})만 삭제할까요? 다른 달의 반복 일정은 유지됩니다.`:'이 업무를 삭제할까요?';
+ if(!confirm(message))return;
+ if(isGenerated&&!deletedRecurringIds.includes(id))deletedRecurringIds.push(id);
+ tasks=tasks.filter(t=>String(t.id)!==id);
+ saveData();closeTaskModal();renderAll();
 }
 function quickAdd(){const title=$('quickTitle').value.trim();if(!title)return;tasks.push({id:`${Date.now()}-${Math.random().toString(16).slice(2)}`,title,emoji:'',date:selectedDate,category:$('quickCategory').value,status:'예정',priority:'normal',repeat:'none',memo:''});$('quickTitle').value='';saveData();renderAll()}
 function editProfile(){const name=prompt('이름 또는 별칭을 입력하세요.',profile.name);if(name===null)return;const company=prompt('회사 / 부서명을 입력하세요.',profile.company);if(company===null)return;profile={...profile,name:name.trim()||'사용자',company:company.trim()||'경영전략부'};saveData();$('profileText').textContent=`${profile.name} · ${profile.company}`}
@@ -2054,6 +2060,9 @@ function deleteOverdueTask(id){deleteOneTaskOccurrence(id,'지연 업무')}
 
 $('taskModal').addEventListener('click',e=>{if(e.target===$('taskModal')){saveTaskDraft();const status=$('taskDraftStatus');if(status)status.textContent='✍️ 작성창 바깥을 눌러도 닫히지 않아요. 내용은 자동 임시저장됩니다.';}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape' && $('taskModal').classList.contains('open')){saveTaskDraft();const status=$('taskDraftStatus');if(status)status.textContent='✍️ 임시저장했어요. 취소 버튼으로 닫아도 다시 불러올 수 있습니다.';}});
+function updateRepeatUntilVisibility(){const row=$('repeatUntilRow');if(row)row.style.display=$('taskRepeat').value==='none'?'none':'block';}
+$('taskRepeat').addEventListener('change',updateRepeatUntilVisibility);
+updateRepeatUntilVisibility();
 TASK_DRAFT_FIELDS.forEach(id=>{const el=$(id);if(el){el.addEventListener('input',saveTaskDraft);el.addEventListener('change',saveTaskDraft);}});
 
 function exportExcel(){
