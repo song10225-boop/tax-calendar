@@ -103,7 +103,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;ba
 .status-pill{font-size:.68rem;border-radius:99px;padding:3px 6px;background:#f1f5f9;color:#475569;white-space:nowrap}.status-pill.지연{background:#fee2e2;color:#b91c1c}.status-pill.완료{background:#dcfce7;color:#166534}.status-pill.결재대기,.status-pill.자료대기{background:#fef3c7;color:#92400e}
 .empty-state{font-size:.8rem;color:#94a3b8;text-align:center;padding:18px 5px}
 .category-editor{margin-top:15px;padding:14px;border:1px solid #cbd8ee;border-radius:12px;background:#f7faff}.category-editor h3{margin:0 0 10px;color:#29436f;font-size:.95rem}.category-editor>label{display:block;font-size:.82rem;font-weight:800;color:#475569;margin:8px 0 5px}.category-color-picker-row{display:flex;align-items:center;gap:12px}.category-color-picker-row input[type=color]{width:54px;height:42px;padding:3px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;cursor:pointer}.category-edit-preview{width:120px;height:38px;border:1px solid #64748b44;border-radius:8px}.category-color-picker-row code{font-size:.85rem;color:#475569}
-.category-manager-modal{display:none;position:fixed;inset:0;background:#0f172a88;z-index:120;align-items:center;justify-content:center;padding:16px}.category-manager-modal.open{display:flex}.category-manager-card{width:min(680px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;padding:20px;box-shadow:0 20px 60px #0f172a33}.category-manager-title{font-size:1.15rem;font-weight:900;color:#233b68;margin:0 0 6px}.category-manager-help{font-size:.84rem;color:#64748b;margin:0 0 15px;line-height:1.5}.category-manager-row{display:grid;grid-template-columns:minmax(115px,1fr) minmax(90px,.8fr) auto auto;gap:9px;align-items:center;padding:10px 0;border-bottom:1px solid #e8edf4}.category-color-sample{height:42px;border-radius:9px;border:1px solid #64748b33;display:flex;align-items:center;padding:0 12px;font-weight:850;color:#253249}.category-manager-info{display:flex;flex-direction:column;gap:3px}.category-manager-info strong{font-size:.9rem;color:#26354b}.category-manager-info code{font-size:.76rem;color:#64748b}.category-manager-actions{display:flex;justify-content:space-between;gap:8px;margin-top:16px;flex-wrap:wrap}@media(max-width:560px){.category-manager-row{grid-template-columns:1fr 1fr;}.category-color-sample{grid-column:1/-1}.category-manager-row button{font-size:.78rem;padding:7px}}
+.category-palette-title{font-size:.78rem;font-weight:800;color:#475569;margin:12px 0 7px}.category-color-palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:7px}.category-palette-swatch{display:flex;align-items:center;gap:7px;min-height:37px;padding:5px 7px;border:1px solid #d8e0eb;border-radius:8px;background:#fff;cursor:pointer;text-align:left;font-size:.72rem;color:#334155}.category-palette-swatch:hover{border-color:#64748b;transform:translateY(-1px)}.category-palette-swatch.active{outline:2px solid #334155;outline-offset:1px;font-weight:850}.category-palette-dot{width:22px;height:22px;flex:0 0 22px;border-radius:6px;border:1px solid #00000020}.category-manager-modal{display:none;position:fixed;inset:0;background:#0f172a88;z-index:120;align-items:center;justify-content:center;padding:16px}.category-manager-modal.open{display:flex}.category-manager-card{width:min(680px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;padding:20px;box-shadow:0 20px 60px #0f172a33}.category-manager-title{font-size:1.15rem;font-weight:900;color:#233b68;margin:0 0 6px}.category-manager-help{font-size:.84rem;color:#64748b;margin:0 0 15px;line-height:1.5}.category-manager-row{display:grid;grid-template-columns:minmax(115px,1fr) minmax(90px,.8fr) auto auto;gap:9px;align-items:center;padding:10px 0;border-bottom:1px solid #e8edf4}.category-color-sample{height:42px;border-radius:9px;border:1px solid #64748b33;display:flex;align-items:center;padding:0 12px;font-weight:850;color:#253249}.category-manager-info{display:flex;flex-direction:column;gap:3px}.category-manager-info strong{font-size:.9rem;color:#26354b}.category-manager-info code{font-size:.76rem;color:#64748b}.category-manager-actions{display:flex;justify-content:space-between;gap:8px;margin-top:16px;flex-wrap:wrap}@media(max-width:560px){.category-manager-row{grid-template-columns:1fr 1fr;}.category-color-sample{grid-column:1/-1}.category-manager-row button{font-size:.78rem;padding:7px}}
 .modal-backdrop{position:fixed;inset:0;background:#0f172a88;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
 .modal-backdrop.open{display:flex}.modal{width:min(620px,100%);max-height:92vh;overflow:auto;background:white;border-radius:12px;box-shadow:0 20px 60px #0f172a33;padding:20px}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.modal-header h2{font-size:1.1rem}.close-btn{border:0;background:none;font-size:1.5rem;color:#64748b}
@@ -989,6 +989,8 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
    <label for="categoryEditName">분야 이름</label><input id="categoryEditName" maxlength="30" class="field">
    <label for="categoryEditColor">색상 선택</label>
    <div class="category-color-picker-row"><input id="categoryEditColor" type="color" value="#93c5fd" oninput="updateCategoryColorPreview()"><div id="categoryEditPreview" class="category-edit-preview"></div><code id="categoryEditHex">#93c5fd</code></div>
+   <div class="category-palette-title">추천 색상 — 원하는 색을 눌러 선택하세요</div>
+   <div id="categoryColorPalette" class="category-color-palette"></div>
    <div class="category-manager-actions"><button class="btn btn-outline" type="button" onclick="cancelCategoryEdit()">취소</button><button class="btn btn-primary" type="button" onclick="saveCategoryEdit()">변경 저장</button></div>
   </div>
   <div class="category-manager-actions"><button class="btn btn-outline" type="button" onclick="addCategory()">＋ 분야 추가</button><button class="btn btn-primary" type="button" onclick="closeCategoryManager()">닫기</button></div>
@@ -1083,12 +1085,23 @@ function renderCategoryManager(){
  </div>`).join('');
 }
 let editingCategoryIndex=-1;
+const CATEGORY_COLOR_PRESETS=[
+ {name:'살구',color:'#fdba74'},{name:'복숭아',color:'#ffcba4'},{name:'연코랄',color:'#fda4af'},{name:'로즈핑크',color:'#f9a8d4'},
+ {name:'레몬',color:'#fde68a'},{name:'버터',color:'#fef3c7'},{name:'민트',color:'#99f6e4'},{name:'연두',color:'#bef264'},
+ {name:'세이지',color:'#a7c4a0'},{name:'하늘',color:'#93c5fd'},{name:'라벤더',color:'#c4b5fd'},{name:'라일락',color:'#ddd6fe'},
+ {name:'아쿠아',color:'#a5f3fc'},{name:'스카이블루',color:'#bae6fd'},{name:'샌드',color:'#e7d3b1'},{name:'그레이',color:'#cbd5e1'}
+];
+function renderCategoryColorPalette(){
+ const current=$('categoryEditColor').value.toLowerCase();
+ $('categoryColorPalette').innerHTML=CATEGORY_COLOR_PRESETS.map(p=>`<button type="button" class="category-palette-swatch ${p.color===current?'active':''}" onclick="selectCategoryColor('${p.color}')" title="${p.name} ${p.color}"><span class="category-palette-dot" style="background:${p.color}"></span><span>${p.name}</span></button>`).join('');
+}
+function selectCategoryColor(color){$('categoryEditColor').value=color;updateCategoryColorPreview();}
 function editCategory(index){
  const c=getCategories()[index];if(!c)return;editingCategoryIndex=index;
  $('categoryEditName').value=c.name;$('categoryEditColor').value=c.color;$('categoryEditPreview').style.background=c.color;$('categoryEditHex').textContent=c.color;
- $('categoryEditor').style.display='block';$('categoryEditName').focus();
+ $('categoryEditor').style.display='block';renderCategoryColorPalette();$('categoryEditName').focus();
 }
-function updateCategoryColorPreview(){const color=$('categoryEditColor').value;$('categoryEditPreview').style.background=color;$('categoryEditHex').textContent=color;}
+function updateCategoryColorPreview(){const color=$('categoryEditColor').value;$('categoryEditPreview').style.background=color;$('categoryEditHex').textContent=color;renderCategoryColorPalette();}
 function cancelCategoryEdit(){editingCategoryIndex=-1;$('categoryEditor').style.display='none';}
 function saveCategoryEdit(){
  const cats=getCategories(),idx=editingCategoryIndex;if(idx<0||!cats[idx])return;
