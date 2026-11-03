@@ -1581,8 +1581,8 @@ function renderCalendar(){
   const box=document.createElement('div');box.className='list-view';
   box.innerHTML='<div class="list-row header"><span>마감일</span><span>업무명 / 메모</span><span>분야</span><span class="list-status">상태</span></div>'+
    (arr.length?arr.map(t=>`<div class="list-row ${t.status==='완료'?'list-completed':''} ${t.status==='완료'&&t.excludeOverdue?'no-strike':''}">
-    <span><input type="checkbox" class="list-done-check" ${t.status==='완료'?'checked':''} aria-label="업무 완료 처리" onchange="setListTaskStatus('${String(t.id).replace(/'/g,"\\'")}',this.checked)"><br>${escapeHTML(t.endDate&&t.endDate!==t.date?`${t.date} ~ ${t.endDate}`:t.date)}</span>
-    <span><button class="tiny-btn list-task-title" onclick="editTask('${String(t.id).replace(/'/g,"\\'")}')">${t.emoji?escapeHTML(t.emoji)+' ':''}${escapeHTML(t.title)}</button>${t.memo?`<span class="list-memo">${escapeHTML(t.memo)}</span>`:'<span class="list-memo">메모 없음</span>'}</span>
+    <span><input type="checkbox" class="list-done-check" ${t.status==='완료'?'checked':''} aria-label="업무 완료 처리" onchange="setListTaskStatus('${String(t.id).replace(/'/g,"\'")}',this.checked)"><br>${escapeHTML(t.endDate&&t.endDate!==t.date?`${t.date} ~ ${t.endDate}`:t.date)}</span>
+    <span><button class="tiny-btn list-task-title" onclick="editTask('${String(t.id).replace(/'/g,"\'")}')">${t.emoji?escapeHTML(t.emoji)+' ':''}${escapeHTML(t.title)}</button>${t.memo?`<span class="list-memo">${escapeHTML(t.memo)}</span>`:'<span class="list-memo">메모 없음</span>'}</span>
     <span><span class="tag ${escapeHTML(t.category)}">${escapeHTML(t.category)}</span></span>
     <span class="list-status">${escapeHTML(isOverdue(t)?'지연':t.status)}</span>
    </div>`).join(''):'<div class="empty-state">이번 달 등록된 업무가 없습니다.</div>');
@@ -1598,20 +1598,85 @@ function renderCalendar(){
   const leadingBlanks=first.getDay(),totalCells=Math.ceil((leadingBlanks+lastDay)/7)*7;
   for(let i=0;i<totalCells;i++){const dayOfMonth=i-leadingBlanks+1;if(dayOfMonth>=1&&dayOfMonth<=lastDay)dates.push(new Date(viewYear,viewMonth,dayOfMonth));else dates.push(null)}
  }
- for(const d of dates){
-  if(!d){const blank=document.createElement('div');blank.className='calendar-cell calendar-blank';blank.setAttribute('aria-hidden','true');grid.appendChild(blank);continue;}
-  const iso=toISO(d),cell=document.createElement('div');cell.className='calendar-cell'+(iso===todayISO?' today-cell':'')+(viewMode==='week'&&iso===selectedDate?' selected-week-day':'');cell.dataset.date=iso;const holiday=getHoliday(iso);if(holiday){const hl=document.createElement('div');hl.className='holiday-label';hl.textContent=holiday;cell.appendChild(hl);}
- const day=document.createElement('div');day.className='day-num'+(d.getDay()===0?' sun':d.getDay()===6?' sat':'');day.innerHTML=`<span>${d.getDate()}</span>${iso===todayISO?'<span class="today-date-label">오늘</span>':''}`;cell.appendChild(day);
- const dayTasks=all.filter(t=>t.date<=iso&&(t.endDate||t.date)>=iso).sort((a,b)=>priorityOrder(a.priority)-priorityOrder(b.priority));
- if(dayTasks.some(t=>t.priority==='urgent'&&!isOverdue(t)&&t.status!=='완료'))cell.classList.add('has-urgent');
- const expanded=expandedCalendarDates.has(iso);if(expanded)cell.classList.add('expanded-day');
- const rangeTasks=dayTasks.filter(t=>(t.endDate||t.date)>t.date);
- const singleTasks=dayTasks.filter(t=>(t.endDate||t.date)===t.date);
- const displayTasks=expanded?dayTasks:[...rangeTasks,...singleTasks.slice(0,Math.max(0,3-rangeTasks.length))];
- displayTasks.forEach(t=>{const chip=document.createElement('button');const rangeStart=t.date,rangeEnd=t.endDate||t.date,isRange=rangeEnd>rangeStart;chip.className=`event-chip cat-${t.category}${t.priority==='urgent'?' urgent':''}${t.status==='완료'?' completed':''}${t.status==='완료'&&t.excludeOverdue?' completed-no-strike':''}${isRange?(iso===rangeStart?' range-start':iso===rangeEnd?' range-end':' range-middle'):''}`;chip.title=`${t.title} · ${t.category} · ${t.status}${t.relatedPerson?' · 관련자: '+t.relatedPerson:''}${isRange?' · '+rangeStart+'~'+rangeEnd:''}`;const dd=daysUntil(t.date);const emojiStr = t.emoji ? escapeHTML(t.emoji) + ' ' : '';const spanDays=isRange?Math.floor((new Date(rangeEnd+'T12:00:00')-new Date(rangeStart+'T12:00:00'))/86400000)+1:1;const labelDate=rangeStart;chip.textContent=(isOverdue(t)?'⚠ ':'')+(iso===labelDate?emojiStr+t.title+(dd===0?' · D-Day':dd>0&&dd<=30?` · D-${dd}`:''):isRange?'　':'') ;if(isRange){chip.style.textAlign='left';if(iso===rangeStart){const visibleSpan=Math.min(spanDays,7-d.getDay());chip.style.width=`calc(${visibleSpan*100}% + ${(visibleSpan-1)*12+6}px)`;chip.style.position='relative';chip.style.zIndex='10';chip.style.overflow='visible';chip.style.textOverflow='clip';chip.style.whiteSpace='nowrap';}}if(t.color){chip.style.backgroundColor=t.color;chip.style.color='#172033';chip.classList.add('custom-color')}else{const cat=getCategories().find(c=>c.name===t.category);if(cat){chip.style.backgroundColor=cat.color;chip.style.color='#172033';chip.classList.add('custom-color')}};chip.onclick=e=>{e.stopPropagation();editTask(t.id)};cell.appendChild(chip);if(!isRange||iso!==rangeStart){requestAnimationFrame(()=>{if(chip.isConnected&&chip.scrollWidth>chip.clientWidth+1)chip.classList.add("has-overflow")})}});
- if(dayTasks.length>3){const more=document.createElement('button');more.type='button';more.className='more-events';more.textContent=expanded?'접기':`+${dayTasks.length-3}건 · 전체 일정 보기`;more.title='해당 날짜의 일정을 모두 펼쳐 봅니다';more.onclick=e=>{e.stopPropagation();if(expanded)expandedCalendarDates.delete(iso);else expandedCalendarDates.add(iso);renderCalendar()};cell.appendChild(more)}
- cell.onclick=()=>{selectedDate=iso;openTaskModal(null,iso);renderSidebar()};grid.appendChild(cell);
+
+ let weeks=[];
+ for(let i=0;i<dates.length;i+=7){
+  weeks.push(dates.slice(i,i+7));
  }
+
+ weeks.forEach(weekDates=>{
+  let weekStartISO = weekDates.find(d=>d!==null) ? toISO(weekDates.find(d=>d!==null)) : '';
+  let weekEndISO = weekDates.slice().reverse().find(d=>d!==null) ? toISO(weekDates.slice().reverse().find(d=>d!==null)) : '';
+  
+  let weekTasks = all.filter(t => {
+   let s = t.date, e = t.endDate || t.date;
+   return s <= weekEndISO && e >= weekStartISO;
+  }).sort((a,b)=> (a.date !== b.date ? a.date.localeCompare(b.date) : (b.endDate||b.date).localeCompare(a.endDate||a.date)));
+
+  let taskSlots = new Map();
+  let assignedSlots = [];
+  weekTasks.forEach(t => {
+   let s = t.date, e = t.endDate || t.date;
+   let slot = 0;
+   while (assignedSlots[slot] && assignedSlots[slot] >= s) {
+    slot++;
+   }
+   assignedSlots[slot] = e;
+   taskSlots.set(t.id, slot);
+  });
+
+  weekDates.forEach((d, dayIdx)=>{
+   if(!d){const blank=document.createElement('div');blank.className='calendar-cell calendar-blank';blank.setAttribute('aria-hidden','true');grid.appendChild(blank);return;}
+   const iso=toISO(d),cell=document.createElement('div');cell.className='calendar-cell'+(iso===todayISO?' today-cell':'')+(viewMode==='week'&&iso===selectedDate?' selected-week-day':'');cell.dataset.date=iso;const holiday=getHoliday(iso);if(holiday){const hl=document.createElement('div');hl.className='holiday-label';hl.textContent=holiday;cell.appendChild(hl);}
+   const day=document.createElement('div');day.className='day-num'+(d.getDay()===0?' sun':d.getDay()===6?' sat':'');day.innerHTML=`<span>${d.getDate()}</span>${iso===todayISO?'<span class="today-date-label">오늘</span>':''}`;cell.appendChild(day);
+
+   const dayTasks=all.filter(t=>t.date<=iso&&(t.endDate||t.date)>=iso).sort((a,b)=>priorityOrder(a.priority)-priorityOrder(b.priority));
+   if(dayTasks.some(t=>t.priority==='urgent'&&!isOverdue(t)&&t.status!=='완료'))cell.classList.add('has-urgent');
+   const expanded=expandedCalendarDates.has(iso);if(expanded)cell.classList.add('expanded-day');
+
+   dayTasks.forEach(t=>{
+    const chip=document.createElement('button');
+    const rangeStart=t.date,rangeEnd=t.endDate||t.date,isRange=rangeEnd>rangeStart;
+    const isWeekStart = (dayIdx === 0) || (iso === rangeStart);
+    chip.className=`event-chip cat-${t.category}${t.priority==='urgent'?' urgent':''}${t.status==='완료'?' completed':''}${t.status==='완료'&&t.excludeOverdue?' completed-no-strike':''}${isRange?(iso===rangeStart?' range-start':iso===rangeEnd?' range-end':' range-middle'):''}`;
+    chip.title=`${t.title} · ${t.category} · ${t.status}${t.relatedPerson?' · 관련자: '+t.relatedPerson:''}${isRange?' · '+rangeStart+'~'+rangeEnd:''}`;
+    
+    const dd=daysUntil(t.date);
+    const emojiStr = t.emoji ? escapeHTML(t.emoji) + ' ' : '';
+    
+    chip.textContent = (isOverdue(t)?'⚠ ':'') + (isWeekStart ? emojiStr + t.title + (dd===0?' · D-Day':dd>0&&dd<=30?` · D-${dd}`:'') : (isRange ? '　' : emojiStr + t.title));
+    
+    if(isRange){
+     chip.style.textAlign='left';
+     if(iso===rangeStart || isWeekStart){
+      let remainingDaysInWeek = 7 - dayIdx;
+      let startD = new Date(iso+'T12:00:00');
+      let endD = new Date(rangeEnd+'T12:00:00');
+      let diffDays = Math.floor((endD - startD)/86400000) + 1;
+      let visibleSpan = Math.min(diffDays, remainingDaysInWeek);
+      chip.style.width=`calc(${visibleSpan*100}% + ${(visibleSpan-1)*12+6}px)`;
+      chip.style.position='relative';
+      chip.style.zIndex='10';
+      chip.style.overflow='visible';
+      chip.style.textOverflow='clip';
+      chip.style.whiteSpace='nowrap';
+     }
+    }
+    if(t.color){chip.style.backgroundColor=t.color;chip.style.color='#172033';chip.classList.add('custom-color')}
+    else{const cat=getCategories().find(c=>c.name===t.category);if(cat){chip.style.backgroundColor=cat.color;chip.style.color='#172033';chip.classList.add('custom-color')}};
+    chip.onclick=e=>{e.stopPropagation();editTask(t.id)};
+    cell.appendChild(chip);
+   });
+
+   if(dayTasks.length>4){
+    const more=document.createElement('button');more.type='button';more.className='more-events';more.textContent=expanded?'접기':`+${dayTasks.length-4}건 더보기`;
+    more.onclick=e=>{e.stopPropagation();if(expanded)expandedCalendarDates.delete(iso);else expandedCalendarDates.add(iso);renderCalendar()};
+    cell.appendChild(more);
+   }
+   cell.onclick=()=>{selectedDate=iso;openTaskModal(null,iso);renderSidebar()};
+   grid.appendChild(cell);
+  });
+ });
  root.appendChild(grid);
 }
 function priorityOrder(p){return p==='urgent'?0:p==='important'?1:2}
