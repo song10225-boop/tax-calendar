@@ -448,6 +448,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .task-attachment-item button{flex:0 0 auto;border:0;border-radius:7px;padding:6px 9px;background:#fff1f2;color:#be123c;cursor:pointer}
 .task-attachment-item a{color:#4f46e5;text-decoration:none;font-size:.82rem}
 </style>
+<style>:root{--app-font:Dotum,"돋움",sans-serif}body{font-family:var(--app-font)!important}body *{font-family:inherit}</style>
 </head>
 <body>
 
@@ -1002,6 +1003,13 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     <h2 id="appearanceTitle">캘린더 제목·색상 설정</h2>
     <label for="customCalendarTitle">캘린더 제목</label>
     <input id="customCalendarTitle" maxlength="60" placeholder="예: 경영전략부 업무 캘린더">
+    <label for="calendarFontChoice">글씨체</label>
+    <select id="calendarFontChoice">
+      <option value="Dotum, 돋움, sans-serif">돋움</option>
+      <option value="Malgun Gothic, 맑은 고딕, sans-serif">맑은 고딕</option>
+      <option value="Gulim, 굴림, sans-serif">굴림체</option>
+      <option value="Batang, 바탕, serif">바탕체</option>
+    </select>
     <label for="calendarThemeChoice">달력 색상 테마</label>
     <select id="calendarThemeChoice">
       <option value="blue">블루 톤</option>
@@ -1223,10 +1231,18 @@ function applyAppearance(){
  if(theme!=='blue')document.body.classList.add('theme-'+theme);
  const titleEl=$('appTitleText');if(titleEl)titleEl.textContent=title;
  document.title=title;
+ const fontMap={
+  'Dotum, 돋움, sans-serif':'Dotum, \"돋움\", sans-serif',
+  'Malgun Gothic, 맑은 고딕, sans-serif':'\"Malgun Gothic\", \"맑은 고딕\", sans-serif',
+  'Gulim, 굴림, sans-serif':'Gulim, \"굴림\", sans-serif',
+  'Batang, 바탕, serif':'Batang, \"바탕\", serif'
+ };
+ document.documentElement.style.setProperty('--app-font',fontMap[profile.fontFamily]||fontMap['Dotum, 돋움, sans-serif']);
 }
 function openAppearanceSettings(){
  $('customCalendarTitle').value=profile.calendarTitle||'경영전략부 업무 캘린더';
  $('calendarThemeChoice').value=['blue','rose','beige','lavender','green'].includes(profile.theme)?profile.theme:'blue';
+ $('calendarFontChoice').value=profile.fontFamily||'Dotum, 돋움, sans-serif';
  $('appearanceModal').classList.add('open');
 }
 function closeAppearanceSettings(){$('appearanceModal').classList.remove('open')}
@@ -1234,6 +1250,7 @@ function saveAppearanceSettings(){
  const title=$('customCalendarTitle').value.trim();
  if(!title){alert('캘린더 제목을 입력해 주세요.');$('customCalendarTitle').focus();return}
  profile.calendarTitle=title;profile.theme=['blue','rose','beige','lavender','green'].includes($('calendarThemeChoice').value)?$('calendarThemeChoice').value:'blue';
+ profile.fontFamily=['Dotum, 돋움, sans-serif','Malgun Gothic, 맑은 고딕, sans-serif','Gulim, 굴림, sans-serif','Batang, 바탕, serif'].includes($('calendarFontChoice').value)?$('calendarFontChoice').value:'Dotum, 돋움, sans-serif';
  saveData();applyAppearance();closeAppearanceSettings();
 }
 function changeMonth(delta){
