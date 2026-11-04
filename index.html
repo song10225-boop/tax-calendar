@@ -485,6 +485,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .vat-box{background:#fff;border:1.5px solid #bfd3f2;border-radius:12px;padding:12px 14px;margin-bottom:10px}.vat-grid{display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,1fr);gap:8px 14px;margin-top:8px;align-items:end}.vat-grid label{display:flex;flex-direction:column;gap:4px;font-size:.78rem;font-weight:700;color:#475569}.vat-grid input{padding:9px;border:1px solid #cbd5e1;border-radius:7px;font-size:1rem}.vat-out{padding:10px;background:#eff6ff;border-radius:7px;font-weight:800;color:#1e3a8a;cursor:pointer}@media(max-width:720px){.vat-grid{grid-template-columns:1fr}}
 .today-age{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;background:#fef3c7;color:#92400e;font-weight:800;font-size:.76rem}.today-age.old{background:#fee2e2;color:#991b1b}
 .leave-side-card{background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:10px 12px;cursor:pointer;flex-shrink:0}.leave-side-card:hover{background:#dcfce7}.lsc-t{font-size:.8rem;font-weight:800;color:#166534}.lsc-big{font-size:1.7rem;font-weight:900;color:#14532d;line-height:1.3}.lsc-big small{font-size:.85rem;font-weight:800;margin-left:4px}.lsc-s{font-size:.78rem;font-weight:700;color:#4b6b55}
+.retire-breakdown{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0}.retire-breakdown h3{font-size:1rem;margin-bottom:8px}.retire-breakdown td:nth-child(2),.retire-breakdown td:nth-child(4),.retire-breakdown th:nth-child(2),.retire-breakdown th:nth-child(4){text-align:right}.retire-breakdown tr.off td{color:#94a3b8}.retire-breakdown tfoot td{font-weight:800;background:#f8fafc;text-align:right}.retire-breakdown tfoot td[colspan]{text-align:right}.retire-breakdown tr.rb-total td{background:#e0ecff;color:#1e3a8a;font-size:1.02rem}
 .calendar-cell .day-num{position:relative}
 .calendar-cell .day-num .today-date-label{position:absolute;right:0;top:50%;transform:translateY(-50%)}
 </style>
@@ -1755,6 +1756,22 @@ function updateLeaveCard(){
 }
 const _renderLeaveManagerBase=renderLeaveManager;renderLeaveManager=function(){_renderLeaveManagerBase();updateLeaveCard();try{renderCalendar();renderSidebar()}catch(e){}};
 const _renderAllBase2=renderAll;renderAll=function(){_renderAllBase2();updateLeaveCard()};
+/* ===== [추가] 퇴직금(DC) 연도별 부담금 내역표 ===== */
+const _calcRetirementBase=calcRetirement;
+calcRetirement=function(){
+ _calcRetirementBase();
+ const cards=document.querySelector('.retire-summary-cards');if(!cards||!$('retireHireDate'))return;
+ let box=$('retireBreakdown');if(!box){box=document.createElement('div');box.id='retireBreakdown';box.className='retire-breakdown';cards.insertAdjacentElement('afterend',box)}
+ const hire=$('retireHireDate').value,end=$('retireEndDate').value,won=n=>'₩'+Math.round(n).toLocaleString('ko-KR');
+ let sum=0;
+ const rows=retireYears.map(y=>{const wage=parseRetireMoney($('retireWage'+y)?.value),st=`${y}-01-01`,fi=`${y}-12-31`;
+  const inScope=(!hire||fi>=hire)&&(!end||st<=end);
+  let note,amt=0,cls='';
+  if(!inScope){note='기간 밖 (제외)';cls='off'}else if(!(wage>0)){note='임금 미입력 (제외)';cls='off'}else{amt=wage/12;sum+=amt;note='산입'}
+  return `<tr class="${cls}"><td>${y}년</td><td>${wage>0?won(wage):'—'}</td><td>${note}</td><td>${amt?won(amt):'—'}</td></tr>`}).join('');
+ const bal=parseRetireMoney($('retireBalance')?.value),ext=parseRetireMoney($('retireExtra')?.value);
+ box.innerHTML=`<h3>📊 연도별 부담금 내역 (임금총액 ÷ 12)</h3><div class="leave-table-wrap"><table class="leave-table"><thead><tr><th>연도</th><th>임금총액</th><th>산입 여부</th><th>회사 부담금(÷12)</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="3">회사 부담금 합계</td><td>${won(sum)}</td></tr>${bal?`<tr><td colspan="3">＋ 기존 회사 불입액</td><td>${won(bal)}</td></tr>`:''}${ext?`<tr><td colspan="3">＋ 추가 납입·승계액</td><td>${won(ext)}</td></tr>`:''}<tr class="rb-total"><td colspan="3">예상 총액 (운용수익 제외)</td><td>${won(sum+bal+ext)}</td></tr></tfoot></table></div>`;
+};
 function clearDiaryFilters(){['diarySearch','diaryPersonFilter','diaryStatusFilter','diaryDateFrom','diaryDateTo'].forEach(id=>{const el=$(id);if(el)el.value=''});renderDiaryTable()}
 function setAllCategories(value){document.querySelectorAll('.cat-filter').forEach(c=>c.checked=value);updateCategoryToggleLabel();renderAll()}
 function toggleAllCategories(){const boxes=[...document.querySelectorAll('.cat-filter')];const allChecked=boxes.length>0&&boxes.every(c=>c.checked);setAllCategories(!allChecked)}
