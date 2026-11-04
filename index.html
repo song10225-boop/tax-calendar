@@ -1699,12 +1699,18 @@ function taxPresetList(y){
  add('year',3,10,'근로·퇴직·사업소득 지급명세서 제출 (연말정산)');add('corp',3,31,'법인세 신고·납부 (12월 결산법인)');add('corpl',4,30,'법인지방소득세 신고·납부 (12월 결산법인)');add('mid',8,31,'법인세 중간예납 (12월 결산법인)');
  return L.map(x=>({...x,date:taxAdjust(x.iso),id:`tax-${y}-${x.key}`}));
 }
+function taxFilingCategory(){
+ const cs=getCategories(),f=cs.find(c=>c.name==='신고업무')||cs.find(c=>c.name==='신고')||cs.find(c=>/신고/.test(c.name));
+ if(f)return f.name;cs.push({name:'신고업무',color:'#fcd34d'});return '신고업무';
+}
 function registerTaxPreset(){
+ const moved=(()=>{const cat=taxFilingCategory();let n=0;tasks.forEach(t=>{if(String(t.id).startsWith('tax-')&&t.category!==cat){t.category=cat;n++}});if(n){saveData();renderAll()}return n})();
+ if(moved)alert('이미 등록돼 있던 법정세무일정 '+moved+'건을 신고업무 분야로 옮겼어요.');
  const y=Number(prompt('법정 세무일정을 등록할 연도를 입력하세요.',String(new Date().getFullYear())));if(!y||y<2000||y>2100)return;
  const t0=toISO(new Date()),list=taxPresetList(y).filter(x=>x.date>=t0&&!tasks.some(t=>t.id===x.id));
  if(!list.length){alert('등록할 새 세무일정이 없어요. (오늘 이후 일정만 등록하며, 이미 등록된 건은 건너뜁니다)');return}
  if(!confirm(`${y}년 법정 세무일정 중 오늘 이후 ${list.length}건을 캘린더에 등록할까요?\n\n※ 주말·공휴일은 다음 영업일로 자동 보정돼요. 임시공휴일은 '공휴일 관리'에 먼저 등록해 두세요.\n※ 법령 개정이 있을 수 있으니 신고 전 홈택스(국세청) 공지를 꼭 확인하세요.`))return;
- const cats=getCategories().map(c=>c.name),cat=cats.includes('회계')?'회계':cats[0];
+ const cat=taxFilingCategory();
  list.forEach(x=>tasks.push({id:x.id,title:x.title,emoji:'🧾',date:x.date,endDate:x.date,relatedPerson:'',category:cat,status:'예정',priority:'important',isDday:false,excludeOverdue:false,repeat:'none',repeatUntil:'',actualDate:'',memo:('[법정기한] '+x.memo).trim(),link:'',color:'',logs:[],attachments:[]}));
  saveData();renderAll();alert(list.length+'건을 등록했어요.');
 }
