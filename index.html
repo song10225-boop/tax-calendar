@@ -458,6 +458,19 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .calendar-cell .event-chip.range-bar.seg-left{border-radius:0 6px 6px 0!important;border-left-width:0;padding-left:calc(var(--cp,6px) + 5px)!important}
 .calendar-cell .event-chip.range-bar.seg-right{border-radius:6px 0 0 6px!important;border-right-width:0}
 .calendar-cell .event-chip.range-bar.seg-left.seg-right{border-radius:0!important}
+/* [가독성 개선] 우측 사이드바의 분야 태그·상태 표시 글씨를 더 크고 진하게 (글꼴은 사용자 설정 유지) */
+.todo-sidebar .tag,.todo-sidebar .status-pill{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;line-height:1.35;letter-spacing:0}
+.todo-sidebar .tag{display:inline-block;font-size:.8rem;font-weight:800;padding:3px 8px;border-radius:5px;color:#1f2937;background:#e5e7eb;border:1px solid #cbd5e1}
+.todo-sidebar .tag.회계{background:#dbeafe;color:#1e3a8a;border-color:#93b4ee}
+.todo-sidebar .tag.자금{background:#dcfce7;color:#14532d;border-color:#86d6a0}
+.todo-sidebar .tag.인사{background:#ffedd5;color:#7c2d12;border-color:#f5b982}
+.todo-sidebar .tag.총무{background:#ede9fe;color:#4c1d95;border-color:#bfaef0}
+.todo-sidebar .tag.공통{background:#ffe4e6;color:#881337;border-color:#f3a5b1}
+.todo-sidebar .status-pill{display:inline-block;font-size:.8rem;font-weight:800;padding:2px 9px;color:#1e293b;background:#e2e8f0;border:1px solid #b6c2d2}
+.todo-sidebar .status-pill.지연{background:#fecaca;color:#7f1d1d;border-color:#f08a8a}
+.todo-sidebar .status-pill.완료{background:#bbf7d0;color:#14532d;border-color:#6fcf95}
+.todo-sidebar .status-pill.결재대기,.todo-sidebar .status-pill.자료대기{background:#fde68a;color:#78350f;border-color:#e6b84a}
+.todo-sidebar .todo-text .subtle{color:#475569;font-size:.8rem;font-weight:700}
 .calendar-cell .day-num{position:relative}
 .calendar-cell .day-num .today-date-label{position:absolute;right:0;top:50%;transform:translateY(-50%)}
 </style>
