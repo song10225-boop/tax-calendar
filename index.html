@@ -471,6 +471,10 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .todo-sidebar .status-pill.완료{background:#bbf7d0;color:#14532d;border-color:#6fcf95}
 .todo-sidebar .status-pill.결재대기,.todo-sidebar .status-pill.자료대기{background:#fde68a;color:#78350f;border-color:#e6b84a}
 .todo-sidebar .todo-text .subtle{color:#475569;font-size:.8rem;font-weight:700}
+.diary-quick{display:flex;gap:7px;flex-wrap:wrap}.diary-quick input{flex:1;min-width:220px;padding:9px;border:1.5px solid #9bb8ee;border-radius:8px;background:#fff}
+.diary-alert-bar{display:flex;gap:8px;flex-wrap:wrap}.diary-alert-bar:empty{display:none}.dl-late{background:#fee2e2;color:#991b1b}.dl-soon{background:#fef3c7;color:#92400e}.diary-alert-bar span{padding:5px 11px;border-radius:99px;font-weight:800;font-size:.82rem}
+.dl-badge{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:99px;font-size:.74rem;font-weight:800}.diary-table tbody tr.diary-overdue td:first-child{border-left:6px solid #dc2626}.diary-table tbody tr.diary-soon td:first-child{border-left:6px solid #f59e0b}
+.diary-chk{display:inline-flex;align-items:center;gap:4px;font-size:.82rem;font-weight:700;white-space:nowrap}.diary-star{display:block;margin-top:3px;border:0;background:none;font-size:1.15rem;line-height:1;color:#94a3b8;cursor:pointer}.diary-star.on{color:#f59e0b}
 .calendar-cell .day-num{position:relative}
 .calendar-cell .day-num .today-date-label{position:absolute;right:0;top:50%;transform:translateY(-50%)}
 </style>
@@ -1581,6 +1585,37 @@ function renderDiaryTable(){
  `<td><div class="diary-stamp">${escapeHTML(r.date||'날짜 없음')}<small class="${hasUpdate?'stamp-updated':''}">${stampLabel} ${escapeHTML(stampText)}</small></div></td><td>${weekday(r.date)}</td><td><span class="priority-pill ${statusClass}">${escapeHTML(r.status||'예정')}</span></td><td>${escapeHTML(r.person||'—')}</td><td class="diary-readonly"><div class="diary-preview">${escapeHTML(r.content||'내용 없음')}</div>${r.note?`<div class="diary-preview note">비고: ${escapeHTML(r.note)}</div>`:''}</td><td>${escapeHTML(r.deadline||'—')}</td><td class="diary-readonly"><div class="diary-preview note">${escapeHTML(r.note||'—')}</div></td>`}
  <td style="white-space:nowrap">${editing?`<button class="small-action diary-save-btn" onclick="saveDiaryEdit('${String(r.id).replace(/'/g,"\\'")}')">저장</button> <button class="small-action" onclick="cancelDiaryEdit('${String(r.id).replace(/'/g,"\\'")}')">취소</button>`:`<button class="small-action diary-edit-btn" onclick="toggleDiaryEdit('${String(r.id).replace(/'/g,"\\'")}')">수정</button> `}${r.taskId?`<button class="small-action" onclick="openLinkedTask('${String(r.taskId).replace(/'/g,"\\'")}')">일정 수정</button> `:``}<button class="small-action" onclick="removeDiaryRow('${String(r.id).replace(/'/g,"\\'")}')">삭제</button></td></tr>`}).join(''):'<tr><td colspan="9" class="empty-state">표시할 일지가 없습니다. ‘＋ 일지 추가’를 눌러 기록을 시작하세요.</td></tr>';
 }
+/* ===== [일지 기능 추가] 빠른 작성 / 오늘 일정 가져오기 / 마감 강조 / 정렬 / 즐겨찾기 ===== */
+const diaryUI={};
+function newDiaryId(){return `d-${Date.now()}-${Math.random().toString(16).slice(2)}`}
+function quickAddDiary(){const inp=$('diaryQuickInput'),text=(inp?.value||'').trim();if(!text)return;const now=new Date();diaryRows.push({id:newDiaryId(),date:toISO(now),createdAt:now.toISOString(),status:'진행 중',person:'',content:text,deadline:'',note:''});inp.value='';saveData();renderDiaryTable()}
+function importTodayDiary(){const t0=toISO(new Date());const list=tasks.filter(t=>t.date<=t0&&(t.endDate||t.date)>=t0&&!diaryRows.some(r=>r.date===t0&&(r.srcTaskId===t.id||r.taskId===t.id)));if(!list.length){alert('가져올 오늘 일정이 없거나 이미 모두 가져왔어요.');return}const now=new Date();list.forEach(t=>diaryRows.push({id:newDiaryId(),date:t0,createdAt:now.toISOString(),status:t.status||'예정',person:t.relatedPerson||'',content:(t.emoji?t.emoji+' ':'')+t.title,deadline:t.endDate||t.date,note:'',srcTaskId:t.id}));saveData();renderDiaryTable();alert(list.length+'건을 가져왔어요.')}
+function ensureDiaryControls(){
+ if($('diarySortSel'))return;const f=document.querySelector('#diaryPage .diary-filters');if(!f)return;
+ f.insertAdjacentHTML('beforebegin','<div class="diary-quick"><input id="diaryQuickInput" placeholder="오늘 한 일을 입력하고 Enter → 오늘 날짜로 바로 기록"><button type="button" class="btn btn-primary" id="diaryQuickAdd">기록</button><button type="button" class="btn btn-outline" id="diaryImportToday">📥 오늘 일정 가져오기</button></div><div id="diaryAlertBar" class="diary-alert-bar"></div>');
+ f.insertAdjacentHTML('beforeend','<select id="diarySortSel" title="정렬"><option value="default">정렬: 기본(날짜순)</option><option value="dateDesc">날짜 최신순</option><option value="deadline">마감일 빠른순</option><option value="status">상태순(지연 먼저)</option></select><label class="diary-chk"><input type="checkbox" id="diaryStarOnly"> ⭐만</label><label class="diary-chk"><input type="checkbox" id="diaryDueOnly"> 마감임박·지연만</label>');
+ $('diaryQuickAdd').onclick=quickAddDiary;$('diaryImportToday').onclick=importTodayDiary;$('diaryQuickInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing)quickAddDiary()});
+ ['diarySortSel','diaryStarOnly','diaryDueOnly'].forEach(id=>$(id).addEventListener('change',renderDiaryTable));
+ $('diaryTableBody').addEventListener('click',e=>{const b=e.target.closest('[data-star]');if(!b)return;e.stopPropagation();const r=diaryRows.find(x=>String(x.id)===b.dataset.star);if(r){r.starred=!r.starred;saveData();renderDiaryTable()}});
+}
+function diaryDue(r){if(!r.deadline||r.status==='완료')return null;return Math.round((new Date(r.deadline+'T12:00:00')-new Date(toISO(new Date())+'T12:00:00'))/864e5)}
+const _renderDiaryTableBase=renderDiaryTable;
+renderDiaryTable=function(){
+ _renderDiaryTableBase();ensureDiaryControls();
+ const body=$('diaryTableBody');if(!body)return;
+ const all=diaryRows.map(diaryDue).filter(v=>v!==null),late=all.filter(v=>v<0).length,soon=all.filter(v=>v>=0&&v<=3).length;
+ const bar=$('diaryAlertBar');if(bar)bar.innerHTML=(late||soon)?`${late?`<span class="dl-late">⚠ 지연 ${late}건</span>`:''}${soon?`<span class="dl-soon">⏰ 마감 임박(3일 이내) ${soon}건</span>`:''}`:'';
+ const starOnly=$('diaryStarOnly').checked,dueOnly=$('diaryDueOnly').checked,mode=$('diarySortSel').value;
+ const items=[...body.querySelectorAll('tr[data-diary-row]')].map(tr=>{const r=diaryRows.find(x=>String(x.id)===tr.dataset.diaryRow)||{};return {tr,r,dd:diaryDue(r)}});
+ items.forEach(o=>{const dl=o.tr.children[6];if(o.dd!==null&&dl&&!dl.querySelector('input')){if(o.dd<0){o.tr.classList.add('diary-overdue');dl.insertAdjacentHTML('beforeend',`<span class="dl-badge dl-late">지연 ${-o.dd}일</span>`)}else if(o.dd<=3){o.tr.classList.add('diary-soon');dl.insertAdjacentHTML('beforeend',`<span class="dl-badge dl-soon">${o.dd===0?'D-Day':'D-'+o.dd}</span>`)}}});
+ const ord={'지연':0,'진행 중':1,'결재 대기':2,'자료 대기':3,'예정':4,'완료':5};
+ const cmp={dateDesc:(a,b)=>String(b.r.date||'').localeCompare(String(a.r.date||'')),deadline:(a,b)=>String(a.r.deadline||'9999').localeCompare(String(b.r.deadline||'9999')),status:(a,b)=>(ord[a.r.status]??9)-(ord[b.r.status]??9)}[mode];
+ const vis=items.filter(o=>(!starOnly||o.r.starred)&&(!dueOnly||(o.dd!==null&&o.dd<=3)));
+ if(cmp)vis.sort(cmp);
+ items.forEach(o=>{if(!vis.includes(o))o.tr.style.display='none'});
+ vis.forEach((o,i)=>{body.appendChild(o.tr);const td=o.tr.children[0],id=String(o.r.id).replace(/"/g,'&quot;');td.innerHTML=`<div>${i+1}</div><button type="button" class="diary-star${o.r.starred?' on':''}" data-star="${id}" title="중요 표시">${o.r.starred?'★':'☆'}</button>`});
+ if(!vis.length&&items.length)body.insertAdjacentHTML('beforeend','<tr><td colspan="9" class="empty-state">조건에 맞는 일지가 없습니다.</td></tr>');
+};
 function clearDiaryFilters(){['diarySearch','diaryPersonFilter','diaryStatusFilter','diaryDateFrom','diaryDateTo'].forEach(id=>{const el=$(id);if(el)el.value=''});renderDiaryTable()}
 function setAllCategories(value){document.querySelectorAll('.cat-filter').forEach(c=>c.checked=value);updateCategoryToggleLabel();renderAll()}
 function toggleAllCategories(){const boxes=[...document.querySelectorAll('.cat-filter')];const allChecked=boxes.length>0&&boxes.every(c=>c.checked);setAllCategories(!allChecked)}
