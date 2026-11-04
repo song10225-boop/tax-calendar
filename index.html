@@ -489,6 +489,13 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .calendar-cell .day-num{position:relative}
 .calendar-cell .day-num .today-date-label{position:absolute;right:0;top:50%;transform:translateY(-50%)}
 </style>
+<style>
+.nav-group{display:flex;align-items:stretch}.nav-group-btn{background:none;border:0;cursor:pointer;font:inherit;font-weight:700}.nav-caret{font-size:.7rem;opacity:.7}
+.nav-menu{display:none;position:fixed;z-index:3000;min-width:170px;background:#fff;border:1px solid var(--line,#dde3ee);border-radius:12px;box-shadow:0 10px 28px rgba(30,45,80,.18);padding:6px}
+.nav-menu.open{display:block}
+.nav-menu .nav-link{display:flex;width:100%;height:auto;min-height:0;padding:10px 12px;justify-content:flex-start;border:0;border-radius:8px;background:none;text-align:left;white-space:nowrap;cursor:pointer}
+.nav-menu .nav-link:hover{background:#f2f5ff}.nav-menu .nav-link.active{background:#e8eefc;border:0}
+</style>
 </head>
 <body>
 
@@ -587,17 +594,29 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
   <div class="nav-brand"><span class="brand-mark">✓</span>TaxDiary</div>
   <button class="nav-link active" data-page="calendarPage" onclick="showPage('calendarPage',this)"><span class="nav-icon">🗓️</span> 세무 달력</button>
   <button class="nav-link" data-page="diaryPage" onclick="showPage('diaryPage',this)"><span class="nav-icon">📒</span> 업무일지</button>
-  <button class="nav-link" data-page="todayListPage" onclick="showPage('todayListPage',this)"><span class="nav-icon">📝</span> 투데이리스트</button>
-  <button class="nav-link" data-page="memoPage" onclick="showPage('memoPage',this)"><span class="nav-icon">📌</span> 메모장</button>
-  <button class="nav-link" data-page="calculatorPage" onclick="showPage('calculatorPage',this)"><span class="nav-icon">🧮</span> 계산기</button>
-  <button class="nav-link" data-page="quickLinksPage" onclick="showPage('quickLinksPage',this)"><span class="nav-icon">💗</span> 즐겨찾기</button>
-  <button class="nav-link" data-page="contactsPage" onclick="showPage('contactsPage',this)"><span class="nav-icon">📇</span> 연락망</button>
-  <button class="nav-link" data-page="leavePage" onclick="showPage('leavePage',this)"><span class="nav-icon">🌿</span> 연차관리</button>
-  <button class="nav-link" data-page="retirementPage" onclick="showPage('retirementPage',this)"><span class="nav-icon">🏦</span> 퇴직금 관리</button>
-  <button class="nav-link" data-page="ddayPage" onclick="showPage('ddayPage',this)"><span class="nav-icon">💝</span> 디데이 목록</button>
-  <button class="nav-link" data-page="holidaysPage" onclick="showPage('holidaysPage',this)"><span class="nav-icon">🌷</span> 공휴일 관리</button>
-  <button class="nav-link" onclick="document.getElementById('excelImportFile').click()">엑셀 복원</button>
-  <button class="nav-link" onclick="exportExcel()">엑셀 백업</button>
+  <div class="nav-group"><button type="button" class="nav-link nav-group-btn" onclick="toggleNavMenu(this)"><span class="nav-icon">📂</span> 기록 <span class="nav-caret">▾</span></button>
+    <div class="nav-menu">
+      <button class="nav-link nav-sub" data-page="todayListPage" onclick="showPage('todayListPage',this)"><span class="nav-icon">📝</span> 투데이리스트</button>
+      <button class="nav-link nav-sub" data-page="memoPage" onclick="showPage('memoPage',this)"><span class="nav-icon">📌</span> 메모장</button>
+      <button class="nav-link nav-sub" data-page="ddayPage" onclick="showPage('ddayPage',this)"><span class="nav-icon">💝</span> 디데이 목록</button>
+    </div></div>
+  <div class="nav-group"><button type="button" class="nav-link nav-group-btn" onclick="toggleNavMenu(this)"><span class="nav-icon">🗂️</span> 자료실 <span class="nav-caret">▾</span></button>
+    <div class="nav-menu">
+      <button class="nav-link nav-sub" data-page="quickLinksPage" onclick="showPage('quickLinksPage',this)"><span class="nav-icon">💗</span> 즐겨찾기</button>
+      <button class="nav-link nav-sub" data-page="contactsPage" onclick="showPage('contactsPage',this)"><span class="nav-icon">📇</span> 연락망</button>
+      <button class="nav-link nav-sub" data-page="calculatorPage" onclick="showPage('calculatorPage',this)"><span class="nav-icon">🧮</span> 계산기</button>
+    </div></div>
+  <div class="nav-group"><button type="button" class="nav-link nav-group-btn" onclick="toggleNavMenu(this)"><span class="nav-icon">👥</span> 인사 <span class="nav-caret">▾</span></button>
+    <div class="nav-menu">
+      <button class="nav-link nav-sub" data-page="leavePage" onclick="showPage('leavePage',this)"><span class="nav-icon">🌿</span> 연차관리</button>
+      <button class="nav-link nav-sub" data-page="retirementPage" onclick="showPage('retirementPage',this)"><span class="nav-icon">🏦</span> 퇴직금 관리</button>
+    </div></div>
+  <div class="nav-group"><button type="button" class="nav-link nav-group-btn" onclick="toggleNavMenu(this)"><span class="nav-icon">⚙️</span> 설정 <span class="nav-caret">▾</span></button>
+    <div class="nav-menu">
+      <button class="nav-link nav-sub" data-page="holidaysPage" onclick="showPage('holidaysPage',this)"><span class="nav-icon">🌷</span> 공휴일 관리</button>
+      <button class="nav-link nav-sub" onclick="document.getElementById('excelImportFile').click()">📥 엑셀 복원</button>
+      <button class="nav-link nav-sub" onclick="exportExcel()">📤 엑셀 백업</button>
+    </div></div>
   <input type="file" id="excelImportFile" accept=".xlsx,.xls,.csv" hidden onchange="importExcel(event)">
 </nav>
 <div id="calendarPage" class="page-panel active">
@@ -1542,6 +1561,7 @@ function initCalcPage(){if($('calcRows')&&!$('calcRows').children.length){for(le
 function showPage(pageId,button){
  document.querySelectorAll('.page-panel').forEach(p=>p.classList.toggle('active',p.id===pageId));
  document.querySelectorAll('.nav-link[data-page]').forEach(b=>b.classList.toggle('active',b===button||b.dataset.page===pageId));
+ document.querySelectorAll('.nav-group').forEach(g=>g.querySelector('.nav-group-btn').classList.toggle('active',!!g.querySelector('.nav-sub.active')));closeNavMenus();
  if(pageId==='diaryPage'){renderDiaryTable();requestAnimationFrame(()=>{const wrap=document.querySelector('.diary-table-wrap');if(wrap)wrap.scrollTop=wrap.scrollHeight;});}
  if(pageId==='quickLinksPage')renderQuickLinksManager();
  if(pageId==='contactsPage')renderContacts();
@@ -2598,6 +2618,11 @@ async function deleteContactLog(id,hid){
  c.history=(c.history||[]).filter(x=>x.id!==hid);
  try{await saveContactsData(getContacts());renderContacts();openContactLog(id)}catch(e){alert('삭제하지 못했어요.\n'+(e.message||''))}
 }
+
+function closeNavMenus(){document.querySelectorAll('.nav-menu.open').forEach(m=>m.classList.remove('open'))}
+function toggleNavMenu(btn){const menu=btn.parentElement.querySelector('.nav-menu'),was=menu.classList.contains('open');closeNavMenus();if(was)return;const r=btn.getBoundingClientRect();menu.style.top=(r.bottom+2)+'px';menu.style.left=Math.max(6,Math.min(r.left,window.innerWidth-menu.offsetWidth-6))+'px';menu.classList.add('open');const w=menu.offsetWidth;menu.style.left=Math.max(6,Math.min(r.left,window.innerWidth-w-6))+'px'}
+document.addEventListener('click',e=>{if(!e.target.closest('.nav-group-btn'))closeNavMenus()});
+window.addEventListener('resize',closeNavMenus);document.getElementById('excelImportFile')&&document.querySelector('.topnav')?.addEventListener('scroll',closeNavMenus);
 </script>
 </body>
 </html>
