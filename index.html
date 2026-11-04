@@ -481,6 +481,9 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .diary-dlg{position:fixed;inset:0;background:#0f172a88;z-index:60;display:flex;align-items:center;justify-content:center;padding:14px}.diary-dlg-card{width:min(640px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:14px;padding:18px;box-shadow:0 20px 60px #0f172a44}.diary-dlg-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:1.05rem}
 .st-row{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:.84rem}.st-k{width:84px;flex:0 0 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}.st-bar{flex:1;height:14px;background:#eef2f7;border-radius:7px;overflow:hidden}.st-bar i{display:block;height:100%;border-radius:7px}.hist-row{padding:8px 0;border-bottom:1px solid #e5eaf0;font-size:.86rem;line-height:1.5}
 @media print{body.printing-diary{visibility:hidden;height:auto!important;overflow:visible!important}body.printing-diary #diaryPage,body.printing-diary #diaryPage *{visibility:visible}body.printing-diary #diaryPage{position:absolute;left:0;top:0;width:100%;overflow:visible!important}body.printing-diary .diary-toolbar .diary-actions,body.printing-diary .diary-quick,body.printing-diary .diary-filters,body.printing-diary .diary-phrases,body.printing-diary .diary-star,body.printing-diary .diary-cat,body.printing-diary .diary-link.add,body.printing-diary .diary-link button,body.printing-diary .diary-table th:last-child,body.printing-diary .diary-table td:last-child{display:none!important}body.printing-diary .diary-table-wrap{overflow:visible!important;border:0}body.printing-diary .diary-table{min-width:0;font-size:.74rem}body.printing-diary .diary-table tr{page-break-inside:avoid}}
+#deadlineBanner{display:none;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}.dlb{padding:6px 12px;border-radius:99px;font-size:.84rem;font-weight:800}.dlb.late{background:#fee2e2;color:#991b1b}.dlb.today{background:#fef3c7;color:#92400e}.dlb.next{background:#e0f2fe;color:#075985}.dlb-x{border:0;background:none;cursor:pointer;color:#64748b;font-size:1rem;margin-left:auto}
+.vat-box{background:#fff;border:1.5px solid #bfd3f2;border-radius:12px;padding:12px 14px;margin-bottom:10px}.vat-grid{display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,1fr);gap:8px 14px;margin-top:8px;align-items:end}.vat-grid label{display:flex;flex-direction:column;gap:4px;font-size:.78rem;font-weight:700;color:#475569}.vat-grid input{padding:9px;border:1px solid #cbd5e1;border-radius:7px;font-size:1rem}.vat-out{padding:10px;background:#eff6ff;border-radius:7px;font-weight:800;color:#1e3a8a;cursor:pointer}@media(max-width:720px){.vat-grid{grid-template-columns:1fr}}
+.today-age{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;background:#fef3c7;color:#92400e;font-weight:800;font-size:.76rem}.today-age.old{background:#fee2e2;color:#991b1b}
 .calendar-cell .day-num{position:relative}
 .calendar-cell .day-num .today-date-label{position:absolute;right:0;top:50%;transform:translateY(-50%)}
 </style>
@@ -1677,6 +1680,57 @@ renderDiaryTable=function(){
   c.querySelector('[data-cat]').onchange=ev=>{r.category=ev.target.value;saveData()};
   if((r.history||[]).length)tr.lastElementChild.insertAdjacentHTML('afterbegin',`<button type="button" class="small-action" data-hist="${eid}" title="변경 이력">🕘</button> `)});
 };
+/* ===== [추가] 법정 세무일정 자동 등록 / 마감 알림 배너 / 부가세 계산 / 투데이리스트 밀린 표시 ===== */
+const p2=n=>String(n).padStart(2,'0');
+function taxAdjust(iso){const d=new Date(iso+'T12:00:00');while(d.getDay()===0||d.getDay()===6||getHoliday(toISO(d)))d.setDate(d.getDate()+1);return toISO(d)}
+function taxPresetList(y){
+ const L=[],add=(key,m,d,title,memo)=>L.push({key,iso:`${y}-${p2(m)}-${p2(d)}`,title,memo:memo||''});
+ for(let m=1;m<=12;m++){const pv=m===1?`${y-1}년 12월`:`${m-1}월`,last=new Date(y,m,0).getDate();
+  add('wht'+m,m,10,`원천세 신고·납부 (${pv}분)`,'전월 지급분. 반기납 승인 사업장은 1월·7월 10일에 반기분 납부.');
+  add('stmt'+m,m,last,`일용근로·간이지급명세서(사업·기타소득) 제출 (${pv} 지급분)`,'')}
+ add('vat1',1,25,`부가세 확정신고·납부 (${y-1}년 2기)`);add('vat4',4,25,'부가세 예정신고·납부 (1기 예정, 법인)');add('vat7',7,25,'부가세 확정신고·납부 (1기)');add('vat10',10,25,'부가세 예정신고·납부 (2기 예정, 법인)');
+ add('lab1',1,31,'간이지급명세서(근로소득) 제출 (전년 7~12월분)');add('lab7',7,31,'간이지급명세서(근로소득) 제출 (1~6월분)');
+ add('year',3,10,'근로·퇴직·사업소득 지급명세서 제출 (연말정산)');add('corp',3,31,'법인세 신고·납부 (12월 결산법인)');add('corpl',4,30,'법인지방소득세 신고·납부 (12월 결산법인)');add('mid',8,31,'법인세 중간예납 (12월 결산법인)');
+ return L.map(x=>({...x,date:taxAdjust(x.iso),id:`tax-${y}-${x.key}`}));
+}
+function registerTaxPreset(){
+ const y=Number(prompt('법정 세무일정을 등록할 연도를 입력하세요.',String(new Date().getFullYear())));if(!y||y<2000||y>2100)return;
+ const t0=toISO(new Date()),list=taxPresetList(y).filter(x=>x.date>=t0&&!tasks.some(t=>t.id===x.id));
+ if(!list.length){alert('등록할 새 세무일정이 없어요. (오늘 이후 일정만 등록하며, 이미 등록된 건은 건너뜁니다)');return}
+ if(!confirm(`${y}년 법정 세무일정 중 오늘 이후 ${list.length}건을 캘린더에 등록할까요?\n\n※ 주말·공휴일은 다음 영업일로 자동 보정돼요. 임시공휴일은 '공휴일 관리'에 먼저 등록해 두세요.\n※ 법령 개정이 있을 수 있으니 신고 전 홈택스(국세청) 공지를 꼭 확인하세요.`))return;
+ const cats=getCategories().map(c=>c.name),cat=cats.includes('회계')?'회계':cats[0];
+ list.forEach(x=>tasks.push({id:x.id,title:x.title,emoji:'🧾',date:x.date,endDate:x.date,relatedPerson:'',category:cat,status:'예정',priority:'important',isDday:false,excludeOverdue:false,repeat:'none',repeatUntil:'',actualDate:'',memo:('[법정기한] '+x.memo).trim(),link:'',color:'',logs:[],attachments:[]}));
+ saveData();renderAll();alert(list.length+'건을 등록했어요.');
+}
+let _bannerHidden=false;
+function updateDeadlineBanner(){
+ const area=document.querySelector('.calendar-area');if(!area)return;let b=$('deadlineBanner');if(!b){b=document.createElement('div');b.id='deadlineBanner';area.insertAdjacentElement('afterbegin',b)}
+ const t0=toISO(new Date()),tm=new Date();tm.setDate(tm.getDate()+1);const t1=toISO(tm),open=tasks.filter(t=>!t.isDday&&t.status!=='완료'),dl=t=>t.endDate||t.date;
+ const late=open.filter(t=>isOverdue(t)),td=open.filter(t=>dl(t)===t0&&!isOverdue(t)),nx=open.filter(t=>dl(t)===t1);
+ if(_bannerHidden||!(late.length||td.length||nx.length)){b.style.display='none';return}
+ const chip=(cls,label,arr)=>arr.length?`<span class="dlb ${cls}" title="${escapeHTML(arr.map(t=>t.title).join('\n'))}">${label} ${arr.length}건: ${escapeHTML(arr.slice(0,2).map(t=>t.title).join(', '))}${arr.length>2?' 외 '+(arr.length-2):''}</span>`:'';
+ b.style.display='flex';b.innerHTML=chip('late','⚠ 지연',late)+chip('today','⏰ 오늘 마감',td)+chip('next','📅 내일 마감',nx)+'<button type="button" class="dlb-x" title="닫기">✕</button>';
+ b.querySelector('.dlb-x').onclick=()=>{_bannerHidden=true;b.style.display='none'};
+}
+const _renderAllBase=renderAll;renderAll=function(){_renderAllBase();updateDeadlineBanner()};
+function vatCalc(){
+ const n=v=>Number(String(v).replace(/[^\d.-]/g,''))||0,f=x=>x.toLocaleString('ko-KR')+'원';
+ const t=n($('vatTotal').value),sp=Math.round(t/1.1);$('vatOutSplit').textContent=t?`공급가액 ${f(sp)} · 부가세 ${f(t-sp)}`:'공급가액 - · 부가세 -';
+ const s2=n($('vatSupply').value),v2=Math.round(s2*0.1);$('vatOutAdd').textContent=s2?`부가세 ${f(v2)} · 합계 ${f(s2+v2)}`:'부가세 - · 합계 -';
+}
+const _rtlBase=renderTodayList;
+renderTodayList=function(){
+ _rtlBase();const box=$('todayListItems');if(!box)return;
+ const q=($('todaySearch')?.value||'').trim().toLowerCase(),sc=$('todayShowCompleted')?.checked!==false;
+ const items=(profile.todoItems||[]).filter(t=>(sc||!t.done)&&[t.text,t.note,t.emoji].some(v=>String(v||'').toLowerCase().includes(q)));
+ const mid=d=>{const x=new Date(d);x.setHours(0,0,0,0);return x.getTime()},now=mid(new Date());
+ [...box.querySelectorAll('.today-item')].forEach((a,i)=>{const t=items[i];if(!t||t.done||!t.createdAt)return;const days=Math.round((now-mid(t.createdAt))/864e5);if(days>=1){const el=a.querySelector('.today-item-date');if(el)el.insertAdjacentHTML('beforeend',` <span class="today-age${days>=3?' old':''}">⏳ ${days}일째 밀림</span>`)}});
+ [...box.querySelectorAll('.today-item.done')].forEach(a=>box.appendChild(a));
+};
+(function initExtras(){const go=()=>{
+ const vc=document.querySelector('.view-controls');if(vc&&!$('taxPresetBtn')){vc.insertAdjacentHTML('afterbegin','<button type="button" class="btn" id="taxPresetBtn" title="원천세·부가세·법인세 등 법정 기한을 캘린더에 등록">🧾 법정 세무일정</button>');$('taxPresetBtn').onclick=registerTaxPreset}
+ const cp=$('calculatorPage');if(cp&&!$('vatTotal')){cp.insertAdjacentHTML('afterbegin','<div class="vat-box"><b>🧾 부가세 빠른 계산</b><div class="vat-grid"><label>합계금액(공급대가) → 공급가액·부가세 분리<input id="vatTotal" inputmode="numeric" placeholder="예: 110000"></label><div id="vatOutSplit" class="vat-out" title="클릭하면 복사">공급가액 - · 부가세 -</div><label>공급가액 → 부가세 10% 더하기<input id="vatSupply" inputmode="numeric" placeholder="예: 100000"></label><div id="vatOutAdd" class="vat-out" title="클릭하면 복사">부가세 - · 합계 -</div></div></div>');['vatTotal','vatSupply'].forEach(i=>$(i).addEventListener('input',vatCalc));['vatOutSplit','vatOutAdd'].forEach(i=>$(i).onclick=()=>{try{navigator.clipboard.writeText($(i).textContent)}catch(e){}})}
+};document.readyState==='loading'?document.addEventListener('DOMContentLoaded',go):go()})();
 function clearDiaryFilters(){['diarySearch','diaryPersonFilter','diaryStatusFilter','diaryDateFrom','diaryDateTo'].forEach(id=>{const el=$(id);if(el)el.value=''});renderDiaryTable()}
 function setAllCategories(value){document.querySelectorAll('.cat-filter').forEach(c=>c.checked=value);updateCategoryToggleLabel();renderAll()}
 function toggleAllCategories(){const boxes=[...document.querySelectorAll('.cat-filter')];const allChecked=boxes.length>0&&boxes.every(c=>c.checked);setAllCategories(!allChecked)}
