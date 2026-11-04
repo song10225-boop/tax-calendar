@@ -631,7 +631,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
   <section class="calendar-area">
     <div class="calendar-header">
       <div class="month-controls"><button class="icon-btn" onclick="changeMonth(-1)">‹</button><div class="calendar-title" id="calendarTitle"></div><button class="icon-btn" onclick="changeMonth(1)">›</button><button class="icon-btn" onclick="goToday()">오늘</button></div>
-      <div class="view-controls"><button class="btn btn-outline" id="monthViewBtn" onclick="setView('month')">월간</button><button class="btn btn-outline" id="weekViewBtn" onclick="setView('week')">주간</button><button class="btn btn-outline" id="listViewBtn" onclick="setView('list')">목록</button></div>
+      <div class="view-controls"><button class="btn btn-outline" id="monthViewBtn" onclick="setView('month')">월간</button><button class="btn btn-outline" id="weekViewBtn" onclick="setView('week')">주간</button><button class="btn btn-outline" id="listViewBtn" onclick="setView('list')">목록</button><button class="btn btn-outline" onclick="printMonthCalendar()" title="인쇄 창에서 'PDF로 저장'을 선택하세요">🖨 월간 인쇄·PDF</button></div>
     </div>
     <div class="filters">
       <select id="statusFilter" onchange="clearQuickFilter();renderAll()"><option value="all">모든 상태</option><option value="예정">예정</option><option value="진행 중">진행 중</option><option value="결재 대기">결재 대기</option><option value="자료 대기">타부서 자료 대기</option><option value="완료">완료</option><option value="지연">지연</option></select>
@@ -697,14 +697,16 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
       <div><div class="panel-title">나의 즐겨찾기</div><div class="subtle">자주 가는 사이트를 한곳에 모아두고 편하게 찾아보세요.</div></div>
     </div>
   </div>
+  <div class="retire-note" style="margin:0 0 10px">🔒 <b>비밀번호는 저장하지 않아요.</b> 이 화면에는 사이트 주소·아이디·메모만 기록해 주세요. 비밀번호는 브라우저 비밀번호 관리자 등 별도의 안전한 방법으로 보관하세요.</div>
   <form class="settings-form favorites-form" id="favoriteForm" onsubmit="addQuickLinkFromForm(event)">
     <label>사이트 이름 *<input id="shortcutName" required maxlength="100" placeholder="예: 홈택스"></label>
     <label>사이트 링크 *<input id="shortcutUrl" type="url" required placeholder="https://..."></label>
-    <label>아이디<input id="shortcutLoginId" maxlength="150" placeholder="로그인 아이디 (선택)"></label>
+    <label>아이디<input id="shortcutLoginId" maxlength="150" placeholder="로그인 아이디만 (비밀번호 입력 금지)"></label>
     <label>비고 / 메모<input id="shortcutMemo" maxlength="500" placeholder="용도나 참고사항 (선택)"></label>
+    <label>그룹(폴더)<input id="shortcutGroup" maxlength="40" list="favGroupList" placeholder="예: 세무, 은행 (선택)"><datalist id="favGroupList"></datalist></label>
     <button class="btn btn-primary" type="submit">♡ 즐겨찾기 등록</button>
   </form>
-  <div class="favorites-toolbar"><div class="favorites-count" id="favoriteCount">등록 0개</div><input id="favoriteSearch" type="search" placeholder="🔎 이름·링크·아이디·메모 검색" oninput="renderQuickLinksManager()"></div>
+  <div class="favorites-toolbar"><div class="favorites-count" id="favoriteCount">등록 0개</div><input id="favoriteSearch" type="search" placeholder="🔎 이름·링크·아이디·메모 검색" oninput="renderQuickLinksManager()"><select id="favoriteGroupFilter" onchange="renderQuickLinksManager()"><option value="">📁 전체 그룹</option></select><select id="favoriteSort" onchange="renderQuickLinksManager()"><option value="pin">정렬: 고정 우선</option><option value="freq">정렬: 자주 쓰는 순</option><option value="name">정렬: 이름순</option><option value="recent">정렬: 최근 등록순</option></select></div>
   <div class="favorites-table-wrap"><table class="favorites-table"><thead><tr><th>번호</th><th>이름</th><th>사이트 링크</th><th>아이디</th><th>비고 / 메모</th><th>등록일</th><th>관리</th></tr></thead><tbody id="quickLinksManagerList"></tbody></table></div>
   <div class="subtle favorites-note">※ 즐겨찾기는 계정 데이터에 저장됩니다. 아이디와 메모만 기록하고 비밀번호 등 인증정보는 저장하지 마세요.</div>
 </section>
@@ -756,13 +758,15 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
   <div class="contacts-toolbar">
     <input id="contactSearch" type="search" placeholder="🔎 거래처명·담당자·연락처·이메일 등 검색" oninput="renderContacts()">
     <select id="contactFilter" aria-label="연락망 필터" onchange="renderContacts()"><option value="all">전체 보기</option><option value="hasEmail">이메일 있는 거래처</option><option value="noEmail">이메일 없는 거래처</option><option value="hasPhone">연락처 있는 거래처</option><option value="noPhone">연락처 없는 거래처</option></select>
+    <button type="button" class="btn btn-outline" onclick="downloadContactTemplate()">📥 엑셀 양식</button>
+    <label class="btn btn-outline" style="cursor:pointer">📤 엑셀 일괄 등록<input type="file" accept=".xlsx,.xls,.csv" hidden onchange="importContactsExcel(event)"></label>
   </div>
   <div class="contacts-table-wrap"><table class="contacts-table"><thead><tr><th>고정</th><th>거래처명</th><th>담당자</th><th>연락처</th><th>팩스번호</th><th>이메일주소</th><th>사업자등록번호</th><th>대표자명</th><th>주소</th><th>비고</th><th>관리</th></tr></thead><tbody id="contactsTableBody"></tbody></table></div>
   <div class="subtle contacts-note">✨ 거래처마다 이모지를 붙여 구분할 수 있어요. 연락처와 이메일은 클릭 링크 없이 일반 텍스트로 표시됩니다. 연락망은 로그인한 계정의 Firebase 클라우드에 저장됩니다.</div>
 </section>
 
 <section id="retirementPage" class="page-panel diary-page retirement-page">
- <div class="diary-toolbar"><div class="diary-heading retirement-heading"><div class="diary-title"><span class="diary-title-mark">🏦</span>DC형 퇴직연금 관리</div><div class="diary-subtitle">연도별 임금총액을 입력하면 회사 부담금(임금총액 ÷ 12)과 운용수익을 제외한 예상 누적 부담금을 계산해요.</div></div><span id="retireCloudStatus" class="leave-cloud-status">클라우드 연결 대기</span></div>
+ <div class="diary-toolbar"><div class="diary-heading retirement-heading"><div class="diary-title"><span class="diary-title-mark">🏦</span>DC형 퇴직연금 관리</div><div class="diary-subtitle">입사일·퇴직일을 입력하면 해당 연도의 임금총액 입력란이 자동으로 만들어지고, 연도별 임금총액을 입력하면 회사 부담금(임금총액 ÷ 12)과 운용수익을 제외한 예상 누적 부담금을 계산해요.</div></div><span id="retireCloudStatus" class="leave-cloud-status">클라우드 연결 대기</span></div>
  <div class="retire-panel">
   <div class="retire-grid">
    <label>관리 대상<select id="retireSlot" onchange="loadRetireProfile()"><option value="self">직원 1 · 내 정보</option><option value="other">직원 2 · 추가 관리</option></select></label>
@@ -772,11 +776,11 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
    <label>가입 금융기관 / 운용사<input id="retireProvider" maxlength="100" value="우리" placeholder="예: 우리은행"></label>
    <label>IRP 은행명<input id="retireBank" maxlength="100" placeholder="IRP 계좌 은행"></label>
    <label>IRP 계좌번호<input id="retireIpr" maxlength="100" placeholder="계좌번호"></label>
-   <label>입사일<input id="retireHireDate" type="date" value="2025-08-18" onchange="calcRetirement()"></label>
-   <label>퇴직 예정일 / 산정 기준일<input id="retireEndDate" type="date" value="2026-12-31" onchange="calcRetirement()"></label>
+   <label>입사일<input id="retireHireDate" type="date" value="2025-08-18" onchange="retireSyncYears();calcRetirement()"></label>
+   <label>퇴직 예정일 / 산정 기준일<input id="retireEndDate" type="date" value="2026-12-31" onchange="retireSyncYears();calcRetirement()"></label>
   </div>
   <div class="retire-wage-heading"><h3>연도별 임금총액</h3><p>해당 연도에 실제 지급된 임금총액을 입력해 주세요. 숫자는 자동으로 천 단위 쉼표가 표시돼요.</p></div>
-  <div class="retire-wage-grid">
+  <div class="retire-wage-grid" id="retireWageGrid">
    <label>2022년 임금총액 (원)<input id="retireWage2022" class="retire-money-input" type="text" inputmode="numeric" autocomplete="off" value="0" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>
    <label>2023년 임금총액 (원)<input id="retireWage2023" class="retire-money-input" type="text" inputmode="numeric" autocomplete="off" value="0" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>
    <label>2024년 임금총액 (원)<input id="retireWage2024" class="retire-money-input" type="text" inputmode="numeric" autocomplete="off" value="0" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>
@@ -869,7 +873,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     </label>
     <button class="btn today-add-btn" type="submit">＋ 메모 등록</button>
   </form>
-  <div class="today-tools"><input id="todaySearch" type="search" placeholder="🔎 메모·비고 검색" oninput="renderTodayList()"><div class="today-filter"><label><input type="checkbox" id="todayShowCompleted" checked onchange="renderTodayList()"> 완료한 항목도 보기</label></div></div>
+  <div class="today-tools"><input id="todaySearch" type="search" placeholder="🔎 메모·비고 검색" oninput="renderTodayList()"><div class="today-filter"><label><input type="checkbox" id="todayShowCompleted" checked onchange="renderTodayList()"> 완료한 항목도 보기</label><label><input type="checkbox" id="todayOnlyToday" onchange="renderTodayList()"> 오늘 할 일만 보기</label><button type="button" id="todayCarryBtn" class="btn btn-white" onclick="carryOverTodayItems()">⏩ 이월</button></div></div>
   <div id="todayListItems" class="today-list-items"></div>
 </section>
 <section id="memoPage" class="page-panel diary-page sticky-memo-page">
@@ -905,7 +909,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     <label class="style-check"><input id="stickyUnderline" type="checkbox"> 밑줄</label>
   </div>
   <div class="sticky-memo-hint">💡 위 꾸미기 설정은 새 포스트잇에 적용돼요. 기존 메모는 각 포스트잇의 ‘꾸미기’에서 바꿀 수 있어요.</div>
-  <div class="sticky-search"><input id="stickyMemoSearch" type="search" placeholder="🔎 메모 내용 검색..." oninput="renderStickyMemos()" aria-label="메모 검색"><button type="button" class="btn btn-white" onclick="clearStickyMemoSearch()">초기화</button></div>
+  <div class="sticky-search"><input id="stickyMemoSearch" type="search" placeholder="🔎 메모 내용 검색..." oninput="renderStickyMemos()" aria-label="메모 검색"><select id="stickyColorFilter" onchange="renderStickyMemos()" aria-label="색상 필터"><option value="">🎨 전체 색상</option><option value="#fff4a8">레몬 노랑</option><option value="#ffe0e8">딸기 핑크</option><option value="#dff3dc">민트 그린</option><option value="#dcecff">하늘 블루</option><option value="#eadfff">라벤더</option><option value="#ffe8cc">살구</option><option value="#ffffff">화이트</option><option value="#eaf7ff">도라에몽 기본</option></select><button type="button" class="btn btn-white" onclick="clearStickyMemoSearch()">초기화</button></div>
   <div id="stickyMemoGrid" class="sticky-memo-grid"></div>
 </section>
 <section id="holidaysPage" class="page-panel diary-page">
@@ -957,6 +961,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
       </select>
     </label>
 
+    <label class="style-check"><input id="ddayQuickYearly" type="checkbox"> 🔁 매년 반복 (기념일)</label>
     <button class="btn btn-primary heart-add-btn" type="submit">
       ＋ 디데이 등록
     </button>
@@ -1360,18 +1365,17 @@ async function loadContactsCloud(){
 async function saveContactsData(items){
  if(!currentUser||!contactsCloudReady)throw new Error('연락망 클라우드가 아직 연결되지 않았어요. 잠시 후 다시 시도해 주세요.');
  const ref=firestore.collection('users').doc(currentUser.uid).collection('contacts');
- const batch=firestore.batch();
  const keep=new Set(items.map(c=>String(c.id)));
- items.forEach(c=>{const {id,...data}=c;batch.set(ref.doc(String(id)),data,{merge:true});});
- contactsCache.filter(c=>!keep.has(String(c.id))).forEach(c=>batch.delete(ref.doc(String(c.id))));
- await batch.commit();contactsCache=items;saveContactsLocal(items);
+  const ops=[];items.forEach(c=>{const {id,...data}=c;ops.push(b=>b.set(ref.doc(String(id)),data,{merge:true}));});
+  contactsCache.filter(c=>!keep.has(String(c.id))).forEach(c=>ops.push(b=>b.delete(ref.doc(String(c.id)))));
+  for(let i=0;i<ops.length;i+=400){const batch=firestore.batch();ops.slice(i,i+400).forEach(f=>f(batch));await batch.commit();}contactsCache=items;saveContactsLocal(items);
 }
 function resetContactForm(){const f=$('contactForm');if(f)f.reset();$('contactEditId').value='';$('contactSubmitBtn').textContent='＋ 연락처 등록'}
-async function saveContact(event){event.preventDefault();const company=contactVal('contactCompany');if(!company){alert('거래처명을 입력해 주세요.');return}const editId=contactVal('contactEditId');const items=getContacts();const data={id:editId||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)),emoji:contactVal('contactEmoji'),company,person:contactVal('contactPerson'),phone:contactVal('contactPhone'),fax:contactVal('contactFax'),email:contactVal('contactEmail'),bizNo:contactVal('contactBizNo'),ceo:contactVal('contactCEO'),address:contactVal('contactAddress'),note:contactVal('contactNote'),updatedAt:new Date().toISOString()};const idx=items.findIndex(x=>String(x.id)===String(editId));if(idx>=0)items[idx]=data;else items.unshift(data);try{await saveContactsData(items);resetContactForm();renderContacts();}catch(e){alert('연락망을 클라우드에 저장하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''));}}
+async function saveContact(event){event.preventDefault();const company=contactVal('contactCompany');if(!company){alert('거래처명을 입력해 주세요.');return}const editId=contactVal('contactEditId');const items=getContacts();const data={id:editId||('c-'+Date.now()+'-'+Math.random().toString(16).slice(2)),emoji:contactVal('contactEmoji'),company,person:contactVal('contactPerson'),phone:contactVal('contactPhone'),fax:contactVal('contactFax'),email:contactVal('contactEmail'),bizNo:contactVal('contactBizNo'),ceo:contactVal('contactCEO'),address:contactVal('contactAddress'),note:contactVal('contactNote'),updatedAt:new Date().toISOString()};const idx=items.findIndex(x=>String(x.id)===String(editId));if(idx>=0)items[idx]={...items[idx],...data};else items.unshift(data);try{await saveContactsData(items);resetContactForm();renderContacts();}catch(e){alert('연락망을 클라우드에 저장하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''));}}
 function editContact(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;$('contactEditId').value=c.id;$('contactEmoji').value=c.emoji||'';$('contactCompany').value=c.company||'';$('contactPerson').value=c.person||'';$('contactPhone').value=c.phone||'';$('contactFax').value=c.fax||'';$('contactEmail').value=c.email||'';$('contactBizNo').value=c.bizNo||'';$('contactCEO').value=c.ceo||'';$('contactAddress').value=c.address||'';$('contactNote').value=c.note||'';$('contactSubmitBtn').textContent='✓ 수정 저장';$('contactForm').scrollIntoView({behavior:'smooth',block:'start'});$('contactCompany').focus()}
 async function deleteContact(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;if(!confirm('「'+c.company+'」 연락처를 삭제할까요?'))return;try{await firestore.collection('users').doc(currentUser.uid).collection('contacts').doc(String(id)).delete();contactsCache=getContacts().filter(x=>String(x.id)!==String(id));saveContactsLocal(contactsCache);if($('contactEditId').value===String(id))resetContactForm();renderContacts()}catch(e){alert('연락처를 클라우드에서 삭제하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''))}}
 function toggleContactPin(id){const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;c.pinned=!c.pinned;saveContactsData(getContacts()).then(renderContacts).catch(e=>alert(e.message||'저장 실패'));}
-function renderContacts(){const body=$('contactsTableBody');if(!body)return;const q=contactVal('contactSearch').toLocaleLowerCase();const filter=$('contactFilter')?.value||'all';const all=getContacts();let rows=all.filter(c=>{const text=[c.emoji,c.company,c.person,c.phone,c.fax,c.email,c.bizNo,c.ceo,c.address,c.note].join(' ').toLocaleLowerCase();if(q&&!text.includes(q))return false;if(filter==='hasEmail'&&!c.email)return false;if(filter==='noEmail'&&c.email)return false;if(filter==='hasPhone'&&!c.phone)return false;if(filter==='noPhone'&&c.phone)return false;return true}).sort((a,b)=>Number(!!b.pinned)-Number(!!a.pinned));$('contactsCount').textContent=`등록 ${all.length}개 · 표시 ${rows.length}개${contactsCloudReady?' · 클라우드 연결됨':' · 클라우드 연결 중'}`;if(!rows.length){body.innerHTML=`<tr><td colspan="11" class="contacts-empty">${all.length?'검색 조건에 맞는 연락처가 없습니다.':'등록된 거래처가 없습니다. 위 입력란에서 등록해 주세요.'}</td></tr>`;return}body.innerHTML=rows.map((c,i)=>`<tr><td><button type="button" class="contact-pin" onclick="toggleContactPin(&quot;${escapeHTML(c.id)}&quot;)">${c.pinned?"📌":"📍"}</button></td><td><strong>${c.emoji?`<span class="contact-company-emoji">${escapeHTML(c.emoji)}</span>`:''}${escapeHTML(c.company||'')}</strong></td><td>${escapeHTML(c.person||'—')}</td><td>${escapeHTML(c.phone||'—')}</td><td>${escapeHTML(c.fax||'—')}</td><td>${escapeHTML(c.email||'—')}</td><td>${escapeHTML(c.bizNo||'—')}</td><td>${escapeHTML(c.ceo||'—')}</td><td>${escapeHTML(c.address||'—')}</td><td>${escapeHTML(c.note||'—')}</td><td><div class="contacts-actions"><button type="button" onclick="editContact('${String(c.id).replace(/'/g,"\\'")}')">수정</button><button type="button" class="contact-delete" onclick="deleteContact('${String(c.id).replace(/'/g,"\\'")}')">삭제</button></div></td></tr>`).join('')}
+function renderContacts(){const body=$('contactsTableBody');if(!body)return;const q=contactVal('contactSearch').toLocaleLowerCase();const filter=$('contactFilter')?.value||'all';const all=getContacts();let rows=all.filter(c=>{const text=[c.emoji,c.company,c.person,c.phone,c.fax,c.email,c.bizNo,c.ceo,c.address,c.note,...(c.history||[]).map(h=>h.text)].join(' ').toLocaleLowerCase();if(q&&!text.includes(q))return false;if(filter==='hasEmail'&&!c.email)return false;if(filter==='noEmail'&&c.email)return false;if(filter==='hasPhone'&&!c.phone)return false;if(filter==='noPhone'&&c.phone)return false;return true}).sort((a,b)=>Number(!!b.pinned)-Number(!!a.pinned));$('contactsCount').textContent=`등록 ${all.length}개 · 표시 ${rows.length}개${contactsCloudReady?' · 클라우드 연결됨':' · 클라우드 연결 중'}`;if(!rows.length){body.innerHTML=`<tr><td colspan="11" class="contacts-empty">${all.length?'검색 조건에 맞는 연락처가 없습니다.':'등록된 거래처가 없습니다. 위 입력란에서 등록해 주세요.'}</td></tr>`;return}body.innerHTML=rows.map((c,i)=>`<tr><td><button type="button" class="contact-pin" onclick="toggleContactPin(&quot;${escapeHTML(c.id)}&quot;)">${c.pinned?"📌":"📍"}</button></td><td><strong>${c.emoji?`<span class="contact-company-emoji">${escapeHTML(c.emoji)}</span>`:''}${escapeHTML(c.company||'')}</strong></td><td>${escapeHTML(c.person||'—')}</td><td>${escapeHTML(c.phone||'—')}</td><td>${escapeHTML(c.fax||'—')}</td><td>${escapeHTML(c.email||'—')}</td><td>${escapeHTML(c.bizNo||'—')}</td><td>${escapeHTML(c.ceo||'—')}</td><td>${escapeHTML(c.address||'—')}</td><td>${escapeHTML(c.note||'—')}</td><td><div class="contacts-actions"><button type="button" onclick="editContact('${String(c.id).replace(/'/g,"\\'")}')">수정</button><button type="button" data-id="${escapeHTML(c.id)}" onclick="openContactLog(this.dataset.id)">이력${(c.history||[]).length?' '+(c.history||[]).length:''}</button><button type="button" class="contact-delete" onclick="deleteContact('${String(c.id).replace(/'/g,"\\'")}')">삭제</button></div></td></tr>`).join('')}
 
 
 // ===== 연차관리: 로그인 사용자별 Firestore 저장 =====
@@ -1508,13 +1512,13 @@ function renderLeaveManager(){
 
 
 // ===== DC형 퇴직연금 개인별 정보 저장 =====
-const retireYears=[2022,2023,2024,2025,2026,2027,2028,2029];
+let retireWageMemo={};let retireYears=[2022,2023,2024,2025,2026,2027,2028,2029];
 const retireDefaults={self:{name:'한송희',dept:'경영전략부',rank:'대리',provider:'우리',bank:'',ipr:'',hireDate:'2025-08-18',endDate:'2026-12-31',wages:{2022:0,2023:0,2024:0,2025:12788886,2026:36099992,2027:0,2028:0,2029:0},balance:0,extra:0},other:{name:'',dept:'',rank:'',provider:'',bank:'',ipr:'',hireDate:'',endDate:'',wages:{2022:0,2023:0,2024:0,2025:0,2026:0,2027:0,2028:0,2029:0},balance:0,extra:0}};
 let retireCache={};
 function parseRetireMoney(v){return Math.max(0,Number(String(v??'').replace(/[^0-9.-]/g,''))||0)}
 function formatRetireMoney(el){const raw=String(el.value||'').replace(/[^0-9]/g,'');el.value=raw?Number(raw).toLocaleString('en-US'):''}
-function retireFieldData(){const wages={};retireYears.forEach(y=>wages[y]=parseRetireMoney($('retireWage'+y).value));return {name:$('retireName').value.trim(),dept:$('retireDept').value.trim(),rank:$('retireRank').value.trim(),provider:$('retireProvider').value.trim(),bank:$('retireBank').value.trim(),ipr:$('retireIpr').value.trim(),hireDate:$('retireHireDate').value,endDate:$('retireEndDate').value,wages,balance:parseRetireMoney($('retireBalance').value),extra:parseRetireMoney($('retireExtra').value)}}
-function putRetireFields(d){d={...retireDefaults[$('retireSlot').value||'self'],...(d||{})};d.wages={...retireDefaults[$('retireSlot').value||'self'].wages,...(d.wages||{})};for(const [k,id] of Object.entries({name:'retireName',dept:'retireDept',rank:'retireRank',provider:'retireProvider',bank:'retireBank',ipr:'retireIpr',hireDate:'retireHireDate',endDate:'retireEndDate',balance:'retireBalance',extra:'retireExtra'})){if($(id))$(id).value=k==='balance'||k==='extra'?Number(d[k]||0).toLocaleString('en-US'):(d[k]??'');}retireYears.forEach(y=>{const el=$('retireWage'+y);if(el)el.value=Number(d.wages[y]||0).toLocaleString('en-US')});calcRetirement()}
+function retireFieldData(){retireYears.forEach(y=>{const el=$('retireWage'+y);if(el)retireWageMemo[y]=parseRetireMoney(el.value)});const wages={...retireWageMemo};return {name:$('retireName').value.trim(),dept:$('retireDept').value.trim(),rank:$('retireRank').value.trim(),provider:$('retireProvider').value.trim(),bank:$('retireBank').value.trim(),ipr:$('retireIpr').value.trim(),hireDate:$('retireHireDate').value,endDate:$('retireEndDate').value,wages,balance:parseRetireMoney($('retireBalance').value),extra:parseRetireMoney($('retireExtra').value)}}
+function putRetireFields(d){d={...retireDefaults[$('retireSlot').value||'self'],...(d||{})};d.wages={...retireDefaults[$('retireSlot').value||'self'].wages,...(d.wages||{})};for(const [k,id] of Object.entries({name:'retireName',dept:'retireDept',rank:'retireRank',provider:'retireProvider',bank:'retireBank',ipr:'retireIpr',hireDate:'retireHireDate',endDate:'retireEndDate',balance:'retireBalance',extra:'retireExtra'})){if($(id))$(id).value=k==='balance'||k==='extra'?Number(d[k]||0).toLocaleString('en-US'):(d[k]??'');}retireWageMemo={...d.wages};retireSyncYears(true);retireYears.forEach(y=>{const el=$('retireWage'+y);if(el)el.value=Number(d.wages[y]||0).toLocaleString('en-US')});calcRetirement()}
 async function loadRetireProfile(){const slot=$('retireSlot').value;let d=retireCache[slot]||retireDefaults[slot];if(currentUser){try{const snap=await firestore.collection('users').doc(currentUser.uid).collection('retirementProfiles').doc(slot).get();if(snap.exists){d=snap.data();retireCache[slot]=d;} $('retireCloudStatus').textContent='클라우드 연결됨';}catch(e){$('retireCloudStatus').textContent='클라우드 읽기 실패';}}putRetireFields(d)}
 async function saveRetireProfile(){if(!currentUser){alert('먼저 로그인해 주세요.');return;}const slot=$('retireSlot').value;const d=retireFieldData();try{await firestore.collection('users').doc(currentUser.uid).collection('retirementProfiles').doc(slot).set({...d,updatedAt:new Date().toISOString()},{merge:true});retireCache[slot]=d;$('retireCloudStatus').textContent='저장 완료 · 클라우드';alert('직원 정보를 클라우드에 저장했어요.');}catch(e){alert('저장하지 못했어요. Firestore 보안 규칙과 인터넷 연결을 확인해 주세요.\n'+(e.message||''));}}
 function calcRetirement(){if(!$('retireHireDate'))return;const hire=$('retireHireDate').value,end=$('retireEndDate').value;const bal=parseRetireMoney($('retireBalance').value),extra=parseRetireMoney($('retireExtra').value);let total=0,yearsCount=0;retireYears.forEach(y=>{const wage=parseRetireMoney($('retireWage'+y)?.value);const start=`${y}-01-01`,finish=`${y}-12-31`;const inScope=(!hire||finish>=hire)&&(!end||start<=end);if(inScope&&wage>0){total+=wage/12;yearsCount++;}});const f=n=>'₩'+Math.round(n).toLocaleString('ko-KR');$('retireCalcTotal').textContent=f(total);$('retireCalcWithBalance').textContent=f(total+bal+extra);$('retireYearsCount').textContent=yearsCount+'년';}
@@ -1805,7 +1809,7 @@ function setListTaskStatus(id,checked){
  syncLinkedDiaryStatus(task);
  saveData();renderAll();renderDiaryTable();
 }
-function renderAll(){ensureRecurringTasks();renderCategoryOptions();updateQuickFilterButtons();renderCalendar();renderMini();renderSidebar();if(viewMode==='week'){const a=new Date((selectedDate||toISO(today))+'T12:00:00');a.setDate(a.getDate()-a.getDay());const b=new Date(a);b.setDate(a.getDate()+6);$('calendarTitle').textContent=`${a.getFullYear()}년 ${a.getMonth()+1}월 ${a.getDate()}일 ~ ${b.getMonth()+1}월 ${b.getDate()}일`; }else $('calendarTitle').textContent=monthLabel(viewYear,viewMonth);$('miniTitle').textContent=monthLabel(viewYear,viewMonth);$('monthViewBtn').style.background=viewMode==='month'?'#dbeafe':'white';$('weekViewBtn').style.background=viewMode==='week'?'#dbeafe':'white';$('listViewBtn').style.background=viewMode==='list'?'#dbeafe':'white';$('monthViewBtn').style.fontWeight=viewMode==='month'?'900':'600';$('weekViewBtn').style.fontWeight=viewMode==='week'?'900':'600';$('listViewBtn').style.fontWeight=viewMode==='list'?'900':'600'}
+function renderAll(){if(profile&&profile.ddayAutoClean)cleanupPastDdays(true);ensureRecurringTasks();renderCategoryOptions();updateQuickFilterButtons();renderCalendar();renderMini();renderSidebar();if(viewMode==='week'){const a=new Date((selectedDate||toISO(today))+'T12:00:00');a.setDate(a.getDate()-a.getDay());const b=new Date(a);b.setDate(a.getDate()+6);$('calendarTitle').textContent=`${a.getFullYear()}년 ${a.getMonth()+1}월 ${a.getDate()}일 ~ ${b.getMonth()+1}월 ${b.getDate()}일`; }else $('calendarTitle').textContent=monthLabel(viewYear,viewMonth);$('miniTitle').textContent=monthLabel(viewYear,viewMonth);$('monthViewBtn').style.background=viewMode==='month'?'#dbeafe':'white';$('weekViewBtn').style.background=viewMode==='week'?'#dbeafe':'white';$('listViewBtn').style.background=viewMode==='list'?'#dbeafe':'white';$('monthViewBtn').style.fontWeight=viewMode==='month'?'900':'600';$('weekViewBtn').style.fontWeight=viewMode==='week'?'900':'600';$('listViewBtn').style.fontWeight=viewMode==='list'?'900':'600'}
 function renderCalendar(){
  const root=$('calendarContent'),all=visibleTasks();root.innerHTML='';
  if(viewMode==='list'){
@@ -1905,7 +1909,7 @@ function createDdayFromList(e) {
     status: '예정',
     priority: 'important',
     isDday: true,
-    repeat: 'none',
+    repeat: ($('ddayQuickYearly')&&$('ddayQuickYearly').checked)?'yearly':'none',
     actualDate: '',
     memo: '',
     link: '',
@@ -1929,9 +1933,7 @@ function createDdayFromList(e) {
 }
 
 function renderDdayList() {
-  const items = tasks
-    .filter(t => t.isDday)
-    .sort((a, b) => a.date.localeCompare(b.date));
+  const items = ddayItems();
 
   const html = items.length
     ? items.map(t => {
@@ -1951,7 +1953,7 @@ function renderDdayList() {
               </strong>
               <span>
                 ${escapeHTML(t.date)} ·
-                ${escapeHTML(weekday(t.date))}요일 ·
+                ${escapeHTML(weekday(t.date))}요일 ${t.repeat==='yearly'?'· 🔁 매년':''} ·
                 <span class="dday">${label}</span>
               </span>
               <span class="subtle">
@@ -1969,7 +1971,7 @@ function renderDdayList() {
     : '<div class="empty-state">등록된 디데이가 없습니다.</div>';
 
   const box = $('ddayManagerList');
-  if (box) box.innerHTML = html;
+  if (box) box.innerHTML = `<div class="settings-row" style="gap:10px;flex-wrap:wrap"><button type="button" class="btn btn-outline" onclick="cleanupPastDdays()">🧹 지난 디데이 정리</button><label class="style-check"><input type="checkbox" ${profile.ddayAutoClean?'checked':''} onchange="profile.ddayAutoClean=this.checked;saveData();renderAll()"> 지난 지 30일이 넘으면 자동 정리</label></div>`+html;
 
   const side = $('sidebarDdayList');
 
@@ -2047,7 +2049,7 @@ $('taskAttachments').addEventListener('change',()=>{const files=Array.from($('ta
 function openTaskModal(id=null,date=selectedDate){
  removedAttachmentPaths.clear();
  $('taskForm').reset();$('taskId').value='';$('taskDate').value=date||toISO(today);$('taskEndDate').value='';$('taskRelatedPerson').value='';$('taskStatus').value='예정';$('taskRepeat').value='none';$('taskRepeatUntil').value='';$('taskPriority').value='normal';$('taskIsDday').checked=false;$('taskExcludeOverdue').checked=false;$('taskColor').value='';$('taskEmoji').value='';$('taskDiary').value='';$('taskDiaryHistory').innerHTML='';$('taskAttachments').value='';$('taskAttachmentPreview').innerHTML='';$('modalTitle').textContent=id?'업무 수정':'업무 등록';$('deleteTaskBtn').style.display=id?'inline-block':'none';
- if(!id)restoreTaskDraft();
+ if(!id){restoreTaskDraft();if(date)$('taskDate').value=date;const te=$('taskEndDate');if(te&&te.value&&te.value<$('taskDate').value)te.value='';}
  if(id){const t=tasks.find(x=>x.id===id);if(!t)return;$('taskId').value=t.id;$('taskTitle').value=t.title;$('taskDate').value=t.date;$('taskEndDate').value=t.endDate||'';$('taskRelatedPerson').value=t.relatedPerson||'';renderCategoryOptions();$('taskCategory').value=t.category;$('taskStatus').value=t.status;$('taskPriority').value=t.priority||'normal';$('taskIsDday').checked=!!t.isDday;$('taskExcludeOverdue').checked=!!t.excludeOverdue;$('taskRepeat').value=t.repeat||'none';$('taskRepeatUntil').value=t.repeatUntil||'';$('taskActualDate').value=t.actualDate||'';$('taskMemo').value=t.memo||'';$('taskLink').value=t.link||'';$('taskColor').value=t.color||'';$('taskEmoji').value=t.emoji||'';renderTaskAttachments(t.attachments||[]);$('taskDiaryHistory').innerHTML=renderDiaryHistory(t.logs||[])}
  updateRepeatUntilVisibility();$('taskModal').classList.add('open');$('taskTitle').focus();
 }
@@ -2145,7 +2147,7 @@ function createRecurring(t){
    const id=`${t.id}-r${i}`;
    if(deletedRecurringIds.includes(id)||tasks.some(x=>String(x.id)===id))continue;
    const baseDate=recurringBaseDate(source,t.repeat,i);
-   const date=nextBusinessDate(baseDate);
+   const date=t.isDday?baseDate:nextBusinessDate(baseDate);
    // 각 반복 회차는 해당 날짜 하루짜리 일정으로 저장해야 달력/주간/목록에 표시됩니다.
    tasks.push({...t,id,date,endDate:date,status:'예정',actualDate:''});
  }
@@ -2214,18 +2216,19 @@ function addQuickLinkFromForm(e){
  try{
   const u=new URL(url);if(!['http:','https:'].includes(u.protocol))throw new Error('url');
   profile.quickLinks=profile.quickLinks||[];
-  profile.quickLinks.push({name,url:u.href,loginId,memo,createdAt:toISO(new Date())});
+  if(/(비밀번호|비번|password|passwd|pw)\s*[:=：]\s*\S+/i.test(loginId+' '+memo)&&!confirm('비밀번호로 보이는 내용이 있어요. 비밀번호는 저장하지 않는 것이 안전해요.\n그래도 저장할까요?'))return;
+   profile.quickLinks.push({name,url:u.href,loginId,memo,group:($('shortcutGroup')?.value||'').trim(),clicks:0,createdAt:toISO(new Date())});
   saveData();e.target.reset();renderQuickLinksManager();
  }catch(err){alert('http:// 또는 https://로 시작하는 올바른 사이트 주소를 입력해 주세요.')}
 }
 function renderQuickLinksManager(){
- const box=$('quickLinksManagerList');if(!box)return;
- const all=profile.quickLinks||[],query=($('favoriteSearch')?.value||'').trim().toLowerCase();
- const links=all.map((l,i)=>({...l,_index:i})).filter(l=>[l.name,l.url,l.loginId,l.memo].some(v=>String(v||'').toLowerCase().includes(query))).sort((a,b)=>Number(!!b.pinned)-Number(!!a.pinned));
+ const box=$('quickLinksManagerList');if(!box)return;refreshFavGroups();
+ const all=profile.quickLinks||[],query=($('favoriteSearch')?.value||'').trim().toLowerCase(),gf=$('favoriteGroupFilter')?.value||'',sortMode=$('favoriteSort')?.value||'pin';
+ const links=all.map((l,i)=>({...l,_index:i})).filter(l=>[l.name,l.url,l.loginId,l.memo,l.group].some(v=>String(v||'').toLowerCase().includes(query))).filter(l=>!gf||(l.group||'')===gf).sort(favSorter(sortMode));
  const count=$('favoriteCount');if(count)count.textContent=`등록 ${all.length}개 · 검색 결과 ${links.length}개`;
  box.innerHTML=links.length?links.map((l,n)=>`<tr>
-  <td>${n+1}</td><td><strong>${escapeHTML(l.name||'')}</strong></td>
-  <td><a href="${escapeHTML(l.url||'')}" target="_blank" rel="noopener noreferrer">사이트 열기 ↗</a><div class="subtle" style="font-size:.76rem;overflow-wrap:anywhere">${escapeHTML(l.url||'')}</div></td>
+  <td>${n+1}</td><td><strong>${escapeHTML(l.name||'')}</strong>${l.group?`<div class="subtle" style="font-size:.74rem">📁 ${escapeHTML(l.group)}</div>`:''}${l.clicks?`<div class="subtle" style="font-size:.74rem">열기 ${l.clicks}회</div>`:''}</td>
+  <td><a href="${escapeHTML(l.url||'')}" target="_blank" rel="noopener noreferrer" onclick="bumpQuickLink(${l._index})">사이트 열기 ↗</a><div class="subtle" style="font-size:.76rem;overflow-wrap:anywhere">${escapeHTML(l.url||'')}</div></td>
   <td>${escapeHTML(l.loginId||'—')}</td><td>${escapeHTML(l.memo||'—')}</td><td>${escapeHTML(l.createdAt||'—')}</td>
   <td><div class="favorite-actions"><button type="button" onclick="toggleQuickLinkPin(${l._index})">${l.pinned?"📌 고정됨":"📍 상단 고정"}</button><button type="button" onclick="editQuickLink(${l._index})">수정</button><button type="button" class="delete-fav" onclick="deleteQuickLink(${l._index})">삭제</button></div></td>
  </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;padding:28px;color:#718096">검색 결과가 없어요. 즐겨찾기를 등록해 주세요 💗</td></tr>';
@@ -2237,7 +2240,8 @@ function editQuickLink(i){
  const url=prompt('사이트 링크 (https:// 포함)',l.url||'');if(url===null)return;
  const loginId=prompt('아이디 (선택)',l.loginId||'');if(loginId===null)return;
  const memo=prompt('비고 / 메모 (선택)',l.memo||'');if(memo===null)return;
- try{const u=new URL(url.trim());if(!['http:','https:'].includes(u.protocol))throw 0;profile.quickLinks[i]={...l,name:name.trim(),url:u.href,loginId:loginId.trim(),memo:memo.trim()};saveData();renderQuickLinksManager();}
+ const group=prompt('그룹(폴더) 이름 (선택)',l.group||'');if(group===null)return;
+ try{const u=new URL(url.trim());if(!['http:','https:'].includes(u.protocol))throw 0;profile.quickLinks[i]={...l,name:name.trim(),url:u.href,loginId:loginId.trim(),memo:memo.trim(),group:group.trim()};saveData();renderQuickLinksManager();}
  catch(e){alert('올바른 http:// 또는 https:// 사이트 주소를 입력해 주세요.')}
 }
 function deleteQuickLink(i){if(!confirm('이 바로가기를 삭제할까요?'))return;profile.quickLinks=profile.quickLinks||[];profile.quickLinks.splice(i,1);saveData();renderQuickLinksManager();renderAll()}
@@ -2260,7 +2264,7 @@ function addStickyMemo(e){
  profile.stickyNotes.unshift({id:`memo-${Date.now()}-${Math.random().toString(16).slice(2)}`,text,emoji:$('stickyMemoEmoji')?.value||'📌',design:$('stickyMemoDesign')?.value==='doraemon'?'doraemon':'original',createdAt:new Date().toISOString(),style:{...stickyStyleFromControls(),emojiSize:'1.35rem'}});
  saveData();input.value='';renderStickyMemos();
 }
-function clearStickyMemoSearch(){const input=$('stickyMemoSearch');if(input)input.value='';renderStickyMemos();}
+function clearStickyMemoSearch(){const input=$('stickyMemoSearch');if(input)input.value='';const cf=$('stickyColorFilter');if(cf)cf.value='';renderStickyMemos();}
 function getStickyTheme(){return 'original';}
 function setStickyTheme(theme){const select=document.getElementById('stickyMemoDesign');if(select)select.value=theme==='doraemon'?'doraemon':'original';}
 function initStickyTheme(){}
@@ -2268,8 +2272,8 @@ function initStickyTheme(){}
 function renderStickyMemos(){
  const grid=$('stickyMemoGrid');if(!grid)return;initStickyTheme();profile.stickyNotes=Array.isArray(profile.stickyNotes)?profile.stickyNotes:[];
  const all=profile.stickyNotes;const query=($('stickyMemoSearch')?.value||'').trim().toLocaleLowerCase('ko-KR');
- const filtered=all.filter(m=>String(m.text||'').toLocaleLowerCase('ko-KR').includes(query));
- const count=$('stickyMemoCount');if(count)count.textContent=query?`검색 결과 ${filtered.length}개 / 전체 ${all.length}개`:`메모 ${all.length}개`;
+ const cf=$('stickyColorFilter')?.value||'';const filtered=all.filter(m=>String(m.text||'').toLocaleLowerCase('ko-KR').includes(query)&&(!cf||((m.style&&m.style.color)||(m.design==='doraemon'?'#eaf7ff':'#fff4a8'))===cf)).sort((a,b)=>Number(!!b.pinned)-Number(!!a.pinned));
+ const count=$('stickyMemoCount');if(count)count.textContent=(query||cf)?`검색 결과 ${filtered.length}개 / 전체 ${all.length}개`:`메모 ${all.length}개`;
  if(!all.length){grid.innerHTML='<div class="sticky-empty">📌 아직 메모가 없어요.<br>위에 내용을 적고 포스트잇을 만들어 보세요!</div>';return;}
  if(!filtered.length){grid.innerHTML='<div class="sticky-empty">🔎 검색 결과가 없어요.<br>다른 단어로 검색해 보세요.</div>';return;}
  const escAttr=v=>String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
@@ -2286,10 +2290,9 @@ function renderStickyMemos(){
    const underline=!!st.underline;
    const bgStyle=`--sticky-note-color:${escAttr(color)};background-color:${escAttr(color)} !important;${isDoraemon?'':'background-image:none !important;'}`;
    const id=String(m.id).replace(/'/g,"\\'");
-   return `<article class="sticky-note${isDoraemon?' doraemon-note':''}" title="포스트잇" style="${bgStyle};border-color:transparent;color:#254c70" onclick="editStickyMemo('${id}')"><div class="sticky-note-emoji" style="font-size:${escAttr(emojiSize)}">${escapeHTML(m.emoji||"📌")}</div><div class="sticky-note-text" style="font-family:${escAttr(font)};font-size:${escAttr(size)};font-weight:${bold?'700':'400'};text-decoration:${underline?'underline':'none'}">${escapeHTML(m.text||'')}</div><div class="sticky-note-date">🕒 입력일자 ${escapeHTML(stamp)}</div><div class="sticky-note-actions"><button type="button" onclick="event.stopPropagation();editStickyMemo('${id}')">수정</button><button type="button" onclick="event.stopPropagation();deleteStickyMemo('${id}')">삭제</button></div></article>`;
- }).join('');
+   return `<article class="sticky-note${isDoraemon?' doraemon-note':''}" data-id="${escAttr(m.id)}" title="포스트잇" style="${bgStyle};border-color:${m.pinned?'#f59e0b':'transparent'};color:#254c70" onclick="editStickyMemo('${id}')"><div class="sticky-note-emoji" style="font-size:${escAttr(emojiSize)}">${escapeHTML(m.emoji||"📌")}</div><div class="sticky-note-text" style="font-family:${escAttr(font)};font-size:${escAttr(size)};font-weight:${bold?'700':'400'};text-decoration:${underline?'underline':'none'}">${escapeHTML(m.text||'')}</div><div class="sticky-note-date">🕒 입력일자 ${escapeHTML(stamp)}</div><div class="sticky-note-actions"><button type="button" onclick="event.stopPropagation();toggleStickyPin('${id}')">${m.pinned?'📌 해제':'📍 고정'}</button><button type="button" onclick="event.stopPropagation();editStickyMemo('${id}')">수정</button><button type="button" onclick="event.stopPropagation();deleteStickyMemo('${id}')">삭제</button></div></article>`;
+ }).join('');enableStickyDrag(grid);
 }
-
 function editStickyMemo(id){
  const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;
  const old=document.getElementById('stickyMemoEditModal');if(old)old.remove();
@@ -2377,19 +2380,20 @@ function addTodayItem(e){
  const text=$('todayText').value.trim(),note=$('todayNote').value.trim(),emoji=$('todayEmoji').value||'📝';
  if(!text)return;
  profile.todoItems=Array.isArray(profile.todoItems)?profile.todoItems:[];
- profile.todoItems.unshift({id:`todo-${Date.now()}-${Math.random().toString(16).slice(2)}`,text,note,emoji,done:false,createdAt:new Date().toISOString()});
+ profile.todoItems.unshift({id:`todo-${Date.now()}-${Math.random().toString(16).slice(2)}`,text,note,emoji,done:false,date:toISO(new Date()),createdAt:new Date().toISOString()});
  saveData();e.target.reset();$('todayEmoji').value=emoji;renderTodayList();
 }
 function renderTodayList(){
  const box=$('todayListItems');if(!box)return;
  profile.todoItems=Array.isArray(profile.todoItems)?profile.todoItems:[];
  const query=($('todaySearch')?.value||'').trim().toLowerCase();
- const showCompleted=$('todayShowCompleted')?.checked!==false;
- const items=profile.todoItems.filter(t=>(showCompleted||!t.done)&&[t.text,t.note,t.emoji].some(v=>String(v||'').toLowerCase().includes(query)));
+ const showCompleted=$('todayShowCompleted')?.checked!==false;const onlyToday=$('todayOnlyToday')?.checked===true,t0=toISO(new Date());
+ const items=profile.todoItems.filter(t=>(showCompleted||!t.done)&&(!onlyToday||todoDate(t)===t0)&&[t.text,t.note,t.emoji].some(v=>String(v||'').toLowerCase().includes(query)));
  const count=$('todayListCount');if(count)count.textContent=`전체 ${profile.todoItems.length}개 · 미완료 ${profile.todoItems.filter(t=>!t.done).length}개`;
+ const late=profile.todoItems.filter(t=>!t.done&&todoDate(t)<t0).length;const cb=$('todayCarryBtn');if(cb){cb.textContent='⏩ 지난 미완료 '+late+'건 오늘로 이월';cb.disabled=!late}
  box.innerHTML=items.length?items.map(t=>`<article class="today-item ${t.done?'done':''}">
   <div class="today-item-emoji">${escapeHTML(t.emoji||'📝')}</div>
-  <div class="today-item-main"><div class="today-item-title">${escapeHTML(t.text||'')}</div>${t.note?`<div class="today-item-note">${escapeHTML(t.note)}</div>`:''}<div class="today-item-date">등록 ${escapeHTML(t.createdAt?new Date(t.createdAt).toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'날짜 없음')} · ${t.done?'완료':'미완료'}</div></div>
+  <div class="today-item-main"><div class="today-item-title">${escapeHTML(t.text||'')}</div>${t.note?`<div class="today-item-note">${escapeHTML(t.note)}</div>`:''}<div class="today-item-date">등록 ${escapeHTML(t.createdAt?new Date(t.createdAt).toLocaleString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'날짜 없음')} · ${t.done?'완료':'미완료'}${t.carried?' · ⏩ 이월됨':''} · 📅 ${escapeHTML(todoDate(t))}</div></div>
   <div class="today-item-actions"><button type="button" class="today-complete" onclick="toggleTodayItem('${String(t.id).replace(/'/g,"\'")}')">${t.done?'↩ 미완료':'✓ 완료'}</button><button type="button" onclick="editTodayItem('${String(t.id).replace(/'/g,"\'")}')">수정</button><button type="button" onclick="deleteTodayItem('${String(t.id).replace(/'/g,"\'")}')">삭제</button></div>
  </article>`).join(''):'<div class="today-empty">아직 등록한 메모가 없어요. 작은 전화 메모부터 기록해 보세요 💗</div>';
 }
@@ -2482,6 +2486,112 @@ document.addEventListener('DOMContentLoaded',()=>{document.addEventListener('cha
  if($('leaveEntryDate'))$('leaveEntryDate').value=isoToday();
 });
 
+
+/* ===== 업데이트: 추가 기능 ===== */
+function retireSyncYears(skipRead){
+ const grid=$('retireWageGrid');if(!grid)return;
+ if(!skipRead)retireYears.forEach(y=>{const el=$('retireWage'+y);if(el)retireWageMemo[y]=parseRetireMoney(el.value)});
+ const hire=$('retireHireDate').value,end=$('retireEndDate').value;
+ let a=hire?+hire.slice(0,4):2022,b=end?+end.slice(0,4):new Date().getFullYear();
+ if(b<a)b=a;b=Math.min(b,a+49);
+ retireYears=[];for(let y=a;y<=b;y++)retireYears.push(y);
+ grid.innerHTML=retireYears.map(y=>{const tag=(hire&&y===a?' · '+hire.slice(5).replace('-','/')+' 입사':'')+(end&&y===b?' · '+end.slice(5).replace('-','/')+' 퇴직':'');
+  return `<label>${y}년 임금총액 (원)<small style="color:#2563eb">${tag}</small><input id="retireWage${y}" class="retire-money-input" type="text" inputmode="numeric" autocomplete="off" value="${Number(retireWageMemo[y]||0).toLocaleString('en-US')}" oninput="formatRetireMoney(this);calcRetirement()" placeholder="0"></label>`}).join('');
+}
+function printMonthCalendar(){
+ const y=viewYear,m=viewMonth,last=new Date(y,m+1,0).getDate(),cats=selectedCategories(),lead=new Date(y,m,1).getDay(),cells=[];
+ for(let i=0;i<lead;i++)cells.push('<td class="x"></td>');
+ for(let d=1;d<=last;d++){const iso=dateISO(y,m+1,d),hol=getHoliday(iso),dow=(lead+d-1)%7;
+  const items=tasks.filter(t=>t.date<=iso&&(t.endDate||t.date)>=iso&&(!cats.length||cats.includes(t.category)));
+  cells.push(`<td class="${dow===0||hol?'red':dow===6?'blue':''}"><b>${d}</b>${hol&&hol!=='일요일'?`<i>${escapeHTML(hol)}</i>`:''}${items.map(t=>`<div class="${t.status==='완료'?'done':''}">${escapeHTML((t.emoji?t.emoji+' ':'')+t.title)}</div>`).join('')}</td>`);}
+ while(cells.length%7)cells.push('<td class="x"></td>');
+ let rows='';for(let i=0;i<cells.length;i+=7)rows+='<tr>'+cells.slice(i,i+7).join('')+'</tr>';
+ const html=`<!doctype html><html><head><meta charset="utf-8"><title>${y}년 ${m+1}월 업무 달력</title><style>@page{size:A4 landscape;margin:10mm}body{font-family:'Malgun Gothic',sans-serif;margin:0}h1{font-size:18px;margin:0 0 8px}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{border:1px solid #999;vertical-align:top;padding:3px;font-size:10px}th{background:#eee}td{height:24mm;overflow:hidden}td b{font-size:11px}td i{font-size:9px;color:#c00;margin-left:3px;font-style:normal}td div{margin-top:2px;padding:1px 3px;background:#eef4ff;border-radius:3px;word-break:break-all}td div.done{text-decoration:line-through;color:#888}.red b{color:#c00}.blue b{color:#2563eb}.x{background:#fafafa}</style></head><body><h1>📅 ${y}년 ${m+1}월 업무 달력</h1><table><thead><tr>${['일','월','화','수','목','금','토'].map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></body></html>`;
+ const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
+ const doc=f.contentWindow.document;doc.open();doc.write(html);doc.close();
+ setTimeout(()=>{f.contentWindow.focus();f.contentWindow.print();setTimeout(()=>f.remove(),2000)},300);
+}
+function ddayItems(){
+ const t0=toISO(today),g={};
+ tasks.filter(t=>t.isDday).forEach(t=>{const k=String(t.id).replace(/-r\d+$/,'');(g[k]=g[k]||[]).push(t)});
+ return Object.values(g).map(a=>{a.sort((x,y)=>x.date.localeCompare(y.date));return a.find(t=>t.date>=t0)||a[a.length-1]})
+  .sort((a,b)=>{const pa=a.date<t0,pb=b.date<t0;return pa!==pb?(pa?1:-1):(pa?b.date.localeCompare(a.date):a.date.localeCompare(b.date))});
+}
+function cleanupPastDdays(auto){
+ const cut=auto?toISO(new Date(today.getFullYear(),today.getMonth(),today.getDate()-30)):toISO(today);
+ const doomed=tasks.filter(t=>t.isDday&&t.date<cut&&(!t.repeat||t.repeat==='none')&&!/-r\d+$/.test(String(t.id)));
+ if(!doomed.length){if(!auto)alert('정리할 지난 디데이가 없어요. (매년 반복 디데이는 정리 대상이 아니에요)');return}
+ if(!auto&&!confirm(`지난 디데이 ${doomed.length}건을 달력에서도 삭제할까요?\n(매년 반복 디데이는 유지됩니다)`))return;
+ const ids=new Set(doomed.map(t=>String(t.id)));tasks=tasks.filter(t=>!ids.has(String(t.id)));saveData();if(!auto)renderAll();
+}
+function todoDate(t){return t.date||(t.createdAt?toISO(new Date(t.createdAt)):toISO(new Date()))}
+function carryOverTodayItems(){
+ const t0=toISO(new Date());let n=0;
+ (profile.todoItems||[]).forEach(t=>{if(!t.done&&todoDate(t)<t0){t.date=t0;t.carried=true;n++}});
+ if(!n){alert('이월할 지난 미완료 항목이 없어요.');return}
+ saveData();renderTodayList();
+}
+function toggleStickyPin(id){const m=(profile.stickyNotes||[]).find(x=>String(x.id)===String(id));if(!m)return;m.pinned=!m.pinned;saveData();renderStickyMemos()}
+let stickyDragId=null;
+function enableStickyDrag(grid){
+ grid.querySelectorAll('.sticky-note[data-id]').forEach(el=>{el.draggable=true;
+  el.addEventListener('dragstart',e=>{stickyDragId=el.dataset.id;e.dataTransfer.effectAllowed='move';el.style.opacity='.5'});
+  el.addEventListener('dragend',()=>{el.style.opacity=''});
+  el.addEventListener('dragover',e=>e.preventDefault());
+  el.addEventListener('drop',e=>{e.preventDefault();const to=el.dataset.id;if(!stickyDragId||stickyDragId===to)return;
+   const a=profile.stickyNotes,from=a.findIndex(x=>String(x.id)===stickyDragId),toIdx=a.findIndex(x=>String(x.id)===to);if(from<0)return;
+   const [m]=a.splice(from,1);const ti=a.findIndex(x=>String(x.id)===to);a.splice(from<toIdx?ti+1:ti,0,m);stickyDragId=null;saveData();renderStickyMemos()});});
+}
+function refreshFavGroups(){
+ const groups=[...new Set((profile.quickLinks||[]).map(l=>(l.group||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));
+ const sel=$('favoriteGroupFilter');if(sel){const cur=sel.value;sel.innerHTML='<option value="">📁 전체 그룹</option>'+groups.map(g=>`<option value="${escapeHTML(g)}">${escapeHTML(g)}</option>`).join('');sel.value=groups.includes(cur)?cur:''}
+ const dl=$('favGroupList');if(dl)dl.innerHTML=groups.map(g=>`<option value="${escapeHTML(g)}">`).join('');
+}
+function favSorter(mode){
+ const pin=(a,b)=>Number(!!b.pinned)-Number(!!a.pinned);
+ if(mode==='freq')return(a,b)=>pin(a,b)||(b.clicks||0)-(a.clicks||0);
+ if(mode==='name')return(a,b)=>pin(a,b)||String(a.name||'').localeCompare(String(b.name||''),'ko');
+ if(mode==='recent')return(a,b)=>pin(a,b)||String(b.createdAt||'').localeCompare(String(a.createdAt||''));
+ return pin;
+}
+function bumpQuickLink(i){const l=(profile.quickLinks||[])[i];if(!l)return;l.clicks=(l.clicks||0)+1;saveData()}
+const CONTACT_FIELDS=[['company','거래처명',['거래처명','거래처','회사명','상호']],['person','담당자',['담당자','담당자명']],['phone','연락처',['연락처','전화번호','전화','휴대폰']],['fax','팩스번호',['팩스번호','팩스']],['email','이메일주소',['이메일주소','이메일','메일','email']],['bizNo','사업자등록번호',['사업자등록번호','사업자번호']],['ceo','대표자명',['대표자명','대표자','대표']],['address','주소',['주소']],['note','비고',['비고','메모']]];
+function downloadContactTemplate(){
+ const ws=XLSX.utils.aoa_to_sheet([CONTACT_FIELDS.map(f=>f[1]),['(주)예시상사','김담당','02-123-4567','','abc@example.com','123-45-67890','홍길동','서울시 …','매출거래처']]);
+ const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'연락망');XLSX.writeFile(wb,'연락망_일괄등록_양식.xlsx');
+}
+function importContactsExcel(e){
+ const file=e.target.files[0];if(!file)return;const r=new FileReader();
+ r.onload=async()=>{try{
+  const wb=XLSX.read(r.result,{type:'array'});const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:'',raw:false});
+  const exist=getContacts(),keyOf=c=>(c.company||'').trim()+'|'+(c.person||'').trim(),keys=new Set(exist.map(keyOf)),added=[];let skip=0,blank=0;
+  rows.forEach((row,i)=>{const norm={};Object.keys(row).forEach(k=>norm[String(k).replace(/\s/g,'').toLowerCase()]=String(row[k]).trim());
+   const c={};CONTACT_FIELDS.forEach(([key,,al])=>{const hit=al.map(a=>a.toLowerCase()).find(a=>norm[a]!==undefined);c[key]=hit?norm[hit]:''});
+   if(!c.company){blank++;return}
+   const k=keyOf(c);if(keys.has(k)){skip++;return}keys.add(k);
+   added.push({...c,id:'c-'+Date.now()+'-'+i+'-'+Math.random().toString(16).slice(2),emoji:'🏢',updatedAt:new Date().toISOString()});});
+  if(!added.length){alert(`새로 등록할 거래처가 없어요. (중복 ${skip}건, 거래처명 없음 ${blank}건)`);return}
+  if(!confirm(`${added.length}건을 등록할까요?\n(중복 제외 ${skip}건, 거래처명 없음 ${blank}건)`))return;
+  await saveContactsData([...added,...exist]);renderContacts();alert(`${added.length}건을 등록했어요.`);
+ }catch(err){alert('엑셀 파일을 읽지 못했어요. 먼저 "엑셀 양식"을 내려받아 형식을 확인해 주세요.\n'+(err.message||''))}finally{e.target.value=''}};
+ r.readAsArrayBuffer(file);
+}
+function openContactLog(id){
+ const c=getContacts().find(x=>String(x.id)===String(id));if(!c)return;
+ const h=(c.history||[]).slice().sort((a,b)=>String(b.at).localeCompare(String(a.at))),sid=escapeHTML(c.id);
+ diaryDialog('📞 '+escapeHTML(c.company)+' · 통화/메일 이력',`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"><select id="clogType"><option>📞 통화</option><option>✉️ 메일</option><option>💬 기타</option></select><input id="clogText" style="flex:1;min-width:180px" maxlength="500" placeholder="내용 (예: 세금계산서 재발행 요청)" onkeydown="if(event.key==='Enter'){event.preventDefault();addContactLog('${sid}')}"><button type="button" class="btn btn-primary" onclick="addContactLog('${sid}')">＋ 추가</button></div>`+(h.length?h.map(x=>`<div class="hist-row"><small>${new Date(x.at).toLocaleString('ko-KR')}</small> · <b>${escapeHTML(x.type)}</b><br>${escapeHTML(x.text)} <button type="button" class="small-action" onclick="deleteContactLog('${sid}','${escapeHTML(x.id)}')">삭제</button></div>`).join(''):'<div class="subtle">아직 기록이 없어요.</div>'));
+ setTimeout(()=>$('clogText')?.focus(),50);
+}
+async function addContactLog(id){
+ const c=getContacts().find(x=>String(x.id)===String(id)),text=($('clogText')?.value||'').trim();if(!c||!text)return;
+ c.history=[...(c.history||[]),{id:'h-'+Date.now(),at:new Date().toISOString(),type:$('clogType').value,text}];
+ try{await saveContactsData(getContacts());renderContacts();openContactLog(id)}catch(e){alert('이력을 저장하지 못했어요.\n'+(e.message||''))}
+}
+async function deleteContactLog(id,hid){
+ const c=getContacts().find(x=>String(x.id)===String(id));if(!c||!confirm('이 이력을 삭제할까요?'))return;
+ c.history=(c.history||[]).filter(x=>x.id!==hid);
+ try{await saveContactsData(getContacts());renderContacts();openContactLog(id)}catch(e){alert('삭제하지 못했어요.\n'+(e.message||''))}
+}
 </script>
 </body>
 </html>
