@@ -496,7 +496,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .nav-menu .nav-link{display:flex;width:100%;height:auto;min-height:0;padding:10px 12px;justify-content:flex-start;border:0;border-radius:8px;background:none;text-align:left;white-space:nowrap;cursor:pointer}
 .nav-menu .nav-link:hover{background:#f2f5ff}.nav-menu .nav-link.active{background:#e8eefc;border:0}
 </style>
-</head>
+<style>.list-bulkbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e5eaf2;font-size:.82rem}.list-bulkbar.on{background:#fff7ed}.list-row.list-selected{background:#fff1f2}.list-sel{width:18px;height:18px;accent-color:#e11d48;vertical-align:middle}.list-bulkbar .btn-del{background:#e11d48;color:#fff;border:0;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer}</style></head>
 <body>
 
 <style>
@@ -1871,9 +1871,9 @@ function renderCalendar(){
   const first=dateISO(viewYear,viewMonth+1,1),last=dateISO(viewYear,viewMonth+1,new Date(viewYear,viewMonth+1,0).getDate());
   const arr=all.filter(t=>(t.endDate||t.date)>=first&&t.date<=last).sort((a,b)=>a.date.localeCompare(b.date));
   const box=document.createElement('div');box.className='list-view';
-  box.innerHTML='<div class="list-row header"><span>마감일</span><span>업무명 / 메모</span><span>분야</span><span class="list-status">상태</span></div>'+
-   (arr.length?arr.map(t=>`<div class="list-row ${t.status==='완료'?'list-completed':''} ${t.status==='완료'&&t.excludeOverdue?'no-strike':''}">
-    <span><input type="checkbox" class="list-done-check" ${t.status==='완료'?'checked':''} aria-label="업무 완료 처리" onchange="setListTaskStatus('${String(t.id).replace(/'/g,"\\'")}',this.checked)"><br>${escapeHTML(t.endDate&&t.endDate!==t.date?`${t.date} ~ ${t.endDate}`:t.date)}</span>
+  box.innerHTML=bulkBarHTML(arr)+'<div class="list-row header"><span>마감일</span><span>업무명 / 메모</span><span>분야</span><span class="list-status">상태</span></div>'+
+   (arr.length?arr.map(t=>`<div class="list-row ${listSelectMode&&listSel.has(String(t.id))?'list-selected':''} ${t.status==='완료'?'list-completed':''} ${t.status==='완료'&&t.excludeOverdue?'no-strike':''}">
+    <span>${listSelectMode?`<input type="checkbox" class="list-sel" data-id="${escapeHTML(t.id)}" ${listSel.has(String(t.id))?'checked':''} aria-label="삭제할 업무 선택" title="선택" onchange="toggleListSel(this.dataset.id,this.checked)"> `:''}<input type="checkbox" class="list-done-check" ${t.status==='완료'?'checked':''} aria-label="업무 완료 처리" onchange="setListTaskStatus('${String(t.id).replace(/'/g,"\\'")}',this.checked)"><br>${escapeHTML(t.endDate&&t.endDate!==t.date?`${t.date} ~ ${t.endDate}`:t.date)}</span>
     <span><button class="tiny-btn list-task-title" onclick="editTask('${String(t.id).replace(/'/g,"\\'")}')">${t.emoji?escapeHTML(t.emoji)+' ':''}${escapeHTML(t.title)}</button>${t.memo?`<span class="list-memo">${escapeHTML(t.memo)}</span>`:'<span class="list-memo">메모 없음</span>'}</span>
     <span><span class="tag ${escapeHTML(t.category)}">${escapeHTML(t.category)}</span></span>
     <span class="list-status">${escapeHTML(isOverdue(t)?'지연':t.status)}</span>
@@ -2730,6 +2730,32 @@ function exportReceivables(){
  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([H,...rows]),'미수금내역');
  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['거래처','미수 잔액'],...Object.entries(cm).sort((a,b)=>b[1]-a[1])]),'거래처별집계');
  XLSX.writeFile(wb,`미수금_${toISO(new Date())}.xlsx`);
+}
+
+let listSelectMode=false;const listSel=new Set();let listVisibleIds=[];
+function listSelected(){return [...listSel].filter(id=>listVisibleIds.includes(id))}
+function bulkBarHTML(arr){
+ listVisibleIds=arr.map(t=>String(t.id));
+ if(!listSelectMode)return `<div class="list-bulkbar"><button type="button" class="btn btn-outline" onclick="setListSelectMode(true)">☑ 선택 모드 (일괄 삭제·완료)</button></div>`;
+ const n=listSelected().length,all=arr.length>0&&n===arr.length;
+ return `<div class="list-bulkbar on"><label><input type="checkbox" ${all?'checked':''} onchange="listSelectAll(this.checked)"> 전체 선택 (${arr.length}건)</label><b>${n}건 선택됨</b><button type="button" class="btn btn-outline" ${n?'':'disabled'} onclick="bulkCompleteTasks()">✓ 선택 완료 처리</button><button type="button" class="btn-del" ${n?'':'disabled'} onclick="bulkDeleteTasks()">🗑 선택 삭제</button><button type="button" class="btn btn-outline" onclick="setListSelectMode(false)">취소</button></div>`;
+}
+function rerenderList(){const sc=$('calendarContent')?.parentElement,y=sc?sc.scrollTop:0,wy=window.scrollY;renderCalendar();if(sc)sc.scrollTop=y;window.scrollTo(0,wy)}
+function setListSelectMode(on){listSelectMode=on;listSel.clear();rerenderList()}
+function toggleListSel(id,c){c?listSel.add(String(id)):listSel.delete(String(id));rerenderList()}
+function listSelectAll(c){listSel.clear();if(c)listVisibleIds.forEach(id=>listSel.add(id));rerenderList()}
+function bulkDeleteTasks(){
+ const ids=listSelected();if(!ids.length)return;const sel=tasks.filter(t=>ids.includes(String(t.id)));
+ const rep=sel.some(t=>t.repeat&&t.repeat!=='none');
+ if(!confirm(`선택한 업무 ${sel.length}건을 삭제할까요?`+(rep?'\n※ 반복 일정은 선택한 회차만 삭제되고 나머지 회차는 유지돼요.':'')+'\n삭제하면 되돌릴 수 없어요.'))return;
+ sel.forEach(t=>{const id=String(t.id);if(/-r\d+$/.test(id)&&!deletedRecurringIds.includes(id))deletedRecurringIds.push(id)});
+ tasks=tasks.filter(t=>!ids.includes(String(t.id)));listSel.clear();saveData();renderAll();renderDiaryTable();
+}
+function bulkCompleteTasks(){
+ const ids=listSelected();if(!ids.length)return;
+ if(!confirm(`선택한 업무 ${ids.length}건을 완료 처리할까요?`))return;
+ tasks.forEach(t=>{if(ids.includes(String(t.id))){t.status='완료';t.actualDate=toISO(today);syncLinkedDiaryStatus(t)}});
+ listSel.clear();saveData();renderAll();renderDiaryTable();
 }
 </script>
 </body>
