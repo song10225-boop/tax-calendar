@@ -986,6 +986,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     <label>단위 <select id="salesUnit" onchange="renderSales(true)"><option value="1">원</option><option value="1000">천원</option><option value="1000000">백만원</option></select></label>
     <button type="button" class="btn btn-outline" onclick="printSalesSummary()">🖨 연간 집계표 인쇄·PDF</button>
     <button type="button" class="btn btn-outline" onclick="exportSales()">📤 엑셀 내보내기</button>
+    <button type="button" class="btn btn-outline" onclick="manageSalesCats()">🎨 구분 순서·색상</button>
     <button type="button" class="btn btn-outline" onclick="salesRenameDlg('dept')">✏️ 부서·구분 이름 변경</button>
     <button type="button" class="btn btn-outline" onclick="deleteLedgerYear()" title="선택한 연도에 원장으로 올린 데이터만 삭제">🗑 원장 업로드분 삭제</button>
   </div>
@@ -3030,7 +3031,8 @@ async function loadSalesCloud(){
  try{localStorage.setItem(salesLS(),JSON.stringify(salesCache))}catch(e){}
 }
 function salesCats(){if(!Array.isArray(profile.salesCats)||!profile.salesCats.length)profile.salesCats=['제조매출','용역매출','서비스매출','기타수익'];return profile.salesCats}
-function salesColor(c){const i=salesCats().indexOf(c);return i<0?'#94a3b8':SALES_COL[i%SALES_COL.length]}
+function salesColor(c){const m=profile.salesColors||{};if(m[c])return m[c];const i=salesCats().indexOf(c);return i<0?'#94a3b8':SALES_COL[i%SALES_COL.length]}
+function salesFreezeColors(){profile.salesColors=profile.salesColors||{};salesCats().forEach(c=>{if(!profile.salesColors[c])profile.salesColors[c]=salesColor(c)})}
 function salesSum(a){return a.reduce((t,r)=>t+(+r.amount||0),0)}
 function salesMonthOf(r){return Number(String(r.date||'').slice(5,7))||0}
 function salesShort(n){const a=Math.abs(n),g=n<0?'-':'';if(a>=1e8)return g+(a/1e8).toFixed(1)+'억';if(a>=1e4)return g+Math.round(a/1e4).toLocaleString('ko-KR')+'만';return n?n.toLocaleString('ko-KR'):'0'}
@@ -3057,11 +3059,14 @@ function addSale(e){
  saveSales([date.slice(0,4)]);$('salesAmount').value='';$('salesMemo').value='';$('salesAmount').focus();salesWantYear=date.slice(0,4);renderSales();
 }
 function manageSalesCats(){
- const draw=()=>{const used=new Set(salesData().map(r=>r.cat));return salesCats().map((c,i)=>`<div style="display:flex;gap:8px;align-items:center;margin:5px 0"><span class="sl-tag" style="background:${SALES_COL[i%SALES_COL.length]}">${escapeHTML(c)}</span><span class="subtle">${used.has(c)?salesData().filter(r=>r.cat===c).length+'건 사용 중':''}</span><button type="button" class="small-action" data-i="${i}" onclick="delSalesCat(+this.dataset.i)">삭제</button></div>`).join('')};
- diaryDialog('매출구분 관리',`<div id="salesCatList">${draw()}</div><div style="display:flex;gap:6px;margin-top:10px"><input id="salesCatNew" maxlength="20" placeholder="새 매출구분 (예: 임대수익)" style="flex:1;padding:7px;border:1px solid #d8dfea;border-radius:8px"><button type="button" class="btn btn-primary" onclick="addSalesCat()">＋ 추가</button></div><div class="subtle" style="margin-top:8px">사용 중인 구분을 삭제해도 이미 등록된 매출 내역은 그대로 남아요.</div>`);
+ salesFreezeColors();saveData();
+ const draw=()=>{const used=new Set(salesData().map(r=>r.cat)),n=salesCats().length;return salesCats().map((c,i)=>`<div style="display:flex;gap:8px;align-items:center;margin:6px 0"><button type="button" class="small-action" ${i?'':'disabled'} data-i="${i}" onclick="moveSalesCat(+this.dataset.i,-1)" title="위로">▲</button><button type="button" class="small-action" ${i<n-1?'':'disabled'} data-i="${i}" onclick="moveSalesCat(+this.dataset.i,1)" title="아래로">▼</button><input type="color" value="${escapeHTML(salesColor(c))}" data-i="${i}" onchange="setSalesCatColor(+this.dataset.i,this.value)" title="색상 선택" style="width:34px;height:28px;border:0;padding:0;background:none;cursor:pointer"><span class="sl-tag" style="background:${salesColor(c)}">${escapeHTML(c)}</span><span class="subtle" style="flex:1">${used.has(c)?salesData().filter(r=>r.cat===c).length+'건 사용 중':''}</span><button type="button" class="small-action" data-i="${i}" onclick="delSalesCat(+this.dataset.i)">삭제</button></div>`).join('')};
+ diaryDialog('매출구분 관리 (순서·색상)',`<div class="subtle" style="margin-bottom:6px">▲▼로 순서를, 색 네모를 눌러 색상을 바꿔요. 집계표·그래프·인쇄에 모두 반영돼요.</div><div id="salesCatList">${draw()}</div><div style="display:flex;gap:6px;margin-top:10px"><input id="salesCatNew" maxlength="20" placeholder="새 매출구분 (예: 임대수익)" style="flex:1;padding:7px;border:1px solid #d8dfea;border-radius:8px"><button type="button" class="btn btn-primary" onclick="addSalesCat()">＋ 추가</button></div><div class="subtle" style="margin-top:8px">이름을 바꾸려면 "✏️ 부서·구분 이름 변경"을 사용하세요. 사용 중인 구분을 삭제해도 이미 등록된 매출 내역은 그대로 남아요.</div>`);
  window.__salesCatDraw=draw;
 }
-function addSalesCat(){const v=($('salesCatNew').value||'').trim();if(!v)return;if(salesCats().includes(v)){alert('이미 있는 구분이에요.');return}salesCats().push(v);saveData();$('salesCatList').innerHTML=window.__salesCatDraw();$('salesCatNew').value='';renderSales(true)}
+function moveSalesCat(i,d){const c=salesCats(),j=i+d;if(j<0||j>=c.length)return;[c[i],c[j]]=[c[j],c[i]];saveData();$('salesCatList').innerHTML=window.__salesCatDraw();renderSales(true)}
+function setSalesCatColor(i,v){salesFreezeColors();profile.salesColors[salesCats()[i]]=v;saveData();$('salesCatList').innerHTML=window.__salesCatDraw();renderSales(true)}
+function addSalesCat(){const v=($('salesCatNew').value||'').trim();if(!v)return;if(salesCats().includes(v)){alert('이미 있는 구분이에요.');return}salesFreezeColors();profile.salesColors[v]=SALES_COL[salesCats().length%SALES_COL.length];salesCats().push(v);saveData();$('salesCatList').innerHTML=window.__salesCatDraw();$('salesCatNew').value='';renderSales(true)}
 function delSalesCat(i){const c=salesCats()[i];if(salesCats().length<=1){alert('매출구분은 최소 1개가 필요해요.');return}if(!confirm(`'${c}' 구분을 목록에서 삭제할까요?`))return;salesCats().splice(i,1);saveData();$('salesCatList').innerHTML=window.__salesCatDraw();renderSales(true)}
 function salesEditDlg(id){
  const r=salesData().find(x=>x.id===id);if(!r)return;const f=(l,h)=>`<label style="display:block;margin:6px 0"><small>${l}</small><br>${h}</label>`,st='style="width:100%;padding:7px;border:1px solid #d8dfea;border-radius:8px"';
@@ -3098,7 +3103,7 @@ function salesRenameDo(dim,i){
  const exists=salesData().some(r=>(r[key]||'')===nw);
  if(exists&&!confirm(`'${nw}' ${label}은(는) 이미 있어요. '${old||'(미지정)'}' 내역을 '${nw}'(으)로 합칠까요?`))return;
  const hit=salesData().filter(r=>(r[key]||'')===old);hit.forEach(r=>{r[key]=nw});
- if(dim==='cat'){const c=salesCats(),k=c.indexOf(old);if(k>=0){if(c.includes(nw))c.splice(k,1);else c[k]=nw}else if(!c.includes(nw))c.push(nw)}
+ if(dim==='cat'){salesFreezeColors();const col=profile.salesColors;if(col[old]&&!col[nw])col[nw]=col[old];const c=salesCats(),k=c.indexOf(old);if(k>=0){if(c.includes(nw))c.splice(k,1);else c[k]=nw}else if(!c.includes(nw))c.push(nw)}
  if(old){profile.salesAlias=profile.salesAlias||{};const a=profile.salesAlias[dim]=profile.salesAlias[dim]||{};Object.keys(a).forEach(k=>{if(a[k]===old)a[k]=nw});a[old]=nw}
  saveData();saveSales(salesYearsOf(hit));renderSales(true);salesRenameDlg(dim);
 }
