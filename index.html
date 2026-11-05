@@ -647,6 +647,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
       <button class="nav-link nav-sub" data-page="holidaysPage" onclick="showPage('holidaysPage',this)"><span class="nav-icon">🌷</span> 공휴일 관리</button>
       <button class="nav-link nav-sub" onclick="document.getElementById('excelImportFile').click()">📥 엑셀 복원</button>
       <button class="nav-link nav-sub" onclick="exportExcel()">📤 엑셀 백업</button>
+      <button class="nav-link nav-sub" onclick="openResetDlg()" style="color:#b91c1c">🧹 데이터 초기화</button>
     </div></div>
   <input type="file" id="excelImportFile" accept=".xlsx,.xls,.csv" hidden onchange="importExcel(event)">
 </nav>
@@ -1585,6 +1586,7 @@ async function loadLeaveCloud(){
  leaveProfile=ps.exists?{...LEAVE_DEFAULT_PROFILE,...ps.data()}:{...LEAVE_DEFAULT_PROFILE};
  const snap=await ref.doc('entries').collection('items').get();
  if(!snap.empty){leaveEntries=snap.docs.map(d=>({...d.data(),id:d.id}));}
+ else if(leaveProfile.entriesCleared){leaveEntries=[];}
  else {
    leaveEntries=leaveEntriesSeed();
    const batch=firestore.batch();leaveEntries.forEach(e=>{const {id,...data}=e;batch.set(ref.doc('entries').collection('items').doc(id),data);});
@@ -3267,6 +3269,64 @@ function importSimpleSales(H,col){
  if(!add.length){alert('새로 등록할 매출이 없어요. (중복 '+skip+'건)');return}
  if(!confirm(`매출 ${add.length}건(합계 ${calcMoney(salesSum(add))}원)을 불러올까요?\n중복 ${skip}건은 건너뛰어요.${newCats.size?'\n새 매출구분 추가: '+[...newCats].join(', '):''}`))return;
  newCats.forEach(c=>salesCats().push(c));saveData();salesCache=[...salesData(),...add];saveSales(salesYearsOf(add));salesWantYear=add[add.length-1].date.slice(0,4);renderSales();
+}
+
+const RESET_ITEMS=[
+ ['tasks','🗓️ 세무달력 일정·디데이 (첨부파일 포함)',()=>tasks.length+'건',true],
+ ['diary','📒 업무일지',()=>diaryRows.length+'건',true],
+ ['todo','📝 투데이리스트',()=>(profile.todoItems||[]).length+'건',true],
+ ['memo','📌 메모장(포스트잇)',()=>(profile.stickyNotes||[]).length+'건',true],
+ ['recv','💰 미수금',()=>(profile.receivables||[]).length+'건',true],
+ ['bk','📑 기장현황 (거래처·체크 기록)',()=>((profile.bk&&profile.bk.clients)||[]).length+'개 거래처',true],
+ ['sales','📈 매출 (구분 순서·색상·이름 변경 기록 포함)',()=>salesData().length+'건',true],
+ ['contacts','📇 연락망 (통화·메일 이력 포함)',()=>getContacts().length+'곳',true],
+ ['leave','🌿 연차관리 (기본정보·사용 내역)',()=>leaveEntries.length+'건',true],
+ ['retire','🏦 퇴직금 관리 (직원 1·2 정보)',()=>'2명 슬롯',true],
+ ['holiday','🌷 직접 추가한 공휴일·휴무일',()=>(profile.customHolidays||[]).length+'건',false],
+ ['cats','🏷️ 업무 분야(회계·자금 등) 이름·색상 설정',()=>'기본값으로 복원',false]
+];
+function openResetDlg(){
+ diaryDialog('🧹 데이터 초기화',`<div class="subtle" style="line-height:1.6;margin-bottom:8px">이직·퇴사 등으로 기록을 한꺼번에 비울 때 쓰세요. 선택한 항목은 <b>클라우드에서도 삭제되고 되돌릴 수 없어요.</b></div>
+ <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:8px 10px;font-size:.82rem;margin-bottom:8px">✅ <b>항상 유지돼요</b>: 즐겨찾기 · 제목·색상 등 화면 설정 · 이름/회사 표시 · 로그인 계정</div>
+ <div style="margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="btn btn-outline" onclick="exportJSON()">💾 업무 데이터 백업(JSON)</button><button type="button" class="btn btn-outline" onclick="exportExcel()">📤 엑셀 백업</button></div>
+ <div class="subtle" style="font-size:.76rem;margin-bottom:8px">※ 위 백업에는 매출·연락망·연차·퇴직금은 들어가지 않아요. 매출은 매출 화면의 "엑셀 내보내기"(연도별), 연락망은 따로 백업해 주세요.</div>
+ ${RESET_ITEMS.map(([k,l,c,d])=>`<label style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" id="rs_${k}" ${d?'checked':''}> <span style="flex:1">${l}</span><span class="subtle" style="font-size:.78rem">${c()}</span></label>`).join('')}
+ <div style="margin-top:12px;text-align:right"><button type="button" class="btn" style="background:#e11d48;color:#fff" onclick="runReset()">선택 항목 초기화</button></div>`);
+}
+async function runReset(){
+ const sel=RESET_ITEMS.map(x=>x[0]).filter(k=>$('rs_'+k)?.checked);
+ if(!sel.length){alert('초기화할 항목을 선택해 주세요.');return}
+ const t=prompt(`선택한 ${sel.length}개 항목을 모두 삭제합니다. 되돌릴 수 없어요.\n계속하려면 "초기화"라고 입력해 주세요.\n(즐겨찾기는 유지돼요)`);if(t===null)return;
+ if(t.trim()!=='초기화'){alert('"초기화"를 정확히 입력해야 진행돼요. 취소했어요.');return}
+ const has=k=>sel.includes(k),fail=[];setSyncStatus('초기화 중…');
+ try{
+  if(has('tasks')){try{await Promise.all(tasks.flatMap(t=>(t.attachments||[]).map(a=>a&&a.path?storage.ref(a.path).delete().catch(()=>{}):null)).filter(Boolean))}catch(e){}tasks=[];deletedRecurringIds=[];try{clearTaskDraft()}catch(e){}}
+  if(has('diary'))diaryRows=[];
+  if(has('todo'))profile.todoItems=[];
+  if(has('memo'))profile.stickyNotes=[];
+  if(has('recv')){profile.receivables=[];delete profile.recvCompany}
+  if(has('bk'))delete profile.bk;
+  if(has('holiday'))profile.customHolidays=[];
+  if(has('cats')){delete profile.categories;delete profile.categoryColorSwapV1}
+  if(has('sales')){const ys=salesYearsOf(salesCache);salesCache=[];saveSales(ys);delete profile.sales;delete profile.salesAlias;delete profile.salesColors;delete profile.salesCats;salesSel.clear();salesSelOn=false}
+  saveData();
+  if(has('contacts')){try{await saveContactsData([]);}catch(e){fail.push('연락망: '+(e.message||''))}}
+  if(has('leave')){try{
+   const ref=leaveRef(),snap=await ref.doc('entries').collection('items').get(),docs=snap.docs;
+   for(let i=0;i<docs.length;i+=400){const b=firestore.batch();docs.slice(i,i+400).forEach(d=>b.delete(d.ref));await b.commit()}
+   leaveProfile={...LEAVE_DEFAULT_PROFILE,name:'',hireDate:'',asOf:'',monthlyPay:0,attendance:'unknown',entriesCleared:true};leaveEntries=[];
+   await ref.doc('profile').set(leaveProfile);fillLeaveProfile();
+  }catch(e){fail.push('연차관리: '+(e.message||''))}}
+  if(has('retire')){try{
+   const blank={name:'',dept:'',rank:'',provider:'',bank:'',ipr:'',hireDate:'',endDate:'',wages:Object.fromEntries([2022,2023,2024,2025,2026,2027,2028,2029].map(y=>[y,0])),balance:0,extra:0};
+   for(const slot of ['self','other']){await firestore.collection('users').doc(currentUser.uid).collection('retirementProfiles').doc(slot).set({...blank,updatedAt:new Date().toISOString()});retireCache[slot]={...blank}}
+   retireWageMemo={};
+  }catch(e){fail.push('퇴직금 관리: '+(e.message||''))}}
+ }catch(e){fail.push(e.message||String(e))}
+ $('diaryDlg')?.remove();
+ for(const f of [renderAll,renderDiaryTable,renderTodayList,renderStickyMemos,renderContacts,renderHolidaysManager,renderQuickLinksManager,renderLeaveManager,renderReceivables,renderBk,renderSales,loadRetireProfile,renderDdayList]){try{await f()}catch(e){}}
+ setSyncStatus(fail.length?'초기화 일부 실패':'초기화 완료');
+ alert(fail.length?`일부 항목은 초기화하지 못했어요:\n${fail.join('\n')}\n\n나머지는 완료됐어요.`:'선택한 항목을 초기화했어요. (즐겨찾기는 그대로 남아 있어요)');
 }
 </script>
 </body>
