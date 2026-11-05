@@ -510,7 +510,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .recv-badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.78rem;font-weight:800}.recv-badge.ok{background:#dcfce7;color:#166534}.recv-badge.warn{background:#fef3c7;color:#92400e}.recv-badge.bad{background:#fee2e2;color:#b91c1c}
 .recv-grp td{background:#f4eef8!important;color:#4c2a6b;font-size:.88rem;padding:8px 10px!important}
 </style>
-</head>
+<style>#recvCards{grid-template-columns:repeat(4,minmax(0,1fr))}@media(max-width:1100px){#recvCards{grid-template-columns:repeat(2,minmax(0,1fr))}}.recv-mini{border:0;background:none;cursor:pointer;font-size:.95rem;padding:0 3px}.recv-late{color:#b91c1c;font-weight:800}.recv-sr input{padding:7px;border:1px solid #d8dfea;border-radius:8px}</style></head>
 <body>
 
 <style>
@@ -965,6 +965,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     <label class="style-check"><input type="checkbox" id="recvGroup" onchange="renderReceivables()"> 거래처별 묶어보기</label>
     <label class="style-check"><input type="checkbox" id="recvShowDone" onchange="renderReceivables()"> 수금 완료 건도 보기</label>
     <button type="button" class="btn btn-outline" onclick="exportReceivables()">📤 엑셀 내보내기</button>
+    <button type="button" class="btn btn-outline" onclick="printRecvStatement()">🖨 미수금 내역서 인쇄·PDF</button>
     <label class="btn btn-outline" style="cursor:pointer">📥 엑셀 불러오기<input type="file" accept=".xlsx,.xls,.csv" hidden onchange="importReceivablesExcel(event)"></label>
   </div>
   <div class="recv-two">
@@ -2709,15 +2710,15 @@ function renderReceivables(){
  $('recvCount').textContent=`미수 ${open.length}건 · 거래처 ${new Set(open.map(r=>r.client)).size}곳`;
  const cm={};open.forEach(r=>{const c=cm[r.client]=cm[r.client]||{n:0,bal:0,age:0};c.n++;c.bal+=recvBal(r);c.age=Math.max(c.age,recvMonths(r.date))});
  const cl=Object.entries(cm).sort((a,b)=>b[1].bal-a[1].bal),top=cl[0];
- $('recvCards').innerHTML=`<div class="retire-card"><span>총 미수금</span><strong>${calcMoney(total)}원</strong><small>${open.length}건 · 수금 완료분 제외</small></div><div class="retire-card"><span>장기 미수 (${lm}개월 이상)</span><strong style="color:#b91c1c">${calcMoney(sum(longs))}원</strong><small>${longs.length}건 · 전체의 ${total?Math.round(sum(longs)/total*100):0}%</small></div><div class="retire-card"><span>최대 미수 거래처</span><strong>${top?escapeHTML(top[0]):'-'}</strong><small>${top?calcMoney(top[1].bal)+'원 · '+Math.round(top[1].bal/total*100)+'%':''}</small></div>`;
- $('recvClients').innerHTML=cl.length?cl.map(([n,c],i)=>{const pct=total?c.bal/total*100:0;return `<tr><td>${i+1}</td><td><a href="#" data-c="${escapeHTML(n)}" onclick="recvFilterClient(this.dataset.c);return false"><strong>${escapeHTML(n)}</strong></a></td><td>${c.n}</td><td class="num"><b>${calcMoney(c.bal)}</b></td><td><span class="recv-bar"><i style="width:${pct.toFixed(0)}%"></i></span>${pct.toFixed(0)}%</td><td>${recvBadge(c.age,lm)}</td></tr>`}).join(''):'<tr><td colspan="6" style="text-align:center;padding:18px;color:#718096">미수금이 없어요 🎉</td></tr>';
+ $('recvCards').innerHTML=`<div class="retire-card"><span>총 미수금</span><strong>${calcMoney(total)}원</strong><small>${open.length}건 · 수금 완료분 제외</small></div><div class="retire-card"><span>장기 미수 (${lm}개월 이상)</span><strong style="color:#b91c1c">${calcMoney(sum(longs))}원</strong><small>${longs.length}건 · 전체의 ${total?Math.round(sum(longs)/total*100):0}%</small></div>${recvDueCard(open)}<div class="retire-card"><span>최대 미수 거래처</span><strong>${top?escapeHTML(top[0]):'-'}</strong><small>${top?calcMoney(top[1].bal)+'원 · '+Math.round(top[1].bal/total*100)+'%':''}</small></div>`;
+ $('recvClients').innerHTML=cl.length?cl.map(([n,c],i)=>{const pct=total?c.bal/total*100:0;return `<tr><td>${i+1}</td><td><a href="#" data-c="${escapeHTML(n)}" onclick="recvFilterClient(this.dataset.c);return false"><strong>${escapeHTML(n)}</strong></a> <button type="button" class="recv-mini" data-c="${escapeHTML(n)}" title="연락처 보기" onclick="recvShowContact(this.dataset.c)">📇</button><button type="button" class="recv-mini" data-c="${escapeHTML(n)}" title="이 거래처 미수금 내역서 인쇄" onclick="printRecvStatement(this.dataset.c)">🖨</button></td><td>${c.n}</td><td class="num"><b>${calcMoney(c.bal)}</b></td><td><span class="recv-bar"><i style="width:${pct.toFixed(0)}%"></i></span>${pct.toFixed(0)}%</td><td>${recvBadge(c.age,lm)}</td></tr>`}).join(''):'<tr><td colspan="6" style="text-align:center;padding:18px;color:#718096">미수금이 없어요 🎉</td></tr>';
  const B=[['당월 (0개월)',0,0],['1~2개월',1,2],['3~5개월',3,5],['6~11개월',6,11],['12개월 이상',12,999]];
  $('recvAging').innerHTML=B.map(([l,a,b])=>{const g=open.filter(r=>{const m=recvMonths(r.date);return m>=a&&m<=b}),t=sum(g),pct=total?t/total*100:0;return `<tr style="${g.length?'':'opacity:.45'}"><td>${l}</td><td>${g.length}</td><td class="num">${calcMoney(t)}</td><td><span class="recv-bar"><i style="width:${pct.toFixed(0)}%;background:${a>=6?'#e11d48':a>=3?'#f59e0b':'#34d399'}"></i></span>${pct.toFixed(0)}%</td></tr>`}).join('');
  let rows=all.filter(r=>(done||recvBal(r)>0)&&[r.client,r.memo,r.due].some(v=>String(v||'').toLowerCase().includes(q)));
  const byDate=(a,b)=>String(a.date||'').localeCompare(String(b.date||'')),byName=(a,b)=>String(a.client).localeCompare(String(b.client),'ko');
  rows.sort(grp?(a,b)=>byName(a,b)||byDate(a,b):sort==='amount'?(a,b)=>recvBal(b)-recvBal(a):sort==='client'?(a,b)=>byName(a,b)||byDate(a,b):byDate);
  $('recvDetailInfo').textContent=`(${rows.length}건 · 잔액 ${calcMoney(sum(rows))}원${q?' · 검색 중':''})`;
- const tr=r=>{const m=recvMonths(r.date),bal=recvBal(r),id=escapeHTML(r.id);return `<tr style="${bal===0?'opacity:.5':''}"><td><strong>${escapeHTML(r.client)}</strong></td><td>${escapeHTML(r.date||'')}</td><td>${escapeHTML(r.memo||'')}</td><td class="num">${calcMoney(r.amount)}</td><td class="num">${r.paid?calcMoney(r.paid):'—'}</td><td class="num"><b>${calcMoney(bal)}</b></td><td>${bal?recvBadge(m,lm):'완료'}</td><td>${escapeHTML(r.due||'')}</td><td><div class="favorite-actions">${bal?`<button type="button" data-id="${id}" onclick="recvPay(this.dataset.id)">수금</button>`:''}<button type="button" data-id="${id}" onclick="recvEdit(this.dataset.id)">수정</button><button type="button" class="delete-fav" data-id="${id}" onclick="recvDelete(this.dataset.id)">삭제</button></div></td></tr>`};
+ const ctc={};const tr=r=>{const m=recvMonths(r.date),bal=recvBal(r),id=escapeHTML(r.id);if(!(r.client in ctc))ctc[r.client]=recvContact(r.client);const ct=ctc[r.client];return `<tr style="${bal===0?'opacity:.5':''}"><td><strong>${escapeHTML(r.client)}</strong>${ct&&(ct.person||ct.phone)?`<div class="subtle" style="font-size:.74rem">👤 ${escapeHTML([ct.person,ct.phone].filter(Boolean).join(' · '))}</div>`:''}</td><td>${escapeHTML(r.date||'')}</td><td>${escapeHTML(r.memo||'')}</td><td class="num">${calcMoney(r.amount)}</td><td class="num">${r.paid?calcMoney(r.paid):'—'}</td><td class="num"><b>${calcMoney(bal)}</b></td><td>${bal?recvBadge(m,lm):'완료'}</td><td>${recvDueCell(r)}</td><td><div class="favorite-actions">${bal?`<button type="button" data-id="${id}" onclick="recvPay(this.dataset.id)">수금</button><button type="button" data-id="${id}" onclick="recvSchedDlg(this.dataset.id)">예정</button>`:''}<button type="button" data-id="${id}" onclick="recvEdit(this.dataset.id)">수정</button><button type="button" class="delete-fav" data-id="${id}" onclick="recvDelete(this.dataset.id)">삭제</button></div></td></tr>`};
  let html='';
  if(grp){let cur=null;rows.forEach(r=>{if(r.client!==cur){cur=r.client;const g=rows.filter(x=>x.client===cur);html+=`<tr class="recv-grp"><td colspan="9"><b>${escapeHTML(cur)}</b> · ${g.length}건 · 잔액 ${calcMoney(sum(g))}원</td></tr>`}html+=tr(r)})}else html=rows.map(tr).join('');
  body.innerHTML=html||'<tr><td colspan="9" style="text-align:center;padding:22px;color:#718096">표시할 미수금이 없어요. 직접 등록하거나 엑셀을 불러와 주세요.</td></tr>';
@@ -2778,6 +2779,58 @@ function bulkCompleteTasks(){
  if(!confirm(`선택한 업무 ${ids.length}건을 완료 처리할까요?`))return;
  tasks.forEach(t=>{if(ids.includes(String(t.id))){t.status='완료';t.actualDate=toISO(today);syncLinkedDiaryStatus(t)}});
  listSel.clear();saveData();renderAll();renderDiaryTable();
+}
+
+function recvSched(r){if(Array.isArray(r.schedule))return r.schedule.filter(x=>x.date);const m=String(r.due||'').trim().match(/^(\d{4}-\d{2}-\d{2})$/);return m?[{date:m[1],amount:0}]:[]}
+function recvSchedEff(r){const sc=recvSched(r),bal=recvBal(r),ex=sc.reduce((t,x)=>t+(+x.amount||0),0),un=sc.filter(x=>!(+x.amount)).length,share=un?Math.max(0,bal-ex)/un:0;return sc.map(x=>({date:x.date,amount:Math.min(bal,+x.amount||share)}))}
+function recvDueCard(open){
+ const t0=toISO(new Date()),ym=t0.slice(0,7);let mo=0,mn=0,late=0;
+ open.forEach(r=>recvSchedEff(r).forEach(x=>{if(x.date.slice(0,7)===ym){mo+=x.amount;mn++}if(x.date<t0)late+=x.amount}));
+ return `<div class="retire-card"><span>이번 달 입금 예정 (${Number(ym.slice(5))}월)</span><strong>${calcMoney(mo)}원</strong><small>${mn}건${late?` · <span class="recv-late">예정일 지난 미수 ${calcMoney(late)}원</span>`:''}</small></div>`;
+}
+function recvDueCell(r){
+ const t0=toISO(new Date()),bal=recvBal(r),sc=recvSchedEff(r),legacy=!Array.isArray(r.schedule)&&/^\d{4}-\d{2}-\d{2}$/.test(String(r.due||'').trim());
+ const parts=sc.map(x=>`<span class="${bal&&x.date<t0?'recv-late':''}">${x.date.slice(5).replace('-','/')} ${calcMoney(x.amount)}${bal&&x.date<t0?' (지연)':''}</span>`);
+ const memo=legacy?'':escapeHTML(r.due||'');
+ return parts.join('<br>')+(parts.length&&memo?'<br>':'')+(memo?`<span class="subtle">${memo}</span>`:'');
+}
+function recvSchedRowHTML(d,a){return `<div class="recv-sr" style="display:flex;gap:6px;margin:5px 0"><input type="date" value="${escapeHTML(d||'')}"><input inputmode="numeric" placeholder="금액 (비우면 잔액 전체)" value="${a?calcMoney(a):''}" oninput="formatCalcInput(this)" style="flex:1"><button type="button" class="small-action" onclick="this.parentElement.remove()">✕</button></div>`}
+function recvSchedDlg(id){
+ const r=recvList().find(x=>x.id===id);if(!r)return;const sc=recvSched(r),legacy=!Array.isArray(r.schedule)&&/^\d{4}-\d{2}-\d{2}$/.test(String(r.due||'').trim());
+ diaryDialog('📅 입금 예정 · '+escapeHTML(r.client),`<div class="subtle" style="margin-bottom:6px">잔액 ${calcMoney(recvBal(r))}원 · 분할 입금이면 날짜별로 나눠 적어 주세요. 금액을 비우면 잔액 전체로 계산해요.</div><div id="recvSchedRows">${(sc.length?sc:[{date:'',amount:0}]).map(x=>recvSchedRowHTML(x.date,x.amount)).join('')}</div><button type="button" class="small-action" onclick="$('recvSchedRows').insertAdjacentHTML('beforeend',recvSchedRowHTML('',0))">＋ 날짜 추가</button><div style="margin-top:10px"><input id="recvSchedMemo" style="width:100%;padding:7px;border:1px solid #d8dfea;border-radius:8px" maxlength="100" placeholder="입금 메모 (선택)" value="${legacy?'':escapeHTML(r.due||'')}"></div><div style="margin-top:10px;text-align:right"><button type="button" class="btn btn-primary" data-id="${escapeHTML(id)}" onclick="recvSchedSave(this.dataset.id)">저장</button></div>`);
+}
+function recvSchedSave(id){
+ const r=recvList().find(x=>x.id===id);if(!r)return;
+ r.schedule=[...document.querySelectorAll('#recvSchedRows .recv-sr')].map(row=>{const i=row.querySelectorAll('input');return {date:i[0].value,amount:calcNum(i[1].value)}}).filter(x=>x.date).sort((a,b)=>a.date.localeCompare(b.date));
+ r.due=($('recvSchedMemo').value||'').trim();saveData();$('diaryDlg')?.remove();renderReceivables();
+}
+function recvNorm(x){return String(x||'').replace(/\(주\)|㈜|주식회사|\s/g,'').toLowerCase()}
+function recvContact(name){
+ const k=recvNorm(name);if(!k)return null;const cs=getContacts();
+ return cs.find(c=>recvNorm(c.company)===k)||cs.find(c=>{const x=recvNorm(c.company);return x.length>=2&&k.length>=2&&(x.includes(k)||k.includes(x))})||null;
+}
+function recvShowContact(name){
+ const c=recvContact(name);
+ if(!c){diaryDialog('📇 '+escapeHTML(name),'<div class="subtle">연락망에 등록된 거래처가 아니에요. 연락망에 같은 이름으로 등록하면 여기서 바로 볼 수 있어요.</div><div style="margin-top:10px"><button type="button" class="btn btn-outline" onclick="$(\'diaryDlg\').remove();showPage(\'contactsPage\',document.querySelector(\'[data-page=contactsPage]\'))">연락망으로 이동</button></div>');return}
+ const rows=[['담당자',c.person],['연락처',c.phone],['이메일',c.email],['팩스',c.fax],['대표자',c.ceo],['주소',c.address],['비고',c.note]].filter(x=>x[1]);
+ const h=(c.history||[]).slice().sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,3);
+ diaryDialog('📇 '+escapeHTML(c.company),rows.map(([k,v])=>`<div style="margin:4px 0"><b>${k}</b> ${escapeHTML(v)}</div>`).join('')+(h.length?`<div style="margin-top:10px"><b>최근 이력</b>${h.map(x=>`<div class="hist-row"><small>${new Date(x.at).toLocaleDateString('ko-KR')}</small> ${escapeHTML(x.type)} · ${escapeHTML(x.text)}</div>`).join('')}</div>`:'')+`<div style="margin-top:10px;text-align:right"><button type="button" class="btn btn-outline" data-id="${escapeHTML(c.id)}" onclick="openContactLog(this.dataset.id)">📞 통화·메일 이력 보기/추가</button></div>`);
+}
+function printRecvStatement(only){
+ const q=($('recvSearch')?.value||'').trim().toLowerCase(),open=recvList().filter(r=>recvBal(r)>0);
+ const rows=only?open.filter(r=>r.client===only):open.filter(r=>[r.client,r.memo,r.due].some(v=>String(v||'').toLowerCase().includes(q)));
+ if(!rows.length){alert('인쇄할 미수금이 없어요.');return}
+ const company=prompt('내역서에 표시할 발신 회사명 (비워도 돼요)',profile.recvCompany||'');if(company===null)return;profile.recvCompany=company.trim();saveData();
+ const clients=[...new Set(rows.map(r=>r.client))].sort((a,b)=>a.localeCompare(b,'ko')),t0=toISO(new Date()),lm=Number(profile.recvLongMonths||6);
+ const pages=clients.map(c=>{
+  const g=rows.filter(r=>r.client===c).sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))),tot=g.reduce((t,r)=>t+recvBal(r),0),ct=recvContact(c);
+  const due=r=>{const sc=recvSchedEff(r);return sc.length?sc.map(x=>`${x.date.slice(5).replace('-','/')} ${calcMoney(x.amount)}`).join(', '):(r.due&&!/^\d{4}-\d{2}-\d{2}$/.test(r.due)?r.due:'')};
+  return `<section><h1>미수금 내역서</h1><div class="meta"><div><b>수신</b> ${escapeHTML(c)}${ct&&ct.person?' '+escapeHTML(ct.person)+' 담당자님':''} 귀하</div><div><b>기준일</b> ${t0}</div>${profile.recvCompany?`<div><b>발신</b> ${escapeHTML(profile.recvCompany)}</div>`:''}</div>
+  <table><thead><tr><th>거래일자</th><th>적요</th><th>청구금액</th><th>입금액</th><th>미수 잔액</th><th>경과</th><th>입금 예정</th></tr></thead><tbody>${g.map(r=>`<tr><td>${escapeHTML(r.date||'')}</td><td class="l">${escapeHTML(r.memo||'')}</td><td class="n">${calcMoney(r.amount)}</td><td class="n">${r.paid?calcMoney(r.paid):'-'}</td><td class="n"><b>${calcMoney(recvBal(r))}</b></td><td>${recvMonths(r.date)}개월</td><td class="l">${escapeHTML(due(r))}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="4">합 계 (${g.length}건)</td><td class="n">${calcMoney(tot)}</td><td colspan="2"></td></tr></tfoot></table>
+  <p class="note">※ 위 금액은 ${t0} 현재 미수금 잔액입니다. 이미 입금하신 내역이 있다면 확인 부탁드립니다.</p></section>`}).join('');
+ const html=`<!doctype html><html><head><meta charset="utf-8"><title>미수금 내역서</title><style>@page{size:A4;margin:16mm}body{font-family:'Malgun Gothic',sans-serif;color:#111;margin:0}section{page-break-after:always}section:last-child{page-break-after:auto}h1{text-align:center;font-size:22px;margin:0 0 16px;letter-spacing:6px}.meta{margin-bottom:12px;font-size:13px;line-height:1.8}.meta b{display:inline-block;width:54px}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #888;padding:6px 7px;text-align:center}th{background:#eee}td.n{text-align:right}td.l{text-align:left}tfoot td{background:#f5f5f5;font-weight:700}.note{font-size:11px;color:#444;margin-top:12px}</style></head><body>${pages}</body></html>`;
+ const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
+ const d=f.contentWindow.document;d.open();d.write(html);d.close();setTimeout(()=>{f.contentWindow.focus();f.contentWindow.print();setTimeout(()=>f.remove(),2000)},300);
 }
 </script>
 </body>
