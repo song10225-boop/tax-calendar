@@ -989,10 +989,8 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 </section>
 <section id="bookkeepingPage" class="page-panel diary-page">
   <div class="diary-toolbar"><div class="diary-heading"><div class="diary-title"><span class="diary-title-mark">📑</span>거래처 기장현황</div><div class="diary-subtitle">거래처를 등록하고 월별로 전표·통장·기타 자료 처리 여부를 칸을 눌러 ○ 체크해요. 법인/개인 구분과 합계·통계도 자동으로 보여줘요.</div></div><div class="today-count" id="bkCount"></div></div>
-  <div class="retire-cards" id="bkCards"></div>
-  <div class="bk-two"><div class="favorites-table-wrap bk-box"><h3>월별 처리 현황 <small>(전체 거래처 기준 · 파랑 전표 / 초록 통장 / 주황 기타)</small></h3><div id="bkChart"></div></div><div class="favorites-table-wrap bk-box"><h3>구분별 진행률</h3><div id="bkTypeStat"></div></div></div>
-  <details class="recv-add" id="bkAddBox" open><summary>＋ 거래처 등록</summary>
-    <form class="settings-form" onsubmit="addBkClient(event)"><label>거래처명 * <small>(여러 개는 쉼표로 구분)</small><input id="bkName" required maxlength="300" placeholder="예: (주)가인유통, (주)동우이엔텍"></label><label>구분<select id="bkType"><option value="법인">법인</option><option value="개인">개인</option></select></label><button class="btn btn-primary" type="submit">＋ 등록</button><button class="btn btn-outline" type="button" onclick="importBkFromContacts()">📇 연락망에서 가져오기</button></form></details>
+  <details class="recv-add" id="bkAddBox"><summary>＋ 거래처 등록</summary>
+    <form class="settings-form" onsubmit="addBkClient(event)"><label>거래처명 * <small>(여러 개는 쉼표로 구분)</small><input id="bkName" required maxlength="300" placeholder="거래처명 (여러 개는 쉼표로 구분)"></label><label>구분<select id="bkType"><option value="법인">법인</option><option value="개인">개인</option></select></label><button class="btn btn-primary" type="submit">＋ 등록</button><button class="btn btn-outline" type="button" onclick="importBkFromContacts()">📇 연락망에서 가져오기</button></form></details>
   <div class="recv-toolbar">
     <label>연도 <select id="bkYear" onchange="renderBk()"></select></label>
     <input id="bkSearch" type="search" placeholder="🔎 거래처·비고 검색" oninput="renderBk()">
@@ -1003,7 +1001,10 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     <button type="button" class="btn btn-outline" onclick="printBk()">🖨 인쇄·PDF</button>
   </div>
   <div class="favorites-table-wrap"><table class="bk-table"><thead><tr><th>No</th><th>거래처명</th><th>구분</th><th>1월</th><th>2월</th><th>3월</th><th>4월</th><th>5월</th><th>6월</th><th>7월</th><th>8월</th><th>9월</th><th>10월</th><th>11월</th><th>12월</th><th>부가세</th><th>급여</th><th>인건비<br>체크</th><th>연간계좌<br>작성</th><th>비고</th></tr></thead><tbody id="bkBody"></tbody><tfoot id="bkFoot"></tfoot></table></div>
-  <div class="subtle favorites-note">※ 월 칸을 누르면 ○ 체크/해제돼요. 연도를 바꾸면 해당 연도 체크가 따로 보관돼요. 통계의 진행률은 올해는 현재 월까지, 지난 해는 12개월 기준으로 계산해요.</div>
+  <div class="subtle favorites-note">※ 월 칸을 누르면 ○ 체크/해제돼요. 연도를 바꾸면 해당 연도 체크가 따로 보관돼요. 통계의 진행률(처리율)은 1~12월 전체를 기준으로 계산해요.</div>
+  <div class="retire-cards" id="bkCards"></div>
+  <div class="bk-two"><div class="favorites-table-wrap bk-box"><h3>월별 처리 현황 <small>(전체 거래처 기준 · 파랑 전표 / 초록 통장 / 주황 기타)</small></h3><div id="bkChart"></div></div><div class="favorites-table-wrap bk-box"><h3>구분별 진행률</h3><div id="bkTypeStat"></div></div></div>
+  <h3 style="margin:8px 0 0">📊 통계 <small style="font-weight:400;color:#718096">(1~12월 기준)</small></h3>
 </section>
 <section id="holidaysPage" class="page-panel diary-page">
   <div class="diary-toolbar"><div><div class="panel-title">🌷 공휴일·임시공휴일 관리</div><div class="subtle">회사 휴무일이나 임시공휴일을 추가하면 달력에 표시됩니다.</div></div></div>
@@ -2902,9 +2903,9 @@ function bkBulk(on){
  if(!confirm(`현재 표시된 거래처 ${list.length}곳의 ${m}월 ${ks==='jte'?'전표·통장·기타 전체':({j:'전표',t:'통장',e:'기타'})[ks]}를 일괄 ${on?'체크':'해제'}할까요?`))return;
  list.forEach(c=>{const Y=bkY(c);let cur=Y.m[m]||'';[...ks].forEach(k=>{cur=on?(cur.includes(k)?cur:cur+k):cur.replace(k,'')});Y.m[m]=cur});saveData();renderBk();
 }
-function bkMonths(){const y=Number(bkYear()),n=new Date();return y<n.getFullYear()?12:y===n.getFullYear()?n.getMonth()+1:0}
+function bkMonths(){return 12}
 function renderBk(){
- const body=$('bkBody');if(!body)return;bkInit();const list=bkList(),all=bkData().clients;
+ const body=$('bkBody');if(!body)return;bkInit();const list=bkList(),all=bkData().clients;if(!all.length&&$('bkAddBox'))$('bkAddBox').open=true;
  body.innerHTML=list.length?list.map((c,i)=>{const Y=bkY(c),id=escapeHTML(c.id);return BK_ITEMS.map(([k,l],r)=>`<tr class="${r===0?'bk-first':''}">${r===0?`<td rowspan="3" class="bk-no">${i+1}</td><td rowspan="3" class="bk-name">${escapeHTML(c.name)}<br><span class="bk-type ${c.type==='법인'?'corp':'ind'}">${c.type}</span><div class="bk-act"><button type="button" data-id="${id}" onclick="bkEdit(this.dataset.id)">수정</button><button type="button" data-id="${id}" onclick="bkDelete(this.dataset.id)">삭제</button></div></td>`:''}<td class="bk-k">${l}</td>${BK_M.map(m=>{const on=(Y.m[m]||'').includes(k);return `<td class="bk-c${on?' on':''}" data-id="${id}" data-m="${m}" data-k="${k}" onclick="bkToggle(this)">${on?'○':''}</td>`}).join('')}${r===0?`<td rowspan="3"><input class="bk-in" data-id="${id}" data-f="vat" value="${escapeHTML(Y.vat||'')}" placeholder="1~6" onchange="bkField(this)"></td><td rowspan="3"><input class="bk-in" data-id="${id}" data-f="pay" value="${escapeHTML(Y.pay||'')}" placeholder="1~7" onchange="bkField(this)"></td><td rowspan="3"><input type="checkbox" data-id="${id}" data-f="labor" ${Y.labor?'checked':''} onchange="bkField(this)"></td><td rowspan="3"><input type="checkbox" data-id="${id}" data-f="acct" ${Y.acct?'checked':''} onchange="bkField(this)"></td><td rowspan="3"><textarea class="bk-note" data-id="${id}" data-f="note" onchange="bkField(this)">${escapeHTML(Y.note||'')}</textarea></td>`:''}</tr>`).join('')}).join(''):'<tr><td colspan="20" style="padding:24px;color:#718096">표시할 거래처가 없어요. 위에서 거래처를 등록해 주세요.</td></tr>';
  bkSummary();
 }
@@ -2914,11 +2915,11 @@ function bkSummary(){
  const prog=arr=>{let d=0;arr.forEach(c=>{for(let m=1;m<=mc;m++)d+=(bkY(c).m[m]||'').length});const tot=arr.length*mc*3;return tot?Math.round(d/tot*100):0};
  const corp=all.filter(c=>c.type==='법인'),ind=all.filter(c=>c.type==='개인'),refM=isCur?curM:(mc?12:1);
  $('bkCount').textContent=`거래처 ${N}곳 · 표시 ${list.length}곳`;
- $('bkCards').innerHTML=`<div class="retire-card"><span>전체 거래처</span><strong>${N}곳</strong><small>법인 ${corp.length} · 개인 ${ind.length}</small></div><div class="retire-card"><span>${bkYear()}년 진행률</span><strong>${prog(all)}%</strong><small>${mc?`1~${mc}월 전표·통장·기타 기준`:'아직 시작 전인 연도'}</small></div><div class="retire-card"><span>${refM}월 완료 거래처</span><strong>${full(all,refM)} / ${N}곳</strong><small>전표·통장·기타 모두 ○</small></div><div class="retire-card"><span>${refM}월 미완료 거래처</span><strong style="color:#b91c1c">${N-full(all,refM)}곳</strong><small>전표 ${N-cnt(all,refM,'j')} · 통장 ${N-cnt(all,refM,'t')} · 기타 ${N-cnt(all,refM,'e')} 남음</small></div>`;
+ $('bkCards').innerHTML=`<div class="retire-card"><span>전체 거래처</span><strong>${N}곳</strong><small>법인 ${corp.length} · 개인 ${ind.length}</small></div><div class="retire-card"><span>${bkYear()}년 진행률</span><strong>${prog(all)}%</strong><small>1~12월 전표·통장·기타 기준</small></div><div class="retire-card"><span>${refM}월 완료 거래처</span><strong>${full(all,refM)} / ${N}곳</strong><small>전표·통장·기타 모두 ○</small></div><div class="retire-card"><span>${refM}월 미완료 거래처</span><strong style="color:#b91c1c">${N-full(all,refM)}곳</strong><small>전표 ${N-cnt(all,refM,'j')} · 통장 ${N-cnt(all,refM,'t')} · 기타 ${N-cnt(all,refM,'e')} 남음</small></div>`;
  const col={j:'#3b82f6',t:'#22c55e',e:'#f59e0b'};
  $('bkChart').innerHTML=N?`<div class="bk-chart">${BK_M.map(m=>`<div class="bk-col"><div class="bk-bars" title="${m}월 전표 ${cnt(all,m,'j')} / 통장 ${cnt(all,m,'t')} / 기타 ${cnt(all,m,'e')} (전체 ${N}곳)">${['j','t','e'].map(k=>`<i style="height:${cnt(all,m,k)/N*100}%;background:${col[k]}"></i>`).join('')}</div><small>${m}월</small><small><b>${full(all,m)}</b>/${N}</small></div>`).join('')}</div>`:'<div class="subtle">거래처를 등록하면 그래프가 나와요.</div>';
  const bar=(l,arr,c)=>`<div class="bk-prog"><div class="t"><b>${l} ${arr.length}곳</b><span>${prog(arr)}%</span></div><div class="b"><i style="width:${prog(arr)}%;background:${c}"></i></div></div>`;
- $('bkTypeStat').innerHTML=bar('법인',corp,'#3b82f6')+bar('개인',ind,'#f97316')+`<div class="subtle">${mc?`1~${mc}월 기준 처리율`:''}</div>`;
+ $('bkTypeStat').innerHTML=bar('법인',corp,'#3b82f6')+bar('개인',ind,'#f97316')+`<div class="subtle">1~12월 기준 처리율</div>`;
  $('bkFoot').innerHTML=[['j','전표 합계'],['t','통장 합계'],['e','기타 합계']].map(([k,l])=>`<tr class="bk-foot"><td colspan="3">${l}</td>${BK_M.map(m=>`<td>${cnt(list,m,k)}</td>`).join('')}<td colspan="5"></td></tr>`).join('')+`<tr class="bk-foot"><td colspan="3">완료 거래처</td>${BK_M.map(m=>`<td>${full(list,m)}</td>`).join('')}<td colspan="5"></td></tr>`;
 }
 function printBk(){
