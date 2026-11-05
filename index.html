@@ -3113,14 +3113,15 @@ function salesScoped(year){
 }
 function salesKey(r,dim){return dim==='cat'?(r.cat||'(미분류)'):dim==='dept'?(r.dept||'(부서 미지정)'):dim==='company'?(r.company||'(사업장 미지정)'):(r.client||'(거래처 미지정)')}
 const SALES_HEAD={cat:'매출구분',dept:'부서',company:'사업장',client:'거래처'};
-function salesPivotHTML(rows,dim,u,cls){
+function salesPivotHTML(rows,dim,u,cls,mEnd){
+ mEnd=mEnd||12;
  const g={};rows.forEach(r=>{const k=salesKey(r,dim),o=g[k]=g[k]||Array(13).fill(0),m=salesMonthOf(r);if(m)o[m-1]+=+r.amount||0;o[12]+=+r.amount||0});
  let keys=Object.keys(g);
  if(dim==='cat'){const order=salesCats();keys.sort((a,b)=>{const x=order.indexOf(a),y=order.indexOf(b);return (x<0?99:x)-(y<0?99:y)})}else keys.sort((a,b)=>g[b][12]-g[a][12]);
  const tot=Array(13).fill(0);keys.forEach(k=>g[k].forEach((v,i)=>tot[i]+=v));
- let mx=1;keys.forEach(k=>g[k].slice(0,12).forEach(v=>{if(v>mx)mx=v}));
+ let mx=1;keys.forEach(k=>g[k].slice(0,12).forEach(v=>{if(v>mx)mx=v}));const MM=BK_M.slice(0,mEnd);
  const cell=(v,heat)=>`<td class="n"${heat&&v>0?` style="background:rgba(217,102,154,${(0.06+0.34*v/mx).toFixed(2)})"`:''}>${v?salesFmt(v,u):''}</td>`,heat=cls==='screen';
- return `<table class="sl-pivot"><thead><tr><th>${SALES_HEAD[dim]}</th>${BK_M.map(m=>`<th>${m}월</th>`).join('')}<th>합계</th></tr></thead><tbody>${keys.map(k=>`<tr><td class="k">${dim==='cat'?`<span class="sl-tag" style="background:${salesColor(k)}">${escapeHTML(k)}</span>`:escapeHTML(k)}</td>${g[k].slice(0,12).map(v=>cell(v,heat)).join('')}<td class="n tt">${salesFmt(g[k][12],u)}</td></tr>`).join('')||`<tr><td colspan="14" style="text-align:center;color:#718096;padding:16px">등록된 매출이 없어요.</td></tr>`}</tbody><tfoot><tr class="tot"><td>합계</td>${tot.slice(0,12).map(v=>cell(v,false)).join('')}<td class="n">${salesFmt(tot[12],u)}</td></tr></tfoot></table>`;
+ return `<table class="sl-pivot"><thead><tr><th>${SALES_HEAD[dim]}</th>${MM.map(m=>`<th>${m}월</th>`).join('')}<th>합계</th></tr></thead><tbody>${keys.map(k=>`<tr><td class="k">${dim==='cat'?`<span class="sl-tag" style="background:${salesColor(k)}">${escapeHTML(k)}</span>`:escapeHTML(k)}</td>${g[k].slice(0,mEnd).map(v=>cell(v,heat)).join('')}<td class="n tt">${salesFmt(g[k][12],u)}</td></tr>`).join('')||`<tr><td colspan="${mEnd+2}" style="text-align:center;color:#718096;padding:16px">등록된 매출이 없어요.</td></tr>`}</tbody><tfoot><tr class="tot"><td>합계</td>${tot.slice(0,mEnd).map(v=>cell(v,false)).join('')}<td class="n">${salesFmt(tot[12],u)}</td></tr></tfoot></table>`;
 }
 function salesCrossHTML(rows,u){
  const order=salesCats(),cats=[...new Set(rows.map(r=>r.cat||'(미분류)'))].sort((a,b)=>{const x=order.indexOf(a),y=order.indexOf(b);return (x<0?99:x)-(y<0?99:y)});
@@ -3168,8 +3169,8 @@ const SALES_PCSS="@page{size:A4 landscape;margin:10mm}body{font-family:'Malgun G
 function salesFilterInfo(){const c=$('salesCatF').value,d=$('salesDeptF').value,o=$('salesCompanyF').value;return [c&&'구분: '+c,o&&'사업장: '+o,d&&'부서: '+d].filter(Boolean).join(' · ')||'전체'}
 function printSalesSummary(){
  const y=$('salesYear').value,rows=salesScoped(y),u=salesU();if(!rows.length){alert('인쇄할 매출이 없어요.');return}
- const pv=d=>salesPivotHTML(rows,d,u,'print').replace(/<span class="sl-tag"[^>]*>(.*?)<\/span>/g,'$1'),hasCo=rows.some(r=>r.company);
- salesPrintHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${y}년 매출 집계표</title><style>${SALES_PCSS}</style></head><body><h1>${y}년 매출 집계표</h1><div class="m"><span>조건: ${escapeHTML(salesFilterInfo())} · 단위: ${u===1?'원':u===1000?'천원':'백만원'}</span><span>출력일 ${toISO(new Date())} · 합계 ${calcMoney(salesSum(rows))}원</span></div><h2>■ 부서별 월별 매출</h2>${pv('dept')}<h2>■ 매출구분별</h2>${pv('cat')}${hasCo?`<h2>■ 사업장별</h2>${pv('company')}`:''}<h2>■ 부서 × 매출구분</h2>${salesCrossHTML(rows,u)}<div class="pb"></div><h2>■ 거래처별</h2>${pv('client')}</body></html>`);
+ const now=new Date(),lastData=Math.max(0,...rows.map(salesMonthOf)),mEnd=Math.max(1,Math.min(12,Number(y)===now.getFullYear()?Math.min(lastData||now.getMonth()+1,now.getMonth()+1):(lastData||12))),pv=d=>salesPivotHTML(rows,d,u,'print',mEnd).replace(/<span class="sl-tag"[^>]*>(.*?)<\/span>/g,'$1'),hasCo=rows.some(r=>r.company);
+ salesPrintHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${y}년 매출 집계표</title><style>${SALES_PCSS}</style></head><body><h1>${y}년 매출 집계표</h1><div class="m"><span>조건: ${escapeHTML(salesFilterInfo())} · 집계기간: 1~${mEnd}월 · 단위: ${u===1?'원':u===1000?'천원':'백만원'}</span><span>출력일 ${toISO(new Date())} · 합계 ${calcMoney(salesSum(rows))}원</span></div><h2>■ 부서별 월별 매출</h2>${pv('dept')}<h2>■ 매출구분별</h2>${pv('cat')}${hasCo?`<h2>■ 사업장별</h2>${pv('company')}`:''}<h2>■ 부서 × 매출구분</h2>${salesCrossHTML(rows,u)}<div class="pb"></div><h2>■ 거래처별</h2>${pv('client')}</body></html>`);
 }
 function printSalesDetail(){
  const y=$('salesYear').value,mo=$('salesMonth').value,det=salesDetRows(salesScoped(y)).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
