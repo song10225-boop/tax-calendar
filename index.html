@@ -513,7 +513,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 <style>#recvCards{grid-template-columns:repeat(4,minmax(0,1fr))}@media(max-width:1100px){#recvCards{grid-template-columns:repeat(2,minmax(0,1fr))}}.recv-mini{border:0;background:none;cursor:pointer;font-size:.95rem;padding:0 3px}.recv-late{color:#b91c1c;font-weight:800}.recv-sr input{padding:7px;border:1px solid #d8dfea;border-radius:8px}</style><style>#bookkeepingPage>*{flex-shrink:0}.bk-two{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:14px}@media(max-width:1000px){.bk-two{grid-template-columns:1fr}}.bk-box{padding:12px 14px}.bk-box h3{margin:0 0 8px;font-size:1rem}.bk-box h3 small{font-weight:400;color:#718096;font-size:.76rem}
 .bk-table{border-collapse:collapse;font-size:.8rem;min-width:1150px;width:100%;background:#fff}.bk-table th,.bk-table td{border:1px solid #cfd6e2;padding:3px 5px;text-align:center}.bk-table th{background:#fff0f7;color:#8a365d;padding:8px 4px;white-space:nowrap}
 .bk-first td{border-top:2px solid #8b97ab}.bk-c{cursor:pointer;width:40px;min-width:40px;height:26px;color:#e11d48;font-weight:900;user-select:none}.bk-c:hover{background:#fff8c5}.bk-c.on{background:#fef08a}
-.bk-name{min-width:130px;font-weight:800;text-align:left!important}.bk-k{color:#e11d48;font-weight:700;white-space:nowrap;background:#fffafb}.bk-no{color:#e11d48;width:30px}
+.bk-name{cursor:grab;min-width:130px;font-weight:800;text-align:left!important}.bk-k{color:#e11d48;font-weight:700;white-space:nowrap;background:#fffafb}.bk-no{color:#e11d48;width:30px}
 .bk-type{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.72rem;font-weight:800}.bk-type.corp{background:#dbeafe;color:#1d4ed8}.bk-type.ind{background:#ffedd5;color:#c2410c}
 .bk-act button{border:0;background:none;color:#64748b;font-size:.72rem;cursor:pointer;padding:2px 4px;text-decoration:underline}.bk-in{width:62px;padding:4px;border:1px solid #d8dfea;border-radius:6px;text-align:center}.bk-note{width:150px;min-height:62px;padding:4px;border:1px solid #d8dfea;border-radius:6px;font-size:.78rem;resize:vertical}
 .bk-foot td{background:#f3f6fb;font-weight:800}.bk-yel{background:#fefce8}
@@ -2919,7 +2919,7 @@ function addBkClient(e){
 function importBkFromContacts(){
  const exist=new Set(bkData().clients.map(c=>recvNorm(c.name))),add=getContacts().filter(c=>c.company&&!exist.has(recvNorm(c.company)));
  if(!add.length){alert('가져올 새 거래처가 없어요.');return}
- if(!confirm(`연락망에서 ${add.length}곳을 가져올까요?\n구분은 (주)·주식회사·유한 등이 이름에 있으면 법인, 아니면 개인으로 임시 지정되니 나중에 수정해 주세요.`))return;
+ if(!confirm(`연락망에서 ${add.length}개를 가져올까요?\n구분은 (주)·주식회사·유한 등이 이름에 있으면 법인, 아니면 개인으로 임시 지정되니 나중에 수정해 주세요.`))return;
  add.forEach((c,i)=>bkData().clients.push({id:'bk-'+Date.now()+'-'+i+'-'+Math.random().toString(16).slice(2),name:c.company,type:/\(주\)|㈜|주식회사|유한|합자|합명|재단|사단/.test(c.company)?'법인':'개인',y:{}}));
  saveData();renderBk();
 }
@@ -2933,37 +2933,57 @@ function bkToggle(td){
  Y.m[m]=cur.includes(k)?cur.replace(k,''):cur+k;const on=Y.m[m].includes(k);td.classList.toggle('on',on);td.textContent=on?'○':'';saveData();bkSummary();
 }
 function bkField(el){const c=bkData().clients.find(x=>x.id===el.dataset.id);if(!c)return;bkY(c)[el.dataset.f]=el.type==='checkbox'?el.checked:el.value;saveData()}
+function bkItems(c){return c.type==='개인'?BK_ITEMS.filter(x=>x[0]!=='t'):BK_ITEMS}
+function bkKeys(c){return c.type==='개인'?'je':'jte'}
+function bkHas(c,m,k){return !(k==='t'&&c.type==='개인')&&(bkY(c).m[m]||'').includes(k)}
+function bkIsFull(c,m){return [...bkKeys(c)].every(k=>bkHas(c,m,k))}
+function bkSorted(){const a=bkData().clients;return [...a.filter(c=>c.type!=='개인'),...a.filter(c=>c.type==='개인')]}
 function bkList(){
  const q=($('bkSearch')?.value||'').trim().toLowerCase(),tf=$('bkTypeF')?.value||'',mf=$('bkMonthF')?.value||'';
- return bkData().clients.filter(c=>{const Y=bkY(c);return (!tf||c.type===tf)&&(!q||(c.name+' '+(Y.note||'')).toLowerCase().includes(q))&&(!mf||(Y.m[mf]||'').length<3)});
+ return bkSorted().filter(c=>{const Y=bkY(c);return (!tf||c.type===tf)&&(!q||(c.name+' '+(Y.note||'')).toLowerCase().includes(q))&&(!mf||!bkIsFull(c,mf))});
+}
+function bkMove(id,dir){
+ const list=bkList(),i=list.findIndex(c=>c.id===id);if(i<0)return;const t=list[i+dir];if(!t||t.type!==list[i].type)return;
+ const a=bkData().clients,x=a.findIndex(c=>c.id===id),y=a.findIndex(c=>c.id===t.id);[a[x],a[y]]=[a[y],a[x]];saveData();renderBk();
+}
+let bkDragId=null;
+function enableBkDrag(){
+ document.querySelectorAll('#bkBody td.bk-name').forEach(td=>{td.draggable=true;
+  td.addEventListener('dragstart',e=>{bkDragId=td.dataset.id;e.dataTransfer.effectAllowed='move';td.style.opacity='.5'});
+  td.addEventListener('dragend',()=>{td.style.opacity=''});
+  td.addEventListener('dragover',e=>{e.preventDefault()});
+  td.addEventListener('drop',e=>{e.preventDefault();const to=td.dataset.id;if(!bkDragId||bkDragId===to)return;
+   const a=bkData().clients,from=a.findIndex(c=>c.id===bkDragId),ti=a.findIndex(c=>c.id===to);if(from<0||ti<0)return;
+   if(a[from].type!==a[ti].type){alert('법인은 법인끼리, 개인은 개인끼리만 순서를 바꿀 수 있어요.');return}
+   const [m]=a.splice(from,1);const t2=a.findIndex(c=>c.id===to);a.splice(from<ti?t2+1:t2,0,m);bkDragId=null;saveData();renderBk()});});
 }
 function bkBulk(on){
  const m=$('bkBulkM').value,ks=$('bkBulkK').value,list=bkList();if(!list.length)return;
- if(!confirm(`현재 표시된 거래처 ${list.length}곳의 ${m}월 ${ks==='jte'?'전표·통장·기타 전체':({j:'전표',t:'통장',e:'기타'})[ks]}를 일괄 ${on?'체크':'해제'}할까요?`))return;
- list.forEach(c=>{const Y=bkY(c);let cur=Y.m[m]||'';[...ks].forEach(k=>{cur=on?(cur.includes(k)?cur:cur+k):cur.replace(k,'')});Y.m[m]=cur});saveData();renderBk();
+ if(!confirm(`현재 표시된 거래처 ${list.length}개의 ${m}월 ${ks==='jte'?'전표·통장·기타 전체':({j:'전표',t:'통장',e:'기타'})[ks]}를 일괄 ${on?'체크':'해제'}할까요?\n(개인 거래처는 통장 칸이 없어 제외돼요)`))return;
+ list.forEach(c=>{const Y=bkY(c);let cur=Y.m[m]||'';[...ks].forEach(k=>{if(k==='t'&&c.type==='개인')return;cur=on?(cur.includes(k)?cur:cur+k):cur.replace(k,'')});Y.m[m]=cur});saveData();renderBk();
 }
 function bkMonths(){return 12}
 function renderBk(){
  const body=$('bkBody');if(!body)return;bkInit();const list=bkList(),all=bkData().clients;if(!all.length&&$('bkAddBox'))$('bkAddBox').open=true;
- body.innerHTML=list.length?list.map((c,i)=>{const Y=bkY(c),id=escapeHTML(c.id);return BK_ITEMS.map(([k,l],r)=>`<tr class="${r===0?'bk-first':''}">${r===0?`<td rowspan="3" class="bk-no">${i+1}</td><td rowspan="3" class="bk-name">${escapeHTML(c.name)}<br><span class="bk-type ${c.type==='법인'?'corp':'ind'}">${c.type}</span><div class="bk-act"><button type="button" data-id="${id}" onclick="bkEdit(this.dataset.id)">수정</button><button type="button" data-id="${id}" onclick="bkDelete(this.dataset.id)">삭제</button></div></td>`:''}<td class="bk-k">${l}</td>${BK_M.map(m=>{const on=(Y.m[m]||'').includes(k);return `<td class="bk-c${on?' on':''}" data-id="${id}" data-m="${m}" data-k="${k}" onclick="bkToggle(this)">${on?'○':''}</td>`}).join('')}${r===0?`<td rowspan="3"><input class="bk-in" data-id="${id}" data-f="vat" value="${escapeHTML(Y.vat||'')}" placeholder="1~6" onchange="bkField(this)"></td><td rowspan="3"><input class="bk-in" data-id="${id}" data-f="pay" value="${escapeHTML(Y.pay||'')}" placeholder="1~7" onchange="bkField(this)"></td><td rowspan="3"><input type="checkbox" data-id="${id}" data-f="labor" ${Y.labor?'checked':''} onchange="bkField(this)"></td><td rowspan="3"><input type="checkbox" data-id="${id}" data-f="acct" ${Y.acct?'checked':''} onchange="bkField(this)"></td><td rowspan="3"><textarea class="bk-note" data-id="${id}" data-f="note" onchange="bkField(this)">${escapeHTML(Y.note||'')}</textarea></td>`:''}</tr>`).join('')}).join(''):'<tr><td colspan="20" style="padding:24px;color:#718096">표시할 거래처가 없어요. 위에서 거래처를 등록해 주세요.</td></tr>';
- bkSummary();
+ body.innerHTML=list.length?list.map((c,i)=>{const Y=bkY(c),id=escapeHTML(c.id),items=bkItems(c),n=items.length;return items.map(([k,l],r)=>`<tr class="${r===0?'bk-first':''}">${r===0?`<td rowspan="${n}" class="bk-no">${i+1}</td><td rowspan="${n}" class="bk-name" data-id="${id}" title="끌어서 순서 변경">${escapeHTML(c.name)}<br><span class="bk-type ${c.type==='법인'?'corp':'ind'}">${c.type}</span><div class="bk-act"><button type="button" data-id="${id}" onclick="bkMove(this.dataset.id,-1)" title="위로">▲</button><button type="button" data-id="${id}" onclick="bkMove(this.dataset.id,1)" title="아래로">▼</button><button type="button" data-id="${id}" onclick="bkEdit(this.dataset.id)">수정</button><button type="button" data-id="${id}" onclick="bkDelete(this.dataset.id)">삭제</button></div></td>`:''}<td class="bk-k">${l}</td>${BK_M.map(m=>{const on=bkHas(c,m,k);return `<td class="bk-c${on?' on':''}" data-id="${id}" data-m="${m}" data-k="${k}" onclick="bkToggle(this)">${on?'○':''}</td>`}).join('')}${r===0?`<td rowspan="${n}"><input class="bk-in" data-id="${id}" data-f="vat" value="${escapeHTML(Y.vat||'')}" onchange="bkField(this)"></td><td rowspan="${n}"><input class="bk-in" data-id="${id}" data-f="pay" value="${escapeHTML(Y.pay||'')}" onchange="bkField(this)"></td><td rowspan="${n}"><input type="checkbox" data-id="${id}" data-f="labor" ${Y.labor?'checked':''} onchange="bkField(this)"></td><td rowspan="${n}"><input type="checkbox" data-id="${id}" data-f="acct" ${Y.acct?'checked':''} onchange="bkField(this)"></td><td rowspan="${n}"><textarea class="bk-note" data-id="${id}" data-f="note" onchange="bkField(this)">${escapeHTML(Y.note||'')}</textarea></td>`:''}</tr>`).join('')}).join(''):'<tr><td colspan="20" style="padding:24px;color:#718096">표시할 거래처가 없어요. 위에서 거래처를 등록해 주세요.</td></tr>';
+ enableBkDrag();bkSummary();
 }
 function bkSummary(){
- const all=bkData().clients,list=bkList(),N=all.length,mc=bkMonths(),curM=new Date().getMonth()+1,isCur=Number(bkYear())===new Date().getFullYear();
- const cnt=(arr,m,k)=>arr.filter(c=>(bkY(c).m[m]||'').includes(k)).length,full=(arr,m)=>arr.filter(c=>(bkY(c).m[m]||'').length>=3).length;
- const prog=arr=>{let d=0;arr.forEach(c=>{for(let m=1;m<=mc;m++)d+=(bkY(c).m[m]||'').length});const tot=arr.length*mc*3;return tot?Math.round(d/tot*100):0};
- const corp=all.filter(c=>c.type==='법인'),ind=all.filter(c=>c.type==='개인'),refM=isCur?curM:(mc?12:1);
- $('bkCount').textContent=`거래처 ${N}곳 · 표시 ${list.length}곳`;
- $('bkCards').innerHTML=`<div class="retire-card"><span>전체 거래처</span><strong>${N}곳</strong><small>법인 ${corp.length} · 개인 ${ind.length}</small></div><div class="retire-card"><span>${bkYear()}년 진행률</span><strong>${prog(all)}%</strong><small>1~12월 전표·통장·기타 기준</small></div><div class="retire-card"><span>${refM}월 완료 거래처</span><strong>${full(all,refM)} / ${N}곳</strong><small>전표·통장·기타 모두 ○</small></div><div class="retire-card"><span>${refM}월 미완료 거래처</span><strong style="color:#b91c1c">${N-full(all,refM)}곳</strong><small>전표 ${N-cnt(all,refM,'j')} · 통장 ${N-cnt(all,refM,'t')} · 기타 ${N-cnt(all,refM,'e')} 남음</small></div>`;
- const col={j:'#3b82f6',t:'#22c55e',e:'#f59e0b'};
- $('bkChart').innerHTML=N?`<div class="bk-chart">${BK_M.map(m=>`<div class="bk-col"><div class="bk-bars" title="${m}월 전표 ${cnt(all,m,'j')} / 통장 ${cnt(all,m,'t')} / 기타 ${cnt(all,m,'e')} (전체 ${N}곳)">${['j','t','e'].map(k=>`<i style="height:${cnt(all,m,k)/N*100}%;background:${col[k]}"></i>`).join('')}</div><small>${m}월</small><small><b>${full(all,m)}</b>/${N}</small></div>`).join('')}</div>`:'<div class="subtle">거래처를 등록하면 그래프가 나와요.</div>';
- const bar=(l,arr,c)=>`<div class="bk-prog"><div class="t"><b>${l} ${arr.length}곳</b><span>${prog(arr)}%</span></div><div class="b"><i style="width:${prog(arr)}%;background:${c}"></i></div></div>`;
+ const all=bkData().clients,list=bkList(),N=all.length;
+ const cnt=(arr,m,k)=>arr.filter(c=>bkHas(c,m,k)).length,full=(arr,m)=>arr.filter(c=>bkIsFull(c,m)).length;
+ const prog=(arr,mc)=>{let d=0,tot=0;arr.forEach(c=>{for(let m=1;m<=mc;m++){tot+=bkKeys(c).length;d+=[...bkKeys(c)].filter(k=>bkHas(c,m,k)).length}});return tot?Math.round(d/tot*100):0};
+ const corp=all.filter(c=>c.type!=='개인'),ind=all.filter(c=>c.type==='개인'),Y=bkYear();
+ $('bkCount').textContent=`거래처 ${N}개 · 표시 ${list.length}개`;
+ $('bkCards').innerHTML=`<div class="retire-card"><span>전체 거래처</span><strong>${N}개</strong><small>법인 ${corp.length} · 개인 ${ind.length}</small></div><div class="retire-card"><span>${Y}년 상반기 진행률</span><strong>${prog(all,6)}%</strong><small>1~6월 기준</small></div><div class="retire-card"><span>${Y}년 진행률</span><strong>${prog(all,12)}%</strong><small>1~12월 기준</small></div>`;
+ const col={j:'#3b82f6',t:'#22c55e',e:'#f59e0b'},den=k=>k==='t'?corp.length:N;
+ $('bkChart').innerHTML=N?`<div class="bk-chart">${BK_M.map(m=>`<div class="bk-col"><div class="bk-bars" title="${m}월 전표 ${cnt(all,m,'j')} / 통장 ${cnt(all,m,'t')} / 기타 ${cnt(all,m,'e')} (전체 ${N}개)">${['j','t','e'].map(k=>`<i style="height:${den(k)?cnt(all,m,k)/den(k)*100:0}%;background:${col[k]}"></i>`).join('')}</div><small>${m}월</small><small><b>${full(all,m)}</b>/${N}</small></div>`).join('')}</div>`:'<div class="subtle">거래처를 등록하면 그래프가 나와요.</div>';
+ const bar=(l,arr,c)=>`<div class="bk-prog"><div class="t"><b>${l} ${arr.length}개</b><span>${prog(arr,12)}%</span></div><div class="b"><i style="width:${prog(arr,12)}%;background:${c}"></i></div></div>`;
  $('bkTypeStat').innerHTML=bar('법인',corp,'#3b82f6')+bar('개인',ind,'#f97316')+`<div class="subtle">1~12월 기준 처리율</div>`;
  $('bkFoot').innerHTML=[['j','전표 합계'],['t','통장 합계'],['e','기타 합계']].map(([k,l])=>`<tr class="bk-foot"><td colspan="3">${l}</td>${BK_M.map(m=>`<td>${cnt(list,m,k)}</td>`).join('')}<td colspan="5"></td></tr>`).join('')+`<tr class="bk-foot"><td colspan="3">완료 거래처</td>${BK_M.map(m=>`<td>${full(list,m)}</td>`).join('')}<td colspan="5"></td></tr>`;
 }
 function printBk(){
  const list=bkList();if(!list.length){alert('인쇄할 거래처가 없어요.');return}const y=bkYear(),owner=bkData().owner||'';
- const rows=list.map((c,i)=>{const Y=bkY(c);return BK_ITEMS.map(([k,l],r)=>`<tr>${r===0?`<td rowspan="3">${i+1}</td><td rowspan="3" class="nm">${escapeHTML(c.name)}<br><small>(${c.type})</small></td>`:''}<td class="k">${l}</td>${BK_M.map(m=>{const on=(Y.m[m]||'').includes(k);return `<td class="${on?'on':''}">${on?'○':''}</td>`}).join('')}${r===0?`<td rowspan="3">${escapeHTML(Y.vat||'')}</td><td rowspan="3">${escapeHTML(Y.pay||'')}</td><td rowspan="3">${Y.labor?'○':''}</td><td rowspan="3">${Y.acct?'○':''}</td><td rowspan="3" class="nt">${escapeHTML(Y.note||'')}</td>`:''}</tr>`).join('')}).join('');
+ const rows=list.map((c,i)=>{const Y=bkY(c);return bkItems(c).map(([k,l],r)=>`<tr>${r===0?`<td rowspan="${bkItems(c).length}">${i+1}</td><td rowspan="${bkItems(c).length}" class="nm">${escapeHTML(c.name)}<br><small>(${c.type})</small></td>`:''}<td class="k">${l}</td>${BK_M.map(m=>{const on=bkHas(c,m,k);return `<td class="${on?'on':''}">${on?'○':''}</td>`}).join('')}${r===0?`<td rowspan="${bkItems(c).length}">${escapeHTML(Y.vat||'')}</td><td rowspan="${bkItems(c).length}">${escapeHTML(Y.pay||'')}</td><td rowspan="${bkItems(c).length}">${Y.labor?'○':''}</td><td rowspan="${bkItems(c).length}">${Y.acct?'○':''}</td><td rowspan="${bkItems(c).length}" class="nt">${escapeHTML(Y.note||'')}</td>`:''}</tr>`).join('')}).join('');
  const html=`<!doctype html><html><head><meta charset="utf-8"><title>${y}년도 거래처 기장현황</title><style>@page{size:A4 landscape;margin:8mm}body{font-family:'Malgun Gothic',sans-serif;margin:0}h1{text-align:center;font-size:18px;letter-spacing:5px;margin:0 0 6px}.m{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}table{width:100%;border-collapse:collapse;font-size:9px}th,td{border:1px solid #666;padding:2px;text-align:center}th{background:#eee}td.nm{font-weight:700;text-align:left}td.k{color:#c00}td.on{background:#fef08a;color:#c00}td.nt{text-align:left;font-size:8px}tr{page-break-inside:avoid}</style></head><body><h1>${y}년도 거래처 기장현황</h1><div class="m"><span>담당 : ${escapeHTML(owner)}</span><span>${toISO(new Date())}</span></div><table><thead><tr><th>No</th><th>거래처명</th><th>구분</th>${BK_M.map(m=>`<th>${m}월</th>`).join('')}<th>부가세</th><th>급여</th><th>인건비</th><th>연간계좌</th><th>비고</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
  const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
  const d=f.contentWindow.document;d.open();d.write(html);d.close();setTimeout(()=>{f.contentWindow.focus();f.contentWindow.print();setTimeout(()=>f.remove(),2000)},300);
