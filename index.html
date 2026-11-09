@@ -516,7 +516,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .bk-name{cursor:grab;min-width:130px;font-weight:800;text-align:left!important}.bk-k{color:#e11d48;font-weight:700;white-space:nowrap;background:#fffafb}.bk-no{color:#e11d48;width:30px}
 .bk-type{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.72rem;font-weight:800}.bk-type.corp{background:#dbeafe;color:#1d4ed8}.bk-type.ind{background:#ffedd5;color:#c2410c}
 .bk-act button{border:0;background:none;color:#64748b;font-size:.72rem;cursor:pointer;padding:2px 4px;text-decoration:underline}.bk-in{width:62px;padding:4px;border:1px solid #d8dfea;border-radius:6px;text-align:center}.bk-note{width:100%;min-width:280px;min-height:78px;padding:6px 8px;border:1px solid #d8dfea;border-radius:6px;font-size:.88rem;line-height:1.5;resize:vertical;box-sizing:border-box;text-align:left}
-.bk-foot td{background:#f3f6fb;font-weight:800}.bk-yel{background:#fefce8}
+.bk-foot td{background:#f3f6fb;font-weight:800}.bk-yel{background:#fefce8}#bookkeepingPage .bk-wrap{max-height:calc(100vh - 210px);min-height:320px;overflow:auto}.bk-table thead th{position:sticky;top:0;z-index:5;box-shadow:inset 0 -2px 0 #e7c3d5,inset -1px 0 0 #cfd6e2}.bk-c.x{background:#eef2f7;color:#475569;font-weight:900}.bk-c.na{background:repeating-linear-gradient(45deg,#f8fafc,#f8fafc 4px,#e2e8f0 4px,#e2e8f0 8px);cursor:not-allowed}.bk-c.na:hover{background:repeating-linear-gradient(45deg,#f8fafc,#f8fafc 4px,#e2e8f0 4px,#e2e8f0 8px)}.bk-period{font-size:.7rem;font-weight:700;color:#64748b;margin-top:3px;line-height:1.4}.bk-period .cl{color:#b91c1c}
 .bk-chart{display:flex;gap:6px;align-items:flex-end;height:150px;padding-top:8px}.bk-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}.bk-bars{display:flex;align-items:flex-end;gap:2px;height:112px;width:100%;justify-content:center}.bk-bars i{display:block;width:30%;max-width:14px;border-radius:3px 3px 0 0;min-height:1px}.bk-col small{font-size:.7rem;color:#64748b}
 .bk-prog{margin:8px 0}.bk-prog .t{display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:3px}.bk-prog .b{height:10px;background:#eef1f6;border-radius:6px;overflow:hidden}.bk-prog .b i{display:block;height:100%}</style><style>#salesPage>*{flex-shrink:0}.sl-wrap{display:flex;align-items:flex-end;gap:6px;height:200px}.sl-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;min-width:0}.sl-bar{display:flex;flex-direction:column-reverse;width:72%;max-width:36px}.sl-bar i{display:block;width:100%}.sl-col small{font-size:.68rem;color:#64748b;white-space:nowrap}.sl-lg{display:inline-flex;align-items:center;gap:4px;margin:0 10px 2px 0}.sl-lg i{width:10px;height:10px;border-radius:3px;display:inline-block}
 .sl-pivot{border-collapse:collapse;width:100%;min-width:1100px;font-size:.8rem;background:#fff}.sl-pivot th,.sl-pivot td{border:1px solid #d9dfea;padding:6px 7px}.sl-pivot th{background:#fff0f7;color:#8a365d;text-align:center;white-space:nowrap}.sl-pivot td.n{text-align:right;font-variant-numeric:tabular-nums}.sl-pivot td.k{font-weight:700;white-space:nowrap}.sl-pivot tr.tot td{background:#f3f6fb;font-weight:800}.sl-pivot td.tt{background:#fffafb;font-weight:700}
@@ -1040,7 +1040,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 <section id="bookkeepingPage" class="page-panel diary-page">
   <div class="diary-toolbar"><div class="diary-heading"><div class="diary-title"><span class="diary-title-mark">📑</span>거래처 기장현황</div><div class="diary-subtitle">거래처를 등록하고 월별로 전표·통장·기타 자료 처리 여부를 칸을 눌러 ○ 체크해요. 법인/개인 구분과 합계·통계도 자동으로 보여줘요.</div></div><div class="today-count" id="bkCount"></div></div>
   <details class="recv-add" id="bkAddBox"><summary>＋ 거래처 등록</summary>
-    <form class="settings-form" onsubmit="addBkClient(event)"><label>거래처명 * <small>(여러 개는 쉼표로 구분)</small><input id="bkName" required maxlength="300" placeholder="거래처명 (여러 개는 쉼표로 구분)"></label><label>구분<select id="bkType"><option value="법인">법인</option><option value="개인">개인</option></select></label><button class="btn btn-primary" type="submit">＋ 등록</button><button class="btn btn-outline" type="button" onclick="importBkFromContacts()">📇 연락망에서 가져오기</button></form></details>
+    <form class="settings-form" onsubmit="addBkClient(event)"><label>거래처명 * <small>(여러 개는 쉼표로 구분)</small><input id="bkName" required maxlength="300" placeholder="거래처명 (여러 개는 쉼표로 구분)"></label><label>구분<select id="bkType"><option value="법인">법인</option><option value="개인">개인</option></select></label><label>개업일 <small>(선택)</small><input id="bkOpen" type="date"></label><label>폐업일 <small>(선택)</small><input id="bkClose" type="date"></label><button class="btn btn-primary" type="submit">＋ 등록</button><button class="btn btn-outline" type="button" onclick="importBkFromContacts()">📇 연락망에서 가져오기</button></form></details>
   <div class="recv-toolbar">
     <label>연도 <select id="bkYear" onchange="renderBk()"></select></label>
     <input id="bkSearch" type="search" placeholder="🔎 거래처·비고 검색" oninput="renderBk()">
@@ -1050,8 +1050,8 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
     <span style="display:inline-flex;gap:4px;align-items:center"><select id="bkBulkM"></select><select id="bkBulkK"><option value="jte">전체</option><option value="j">전표</option><option value="t">통장</option><option value="e">기타</option></select><button type="button" class="btn btn-outline" onclick="bkBulk(true)">일괄 체크</button><button type="button" class="btn btn-outline" onclick="bkBulk(false)">일괄 해제</button></span>
     <button type="button" class="btn btn-outline" onclick="printBk()">🖨 인쇄·PDF</button>
   </div>
-  <div class="favorites-table-wrap"><table class="bk-table"><thead><tr><th>No</th><th>거래처명</th><th>구분</th><th>1월</th><th>2월</th><th>3월</th><th>4월</th><th>5월</th><th>6월</th><th>7월</th><th>8월</th><th>9월</th><th>10월</th><th>11월</th><th>12월</th><th>부가세</th><th>급여</th><th>인건비<br>체크</th><th>연간계좌<br>작성</th><th>비고</th></tr></thead><tbody id="bkBody"></tbody><tfoot id="bkFoot"></tfoot></table></div>
-  <div class="subtle favorites-note">※ 월 칸을 누르면 ○ 체크/해제돼요. 연도를 바꾸면 해당 연도 체크가 따로 보관돼요. 통계의 진행률(처리율)은 1~12월 전체를 기준으로 계산해요.</div>
+  <div class="favorites-table-wrap bk-wrap"><table class="bk-table"><thead><tr><th>No</th><th>거래처명</th><th>구분</th><th>1월</th><th>2월</th><th>3월</th><th>4월</th><th>5월</th><th>6월</th><th>7월</th><th>8월</th><th>9월</th><th>10월</th><th>11월</th><th>12월</th><th>부가세</th><th>급여</th><th>인건비<br>체크</th><th>연간계좌<br>작성</th><th>비고</th></tr></thead><tbody id="bkBody"></tbody><tfoot id="bkFoot"></tfoot></table></div>
+  <div class="subtle favorites-note">※ 월 칸을 누를 때마다 ○ → ✕(해당 없음) → 빈칸 순서로 바뀌어요. ✕ 칸과 개업 전·폐업 후 달(빗금)은 진행률·미완료 계산에서 빠져요. 개업일·폐업일은 거래처 "수정"에서 입력할 수 있어요. 연도를 바꾸면 해당 연도 체크가 따로 보관돼요. 통계의 진행률(처리율)은 1~12월 전체를 기준으로 계산해요.</div>
   <div class="retire-cards" id="bkCards"></div>
   <div class="bk-two"><div class="favorites-table-wrap bk-box"><h3>월별 처리 현황 <small>(전체 거래처 기준 · 파랑 전표 / 초록 통장 / 주황 기타)</small></h3><div id="bkChart"></div></div><div class="favorites-table-wrap bk-box"><h3>구분별 진행률</h3><div id="bkTypeStat"></div></div></div>
   <h3 style="margin:8px 0 0">📊 통계 <small style="font-weight:400;color:#718096">(1~12월 기준)</small></h3>
@@ -2918,7 +2918,7 @@ function printRecvStatement(only){
 const BK_ITEMS=[['j','전 표'],['t','통 장'],['e','기 타']],BK_M=Array.from({length:12},(_,i)=>i+1);
 function bkData(){profile.bk=profile.bk&&typeof profile.bk==='object'?profile.bk:{};profile.bk.clients=Array.isArray(profile.bk.clients)?profile.bk.clients:[];return profile.bk}
 function bkYear(){return String($('bkYear')?.value||new Date().getFullYear())}
-function bkY(c){const y=bkYear();c.y=c.y||{};return c.y[y]=c.y[y]||{m:{},vat:'',pay:'',labor:false,acct:false,note:''}}
+function bkY(c){const y=bkYear();c.y=c.y||{};const Y=c.y[y]=c.y[y]||{m:{},vat:'',pay:'',labor:false,acct:false,note:''};Y.x=Y.x||{};return Y}
 function bkInit(){
  const ys=$('bkYear');if(ys&&!ys.options.length){const cy=new Date().getFullYear();for(let y=cy-2;y<=cy+1;y++)ys.add(new Option(y+'년',y,false,y===cy))}
  const mf=$('bkMonthF');if(mf&&mf.options.length<2)BK_M.forEach(m=>mf.add(new Option(m+'월 미완료 거래처만',m)));
@@ -2926,8 +2926,8 @@ function bkInit(){
  const o=$('bkOwner');if(o&&document.activeElement!==o)o.value=bkData().owner||'';
 }
 function addBkClient(e){
- e.preventDefault();const names=$('bkName').value.split(/[,\n]/).map(x=>x.trim()).filter(Boolean),exist=new Set(bkData().clients.map(c=>recvNorm(c.name)));let n=0;
- names.forEach(nm=>{if(exist.has(recvNorm(nm)))return;exist.add(recvNorm(nm));bkData().clients.push({id:'bk-'+Date.now()+'-'+n+'-'+Math.random().toString(16).slice(2),name:nm,type:$('bkType').value,y:{}});n++});
+ e.preventDefault();const op=$('bkOpen').value,cl=$('bkClose').value;if(op&&cl&&cl<op){alert('폐업일이 개업일보다 빠를 수 없어요.');return}const names=$('bkName').value.split(/[,\n]/).map(x=>x.trim()).filter(Boolean),exist=new Set(bkData().clients.map(c=>recvNorm(c.name)));let n=0;
+ names.forEach(nm=>{if(exist.has(recvNorm(nm)))return;exist.add(recvNorm(nm));bkData().clients.push({id:'bk-'+Date.now()+'-'+n+'-'+Math.random().toString(16).slice(2),name:nm,type:$('bkType').value,open:op,close:cl,y:{}});n++});
  if(!n){alert('이미 등록된 거래처예요.');return}saveData();e.target.reset();renderBk();
 }
 function importBkFromContacts(){
@@ -2938,24 +2938,39 @@ function importBkFromContacts(){
  saveData();renderBk();
 }
 function bkEdit(id){
- const c=bkData().clients.find(x=>x.id===id);if(!c)return;const n=prompt('거래처명',c.name);if(n===null)return;const t=prompt('구분 (법인 / 개인)',c.type);if(t===null)return;
- c.name=n.trim()||c.name;c.type=t.trim()==='개인'?'개인':'법인';saveData();renderBk();
+ const c=bkData().clients.find(x=>x.id===id);if(!c)return;const st='style="width:100%;padding:7px;border:1px solid #d8dfea;border-radius:8px"',f=(l,h)=>`<label style="display:block;margin:7px 0"><small>${l}</small><br>${h}</label>`;
+ diaryDialog('거래처 수정',f('거래처명',`<input id="bke_name" value="${escapeHTML(c.name)}" ${st}>`)+f('구분',`<select id="bke_type" ${st}><option ${c.type!=='개인'?'selected':''}>법인</option><option ${c.type==='개인'?'selected':''}>개인</option></select>`)+f('개업일 (선택)',`<input id="bke_open" type="date" value="${escapeHTML(c.open||'')}" ${st}>`)+f('폐업일 (선택)',`<input id="bke_close" type="date" value="${escapeHTML(c.close||'')}" ${st}>`)+`<div class="subtle" style="font-size:.78rem">개업월 이전·폐업월 이후 달은 빗금 처리되고 진행률 계산에서 빠져요. 비워두면 1~12월 전체가 대상이에요.</div><div style="text-align:right;margin-top:10px"><button type="button" class="btn btn-primary" data-id="${escapeHTML(id)}" onclick="bkEditSave(this.dataset.id)">저장</button></div>`);
+}
+function bkEditSave(id){
+ const c=bkData().clients.find(x=>x.id===id);if(!c)return;const op=$('bke_open').value,cl=$('bke_close').value;
+ if(op&&cl&&cl<op){alert('폐업일이 개업일보다 빠를 수 없어요.');return}
+ c.name=$('bke_name').value.trim()||c.name;c.type=$('bke_type').value==='개인'?'개인':'법인';c.open=op;c.close=cl;saveData();$('diaryDlg')?.remove();renderBk();
 }
 function bkDelete(id){const c=bkData().clients.find(x=>x.id===id);if(!c||!confirm(`'${c.name}' 거래처를 삭제할까요?\n모든 연도의 기장 체크 기록이 함께 삭제돼요.`))return;bkData().clients=bkData().clients.filter(x=>x.id!==id);saveData();renderBk()}
 function bkToggle(td){
- const c=bkData().clients.find(x=>x.id===td.dataset.id);if(!c)return;const Y=bkY(c),m=td.dataset.m,k=td.dataset.k,cur=Y.m[m]||'';
- Y.m[m]=cur.includes(k)?cur.replace(k,''):cur+k;const on=Y.m[m].includes(k);td.classList.toggle('on',on);td.textContent=on?'○':'';saveData();bkSummary();
+ const c=bkData().clients.find(x=>x.id===td.dataset.id);if(!c)return;const m=td.dataset.m,k=td.dataset.k;if(bkOut(c,m))return;
+ const Y=bkY(c),o=Y.m[m]||'',x=Y.x[m]||'';
+ if(o.includes(k)){Y.m[m]=o.replace(k,'');Y.x[m]=x+k}else if(x.includes(k)){Y.x[m]=x.replace(k,'')}else Y.m[m]=o+k;
+ const st=bkCellState(c,m,k);td.className='bk-c'+(st.cls?' '+st.cls:'');td.textContent=st.txt;saveData();bkSummary();
 }
 function bkField(el){const c=bkData().clients.find(x=>x.id===el.dataset.id);if(!c)return;bkY(c)[el.dataset.f]=el.type==='checkbox'?el.checked:el.value;saveData()}
 function bkGrow(el){el.style.height="auto";el.style.height=Math.max(78,el.scrollHeight+2)+"px"}
 function bkItems(c){return c.type==='개인'?BK_ITEMS.filter(x=>x[0]!=='t'):BK_ITEMS}
 function bkKeys(c){return c.type==='개인'?'je':'jte'}
-function bkHas(c,m,k){return !(k==='t'&&c.type==='개인')&&(bkY(c).m[m]||'').includes(k)}
-function bkIsFull(c,m){return [...bkKeys(c)].every(k=>bkHas(c,m,k))}
+function bkYm(m){return bkYear()+'-'+String(m).padStart(2,'0')}
+function bkOut(c,m){const ym=bkYm(m);return !!((c.open&&ym<c.open.slice(0,7))||(c.close&&ym>c.close.slice(0,7)))}
+function bkX(c,m,k){return (bkY(c).x[m]||'').includes(k)}
+function bkNA(c,m,k){return (k==='t'&&c.type==='개인')||bkOut(c,m)||bkX(c,m,k)}
+function bkHas(c,m,k){return !bkNA(c,m,k)&&(bkY(c).m[m]||'').includes(k)}
+function bkAppl(c,m){return [...bkKeys(c)].filter(k=>!bkNA(c,m,k))}
+function bkIsFull(c,m){const a=bkAppl(c,m);return a.length>0&&a.every(k=>bkHas(c,m,k))}
+function bkPending(c,m){return bkAppl(c,m).some(k=>!bkHas(c,m,k))}
+function bkCellState(c,m,k){if(bkOut(c,m))return {cls:'na',txt:'',tip:'개업 전·폐업 후 (해당 없음)'};if(bkX(c,m,k))return {cls:'x',txt:'✕',tip:'해당 없음 · 클릭하면 빈칸'};if(bkHas(c,m,k))return {cls:'on',txt:'○',tip:'완료 · 클릭하면 ✕'};return {cls:'',txt:'',tip:'클릭하면 ○'}}
+function bkPeriodHTML(c){if(!c.open&&!c.close)return '';return `<div class="bk-period">${c.open?'개업 '+escapeHTML(c.open):''}${c.open&&c.close?'<br>':''}${c.close?'<span class="cl">폐업 '+escapeHTML(c.close)+'</span>':''}</div>`}
 function bkSorted(){const a=bkData().clients;return [...a.filter(c=>c.type!=='개인'),...a.filter(c=>c.type==='개인')]}
 function bkList(){
  const q=($('bkSearch')?.value||'').trim().toLowerCase(),tf=$('bkTypeF')?.value||'',mf=$('bkMonthF')?.value||'';
- return bkSorted().filter(c=>{const Y=bkY(c);return (!tf||c.type===tf)&&(!q||(c.name+' '+(Y.note||'')).toLowerCase().includes(q))&&(!mf||!bkIsFull(c,mf))});
+ return bkSorted().filter(c=>{const Y=bkY(c);return (!tf||c.type===tf)&&(!q||(c.name+' '+(Y.note||'')).toLowerCase().includes(q))&&(!mf||bkPending(c,mf))});
 }
 function bkMove(id,dir){
  const list=bkList(),i=list.findIndex(c=>c.id===id);if(i<0)return;const t=list[i+dir];if(!t||t.type!==list[i].type)return;
@@ -2974,32 +2989,32 @@ function enableBkDrag(){
 }
 function bkBulk(on){
  const m=$('bkBulkM').value,ks=$('bkBulkK').value,list=bkList();if(!list.length)return;
- if(!confirm(`현재 표시된 거래처 ${list.length}개의 ${m}월 ${ks==='jte'?'전표·통장·기타 전체':({j:'전표',t:'통장',e:'기타'})[ks]}를 일괄 ${on?'체크':'해제'}할까요?\n(개인 거래처는 통장 칸이 없어 제외돼요)`))return;
- list.forEach(c=>{const Y=bkY(c);let cur=Y.m[m]||'';[...ks].forEach(k=>{if(k==='t'&&c.type==='개인')return;cur=on?(cur.includes(k)?cur:cur+k):cur.replace(k,'')});Y.m[m]=cur});saveData();renderBk();
+ if(!confirm(`현재 표시된 거래처 ${list.length}개의 ${m}월 ${ks==='jte'?'전표·통장·기타 전체':({j:'전표',t:'통장',e:'기타'})[ks]}를 일괄 ${on?'체크':'해제(○·✕ 모두 비움)'}할까요?\n(개인 거래처의 통장 칸, 개업 전·폐업 후 달${on?', ✕ 표시 칸':''}은 제외돼요)`))return;
+ list.forEach(c=>{if(bkOut(c,m))return;const Y=bkY(c);let cur=Y.m[m]||'',cx=Y.x[m]||'';[...ks].forEach(k=>{if(k==='t'&&c.type==='개인')return;if(on){if(!cx.includes(k)&&!cur.includes(k))cur+=k}else{cur=cur.replace(k,'');cx=cx.replace(k,'')}});Y.m[m]=cur;Y.x[m]=cx});saveData();renderBk();
 }
 function bkMonths(){return 12}
 function renderBk(){
  const body=$('bkBody');if(!body)return;bkInit();const list=bkList(),all=bkData().clients;if(!all.length&&$('bkAddBox'))$('bkAddBox').open=true;
- body.innerHTML=list.length?list.map((c,i)=>{const Y=bkY(c),id=escapeHTML(c.id),items=bkItems(c),n=items.length;return items.map(([k,l],r)=>`<tr class="${r===0?'bk-first':''}">${r===0?`<td rowspan="${n}" class="bk-no">${i+1}</td><td rowspan="${n}" class="bk-name" data-id="${id}" title="끌어서 순서 변경">${escapeHTML(c.name)}<br><span class="bk-type ${c.type==='법인'?'corp':'ind'}">${c.type}</span><div class="bk-act"><button type="button" data-id="${id}" onclick="bkMove(this.dataset.id,-1)" title="위로">▲</button><button type="button" data-id="${id}" onclick="bkMove(this.dataset.id,1)" title="아래로">▼</button><button type="button" data-id="${id}" onclick="bkEdit(this.dataset.id)">수정</button><button type="button" data-id="${id}" onclick="bkDelete(this.dataset.id)">삭제</button></div></td>`:''}<td class="bk-k">${l}</td>${BK_M.map(m=>{const on=bkHas(c,m,k);return `<td class="bk-c${on?' on':''}" data-id="${id}" data-m="${m}" data-k="${k}" onclick="bkToggle(this)">${on?'○':''}</td>`}).join('')}${r===0?`<td rowspan="${n}"><input class="bk-in" data-id="${id}" data-f="vat" value="${escapeHTML(Y.vat||'')}" onchange="bkField(this)"></td><td rowspan="${n}"><input class="bk-in" data-id="${id}" data-f="pay" value="${escapeHTML(Y.pay||'')}" onchange="bkField(this)"></td><td rowspan="${n}"><input type="checkbox" data-id="${id}" data-f="labor" ${Y.labor?'checked':''} onchange="bkField(this)"></td><td rowspan="${n}"><input type="checkbox" data-id="${id}" data-f="acct" ${Y.acct?'checked':''} onchange="bkField(this)"></td><td rowspan="${n}"><textarea class="bk-note" data-id="${id}" data-f="note" oninput="bkGrow(this)" onchange="bkField(this)">${escapeHTML(Y.note||'')}</textarea></td>`:''}</tr>`).join('')}).join(''):'<tr><td colspan="20" style="padding:24px;color:#718096">표시할 거래처가 없어요. 위에서 거래처를 등록해 주세요.</td></tr>';
+ body.innerHTML=list.length?list.map((c,i)=>{const Y=bkY(c),id=escapeHTML(c.id),items=bkItems(c),n=items.length;return items.map(([k,l],r)=>`<tr class="${r===0?'bk-first':''}">${r===0?`<td rowspan="${n}" class="bk-no">${i+1}</td><td rowspan="${n}" class="bk-name" data-id="${id}" title="끌어서 순서 변경">${escapeHTML(c.name)}<br><span class="bk-type ${c.type==='법인'?'corp':'ind'}">${c.type}</span>${bkPeriodHTML(c)}<div class="bk-act"><button type="button" data-id="${id}" onclick="bkMove(this.dataset.id,-1)" title="위로">▲</button><button type="button" data-id="${id}" onclick="bkMove(this.dataset.id,1)" title="아래로">▼</button><button type="button" data-id="${id}" onclick="bkEdit(this.dataset.id)">수정</button><button type="button" data-id="${id}" onclick="bkDelete(this.dataset.id)">삭제</button></div></td>`:''}<td class="bk-k">${l}</td>${BK_M.map(m=>{const st=bkCellState(c,m,k);return `<td class="bk-c${st.cls?' '+st.cls:''}" title="${st.tip}" data-id="${id}" data-m="${m}" data-k="${k}" onclick="bkToggle(this)">${st.txt}</td>`}).join('')}${r===0?`<td rowspan="${n}"><input class="bk-in" data-id="${id}" data-f="vat" value="${escapeHTML(Y.vat||'')}" onchange="bkField(this)"></td><td rowspan="${n}"><input class="bk-in" data-id="${id}" data-f="pay" value="${escapeHTML(Y.pay||'')}" onchange="bkField(this)"></td><td rowspan="${n}"><input type="checkbox" data-id="${id}" data-f="labor" ${Y.labor?'checked':''} onchange="bkField(this)"></td><td rowspan="${n}"><input type="checkbox" data-id="${id}" data-f="acct" ${Y.acct?'checked':''} onchange="bkField(this)"></td><td rowspan="${n}"><textarea class="bk-note" data-id="${id}" data-f="note" oninput="bkGrow(this)" onchange="bkField(this)">${escapeHTML(Y.note||'')}</textarea></td>`:''}</tr>`).join('')}).join(''):'<tr><td colspan="20" style="padding:24px;color:#718096">표시할 거래처가 없어요. 위에서 거래처를 등록해 주세요.</td></tr>';
  enableBkDrag();document.querySelectorAll('#bkBody .bk-note').forEach(bkGrow);bkSummary();
 }
 function bkSummary(){
  const all=bkData().clients,list=bkList(),N=all.length;
  const cnt=(arr,m,k)=>arr.filter(c=>bkHas(c,m,k)).length,full=(arr,m)=>arr.filter(c=>bkIsFull(c,m)).length;
- const prog=(arr,mc)=>{let d=0,tot=0;arr.forEach(c=>{for(let m=1;m<=mc;m++){tot+=bkKeys(c).length;d+=[...bkKeys(c)].filter(k=>bkHas(c,m,k)).length}});return tot?Math.round(d/tot*100):0};
+ const prog=(arr,mc)=>{let d=0,tot=0;arr.forEach(c=>{for(let m=1;m<=mc;m++){const a=bkAppl(c,m);tot+=a.length;d+=a.filter(k=>bkHas(c,m,k)).length}});return tot?Math.round(d/tot*100):0};
  const corp=all.filter(c=>c.type!=='개인'),ind=all.filter(c=>c.type==='개인'),Y=bkYear();
  $('bkCount').textContent=`거래처 ${N}개 · 표시 ${list.length}개`;
- $('bkCards').innerHTML=`<div class="retire-card"><span>전체 거래처</span><strong>${N}개</strong><small>법인 ${corp.length} · 개인 ${ind.length}</small></div><div class="retire-card"><span>${Y}년 상반기 진행률</span><strong>${prog(all,6)}%</strong><small>1~6월 기준</small></div><div class="retire-card"><span>${Y}년 진행률</span><strong>${prog(all,12)}%</strong><small>1~12월 기준</small></div>`;
- const col={j:'#3b82f6',t:'#22c55e',e:'#f59e0b'},den=k=>k==='t'?corp.length:N;
- $('bkChart').innerHTML=N?`<div class="bk-chart">${BK_M.map(m=>`<div class="bk-col"><div class="bk-bars" title="${m}월 전표 ${cnt(all,m,'j')} / 통장 ${cnt(all,m,'t')} / 기타 ${cnt(all,m,'e')} (전체 ${N}개)">${['j','t','e'].map(k=>`<i style="height:${den(k)?cnt(all,m,k)/den(k)*100:0}%;background:${col[k]}"></i>`).join('')}</div><small>${m}월</small><small><b>${full(all,m)}</b>/${N}</small></div>`).join('')}</div>`:'<div class="subtle">거래처를 등록하면 그래프가 나와요.</div>';
+ $('bkCards').innerHTML=`<div class="retire-card"><span>전체 거래처</span><strong>${N}개</strong><small>법인 ${corp.length} · 개인 ${ind.length}${all.filter(c=>c.close).length?' · 폐업 '+all.filter(c=>c.close).length:''}</small></div><div class="retire-card"><span>${Y}년 상반기 진행률</span><strong>${prog(all,6)}%</strong><small>1~6월 기준</small></div><div class="retire-card"><span>${Y}년 진행률</span><strong>${prog(all,12)}%</strong><small>1~12월 기준</small></div>`;
+ const col={j:'#3b82f6',t:'#22c55e',e:'#f59e0b'},den=(m,k)=>all.filter(c=>bkKeys(c).includes(k)&&!bkNA(c,m,k)).length,act=m=>all.filter(c=>bkAppl(c,m).length).length;
+ $('bkChart').innerHTML=N?`<div class="bk-chart">${BK_M.map(m=>`<div class="bk-col"><div class="bk-bars" title="${m}월 전표 ${cnt(all,m,'j')} / 통장 ${cnt(all,m,'t')} / 기타 ${cnt(all,m,'e')} (대상 ${act(m)}개)">${['j','t','e'].map(k=>`<i style="height:${den(m,k)?cnt(all,m,k)/den(m,k)*100:0}%;background:${col[k]}"></i>`).join('')}</div><small>${m}월</small><small><b>${full(all,m)}</b>/${act(m)}</small></div>`).join('')}</div>`:'<div class="subtle">거래처를 등록하면 그래프가 나와요.</div>';
  const bar=(l,arr,c)=>`<div class="bk-prog"><div class="t"><b>${l} ${arr.length}개</b><span>${prog(arr,12)}%</span></div><div class="b"><i style="width:${prog(arr,12)}%;background:${c}"></i></div></div>`;
  $('bkTypeStat').innerHTML=bar('법인',corp,'#3b82f6')+bar('개인',ind,'#f97316')+`<div class="subtle">1~12월 기준 처리율</div>`;
  $('bkFoot').innerHTML=[['j','전표 합계'],['t','통장 합계'],['e','기타 합계']].map(([k,l])=>`<tr class="bk-foot"><td colspan="3">${l}</td>${BK_M.map(m=>`<td>${cnt(list,m,k)}</td>`).join('')}<td colspan="5"></td></tr>`).join('')+`<tr class="bk-foot"><td colspan="3">완료 거래처</td>${BK_M.map(m=>`<td>${full(list,m)}</td>`).join('')}<td colspan="5"></td></tr>`;
 }
 function printBk(){
  const list=bkList();if(!list.length){alert('인쇄할 거래처가 없어요.');return}const y=bkYear(),owner=bkData().owner||'';
- const rows=list.map((c,i)=>{const Y=bkY(c);return bkItems(c).map(([k,l],r)=>`<tr>${r===0?`<td rowspan="${bkItems(c).length}">${i+1}</td><td rowspan="${bkItems(c).length}" class="nm">${escapeHTML(c.name)}<br><small>(${c.type})</small></td>`:''}<td class="k">${l}</td>${BK_M.map(m=>{const on=bkHas(c,m,k);return `<td class="${on?'on':''}">${on?'○':''}</td>`}).join('')}${r===0?`<td rowspan="${bkItems(c).length}">${escapeHTML(Y.vat||'')}</td><td rowspan="${bkItems(c).length}">${escapeHTML(Y.pay||'')}</td><td rowspan="${bkItems(c).length}">${Y.labor?'○':''}</td><td rowspan="${bkItems(c).length}">${Y.acct?'○':''}</td><td rowspan="${bkItems(c).length}" class="nt">${escapeHTML(Y.note||'')}</td>`:''}</tr>`).join('')}).join('');
- const html=`<!doctype html><html><head><meta charset="utf-8"><title>${y}년도 거래처 기장현황</title><style>@page{size:A4 landscape;margin:8mm}body{font-family:'Malgun Gothic',sans-serif;margin:0}h1{text-align:center;font-size:18px;letter-spacing:5px;margin:0 0 6px}.m{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}table{width:100%;border-collapse:collapse;font-size:9px}th,td{border:1px solid #666;padding:2px;text-align:center}th{background:#eee}td.nm{font-weight:700;text-align:left}td.k{color:#c00}td.on{background:#fef08a;color:#c00}td.nt{text-align:left;font-size:8px}tr{page-break-inside:avoid}</style></head><body><h1>${y}년도 거래처 기장현황</h1><div class="m"><span>담당 : ${escapeHTML(owner)}</span><span>${toISO(new Date())}</span></div><table><thead><tr><th>No</th><th>거래처명</th><th>구분</th>${BK_M.map(m=>`<th>${m}월</th>`).join('')}<th>부가세</th><th>급여</th><th>인건비</th><th>연간계좌</th><th>비고</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
+ const rows=list.map((c,i)=>{const Y=bkY(c);return bkItems(c).map(([k,l],r)=>`<tr>${r===0?`<td rowspan="${bkItems(c).length}">${i+1}</td><td rowspan="${bkItems(c).length}" class="nm">${escapeHTML(c.name)}<br><small>(${c.type})${c.open?'<br>개업 '+escapeHTML(c.open):''}${c.close?'<br>폐업 '+escapeHTML(c.close):''}</small></td>`:''}<td class="k">${l}</td>${BK_M.map(m=>{const st=bkCellState(c,m,k);return `<td class="${st.cls}">${st.cls==='na'?'—':st.txt}</td>`}).join('')}${r===0?`<td rowspan="${bkItems(c).length}">${escapeHTML(Y.vat||'')}</td><td rowspan="${bkItems(c).length}">${escapeHTML(Y.pay||'')}</td><td rowspan="${bkItems(c).length}">${Y.labor?'○':''}</td><td rowspan="${bkItems(c).length}">${Y.acct?'○':''}</td><td rowspan="${bkItems(c).length}" class="nt">${escapeHTML(Y.note||'')}</td>`:''}</tr>`).join('')}).join('');
+ const html=`<!doctype html><html><head><meta charset="utf-8"><title>${y}년도 거래처 기장현황</title><style>@page{size:A4 landscape;margin:8mm}body{font-family:'Malgun Gothic',sans-serif;margin:0}h1{text-align:center;font-size:18px;letter-spacing:5px;margin:0 0 6px}.m{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}table{width:100%;border-collapse:collapse;font-size:9px}th,td{border:1px solid #666;padding:2px;text-align:center}th{background:#eee}td.nm{font-weight:700;text-align:left}td.k{color:#c00}td.on{background:#fef08a;color:#c00}td.x{color:#555}td.na{background:#eee;color:#999}td.nt{text-align:left;font-size:8px}tr{page-break-inside:avoid}</style></head><body><h1>${y}년도 거래처 기장현황</h1><div class="m"><span>담당 : ${escapeHTML(owner)}</span><span>${toISO(new Date())}</span></div><table><thead><tr><th>No</th><th>거래처명</th><th>구분</th>${BK_M.map(m=>`<th>${m}월</th>`).join('')}<th>부가세</th><th>급여</th><th>인건비</th><th>연간계좌</th><th>비고</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
  const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
  const d=f.contentWindow.document;d.open();d.write(html);d.close();setTimeout(()=>{f.contentWindow.focus();f.contentWindow.print();setTimeout(()=>f.remove(),2000)},300);
 }
