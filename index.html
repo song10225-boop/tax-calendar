@@ -585,7 +585,17 @@ body.theme-notion .day-header{background:#fff!important;color:var(--nt-sub)!impo
 body.theme-notion .quick-filter.active{background:var(--nt-active)!important;border-color:var(--line)!important;color:var(--nt-text)!important}
 body.theme-notion .nav-group-btn.active{background:transparent!important;color:#91918e!important}body.theme-notion .diary-table{min-width:1180px}body.theme-notion .diary-table th,body.theme-notion .priority-pill{white-space:nowrap}body.theme-notion :is(.diary-filters,.bk-filters,.diary-quick){background:#fff!important;border:1px solid var(--line)!important;border-radius:8px!important}body.theme-notion .diary-phrase{background:#f1f1ef!important;color:#37352f!important;border:0!important;font-weight:500!important;border-radius:4px!important}body.theme-notion .diary-phrase:hover{background:#e3e2e0!important}body.theme-notion .diary-stamp{background:transparent!important;border:0!important;padding:0!important;color:var(--nt-text)!important}body.theme-notion .diary-stamp small{background:transparent!important;color:var(--nt-sub)!important;font-weight:400!important}body.theme-notion .diary-page>*{flex-shrink:0}body.theme-notion .diary-table-wrap{flex:0 0 auto!important;overflow-x:auto!important;overflow-y:visible!important}body.theme-notion .diary-table td:nth-child(7),body.theme-notion .diary-table td:nth-child(8){white-space:nowrap}.nav-collapse-btn{display:none}body.theme-notion .nav-brand{position:relative;padding-right:30px!important}body.theme-notion .nav-collapse-btn{display:grid;place-items:center;position:absolute;right:2px;top:50%;transform:translateY(-50%);width:24px;height:24px;border:0;border-radius:5px;background:transparent;color:#91918e;font-size:1rem;cursor:pointer}body.theme-notion .nav-collapse-btn:hover{background:var(--nt-hover);color:#37352f}body.theme-notion .topnav{padding:10px 6px 24px!important}body.theme-notion .nav-link{padding:6px 8px!important;font-size:.9rem!important}body.theme-notion .topnav>*,body.theme-notion .nav-menu>*{flex-shrink:0}body.theme-notion .topnav .nav-group-btn.nav-link{font-size:.74rem!important;padding:4px 8px!important}body.theme-notion.nav-collapsed{--nt-side-w:58px}body.theme-notion.nav-collapsed .nav-brand{font-size:0!important;padding:8px 0!important;justify-content:center;flex-direction:column;gap:6px}body.theme-notion.nav-collapsed .nav-brand .brand-mark{font-size:.9rem}body.theme-notion.nav-collapsed .nav-collapse-btn{position:static;transform:none;font-size:1rem}body.theme-notion.nav-collapsed .nav-link{font-size:0!important;justify-content:center!important;padding:7px 0!important}body.theme-notion.nav-collapsed .nav-link .nav-icon{font-size:1.05rem}body.theme-notion.nav-collapsed .nav-group{margin-top:6px;padding-top:6px;border-top:1px solid var(--line)}body.theme-notion.nav-collapsed .nav-group-btn{display:none!important}@media(max-width:820px){body.theme-notion .nav-collapse-btn{display:none}body.theme-notion{grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr)}body.theme-notion header{grid-column:1;grid-row:1}body.theme-notion .topnav{grid-column:1;grid-row:2;flex-direction:row;overflow-x:auto;padding:6px;border-right:0;border-bottom:1px solid var(--line)}body.theme-notion .nav-group{flex-direction:row;margin:0}body.theme-notion .nav-group-btn{display:none!important}body.theme-notion .nav-brand{display:none}body.theme-notion .nav-link{width:auto}body.theme-notion .page-panel{grid-column:1;grid-row:3}}
 @media print{body{zoom:1!important;height:auto!important}body.theme-notion{display:block!important}body.theme-notion .diary-page::before{display:none}}
-</style></head>
+</style><style>
+#yePage>*{flex-shrink:0}.ye-tabs{margin:2px 0 12px}.ye-pane{display:grid;gap:8px}.ye-pane[hidden]{display:none}
+.ye-pane details{background:#fff;border:1px solid var(--line,#e2e8f0);border-radius:12px;overflow:hidden}.ye-pane summary{cursor:pointer;padding:12px 16px;font-weight:800;font-size:.98rem;color:#0f172a;list-style:none}.ye-pane summary::before{content:"▸ ";color:#94a3b8}.ye-pane details[open] summary::before{content:"▾ "}.ye-pane summary:hover{background:#f8fafc}
+.ye-pane .nt-box ul{margin:4px 0;padding-left:20px}.ye-pane .nt-box li{margin:3px 0}
+.ye-h{grid-column:1/-1;font-weight:800;color:#0f766e;font-size:.9rem;border-bottom:2px solid #ccfbf1;padding:10px 0 4px;margin-top:4px}.ye-h:first-child{padding-top:0;margin-top:0}
+.ye-chk{display:flex;align-items:center;gap:6px;font-size:.86rem;font-weight:700;color:#334155;padding:4px 0}.ye-chk small{font-weight:400;color:#64748b}.ye-chk input{width:16px;height:16px;accent-color:#0f766e}
+.ye-link-row{grid-column:1/-1;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#f0fdfa;border:1px dashed #5eead4;border-radius:10px;padding:8px 12px;font-size:.88rem;margin:4px 0}.ye-link-row b{color:#0f766e}.ye-mini{padding:4px 10px!important;font-size:.78rem!important;margin-left:auto}
+.ye-links{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}.ye-link{display:flex;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--line,#e2e8f0);border-radius:12px;padding:12px 14px;text-decoration:none;color:#0f172a;transition:.15s}.ye-link:hover{border-color:#14b8a6;box-shadow:0 4px 14px rgba(20,184,166,.15);transform:translateY(-1px)}.ye-link span{font-size:.8rem;color:#64748b;line-height:1.5}
+@media print{.ye-tabs{display:none}}
+</style>
+</head>
 <body>
 
 <style>
@@ -702,6 +712,7 @@ body.theme-notion .nav-group-btn.active{background:transparent!important;color:#
   <div class="nav-group"><button type="button" class="nav-link nav-group-btn" onclick="toggleNavMenu(this)"><span class="nav-icon">👥</span> 인사·급여 <span class="nav-caret">▾</span></button>
     <div class="nav-menu">
       <button class="nav-link nav-sub" data-page="payCalcPage" onclick="showPage('payCalcPage',this);payCalc()"><span class="nav-icon">💵</span> 급여 계산기(역산)</button>
+      <button class="nav-link nav-sub" data-page="yePage" onclick="showPage('yePage',this);yeTab(yeCur)"><span class="nav-icon">🧾</span> 연말정산</button>
       <button class="nav-link nav-sub" data-page="laborCalcPage" onclick="showPage('laborCalcPage',this);renderLaborCalc()"><span class="nav-icon">🧮</span> 노무·정산 계산기</button>
       <button class="nav-link nav-sub" data-page="leavePage" onclick="showPage('leavePage',this)"><span class="nav-icon">🌿</span> 연차관리</button>
       <button class="nav-link nav-sub" data-page="retirementPage" onclick="showPage('retirementPage',this)"><span class="nav-icon">🏦</span> 퇴직금 관리</button>
@@ -1285,6 +1296,121 @@ TaxDiary 회계·세무 › 환율·경제에서도 매매기준율을 바로 �
   <div class="diary-toolbar"><div><div class="diary-title"><span class="diary-title-mark">🧮</span>결산·세무조정 도구</div><div class="diary-subtitle">기간 안분, 감가상각, 대손충당금(Ageing), 업무용승용차, 인건비 대사, 퇴직연금 점검, 자금수지표, 임원 퇴직금 한도, 고용 인원 사후관리를 계산해요.</div></div></div>
   <div id="ctTabs" class="lc-tabs"></div>
   <div id="ctBody"></div>
+</section>
+<section id="yePage" class="page-panel diary-page ye-page">
+  <div class="diary-toolbar"><div><div class="diary-title"><span class="diary-title-mark">🧾</span>연말정산</div><div class="diary-subtitle"><b>2026년 귀속</b> (2027년 1~2월 정산) 기준이에요. 하는 법·바뀐 점·공제 요건을 보고, 신용카드·의료비·예상 환급액을 바로 계산해요. 입력한 값은 자동 저장돼요.</div></div></div>
+  <div class="nt-tabs ye-tabs"><button type="button" class="nt-tab ye-tab on" data-ye="calc" onclick="yeTab('calc')">🧮 예상 환급액 계산기</button><button type="button" class="nt-tab ye-tab" data-ye="card" onclick="yeTab('card')">💳 신용카드 공제</button><button type="button" class="nt-tab ye-tab" data-ye="med" onclick="yeTab('med')">🏥 의료비 공제</button><button type="button" class="nt-tab ye-tab" data-ye="guide" onclick="yeTab('guide')">📖 연말정산 하는 법</button><button type="button" class="nt-tab ye-tab" data-ye="change" onclick="yeTab('change')">🆕 2026 귀속 바뀐 점</button><button type="button" class="nt-tab ye-tab" data-ye="rule" onclick="yeTab('rule')">📋 공제 요건·공제율 표</button><button type="button" class="nt-tab ye-tab" data-ye="links" onclick="yeTab('links')">🔗 사이트·자료</button></div>
+
+  <div class="ye-pane" data-yp="calc"><div id="yeCalcBox"></div></div>
+  <div class="ye-pane" data-yp="card" hidden><div id="yeCardBox"></div></div>
+  <div class="ye-pane" data-yp="med" hidden><div id="yeMedBox"></div></div>
+
+  <div class="ye-pane" data-yp="guide" hidden>
+   <details open><summary>🙋 근로자 입장 — 연말정산 하는 순서</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th style="width:150px">시기</th><th>할 일</th></tr>
+    <tr><td><b>12월까지</b></td><td>연금저축·IRP 납입, 고향사랑기부, 카드 사용액 25% 넘었는지 확인(넘었으면 체크카드·현금영수증 위주로). <b>12월 31일 지출분까지만</b> 올해 공제돼요.</td></tr>
+    <tr><td><b>1월 15일</b></td><td>홈택스·손택스 <b>연말정산 간소화</b> 자료 열람 시작. 부양가족 자료는 <b>자료제공 동의</b>가 먼저 필요해요(성인 자녀·부모님은 본인 동의, 미성년 자녀는 신청으로 조회).</td></tr>
+    <tr><td><b>1월 20일 이후</b></td><td>의료기관 등이 추가·수정한 자료까지 반영된 <b>확정 자료</b>로 다시 내려받기. 일찍 받았다면 꼭 한 번 더 확인!</td></tr>
+    <tr><td><b>1월 중·하순</b></td><td>간소화에 없는 자료 따로 챙기기 → 안경·콘택트렌즈 영수증, 교복 구입비, 취학 전 아동 학원비, 월세(임대차계약서·이체내역), 일부 기부금·산후조리원 영수증, 보청기·장애인 보장구 등</td></tr>
+    <tr><td><b>회사 마감일</b></td><td>소득·세액공제신고서 + 증빙 제출 (홈택스 <b>"편리한 연말정산"</b>으로 회사에 바로 전송 가능)</td></tr>
+    <tr><td><b>2월 급여</b></td><td>정산 결과 반영 → 환급 또는 추가 납부. 추가 납부세액이 <b>10만원 초과</b>면 2~4월 급여에서 <b>나눠 내기(분납)</b> 신청 가능</td></tr>
+    <tr><td><b>놓쳤다면</b></td><td>5월 종합소득세 신고 때 추가 공제, 또는 법정신고기한부터 <b>5년 안에 경정청구</b>(홈택스)로 돌려받을 수 있어요.</td></tr></table>
+   </div></details>
+   <details open><summary>🧑‍💼 담당자 입장 — 회사 연말정산 업무 순서</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th style="width:150px">시기</th><th>할 일</th></tr>
+    <tr><td><b>12월 ~ 1월 초</b></td><td>연말정산 일정·제출서류 공지, 부양가족 변동(결혼·출산·사망) 확인, <b>중도입사자 전 근무지 근로소득 원천징수영수증</b> 회수</td></tr>
+    <tr><td><b>1월 중순 ~ 말</b></td><td>직원별 간소화 PDF + 소득·세액공제신고서 회수 (편리한 연말정산 사용 시 홈택스에서 일괄 내려받기)</td></tr>
+    <tr><td><b>1월 말 ~ 2월 초</b></td><td>더존(아마란스10·iCUBE·Smart A) 연말정산 입력 → PDF 불러오기 → <b>검증</b>: 맞벌이 부부 자녀 중복공제, 부양가족 소득요건, 의료비 3%·카드 25% 문턱, 월세 요건(무주택 세대주·총급여 8천 이하)</td></tr>
+    <tr><td><b>2월 급여</b></td><td>정산 결과(환급/추징)를 급여에 반영, 분납 신청자 확인, 직원에게 결과 안내</td></tr>
+    <tr><td><b>3월 10일</b></td><td>① 2월 귀속 <b>원천세 신고</b>(연말정산분 포함 — 환급이면 다음 달 조정환급 또는 환급신청) ② <b>근로소득 지급명세서 제출</b> (늦으면 가산세 — 가산세·과태료 메뉴 참고)</td></tr>
+    <tr><td><b>3월 이후</b></td><td>근로소득 원천징수영수증 배포, 누락·오류는 <b>수정 지급명세서</b> 제출 + 원천세 수정신고</td></tr>
+    <tr><td><b>퇴사자</b></td><td>퇴사월 급여 지급 시 <b>중도 퇴사자 연말정산</b>(기본공제·표준세액공제 위주). 추가 공제는 퇴사자 본인이 5월 종소세로</td></tr></table>
+   </div></details>
+   <details><summary>⚠️ 자주 하는 실수</summary><div class="nt-box">
+    <ul><li><b>맞벌이 부부가 같은 자녀를 둘 다 공제</b> → 한 명만 가능, 적발 시 가산세까지</li>
+    <li>부모님 <b>소득요건 미확인</b> → 연금소득(공적연금), 금융소득 2천만 초과, 부동산 양도소득 등이 있으면 소득금액 100만 초과일 수 있어요</li>
+    <li>형제자매가 쓴 <b>카드 사용액</b> 공제 → 형제자매 카드는 공제 안 돼요 (의료비는 가능)</li>
+    <li>부모님 <b>교육비</b> 공제 → 직계존속 교육비는 불가 (장애인 특수교육비만 가능)</li>
+    <li><b>보험료</b>는 나이·소득요건 둘 다 충족한 기본공제대상자 계약만 가능 (의료비·카드·기부금은 나이 무관)</li>
+    <li>실손보험금 받은 의료비를 그대로 공제 → 받은 보험금은 <b>빼야</b> 해요 (간소화에 실손 수령액도 같이 나와요)</li>
+    <li>연도 중 <b>사망·출생·결혼</b>한 가족 → 그 해는 공제 가능</li></ul>
+   </div></details>
+   <details><summary>💑 맞벌이 부부 절세 팁</summary><div class="nt-box">
+    <ul><li><b>부양가족 인적공제</b>: 세율(과세표준 구간)이 높은 쪽에 몰기</li>
+    <li><b>의료비</b>: 총급여 3% 문턱이 낮은 <b>총급여 적은 쪽</b>이 유리한 경우가 많아요 (단, 그 사람 결정세액이 0원이면 효과 없음)</li>
+    <li><b>신용카드</b>: 25% 문턱 넘기기 쉬운 총급여 적은 쪽에 몰되, 세율 차이도 같이 비교 — 아래 계산기로 둘 다 넣어보세요</li>
+    <li>의료비·카드는 <b>공제받는 사람의 기본공제대상자</b>가 쓴 금액만 합칠 수 있어요</li></ul>
+   </div></details>
+  </div>
+
+  <div class="ye-pane" data-yp="change" hidden>
+   <details open><summary>🆕 2026년 귀속(2027년 초 정산)부터 달라지는 것</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th style="width:170px">항목</th><th>내용</th></tr>
+    <tr><td><b>신용카드 공제한도</b> <span class="pn-new">2026</span></td><td>자녀 수에 따라 <b>기본한도 상향</b> — 총급여 7천만 이하: 자녀 1명당 <b>+50만</b>(최대 +100만 → 400만), 7천만 초과: 1명당 <b>+25만</b>(최대 +50만 → 300만). 카드 공제 제도는 <b>2028년 말까지 연장</b></td></tr>
+    <tr><td><b>자녀세액공제 나이</b> <span class="pn-new">2026</span></td><td>대상이 <b>8세 이상 → 9세 이상</b>으로 상향 (2027년 10세, 2028년 11세… 단계적으로 올라가요). 금액은 첫째 25만·둘째 30만·셋째부터 40만 그대로</td></tr>
+    <tr><td><b>보육수당 비과세</b> <span class="pn-new">2026</span></td><td>6세 이하 자녀 보육수당 월 20만원 비과세가 <b>근로자 1인당 → 자녀 1명당</b>으로 (자녀 2명이면 월 40만원)</td></tr>
+    <tr><td><b>교육비</b> <span class="pn-new">2026</span></td><td><b>9세 미만(초등 2학년 이하)</b> 자녀의 예체능 학원비·체육시설 교육비도 공제 대상 추가 (1명당 300만 한도, 15%). 대학생 자녀 등록금은 <b>소득요건 없이</b> 부모가 낸 금액 900만 한도 공제</td></tr>
+    <tr><td><b>월세 세액공제</b> <span class="pn-new">2026</span></td><td>무주택 <b>주말부부</b>(서로 다른 시·군·구 거주)는 부부 <b>각자</b> 공제 가능 (부부 합산 연 1,000만 한도). 기본공제 자녀 3명 이상이면 지역 무관 <b>전용 100㎡ 이하</b> 주택도 대상</td></tr>
+    <tr><td><b>고향사랑기부금</b> <span class="pn-new">2026</span></td><td>10만원 초과 ~ <b>20만원 이하</b> 구간 공제율 15% → <b>40%</b>. 20만원 기부하면 10만 + 4만 = <b>14만원</b> 세액공제 (+ 답례품)</td></tr></table>
+   </div></details>
+   <details><summary>📌 2025년 귀속부터 이미 바뀐 것 (계속 적용)</summary><div class="nt-box">
+    <ul><li><b>자녀세액공제 금액 인상</b>: 1명 25만 / 2명 55만 / 3명 이상 55만 + 셋째부터 1명당 40만</li>
+    <li><b>수영장·체력단련장(헬스장) 이용료</b>: 2025.7.1 이후 지출분부터 카드공제 <b>문화체육 30%</b> (총급여 7천만 이하)</li>
+    <li><b>주택청약 소득공제</b>: 무주택 세대주의 <b>배우자</b>도 가능 (총급여 7천만 이하, 연 300만 한도 40%)</li>
+    <li><b>고향사랑기부 한도</b> 연 500만 → <b>2,000만원</b></li>
+    <li><b>결혼세액공제</b>: 2024~2026년 혼인신고 시 1인당 <b>50만원</b> (생애 1회 — 2026년 혼인신고까지)</li>
+    <li>9세 미만 발달재활서비스 아동은 이용증명서로 <b>장애인 추가공제</b>(200만) 가능</li></ul>
+   </div></details>
+  </div>
+
+  <div class="ye-pane" data-yp="rule" hidden>
+   <details open><summary>👨‍👩‍👧 부양가족(기본공제 150만원) 요건 — 2026년 귀속</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th>관계</th><th>나이 요건</th><th>소득 요건 (공통)</th></tr>
+    <tr><td><b>본인</b></td><td>없음</td><td>없음</td></tr>
+    <tr><td><b>배우자</b></td><td>없음</td><td rowspan="5">연간 소득금액 <b>100만원 이하</b><br>(근로소득만 있으면 <b>총급여 500만원 이하</b>)</td></tr>
+    <tr><td><b>부모·조부모</b> (직계존속)</td><td><b>60세 이상</b> — 1966.12.31 이전 출생</td></tr>
+    <tr><td><b>자녀·손자녀</b> (직계비속)</td><td><b>20세 이하</b> — 2006.1.1 이후 출생</td></tr>
+    <tr><td><b>형제자매</b></td><td>20세 이하 또는 60세 이상</td></tr>
+    <tr><td><b>장애인</b></td><td><b>나이 무관</b></td></tr></table>
+    <b>추가공제</b>: 경로우대(70세 이상, 1956.12.31 이전 출생) 100만 · 장애인 200만 · 부녀자 50만(근로소득금액 3천만 이하) · 한부모 100만 (부녀자·한부모 중복 시 한부모만)<br>
+    <b>자녀세액공제</b>: 2026년 귀속은 <b>9세 이상</b>(2017.12.31 이전 출생) 기본공제 자녀 · <b>의료비 한도 없는 6세 이하</b>: 2020.1.1 이후 출생
+   </div></details>
+   <details open><summary>💰 주요 공제율·한도 한눈에</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th style="width:160px">항목</th><th>공제율</th><th>한도·요건</th></tr>
+    <tr><td><b>신용카드 등</b> (소득공제)</td><td>신용 15% · 체크/현금 30% · 도서공연·체육 30% · 전통시장 40% · 대중교통 40%</td><td>총급여 25% 초과분부터. 기본 300만(7천 초과 250만) + 자녀 추가 + 전통시장·대중교통 등 추가 300만(200만)</td></tr>
+    <tr><td><b>주택청약</b></td><td>납입액 40%</td><td>연 300만 납입 한도, 총급여 7천 이하 무주택 세대주(배우자)</td></tr>
+    <tr><td><b>주택임차차입금</b> 원리금</td><td>40%</td><td>청약과 합쳐 400만 한도, 무주택 세대주</td></tr>
+    <tr><td><b>연금저축·IRP</b></td><td>15% (총급여 5,500만 초과 12%)</td><td>연금저축 600만, IRP 합산 900만</td></tr>
+    <tr><td><b>보장성 보험료</b></td><td>12% (장애인전용 15%)</td><td>각 100만 한도</td></tr>
+    <tr><td><b>의료비</b></td><td>15% (미숙아·선천성이상아 20%, 난임 30%)</td><td>총급여 3% 초과분. 일반 부양가족 700만 한도, 본인·65세+·장애인·6세 이하 한도 없음. 안경 1인 50만, 산후조리원 출산 1회 200만</td></tr>
+    <tr><td><b>교육비</b></td><td>15%</td><td>본인 전액 · 취학 전·초중고 1명 300만 · 대학생 900만</td></tr>
+    <tr><td><b>기부금</b></td><td>15% (1천만 초과분 30%)</td><td>정치자금·고향사랑 10만원까지 100/110, 고향사랑 10만~20만 40%</td></tr>
+    <tr><td><b>월세</b></td><td>17% (총급여 5,500만 이하) / 15% (8천만 이하)</td><td>연 1,000만 한도, 무주택 세대주, 국민주택규모 또는 기준시가 4억 이하</td></tr>
+    <tr><td><b>자녀</b></td><td>1명 25만 · 2명 55만 · 3명+ 40만씩 추가</td><td>출산·입양: 첫째 30만 · 둘째 50만 · 셋째 이상 70만</td></tr>
+    <tr><td><b>표준세액공제</b></td><td>13만원</td><td>특별소득공제·특별세액공제·월세 공제를 신청하지 않을 때 (더 유리한 쪽 적용)</td></tr></table>
+   </div></details>
+   <details><summary>📊 근로소득공제 · 세율 · 근로소득세액공제</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th>총급여</th><th>근로소득공제</th></tr><tr><td>500만 이하</td><td>70%</td></tr><tr><td>500만~1,500만</td><td>350만 + 500만 초과분 40%</td></tr><tr><td>1,500만~4,500만</td><td>750만 + 1,500만 초과분 15%</td></tr><tr><td>4,500만~1억</td><td>1,200만 + 4,500만 초과분 5%</td></tr><tr><td>1억 초과</td><td>1,475만 + 1억 초과분 2% (한도 2,000만)</td></tr></table>
+    <table class="nt-tbl"><tr><th>과세표준</th><th>세율</th><th>누진공제</th></tr><tr><td>1,400만 이하</td><td>6%</td><td>—</td></tr><tr><td>5,000만 이하</td><td>15%</td><td>126만</td></tr><tr><td>8,800만 이하</td><td>24%</td><td>576만</td></tr><tr><td>1.5억 이하</td><td>35%</td><td>1,544만</td></tr><tr><td>3억 이하</td><td>38%</td><td>1,994만</td></tr><tr><td>5억 이하</td><td>40%</td><td>2,594만</td></tr><tr><td>10억 이하</td><td>42%</td><td>3,594만</td></tr><tr><td>10억 초과</td><td>45%</td><td>6,594만</td></tr></table>
+    근로소득세액공제: 산출세액 130만 이하 55%, 초과분 30% · 한도 총급여 3,300만 이하 74만 / 7천만 이하 66만~74만 / 1.2억 이하 50만~66만 / 초과 20만~50만
+   </div></details>
+  </div>
+
+  <div class="ye-pane" data-yp="links" hidden>
+   <div class="ye-links">
+    <a class="ye-link" href="https://www.hometax.go.kr" target="_blank" rel="noopener"><b>🟦 홈택스</b><span>연말정산 간소화 자료 조회(1/15~), 편리한 연말정산, 미리보기, 경정청구</span></a>
+    <a class="ye-link" href="https://www.nts.go.kr" target="_blank" rel="noopener"><b>🏛 국세청</b><span>연말정산 종합안내, 근로자·원천징수의무자 신고안내 책자(PDF), 개정세법 안내</span></a>
+    <a class="ye-link" href="https://taxlaw.nts.go.kr" target="_blank" rel="noopener"><b>⚖️ 국세법령정보시스템</b><span>소득세법·조특법 조문, 질의회신·예규 검색</span></a>
+    <a class="ye-link" href="https://www.wetax.go.kr" target="_blank" rel="noopener"><b>🏢 위택스</b><span>지방소득세(특별징수) 신고·납부</span></a>
+    <a class="ye-link" href="https://www.gov.kr" target="_blank" rel="noopener"><b>📄 정부24</b><span>주민등록등본·장애인증명 등 증빙 발급</span></a>
+    <a class="ye-link" href="https://efamily.scourt.go.kr" target="_blank" rel="noopener"><b>👪 전자가족관계등록시스템</b><span>가족관계증명서 (따로 사는 부모님·형제 공제 시)</span></a>
+    <a class="ye-link" href="https://www.nhis.or.kr" target="_blank" rel="noopener"><b>🏥 국민건강보험공단</b><span>건강보험 산정특례자 확인, 보험료 납부확인서</span></a>
+    <a class="ye-link" href="https://ilovegohyang.go.kr" target="_blank" rel="noopener"><b>💝 고향사랑e음</b><span>고향사랑기부 · 기부내역 확인 (12/31까지)</span></a>
+    <a class="ye-link" href="https://kbthink.com/year-end-tax/2027-changes.html" target="_blank" rel="noopener"><b>📰 2026 귀속 바뀌는 점 정리</b><span>KB Think — 신용카드 자녀 한도, 자녀세액공제 9세, 고향사랑 40% 등</span></a>
+   </div>
+   <div class="subtle lc-note">📞 막히면 <b>국세상담센터 126</b> (1번 홈택스 → 연말정산 상담). 1~2월은 대기가 길어서 홈택스 <b>"인터넷 상담"</b>이 더 빠를 때가 많아요.</div>
+  </div>
+  <div class="subtle lc-note">※ 2026년 11월 기준 개정 내용을 반영한 <b>참고용 계산</b>이에요. 청년 중소기업 감면, 외국인 단일세율, 기부금 한도(소득금액 기준) 등 세부 요건은 빠져 있어서 실제 회사 정산(더존) 결과와 차이가 날 수 있어요.</div>
 </section>
 <section id="memoPage" class="page-panel diary-page sticky-memo-page">
   <div class="diary-toolbar">
@@ -3052,6 +3178,86 @@ function openGlobalSearch(){let o=$('gsDlg');if(!o){o=document.createElement('di
 function closeGlobalSearch(){const o=$('gsDlg');if(o)o.style.display='none'}
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openGlobalSearch()}});
 function gsMark(t,q){const s=String(t||''),i=s.toLowerCase().indexOf(q);if(i<0)return escapeHTML(s.slice(0,90));const a=Math.max(0,i-30);return (a?'…':'')+escapeHTML(s.slice(a,i))+'<mark>'+escapeHTML(s.slice(i,i+q.length))+'</mark>'+escapeHTML(s.slice(i+q.length,i+q.length+60))+(i+q.length+60<s.length?'…':'')}
+/* ===== 연말정산 (2026년 귀속) ===== */
+let yeCur='calc';
+function yeS(){if(!profile.ye||typeof profile.ye!=='object')profile.ye={gross:42000000,people:1,paid:0};return profile.ye}
+function yeTab(k){yeCur=k;document.querySelectorAll('.ye-tab').forEach(b=>b.classList.toggle('on',b.dataset.ye===k));document.querySelectorAll('.ye-pane').forEach(p=>p.hidden=p.dataset.yp!==k);yeRender()}
+function yeIn(el){const S=yeS(),k=el.dataset.k;S[k]=el.type==='checkbox'?(el.checked?1:0):Number(String(el.value).replace(/[^0-9]/g,''))||0;clearTimeout(window._yeT);window._yeT=setTimeout(()=>{try{saveData()}catch(e){}},900);yeOut()}
+function yM(k,label,hint){const v=yeS()[k]||0;return `<label class="lc-f"><span>${label}${hint?` <small>${hint}</small>`:''}</span><input data-k="${k}" type="text" inputmode="numeric" value="${v?Number(v).toLocaleString('ko-KR'):''}" placeholder="0" oninput="pcFmt(this);yeIn(this)"></label>`}
+function yC(k,label,max,hint,def){const S=yeS(),v=S[k]??def??0;let o='';for(let i=0;i<=max;i++)o+=`<option value="${i}"${i==v?' selected':''}>${i}명</option>`;return `<label class="lc-f"><span>${label}${hint?` <small>${hint}</small>`:''}</span><select data-k="${k}" onchange="yeIn(this)">${o}</select></label>`}
+function yB(k,label,hint){return `<label class="ye-chk"><input type="checkbox" data-k="${k}"${yeS()[k]?' checked':''} onchange="yeIn(this)"> ${label}${hint?` <small>${hint}</small>`:''}</label>`}
+function yH(t){return `<div class="ye-h">${t}</div>`}
+const yGross=()=>yM('gross','총급여 (연간)','비과세 제외 · 1~12월 과세 급여+상여');
+
+/* --- 신용카드 등 소득공제 --- */
+function yeCard(S){const g=S.gross||0,hi=g>70000000,kids=Math.min(2,S.cdKids||0);
+ let c=(S.cdCredit||0)+(hi?(S.cdCulture||0):0),d=S.cdDebit||0,cul=hi?0:(S.cdCulture||0),m=S.cdMarket||0,t=S.cdTransit||0;
+ const use=c+d+cul+m+t,min=g*.25,pre=c*.15+d*.3+cul*.3+m*.4+t*.4;
+ let ex;if(min<=c)ex=min*.15;else if(min<=c+d+cul)ex=c*.15+(min-c)*.3;else ex=c*.15+(d+cul)*.3+(min-c-d-cul)*.4;
+ const can=use>min?Math.max(0,pre-ex):0,baseLim=(hi?2500000:3000000)+kids*(hi?250000:500000),addLim=hi?2000000:3000000;
+ const base=Math.min(can,baseLim),add=Math.min(Math.max(0,can-base),addLim,m*.4+t*.4+cul*.3),ded=Math.floor(base+add);
+ return {g,hi,use,min,pre,ex,can,baseLim,addLim,base,add,ded,short:Math.max(0,min-use),kids}}
+/* --- 의료비 세액공제 --- */
+function yeMed(S){const g=S.gross||0,thr=g*.03,gen=S.mdGen||0,self=S.mdSelf||0,pre=S.mdPre||0,ivf=S.mdIvf||0;
+ let short=0,genD=0;if(gen>=thr)genD=Math.min(gen-thr,7000000);else short=thr-gen;
+ const selfD=Math.max(0,self-short);short=Math.max(0,short-self);const preD=Math.max(0,pre-short);short=Math.max(0,short-pre);const ivfD=Math.max(0,ivf-short);
+ const cr=Math.floor(genD*.15+selfD*.15+preD*.2+ivfD*.3),tot=gen+self+pre+ivf;
+ return {g,thr,gen,self,pre,ivf,tot,genD,selfD,preD,ivfD,cr,need:Math.max(0,thr-tot),genCut:gen>thr+7000000}}
+/* --- 세액 계산 --- */
+function yeEarnDed(g){let d;if(g<=5e6)d=g*.7;else if(g<=15e6)d=3.5e6+(g-5e6)*.4;else if(g<=45e6)d=7.5e6+(g-15e6)*.15;else if(g<=1e8)d=12e6+(g-45e6)*.05;else d=14.75e6+(g-1e8)*.02;return Math.floor(Math.min(d,2e7))}
+function yeTax(b){const T=[[14e6,.06,0],[50e6,.15,1.26e6],[88e6,.24,5.76e6],[150e6,.35,15.44e6],[300e6,.38,19.94e6],[500e6,.40,25.94e6],[1e9,.42,35.94e6],[Infinity,.45,65.94e6]];const r=T.find(x=>b<=x[0]);return Math.max(0,Math.floor(b*r[1]-r[2]))}
+function yeEarnCr(tax,g){const c=tax<=1.3e6?tax*.55:715000+(tax-1.3e6)*.3;let lim;if(g<=33e6)lim=740000;else if(g<=7e7)lim=Math.max(660000,740000-(g-33e6)*.008);else if(g<=1.2e8)lim=Math.max(500000,660000-(g-7e7)/2);else lim=Math.max(200000,500000-(g-1.2e8)/2);return Math.floor(Math.min(c,lim))}
+function yeHome(a){if(a<=0)return 0;const x=Math.min(a,20000000);return Math.floor(Math.min(x,100000)*100/110+Math.max(0,Math.min(x,200000)-100000)*.4+Math.max(0,x-200000)*.15)}
+function yeRun(S,std){const g=S.gross||0,ed=yeEarnDed(g),earn=Math.max(0,g-ed);
+ const ppl=Math.max(1,S.people||1),human=1.5e6*ppl+1e6*(S.old||0)+2e6*(S.dis||0)+(S.single?1e6:(S.woman&&earn<=3e7?5e5:0));
+ const nps=S.nps||0,ins=std?0:(S.hi||0);
+ const save=g<=7e7?Math.min(S.save||0,3e6)*.4:0,rentLoan=std?0:(S.rentLoan||0)*.4,hs=Math.min(save+rentLoan,4e6),mort=std?0:Math.min(S.mort||0,2e7);
+ const card=yeCard(S).ded,limited=Math.min(hs+card,2.5e7),totDed=human+nps+ins+limited+mort;
+ const base=Math.max(0,earn-totDed),tax=yeTax(base);
+ const n=S.kids||0,kid=n<=0?0:n===1?250000:n===2?550000:550000+(n-2)*400000,birth=[0,300000,500000,700000][S.birth||0]||0;
+ const rate=g<=55e6?.15:.12,ps=Math.min(S.ps||0,6e6),pen=Math.floor(Math.min(ps+(S.irp||0),9e6)*rate);
+ const ecr=yeEarnCr(tax,g),marry=S.marry?500000:0;
+ const insCr=std?0:Math.floor(Math.min(S.life||0,1e6)*.12+Math.min(S.disIns||0,1e6)*.15),med=std?0:yeMed(S).cr,edu=std?0:Math.floor((S.edu||0)*.15);
+ const gv=S.give||0,give=std?0:Math.floor(Math.min(gv,1e7)*.15+Math.max(0,gv-1e7)*.3),home=yeHome(S.home||0),pol=S.pol||0,polCr=Math.floor(Math.min(pol,100000)*100/110+Math.max(0,pol-100000)*.15);
+ const rr=g<=55e6?.17:g<=8e7?.15:0,rent=std?0:Math.floor(Math.min(S.rent||0,1e7)*rr),stdCr=std?130000:0;
+ const items=[['근로소득세액공제',ecr],['자녀세액공제',kid+birth],['연금계좌',pen],['결혼세액공제',marry],['보험료',insCr],['의료비',med],['교육비',edu],['기부금 (일반·특례)',give],['고향사랑기부금',home],['정치자금기부금',polCr],['월세',rent],['표준세액공제',stdCr]];
+ const cr=items.reduce((a,b)=>a+b[1],0),dec=Math.max(0,Math.floor((tax-cr)/10)*10);
+ return {g,ed,earn,human,nps,ins,hs,mort,card,limited,totDed,base,tax,items,cr,dec,local:Math.floor(dec*.1/10)*10,std}}
+
+/* --- 화면 --- */
+function yeRender(){['yeCalcBox','yeCardBox','yeMedBox'].forEach(i=>{const e=$(i);if(e)e.innerHTML=''});if(yeCur==='calc')yeCalcUI();if(yeCur==='card')yeCardUI();if(yeCur==='med')yeMedUI()}
+function yeCalcUI(){const b=$('yeCalcBox');if(!b)return;
+ b.innerHTML=`<div class="pc-grid"><div class="pc-card lc-in ye-in">
+ ${yH('① 기본')}${yGross()}${yM('paid','기납부 소득세 (1~12월 원천징수 합계)','지방소득세 제외 · 급여대장 소득세 합계')}
+ ${yH('② 인적공제')}${yC('people','기본공제 인원 (본인 포함)',10,'',1)}${yC('old','그중 70세 이상',6)}${yC('dis','그중 장애인',6)}${yB('woman','부녀자','50만 · 근로소득금액 3천만 이하')}${yB('single','한부모','100만')}
+ ${yH('③ 소득공제')}${yM('nps','국민연금 (근로자 부담분)')}${yM('hi','건강·장기요양·고용보험 (근로자 부담분)')}${yM('save','주택청약 납입액','연 300만 한도 · 총급여 7천 이하')}${yM('rentLoan','주택임차차입금 원리금 상환액')}${yM('mort','장기주택저당차입금 이자','한도 600만~2,000만 (요건별)')}
+ <div class="ye-link-row">💳 신용카드 공제액 <b>${won(yeCard(yeS()).ded)}</b> <button type="button" class="btn btn-outline ye-mini" onclick="yeTab('card')">카드 사용액 입력 →</button></div>
+ ${yH('④ 세액공제')}${yC('kids','9세 이상 기본공제 자녀',6,'2026 귀속: 2017.12.31 이전 출생')}<label class="lc-f"><span>올해 출산·입양</span><select data-k="birth" onchange="yeIn(this)">${['없음','첫째','둘째','셋째 이상'].map((t,i)=>`<option value="${i}"${(yeS().birth||0)==i?' selected':''}>${t}</option>`).join('')}</select></label>${yB('marry','결혼세액공제 50만','2024~2026 혼인신고 · 생애 1회')}
+ ${yM('ps','연금저축 납입액','600만 한도')}${yM('irp','IRP·퇴직연금 개인 납입액','합산 900만 한도')}${yM('life','보장성 보험료')}${yM('disIns','장애인전용 보장성 보험료')}${yM('edu','교육비 (한도 적용 후 금액)','초중고 1명 300만 · 대학 900만')}
+ <div class="ye-link-row">🏥 의료비 세액공제 <b>${won(yeMed(yeS()).cr)}</b> <button type="button" class="btn btn-outline ye-mini" onclick="yeTab('med')">의료비 입력 →</button></div>
+ ${yM('give','기부금 (일반·특례·종교단체)')}${yM('home','고향사랑기부금','10만까지 100/110 · 20만까지 40%')}${yM('pol','정치자금기부금')}${yM('rent','월세 (연간 지급액)','총급여 8천 이하 무주택 세대주')}
+ </div><div class="pc-card" id="yeOut"></div></div>`;yeOut()}
+function yeCardUI(){const b=$('yeCardBox');if(!b)return;
+ b.innerHTML=`<div class="pc-grid"><div class="pc-card lc-in ye-in">${yH('💳 사용액 (1~12월, 본인 + 기본공제 가족)')}${yGross()}
+ ${yM('cdCredit','신용카드')}${yM('cdDebit','체크카드·현금영수증·제로페이')}${yM('cdCulture','도서·공연·박물관·영화·신문·수영장·헬스장','총급여 7천 이하만 30%')}${yM('cdMarket','전통시장')}${yM('cdTransit','대중교통')}${yC('cdKids','기본공제 자녀 수 (한도 상향용)',4,'2026 사용분부터 · 최대 2명 반영')}
+ <div class="subtle lc-note">각 칸은 <b>겹치지 않게</b> 넣어주세요 (전통시장·대중교통·도서공연은 신용/체크 금액에서 빼고). 간소화 PDF의 구분별 금액을 그대로 옮기면 돼요.<br>❌ 공제 안 되는 사용액: 보험료·세금·공과금·아파트관리비·통신비 일부·상품권·해외 사용·자동차 구입(중고차는 10%)·형제자매 사용분</div>
+ </div><div class="pc-card" id="yeOut"></div></div>`;yeOut()}
+function yeMedUI(){const b=$('yeMedBox');if(!b)return;
+ b.innerHTML=`<div class="pc-grid"><div class="pc-card lc-in ye-in">${yH('🏥 의료비 (실손보험금 받은 금액은 빼고)')}${yGross()}
+ ${yM('mdSelf','① 본인·65세 이상·장애인·6세 이하·산정특례자','한도 없음')}${yM('mdGen','② 그 외 부양가족 (배우자·자녀 등)','700만 한도')}${yM('mdPre','③ 미숙아·선천성이상아','20%')}${yM('mdIvf','④ 난임시술비','30%')}
+ <div class="subtle lc-note">✅ 포함: 진료·치료비, 처방 약값, 안경·콘택트렌즈(1인 50만), 보청기, 산후조리원(출산 1회 200만 — 산모가 본인이면 ①, 배우자면 ②), 장애인 보장구<br>❌ 제외: 미용·성형, 건강기능식품, 간병비(개인 간병인), 해외 의료비<br>💡 의료비는 <b>나이·소득 상관없이</b> 부양가족 것을 합칠 수 있어요 (다른 사람이 기본공제 받은 가족은 제외)</div>
+ </div><div class="pc-card" id="yeOut"></div></div>`;yeOut()}
+function yeOut(){const o=$('yeOut');if(!o)return;const S=yeS();
+ if(yeCur==='card'){const r=yeCard(S);
+  if(r.use<=r.min){o.innerHTML=lcRes([['총급여 25% (최저사용액)',won(r.min)],['공제 대상 사용액',won(r.use)],['25%까지 남은 금액',won(r.short),'',1]],['신용카드 소득공제','0원',r.g?`25%까지 ${won(r.short)} 더 써야 공제 시작`:'총급여를 입력하세요'],'💡 25%까지는 혜택 많은 <b>신용카드</b>, 넘은 다음부터는 공제율 높은 <b>체크카드·현금영수증(30%)</b>이 유리해요.');return}
+  o.innerHTML=lcRes([['grp','계산'],['공제 대상 사용액',won(r.use)],['총급여 25% (최저사용액)',won(r.min)],['공제율 적용 합계',won(r.pre),'구분별 공제율 적용'],['공제 제외 금액',`− ${won(r.ex)}`,'25% 부분을 낮은 공제율부터 차감'],['공제 가능 금액',won(r.can)],['grp','한도'],['기본 한도',won(r.baseLim),r.kids?`자녀 ${r.kids}명 상향 포함`:''],['기본 공제',won(r.base)],['추가 공제',won(r.add),`전통시장·대중교통${r.hi?'':'·도서공연'} · 한도 ${won(r.addLim)}`],['신용카드 소득공제',won(r.ded),'',1]],['신용카드 등 소득공제',won(r.ded),`사용액 ${won(r.use)} 중 25% 초과 ${won(r.use-r.min)}`],`${r.can>r.baseLim+r.add?'⚠️ 한도를 넘었어요 — 더 써도 공제가 늘지 않아요.<br>':''}💡 대략 절세액 = 공제액 × 세율(6~45%) × 1.1(지방세). 정확한 효과는 <b>예상 환급액 계산기</b>에 자동 반영돼요.`);return}
+ if(yeCur==='med'){const r=yeMed(S);
+  if(r.tot<=r.thr){o.innerHTML=lcRes([['총급여 3% (문턱)',won(r.thr)],['의료비 합계',won(r.tot)],['3%까지 남은 금액',won(r.need),'',1]],['의료비 세액공제','0원',r.g?`3%를 ${won(r.need)} 더 넘어야 공제 시작`:'총급여를 입력하세요'],'💡 맞벌이면 총급여 <b>적은 쪽</b>으로 몰면 3% 문턱이 낮아져요 (결정세액이 남는지도 확인).');return}
+  o.innerHTML=lcRes([['grp','3% 문턱 차감'],['총급여 3%',won(r.thr),'② 일반 → ① → ③ → ④ 순서로 차감'],['grp','공제 대상 금액'],['② 일반 부양가족',won(r.genD),r.genCut?'700만 한도 적용':'15%'],['① 본인·65세+ 등',won(r.selfD),'15%'],['③ 미숙아·선천성이상아',won(r.preD),'20%'],['④ 난임',won(r.ivfD),'30%'],['의료비 세액공제',won(r.cr),'',1]],['의료비 세액공제',won(r.cr),`지방세 포함 약 ${won(r.cr*1.1)} 절세`],'※ 결정세액이 부족하면 남는 공제액은 사라져요 (이월 안 됨).');return}
+ const A=yeRun(S,false),B=yeRun(S,true),R=B.dec<A.dec?B:A,paid=S.paid||0,paidL=Math.floor(paid*.1/10)*10,diff=(R.dec+R.local)-(paid+paidL);
+ const hero=!S.gross?['예상 결과','—','총급여를 입력하세요']:diff<0?['🎉 예상 환급액',won(-diff),'소득세 + 지방소득세 기준']:diff>0?['💸 예상 추가 납부',won(diff),diff>110000?'10만원 초과 → 2~4월 분납 신청 가능':'소득세 + 지방소득세 기준']:['정산 결과','0원','기납부세액과 같아요'];
+ o.innerHTML=lcRes([['grp','소득'],['총급여',won(R.g)],['근로소득공제',`− ${won(R.ed)}`],['근로소득금액',won(R.earn)],['grp','소득공제'],['인적공제',won(R.human)],['국민연금',won(R.nps)],['건강·고용보험',won(R.ins)],['주택자금·청약',won(R.hs+R.mort)],['신용카드 등',won(R.card),R.limited<R.hs+R.card?'종합한도 2,500만 적용':''],['과세표준',won(R.base),'',1],['산출세액',won(R.tax),'세율 6~45%'],['grp','세액공제'],...R.items.filter(x=>x[1]>0).map(x=>[x[0],won(x[1])]),['세액공제 합계',`− ${won(R.cr)}`],['grp','정산'],['결정세액',won(R.dec),'',1],['지방소득세 (10%)',won(R.local)],['기납부세액 (소득세+지방세)',won(paid+paidL)],[diff<0?'환급':'추가 납부',won(Math.abs(diff)),'',1]],hero,`${R.std?'✅ <b>표준세액공제(13만)</b>가 더 유리해서 그쪽으로 계산했어요.<br>':''}${R.tax>0&&R.cr>=R.tax?'⚠️ 세액공제가 산출세액보다 많아 결정세액 0원 — 남은 공제는 사라져요. 맞벌이면 배우자 쪽으로 옮기는 걸 검토해 보세요.<br>':''}※ 참고용 계산이에요. 청년 중소기업 감면, 기부금 소득금액 한도, 장기주택저당 요건별 한도 등은 단순화했어요.`)}
+
 function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').toLowerCase().includes(q));
  (typeof tasks!=='undefined'?tasks:[]).forEach(t=>R.push({cat:'task',icon:'📅',title:t.title,sub:`${t.date||''} · ${t.category||''}${t.relatedPerson?' · '+t.relatedPerson:''}`,text:[t.title,t.memo,t.relatedPerson,t.category].join(' '),go:()=>{showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}}));
  (typeof diaryRows!=='undefined'?diaryRows:[]).forEach(r=>R.push({cat:'diary',icon:r.kind?'📞':'📒',title:String(r.content||'').split('\n')[0]||'(내용 없음)',sub:`${r.date||''} · ${r.status||''}${r.person?' · '+r.person:''}`,text:[r.content,r.person,r.note,r.rawMemo,(r.addenda||[]).map(a=>a.text).join(' ')].join(' '),go:q=>{showPage('diaryPage',document.querySelector('[data-page=diaryPage]'));$('diarySearch').value=q;renderDiaryTable()}}));
@@ -3064,6 +3270,7 @@ function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').
  document.querySelectorAll('.topnav .nav-sub[data-page]').forEach(b=>{const lab=b.textContent.trim();R.push({cat:'ref',icon:'🧭',title:lab,sub:'메뉴 바로가기',text:lab,go:()=>b.click()})});
  document.querySelectorAll('#notesPage .nt-pane').forEach(p=>{if(p.dataset.pane==='docs')return;const tab=(document.querySelector(`#notesPage .nt-tab[data-nt="${p.dataset.pane}"]`)||{}).textContent||'';p.querySelectorAll('details').forEach(d=>R.push({cat:'ref',icon:'📚',title:(d.querySelector('summary')||{}).textContent,sub:`실무 상식 노트 · ${tab}`,text:d.textContent,go:q=>{showPage('notesPage',document.querySelector('[data-page=notesPage]'));$('ntSearch').value=q;ntSearch(q)}}));if(!p.querySelector('details'))p.querySelectorAll('tr,.xl-item').forEach(r=>{if(r.querySelector('th'))return;R.push({cat:'ref',icon:'📚',title:(r.querySelector('b')||r).textContent.slice(0,40),sub:`실무 상식 노트 · ${tab}`,text:r.textContent,go:q=>{showPage('notesPage',document.querySelector('[data-page=notesPage]'));$('ntSearch').value=q;ntSearch(q)}})})});
  document.querySelectorAll('#penaltyPage .pn-pane').forEach(p=>{const k=p.dataset.pnp,tab=(document.querySelector(`#penaltyPage .pn-tab[data-pn="${k}"]`)||{}).textContent||'';p.querySelectorAll('tbody tr').forEach(r=>R.push({cat:'ref',icon:'⚠️',title:r.children[0].textContent,sub:`가산세·과태료 · ${tab} · ${r.children[1].textContent}`,text:r.textContent,go:()=>{showPage('penaltyPage',document.querySelector('[data-page=penaltyPage]'));pnTab(k);gsFlash(r)}}))});
+ document.querySelectorAll('#yePage .ye-pane').forEach(p=>{const k=p.dataset.yp,tab=(document.querySelector(`#yePage .ye-tab[data-ye="${k}"]`)||{}).textContent||'';p.querySelectorAll('details').forEach(d=>{const sm=d.querySelector('summary');R.push({cat:'ref',icon:'🧾',title:sm.textContent.trim(),sub:`연말정산 · ${tab}`,text:d.textContent,go:()=>{showPage('yePage',document.querySelector('[data-page=yePage]'));yeTab(k);d.open=true;gsFlash(sm)}})});p.querySelectorAll('.ye-link').forEach(a=>R.push({cat:'ref',icon:'🔗',title:a.querySelector('b').textContent.trim(),sub:'사이트 · 연말정산',text:a.textContent,go:()=>window.open(a.href,'_blank')}))});
  document.querySelectorAll('#acctLinksPage .acct-card, #insInfoPage .ins-link, #econPage .econ-links a').forEach(a=>{const pg=a.closest('.page-panel');R.push({cat:'ref',icon:'🔗',title:(a.querySelector('b')||a).textContent.trim(),sub:`사이트 · ${(pg.querySelector('.diary-title')||{}).textContent||''}`,text:a.textContent+' '+(a.dataset.tip||''),go:()=>{showPage(pg.id,document.querySelector(`[data-page=${pg.id}]`));gsFlash(a)}})});
  return R}
 function gsFlash(el){setTimeout(()=>{el.scrollIntoView({block:'center',behavior:'smooth'});el.classList.add('gs-flash');setTimeout(()=>el.classList.remove('gs-flash'),2200)},120)}
