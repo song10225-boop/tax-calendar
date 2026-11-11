@@ -521,7 +521,71 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
 .bk-prog{margin:8px 0}.bk-prog .t{display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:3px}.bk-prog .b{height:10px;background:#eef1f6;border-radius:6px;overflow:hidden}.bk-prog .b i{display:block;height:100%}</style><style>#salesPage>*{flex-shrink:0}.sl-wrap{display:flex;align-items:flex-end;gap:6px;height:200px}.sl-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;min-width:0}.sl-bar{display:flex;flex-direction:column-reverse;width:72%;max-width:36px}.sl-bar i{display:block;width:100%}.sl-col small{font-size:.68rem;color:#64748b;white-space:nowrap}.sl-lg{display:inline-flex;align-items:center;gap:4px;margin:0 10px 2px 0}.sl-lg i{width:10px;height:10px;border-radius:3px;display:inline-block}
 .sl-pivot{border-collapse:collapse;width:100%;min-width:1100px;font-size:.8rem;background:#fff}.sl-pivot th,.sl-pivot td{border:1px solid #d9dfea;padding:6px 7px}.sl-pivot th{background:#fff0f7;color:#8a365d;text-align:center;white-space:nowrap}.sl-pivot td.n{text-align:right;font-variant-numeric:tabular-nums}.sl-pivot td.k{font-weight:700;white-space:nowrap}.sl-pivot tr.tot td{background:#f3f6fb;font-weight:800}.sl-pivot td.tt{background:#fffafb;font-weight:700}
 .sl-yr{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:.84rem}.sl-yr b{width:48px}.sl-yr .bar{flex:1;height:16px;background:#eef1f6;border-radius:6px;overflow:hidden}.sl-yr .bar i{display:block;height:100%;background:#d9669a}.sl-yr span{min-width:120px;text-align:right}.sl-tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.76rem;font-weight:800;color:#fff}</style><style>#salesPage>*{flex-shrink:0}.sl-upload{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 16px;border:2px dashed #e0a9c3;border-radius:13px;background:#fff8fb}.sl-upload .subtle{margin-top:4px;line-height:1.55;max-width:900px}
-.sl-detail{max-height:620px;overflow:auto!important}.sl-detail th{position:sticky;top:0;z-index:2}.sl-selcol{display:none}.sl-detail.selmode .sl-selcol{display:table-cell;width:44px;text-align:center}.sl-selcol input{width:18px;height:18px;accent-color:#e11d48}tr.sl-picked td{background:#fff1f2!important}.sl-memo{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sl-pager{display:flex;gap:10px;align-items:center;justify-content:center;font-size:.86rem;padding:4px}.sl-pager button{border:1px solid #d8dfea;background:#fff;border-radius:8px;padding:5px 12px;cursor:pointer}.sl-pager button:disabled{opacity:.4;cursor:default}</style></head>
+.sl-detail{max-height:620px;overflow:auto!important}.sl-detail th{position:sticky;top:0;z-index:2}.sl-selcol{display:none}.sl-detail.selmode .sl-selcol{display:table-cell;width:44px;text-align:center}.sl-selcol input{width:18px;height:18px;accent-color:#e11d48}tr.sl-picked td{background:#fff1f2!important}.sl-memo{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sl-pager{display:flex;gap:10px;align-items:center;justify-content:center;font-size:.86rem;padding:4px}.sl-pager button{border:1px solid #d8dfea;background:#fff;border-radius:8px;padding:5px 12px;cursor:pointer}.sl-pager button:disabled{opacity:.4;cursor:default}/* ===== 노션 스타일 테마 (설정 › 제목·색상에서 선택할 때만 적용) ===== */
+body.theme-notion{--navy:#37352f;--blue:#2383e2;--line:#e9e9e7;--muted:#787774;--bg:#ffffff;--nt-text:#37352f;--nt-sub:#787774;--nt-side:#f7f7f5;--nt-hover:rgba(55,53,47,.06);--nt-active:rgba(55,53,47,.09);--app-font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;
+ display:grid!important;grid-template-columns:240px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);background:#fff!important;color:var(--nt-text);-webkit-font-smoothing:antialiased}
+body.theme-notion,body.theme-notion *{letter-spacing:-.01em}
+body.theme-notion.global-bold{font-weight:600}
+body.theme-notion *{box-shadow:none!important}
+body.theme-notion .diary-dlg-card,body.theme-notion .appearance-card,body.theme-notion .modal,body.theme-notion .category-manager-card,body.theme-notion #taskModal>*{box-shadow:0 0 0 1px rgba(15,15,15,.05),0 5px 10px rgba(15,15,15,.1),0 15px 40px rgba(15,15,15,.2)!important;border-radius:10px!important}
+/* 상단 머리줄 */
+body.theme-notion header{grid-column:2;grid-row:1;background:#fff!important;color:var(--nt-text)!important;border-bottom:1px solid var(--line);padding:10px 28px}
+body.theme-notion header .logo-area{color:var(--nt-text)!important;font-weight:600;font-size:.95rem}
+body.theme-notion header .btn{background:#fff!important;color:var(--nt-text)!important;border:1px solid var(--line)!important;font-weight:500!important}
+body.theme-notion header .btn:hover{background:var(--nt-hover)!important}
+/* 왼쪽 사이드바 */
+body.theme-notion .topnav{grid-column:1;grid-row:1/3;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:1px;background:var(--nt-side)!important;border-bottom:0;border-right:1px solid var(--line);padding:10px 8px 24px;min-height:0;overflow-x:hidden;overflow-y:auto}
+body.theme-notion .nav-brand{display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:8px 10px;color:var(--nt-text)!important;font-weight:700;font-size:.95rem}
+body.theme-notion .nav-brand .brand-mark{background:#37352f!important;border-radius:5px}
+body.theme-notion .nav-link{height:auto!important;min-height:0!important;width:100%;display:flex!important;justify-content:flex-start!important;gap:8px;padding:6px 10px!important;border:0!important;border-radius:6px!important;background:transparent!important;color:#5f5e5b!important;font-size:.88rem!important;font-weight:500!important;text-align:left;white-space:nowrap}
+body.theme-notion .nav-link:hover{background:var(--nt-hover)!important}
+body.theme-notion .nav-link.active{background:var(--nt-active)!important;color:var(--nt-text)!important;font-weight:600!important}
+body.theme-notion .nav-group{flex-direction:column;margin-top:10px}
+body.theme-notion .nav-group-btn{pointer-events:none;font-size:.72rem!important;color:#91918e!important;font-weight:600!important;padding:4px 10px!important;background:transparent!important}
+body.theme-notion .nav-group-btn .nav-icon,body.theme-notion .nav-caret{display:none}
+body.theme-notion .nav-menu{display:block!important;position:static!important;min-width:0;background:transparent!important;border:0!important;padding:0!important;border-radius:0}
+body.theme-notion .nav-menu .nav-link{padding-left:10px!important}
+/* 본문 영역 */
+body.theme-notion .page-panel{grid-column:2;grid-row:2;background:#fff}
+body.theme-notion .diary-page{padding:0 clamp(20px,5vw,72px) 48px!important;gap:14px}
+body.theme-notion .diary-page::before{content:"";display:block;flex:0 0 auto;height:96px;margin:0 calc(-1*clamp(20px,5vw,72px)) 6px;background:linear-gradient(120deg,#f3e8dc 0%,#eaeef6 55%,#e6f0ea 100%)}
+body.theme-notion .diary-title,body.theme-notion .diary-page .panel-title:first-child,body.theme-notion .diary-page>.diary-toolbar .panel-title{font-size:1.85rem!important;font-weight:700!important;color:var(--nt-text)!important;letter-spacing:-.03em!important;line-height:1.25!important;font-family:inherit!important}
+body.theme-notion .diary-title-mark,body.theme-notion .favorites-title-heart{background:none!important;font-size:2.4rem!important;width:auto!important;height:auto!important;color:inherit!important}
+body.theme-notion .diary-subtitle,body.theme-notion .subtle{color:var(--nt-sub)!important}
+body.theme-notion .diary-heading,body.theme-notion .diary-toolbar{background:transparent!important;border:0!important;padding-left:0!important}
+/* 카드·박스 */
+body.theme-notion :is(.panel,.card,.ft-card,.sidebar-section,.summary-card,.retire-breakdown,.fortune-set,.diary-filters,.favorites-form,.settings-form,.bk-stat,.mini-cal,.left-sidebar>*,.right-sidebar>*){border-color:var(--line)!important;border-radius:8px!important}
+body.theme-notion :is(.left-sidebar,.right-sidebar){background:#fff!important;border-color:var(--line)!important}
+/* 버튼·입력 */
+body.theme-notion .btn,body.theme-notion .small-action{border-radius:6px!important;font-weight:500!important;border:1px solid var(--line)!important;background:#fff!important;color:var(--nt-text)!important;transition:background .12s}
+body.theme-notion .btn:hover,body.theme-notion .small-action:hover{background:var(--nt-hover)!important}
+body.theme-notion .btn-primary,body.theme-notion .comm-btn{background:#2383e2!important;border-color:#2383e2!important;color:#fff!important}
+body.theme-notion .btn-primary:hover,body.theme-notion .comm-btn:hover{background:#0b6bcb!important}
+body.theme-notion :is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=color]){border:1px solid var(--line)!important;border-radius:6px!important;background:#fff!important;color:var(--nt-text)}
+body.theme-notion :is(input,select,textarea):focus{outline:none;border-color:#2383e2!important;box-shadow:0 0 0 2px rgba(35,131,226,.25)!important}
+/* 표 (데이터베이스 느낌) */
+body.theme-notion table{border-color:var(--line)!important}
+body.theme-notion :is(.diary-table,.bk-table,table) thead th{background:#fff!important;color:var(--nt-sub)!important;font-weight:500!important;font-size:.8rem!important;border-color:var(--line)!important}
+body.theme-notion :is(.diary-table,.bk-table) td{border-color:var(--line)!important}
+body.theme-notion .diary-table tbody tr.diary-row td{background:#fff!important;color:var(--nt-text)!important;padding-top:10px;padding-bottom:10px}
+body.theme-notion .diary-table tbody tr.diary-row:hover td{background:#fbfbfa!important}
+body.theme-notion .diary-table tbody tr.diary-done td .diary-preview{color:var(--nt-sub)!important}
+body.theme-notion .diary-table-wrap,body.theme-notion .favorites-table-wrap{border:1px solid var(--line)!important;border-radius:8px!important}
+/* 상태 태그: 노션 색상 */
+body.theme-notion .priority-pill{border:0!important;border-radius:4px!important;font-weight:500!important;padding:2px 7px!important}
+body.theme-notion .priority-pill.status-done,body.theme-notion .diary-status.status-done{background:#dbeddb!important;color:#1c3829!important}
+body.theme-notion .priority-pill.status-progress,body.theme-notion .diary-status.status-progress{background:#d3e5ef!important;color:#183347!important}
+body.theme-notion .priority-pill.status-late,body.theme-notion .diary-status.status-late{background:#ffe2dd!important;color:#5d1715!important}
+body.theme-notion .priority-pill.status-wait,body.theme-notion .diary-status.status-wait{background:#fdecc8!important;color:#402c1b!important}
+body.theme-notion .priority-pill.status-planned,body.theme-notion .diary-status.status-planned{background:#e3e2e0!important;color:#32302c!important}
+body.theme-notion .comm-tag{background:#e8deee!important;color:#412454!important;border-radius:4px!important}
+body.theme-notion .bk-type.corp{background:#d3e5ef!important;color:#183347!important}body.theme-notion .bk-type.ind{background:#fadec9!important;color:#49290e!important}
+/* 달력 */
+body.theme-notion .day-header{background:#fff!important;color:var(--nt-sub)!important;font-weight:500!important;border-color:var(--line)!important}
+body.theme-notion .quick-filter.active{background:var(--nt-active)!important;border-color:var(--line)!important;color:var(--nt-text)!important}
+body.theme-notion .nav-group-btn.active{background:transparent!important;color:#91918e!important}body.theme-notion .diary-table{min-width:1180px}body.theme-notion .diary-table th,body.theme-notion .priority-pill{white-space:nowrap}body.theme-notion :is(.diary-filters,.bk-filters,.diary-quick){background:#fff!important;border:1px solid var(--line)!important;border-radius:8px!important}body.theme-notion .diary-phrase{background:#f1f1ef!important;color:#37352f!important;border:0!important;font-weight:500!important;border-radius:4px!important}body.theme-notion .diary-phrase:hover{background:#e3e2e0!important}body.theme-notion .diary-stamp{background:transparent!important;border:0!important;padding:0!important;color:var(--nt-text)!important}body.theme-notion .diary-stamp small{background:transparent!important;color:var(--nt-sub)!important;font-weight:400!important}body.theme-notion .diary-page>*{flex-shrink:0}body.theme-notion .diary-table-wrap{flex:0 0 auto!important;overflow-x:auto!important;overflow-y:visible!important}body.theme-notion .diary-table td:nth-child(7),body.theme-notion .diary-table td:nth-child(8){white-space:nowrap}@media(max-width:820px){body.theme-notion{grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr)}body.theme-notion header{grid-column:1;grid-row:1}body.theme-notion .topnav{grid-column:1;grid-row:2;flex-direction:row;overflow-x:auto;padding:6px;border-right:0;border-bottom:1px solid var(--line)}body.theme-notion .nav-group{flex-direction:row;margin:0}body.theme-notion .nav-group-btn{display:none!important}body.theme-notion .nav-brand{display:none}body.theme-notion .nav-link{width:auto}body.theme-notion .page-panel{grid-column:1;grid-row:3}}
+@media print{body.theme-notion{display:block!important}body.theme-notion .diary-page::before{display:none}}
+</style></head>
 <body>
 
 <style>
@@ -1219,6 +1283,7 @@ body.theme-green .quick-filter.active{background:#dcfce7;border-color:#86b98a;co
       <option value="beige">밀크티 베이지 톤</option>
       <option value="lavender">연보라 라벤더 톤</option>
       <option value="green">행운의 연녹색 🍀🍀</option>
+      <option value="notion">노션 스타일 (흰 바탕 · 왼쪽 메뉴) ✨</option>
     </select>
     <div class="subtle" style="margin-top:7px">선택한 제목과 색상은 이 브라우저에 저장됩니다.</div>
     <div class="appearance-actions"><button class="btn btn-outline" onclick="closeAppearanceSettings()">취소</button><button class="btn btn-primary" onclick="saveAppearanceSettings()">저장</button></div>
@@ -1444,9 +1509,9 @@ async function signOutTaxDiary(){cloudLoadComplete=false;currentUser=null;salesC
 })();
 function applyAppearance(){
  const title=(profile.calendarTitle||'경영전략부 업무 캘린더').trim()||'경영전략부 업무 캘린더';
- const allowedThemes=['blue','rose','beige','lavender','green'];
+ const allowedThemes=['blue','rose','beige','lavender','green','notion'];
  const theme=allowedThemes.includes(profile.theme)?profile.theme:'blue';
- document.body.classList.remove('theme-rose','theme-beige','theme-lavender','theme-green');
+ document.body.classList.remove('theme-rose','theme-beige','theme-lavender','theme-green','theme-notion');if(theme==='notion'&&!document.getElementById('pretendardFont')){const l=document.createElement('link');l.id='pretendardFont';l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css';document.head.appendChild(l)}
  if(theme!=='blue')document.body.classList.add('theme-'+theme);
  const titleEl=$('appTitleText');if(titleEl)titleEl.textContent=title;
  document.title=title;
@@ -1462,7 +1527,7 @@ function applyAppearance(){
 }
 function openAppearanceSettings(){
  $('customCalendarTitle').value=profile.calendarTitle||'경영전략부 업무 캘린더';
- $('calendarThemeChoice').value=['blue','rose','beige','lavender','green'].includes(profile.theme)?profile.theme:'blue';
+ $('calendarThemeChoice').value=['blue','rose','beige','lavender','green','notion'].includes(profile.theme)?profile.theme:'blue';
  $('calendarFontChoice').value=profile.fontFamily||'Dotum, 돋움, sans-serif';
  $('calendarTextSize').value=['small','normal','large'].includes(profile.fontSize)?profile.fontSize:'normal';
  $('calendarBoldChoice').checked=!!profile.boldText;
@@ -1472,7 +1537,7 @@ function closeAppearanceSettings(){$('appearanceModal').classList.remove('open')
 function saveAppearanceSettings(){
  const title=$('customCalendarTitle').value.trim();
  if(!title){alert('캘린더 제목을 입력해 주세요.');$('customCalendarTitle').focus();return}
- profile.calendarTitle=title;profile.theme=['blue','rose','beige','lavender','green'].includes($('calendarThemeChoice').value)?$('calendarThemeChoice').value:'blue';
+ profile.calendarTitle=title;profile.theme=['blue','rose','beige','lavender','green','notion'].includes($('calendarThemeChoice').value)?$('calendarThemeChoice').value:'blue';
  profile.fontFamily=['Dotum, 돋움, sans-serif','Malgun Gothic, 맑은 고딕, sans-serif','Gulim, 굴림, sans-serif','Batang, 바탕, serif'].includes($('calendarFontChoice').value)?$('calendarFontChoice').value:'Dotum, 돋움, sans-serif';
  profile.fontSize=['small','normal','large'].includes($('calendarTextSize').value)?$('calendarTextSize').value:'normal';
  profile.boldText=$('calendarBoldChoice').checked;
@@ -2837,7 +2902,7 @@ function exportExcel(){
  const settingsRows=[
   ...(profile.quickLinks||[]).map(l=>({'종류':'바로가기','이름':l.name||'','URL':l.url||'','로그인 ID':l.loginId||'','날짜':'','설명':''})),
   ...(profile.customHolidays||[]).map(h=>({'종류':'공휴일','이름':'','URL':'','로그인 ID':'','날짜':h.date||'','설명':h.name||''})),
-  {'종류':'화면설정','이름':profile.calendarTitle||'경영전략부 업무 캘린더','URL':'','로그인 ID':'','날짜':'','설명':['blue','rose','beige','lavender','green'].includes(profile.theme)?profile.theme:'blue'}
+  {'종류':'화면설정','이름':profile.calendarTitle||'경영전략부 업무 캘린더','URL':'','로그인 ID':'','날짜':'','설명':['blue','rose','beige','lavender','green','notion'].includes(profile.theme)?profile.theme:'blue'}
  ];
  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(taskRows),'달력 업무');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(diaryData),'업무 일지');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(settingsRows),'바로가기·공휴일');
  XLSX.writeFile(wb,`TaxDiary_백업_${toISO(new Date())}.xlsx`);
@@ -2857,7 +2922,7 @@ function importExcel(e){
   if(!confirm('선택한 엑셀의 업무와 일지로 현재 데이터를 교체할까요? 기존 데이터는 먼저 백업해 주세요.'))return;
   tasks=taskData.map((r,i)=>({id:`import-${Date.now()}-${i}`,title:String(r['업무명']||''),emoji:String(r['이모지']||''),date:String(r['마감일']||''),category:['회계','자금','인사','총무','공통'].includes(r['분야'])?r['분야']:'공통',status:['예정','진행 중','결재 대기','자료 대기','완료'].includes(r['상태'])?r['상태']:'예정',priority:({'보통':'normal','중요':'important','긴급':'urgent'}[r['중요도']]||(['normal','important','urgent'].includes(r['중요도'])?r['중요도']:'normal')),repeat:r['반복주기']||'none',actualDate:r['실제완료일']||'',memo:r['메모']||'',link:r['관련링크']||'',color:r['달력색상']||'',isDday:String(r['디데이여부']||'').toUpperCase()==='O',logs:[] })).filter(t=>t.title&&/^\d{4}-\d{2}-\d{2}$/.test(t.date));
   diaryRows=diaryData.map((r,i)=>({id:`diary-import-${Date.now()}-${i}`,date:excelDate(r['날짜']),status:['예정','진행 중','결재 대기','자료 대기','완료','지연'].includes(r['상태'])?r['상태']:'진행 중',person:String(r['업무관련자']||''),content:String(r['내용']||''),deadline:excelDate(r['마감일']),doneDate:r['완료일']?excelDate(r['완료일']):'',note:String(r['비고']||'')})).filter(r=>r.date||r.content||r.person);
-  if(settingsSheet){profile.quickLinks=settingsData.filter(r=>r['종류']==='바로가기').map(r=>({name:String(r['이름']||''),url:String(r['URL']||''),loginId:String(r['로그인 ID']||'')})).filter(l=>l.name&&l.url);profile.customHolidays=settingsData.filter(r=>r['종류']==='공휴일').map(r=>({date:excelDate(r['날짜']),name:String(r['설명']||'')})).filter(h=>h.date&&h.name);const appearance=settingsData.find(r=>r['종류']==='화면설정');if(appearance){profile.calendarTitle=String(appearance['이름']||'경영전략부 업무 캘린더');profile.theme=['blue','rose','beige','lavender','green'].includes(String(appearance['설명']||'blue'))?String(appearance['설명']):'blue'}}
+  if(settingsSheet){profile.quickLinks=settingsData.filter(r=>r['종류']==='바로가기').map(r=>({name:String(r['이름']||''),url:String(r['URL']||''),loginId:String(r['로그인 ID']||'')})).filter(l=>l.name&&l.url);profile.customHolidays=settingsData.filter(r=>r['종류']==='공휴일').map(r=>({date:excelDate(r['날짜']),name:String(r['설명']||'')})).filter(h=>h.date&&h.name);const appearance=settingsData.find(r=>r['종류']==='화면설정');if(appearance){profile.calendarTitle=String(appearance['이름']||'경영전략부 업무 캘린더');profile.theme=['blue','rose','beige','lavender','green','notion'].includes(String(appearance['설명']||'blue'))?String(appearance['설명']):'blue'}}
   saveData();renderAll();renderDiaryTable();alert(`복원 완료: 달력 업무 ${tasks.length}건, 일지 ${diaryRows.length}건`);
  }catch(err){alert('엑셀 파일을 읽지 못했습니다. TaxDiary에서 내보낸 .xlsx 파일인지 확인해 주세요.\\n'+err.message)}
  finally{e.target.value=''}
