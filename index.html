@@ -3258,6 +3258,39 @@ function yeOut(){const o=$('yeOut');if(!o)return;const S=yeS();
  const hero=!S.gross?['예상 결과','—','총급여를 입력하세요']:diff<0?['🎉 예상 환급액',won(-diff),'소득세 + 지방소득세 기준']:diff>0?['💸 예상 추가 납부',won(diff),diff>110000?'10만원 초과 → 2~4월 분납 신청 가능':'소득세 + 지방소득세 기준']:['정산 결과','0원','기납부세액과 같아요'];
  o.innerHTML=lcRes([['grp','소득'],['총급여',won(R.g)],['근로소득공제',`− ${won(R.ed)}`],['근로소득금액',won(R.earn)],['grp','소득공제'],['인적공제',won(R.human)],['국민연금',won(R.nps)],['건강·고용보험',won(R.ins)],['주택자금·청약',won(R.hs+R.mort)],['신용카드 등',won(R.card),R.limited<R.hs+R.card?'종합한도 2,500만 적용':''],['과세표준',won(R.base),'',1],['산출세액',won(R.tax),'세율 6~45%'],['grp','세액공제'],...R.items.filter(x=>x[1]>0).map(x=>[x[0],won(x[1])]),['세액공제 합계',`− ${won(R.cr)}`],['grp','정산'],['결정세액',won(R.dec),'',1],['지방소득세 (10%)',won(R.local)],['기납부세액 (소득세+지방세)',won(paid+paidL)],[diff<0?'환급':'추가 납부',won(Math.abs(diff)),'',1]],hero,`${R.std?'✅ <b>표준세액공제(13만)</b>가 더 유리해서 그쪽으로 계산했어요.<br>':''}${R.tax>0&&R.cr>=R.tax?'⚠️ 세액공제가 산출세액보다 많아 결정세액 0원 — 남은 공제는 사라져요. 맞벌이면 배우자 쪽으로 옮기는 걸 검토해 보세요.<br>':''}※ 참고용 계산이에요. 청년 중소기업 감면, 기부금 소득금액 한도, 장기주택저당 요건별 한도 등은 단순화했어요.`)}
 
+/* ===== 공통 인쇄·PDF (모든 메뉴) ===== */
+const PP_SKIP=['diaryPage','salesPage','receivablesPage','bookkeepingPage'];
+function ppInit(){document.querySelectorAll('section.page-panel').forEach(sec=>{if(PP_SKIP.includes(sec.id)||sec.querySelector('.pp-btn'))return;const tb=sec.querySelector('.diary-toolbar');if(!tb)return;
+ let box=tb.querySelector(':scope > .diary-actions');if(!box){box=document.createElement('div');box.className='diary-actions';tb.appendChild(box)}
+ const b=document.createElement('button');b.type='button';b.className='btn btn-outline pp-btn';b.title="인쇄 창에서 'PDF로 저장'을 고르면 PDF 파일로 저장돼요";b.textContent='🖨 인쇄·PDF';b.onclick=()=>pagePrint(sec.id);box.appendChild(b)})}
+function ppBuild(id){const sec=$(id);if(!sec)return'';const cl=sec.cloneNode(true);
+ const src=sec.querySelectorAll('input,select,textarea'),dst=cl.querySelectorAll('input,select,textarea');
+ src.forEach((el,i)=>{const d=dst[i];if(!d)return;if(el.type==='hidden'||el.type==='file'||el.type==='button'){d.remove();return}
+  let t;if(el.type==='checkbox'||el.type==='radio')t=el.checked?'☑':'☐';else if(el.tagName==='SELECT')t=el.selectedOptions[0]?el.selectedOptions[0].text:'';else t=el.value;
+  if(t===''&&!(el.type==='checkbox'||el.type==='radio'||el.tagName==='SELECT')&&(el.type==='search'||/search/i.test(el.id)||!el.closest('label,.lc-f'))){d.remove();return}
+  const sp=document.createElement('span');sp.className='pp-val'+(el.tagName==='TEXTAREA'?' ta':'')+(el.type==='checkbox'||el.type==='radio'?' ck':'');sp.textContent=t===''?'—':t;d.replaceWith(sp)});
+ const sc=sec.querySelectorAll('canvas'),dc=cl.querySelectorAll('canvas');sc.forEach((c,i)=>{try{const im=document.createElement('img');im.src=c.toDataURL();im.style.maxWidth='100%';dc[i].replaceWith(im)}catch(e){}});
+ cl.querySelectorAll('[hidden],.pp-btn,script,iframe,.tradingview-widget-container').forEach(e=>e.remove());
+ cl.querySelectorAll('button').forEach(b=>{if(b.classList.contains('on')||b.classList.contains('active')){const s=document.createElement('span');s.className='pp-tab';s.textContent=b.textContent.trim();b.replaceWith(s)}else b.remove()});
+ cl.querySelectorAll('.diary-actions').forEach(e=>{if(!e.textContent.trim())e.remove()});
+ cl.removeAttribute('id');cl.classList.add('active');cl.id=id;
+ const css=[...document.querySelectorAll('style')].map(s=>s.outerHTML).join('')+[...document.querySelectorAll('link[rel=stylesheet]')].map(l=>l.outerHTML).join('');
+ const title=((sec.querySelector('.diary-title,.panel-title')||{}).textContent||'TaxDiary').replace(/\s+/g,' ').trim(),now=new Date(),ds=`${toISO(now)} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+ const P=`<style>@page{size:A4;margin:12mm}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}html,body{height:auto!important;min-height:0!important;overflow:visible!important;zoom:1!important;display:block!important;background:#fff!important;margin:0}body{padding:14px 18px}
+ .page-panel{display:flex!important;flex-direction:column;gap:10px;position:static!important;height:auto!important;max-height:none!important;overflow:visible!important;padding:0!important;box-shadow:none!important;border:0!important}
+ .page-panel *{max-height:none!important}.page-panel [style*="overflow"],.page-panel .table-wrap,.page-panel [class*="wrap"]{overflow:visible!important}
+ .page-panel thead th,.page-panel [style*="sticky"]{position:static!important}.diary-page::before{display:none!important}
+ .pp-val{display:inline-block;min-width:60px;padding:4px 8px;border:1px solid #cbd5e1;border-radius:6px;background:#f8fafc;font-weight:700;color:#0f172a;text-align:right}.pp-val.ta{display:block;text-align:left;white-space:pre-wrap;min-height:30px}.pp-val.ck{min-width:0;border:0;background:none;padding:0 4px 0 0;font-size:1.05em}
+ .lc-f .pp-val,label .pp-val{display:block;margin-top:3px}.ye-chk .pp-val,.pc-chk .pp-val{display:inline;margin:0}
+ .pp-tab{display:inline-block;padding:5px 12px;border-radius:999px;background:#1e40af;color:#fff;font-weight:800;font-size:.85rem}
+ .pp-head{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #1e293b;padding-bottom:6px;margin-bottom:10px;font-size:.78rem;color:#475569}.pp-head b{font-size:.9rem;color:#0f172a}
+ .pc-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}details{break-inside:avoid}tr,.pc-hero{break-inside:avoid}
+ @media screen{body{max-width:1100px;margin:0 auto}.pp-bar{position:sticky;top:0;background:#fff;padding:8px 0;margin-bottom:8px;display:flex;gap:8px;z-index:9}.pp-bar button{padding:8px 16px;border-radius:8px;border:1px solid #1e40af;background:#1e40af;color:#fff;font-weight:800;cursor:pointer}.pp-bar button+button{background:#fff;color:#1e40af}}@media print{.pp-bar{display:none}}</style>`;
+ return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${escapeHTML(title)} - ${toISO(now)}</title>${css}${P}</head><body class="${escapeHTML(document.body.className.replace(/\bprinting-\S+/g,''))}"><div class="pp-bar"><button onclick="print()">🖨 인쇄 / PDF로 저장</button><button onclick="close()">닫기</button></div><div class="pp-head"><span></span><span>TaxDiary · 출력 ${ds}</span></div>${cl.outerHTML}</body></html>`}
+function pagePrint(id){const html=ppBuild(id);if(!html)return;const w=window.open('','_blank');if(!w){alert('팝업이 차단됐어요. 브라우저 주소창 오른쪽에서 팝업을 허용해 주세요.');return}
+ w.document.open();w.document.write(html);w.document.close();setTimeout(()=>{try{w.focus();w.print()}catch(e){}},600)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ppInit);else ppInit();
+
 function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').toLowerCase().includes(q));
  (typeof tasks!=='undefined'?tasks:[]).forEach(t=>R.push({cat:'task',icon:'📅',title:t.title,sub:`${t.date||''} · ${t.category||''}${t.relatedPerson?' · '+t.relatedPerson:''}`,text:[t.title,t.memo,t.relatedPerson,t.category].join(' '),go:()=>{showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}}));
  (typeof diaryRows!=='undefined'?diaryRows:[]).forEach(r=>R.push({cat:'diary',icon:r.kind?'📞':'📒',title:String(r.content||'').split('\n')[0]||'(내용 없음)',sub:`${r.date||''} · ${r.status||''}${r.person?' · '+r.person:''}`,text:[r.content,r.person,r.note,r.rawMemo,(r.addenda||[]).map(a=>a.text).join(' ')].join(' '),go:q=>{showPage('diaryPage',document.querySelector('[data-page=diaryPage]'));$('diarySearch').value=q;renderDiaryTable()}}));
