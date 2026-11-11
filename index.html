@@ -637,6 +637,9 @@ body.theme-notion .nav-group-btn.active{background:transparent!important;color:#
 
 <style>.vr-ref{margin-top:12px;background:#fff;border:1px solid var(--line,#e2e8f0);border-radius:12px;padding:4px 14px 10px}.vr-ref summary{cursor:pointer;font-weight:800;padding:8px 0}</style>
 
+<style>.upd-tl{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin:0 0 10px}.upd-tl div{background:#fff;border:1px solid #c7d2fe;border-left:4px solid #6366f1;border-radius:10px;padding:8px 11px;display:flex;flex-direction:column;gap:2px}.upd-tl span{font-size:.74rem;font-weight:800;color:#4f46e5}.upd-tl b{font-size:.88rem}.upd-tl small{font-size:.74rem;color:#64748b}
+.upd-tbl td,.upd-tbl th{white-space:normal!important;text-align:left!important;vertical-align:top}.upd-tbl td small{display:block;margin-top:3px;color:#b45309;font-size:.74rem}.upd-tbl tr.done td{color:#94a3b8}.upd-tbl tr.done td b{text-decoration:line-through;text-decoration-color:#16a34a}.upd-tbl input{width:17px;height:17px;accent-color:#16a34a}</style>
+
 </head>
 <body>
 
@@ -780,6 +783,7 @@ body.theme-notion .nav-group-btn.active{background:transparent!important;color:#
     </div></div>
   <div class="nav-group"><button type="button" class="nav-link nav-group-btn" onclick="toggleNavMenu(this)"><span class="nav-icon">⚙️</span> 설정 <span class="nav-caret">▾</span></button>
     <div class="nav-menu">
+      <button class="nav-link nav-sub" data-page="updPage" onclick="showPage('updPage',this)"><span class="nav-icon">🔄</span> 연도별 업데이트 목록</button>
       <button class="nav-link nav-sub" data-page="holidaysPage" onclick="showPage('holidaysPage',this)"><span class="nav-icon">🌷</span> 공휴일 관리</button>
       <button class="nav-link nav-sub" onclick="document.getElementById('excelImportFile').click()">📥 엑셀 복원</button>
       <button class="nav-link nav-sub" onclick="exportExcel()">📤 엑셀 백업</button>
@@ -1622,6 +1626,10 @@ TaxDiary 회계·세무 › 환율·경제에서도 매매기준율을 바로 �
 <section id="vatPage" class="page-panel diary-page vat-page">
   <div class="diary-toolbar"><div><div class="diary-title"><span class="diary-title-mark">🧾</span>부가세 신고 체크리스트</div><div class="diary-subtitle">기수별로 매출·매입·부속서류·검증·신고 후 정리까지 하나씩 체크해요. 체크하면 줄이 그어지고 완료 날짜가 남아요.</div></div></div>
   <div id="vatBody"></div>
+</section>
+<section id="updPage" class="page-panel diary-page upd-page">
+  <div class="diary-toolbar"><div><div class="diary-title"><span class="diary-title-mark">🔄</span>연도별 업데이트 목록</div><div class="diary-subtitle">세법·4대보험·최저임금처럼 <b>해마다 바뀌는 기준</b>과 바뀌는 <b>시기</b>를 모았어요. 업데이트를 부탁할 때 쓰는 요청 문구와 알림 등록도 여기서 해요.</div></div></div>
+  <div id="updBody"></div>
 </section>
 <section id="memoPage" class="page-panel diary-page sticky-memo-page">
   <div class="diary-toolbar">
@@ -3860,6 +3868,36 @@ function vrCalc(){const o=$('vrOut');if(!o)return;const S=vrS(),sale=S.sale||0,b
  o.innerHTML=lcRes([['매출 과세표준',won(sale)],['공제 매입',won(buy)],['부가가치 (매출 − 매입)',won(sale-buy)],['부가율',p(r),'(매출 − 매입) ÷ 매출 × 100',1],...(fix?[['고정자산 제외 부가율',p(r2),'설비투자 영향을 빼고 본 값',1]]:[]),...(pr!=null?[['직전 비교 부가율',p(pr),`${r-pr>=0?'+':''}${(r-pr).toFixed(1)}%p`]]:[]),...(avg?[['동종업종 평균',p(avg),`${r-avg>=0?'+':''}${(r-avg).toFixed(1)}%p`]]:[]),['예상 납부세액 (참고)',won((sale-buy)*.1),'(매출 − 매입) × 10%']],['부가율',p(r),fix?`고정자산 제외 ${p(r2)}`:`부가가치 ${won(sale-buy)}`],(warn.length?warn.join('<br>')+'<br>':'✅ 특이사항 없음<br>')+'※ 부가율이 갑자기 떨어지면 국세청 신고 전 안내(신고도움서비스)·사후검증에서 소명 요청을 받을 수 있어요. 기준선은 업종마다 달라 공식 수치가 없으니, <b>직전 기·작년 같은 기·동종업종 평균</b>과 비교하는 게 실무 체크법이에요.')}
 const _renderVatBase=renderVat;renderVat=function(){const b=$('vatBody');if(!b)return;const tabs=`<div class="nt-tabs" style="margin-bottom:10px"><button type="button" class="nt-tab vt-tab${vatCur==='chk'?' on':''}" onclick="vatCur='chk';renderVat()">✅ 신고 체크리스트</button><button type="button" class="nt-tab vt-tab${vatCur==='rate'?' on':''}" onclick="vatCur='rate';renderVat()">📊 부가율 체크</button></div>`;
  if(vatCur==='rate'){b.innerHTML=tabs+vrUI();vrCalc();return}_renderVatBase();b.insertAdjacentHTML('afterbegin',tabs)};
+
+/* ===== 연도별 업데이트 목록 ===== */
+const UPD_ITEMS=[
+['ins','4대보험 요율','국민연금 9.5%(근로자 4.75%) · 건강 7.19% · 장기요양 0.9448% · 고용 근로자 0.9%','1월 1일 시행 (건강·장기요양은 전년 8~11월 결정)','국민연금은 연금개혁으로 매년 0.5%p ↑ → 2027년 10% 예정','급여 계산기 · 보수총액 · 4대보험 페이지'],
+['npsCap','국민연금 기준소득월액 상·하한','41만 ~ 659만 (2026.7~)','매년 7월 1일','','급여 계산기'],
+['minw','최저임금','2026년 10,320원 · 2027년 10,700원','8월 초 고시 → 다음 해 1월 1일 시행','','노무 계산기 · 4대보험·최저임금 · 이직확인서'],
+['ui','구직급여 상한·하한','상한 68,100원 · 하한 최저임금 80% × 8시간','1월 1일','하한이 상한보다 높아지면 하한 적용','이직확인서'],
+['wht','근로소득 간이세액표','2026.2.27 개정분','2월 말 ~ 3월 (소득세법 시행령 개정 시)','','급여 계산기'],
+['ye','연말정산 공제','자녀세액공제 9세 이상 · 카드 자녀 한도 · 고향사랑 40% 등 (2026 귀속)','12월 세법 통과 → 다음 해 귀속분','자녀세액공제 나이 2027년 10세 이상 예정','연말정산 메뉴'],
+['bill','세법개정안 확정 항목 ("개정안" 표시)','업무용승용차 700만/1,000만(2027 취득분) · 업무추진비 5만·경조사 30만','12월 국회 통과 후 확정','통과 내용대로 "개정안" 표시를 지우거나 고치기','결산·세무조정 도구 · 업무추진비 · 실무상식'],
+['pen','가산세율 · 납부지연 이자율','1일 0.022% · 원천세 3% · 세금계산서 1%/2% 등','2~3월 시행령 개정 시','','가산세·과태료'],
+['rate','당좌대출이자율 (인정이자)','연 4.6%','3월 시행규칙 개정 시','','이자·가지급금 계산기'],
+['nt','비과세 한도','식대 월 20만 · 보육수당 자녀 1명당 월 20만 등','12월 세법 통과 → 1월','','노무 계산기 › 비과세 항목표 · 급여 계산기'],
+['sched','법정 세무일정 · 공휴일','세무 달력 일정 · 공휴일 목록','12월 (다음 해 일정) · 임시공휴일은 수시','임시공휴일은 공휴일 관리에 직접 등록하면 기한 계산에 바로 반영','세무 달력 · 공휴일 관리'],
+['etc','거의 안 바뀌는 것','이자 원천세 14%·25% · 간이과세 부가가치율 · 지급명세서 기한','개정 시에만','','이자 계산기 · 부가세 · 지급명세서']];
+const UPD_TL=[['8월','세법개정안 발표','정부안 — 아직 확정 아님'],['8월 초','최저임금 고시','다음 해 1월 1일 시행'],['12월','국회 세법 통과','개정안 확정 → <b>1차 업데이트 요청</b>'],['1월 1일','4대보험·최저임금·세법 시행','요율 바뀐 거 확인'],['2월 말~3월','시행령·간이세액표 개정','<b>2차 업데이트 요청</b>'],['7월 1일','국민연금 상·하한 변경','급여 계산기 확인']];
+function updY(){return profile.updYear||new Date().getFullYear()+1}
+function updTog(id){const y=updY(),c=(profile.updChk=profile.updChk||{})[y]=(profile.updChk[y]||{});if(c[id])delete c[id];else c[id]=toISO(new Date());saveData();renderUpd()}
+function updMsg(){const y=updY();return `첨부한 TaxDiary 파일에 ${y}년 세법·4대보험·최저임금 등 바뀐 내용을 전부 반영해줘.\n설정 › 연도별 업데이트 목록에 있는 항목(4대보험 요율, 국민연금 상·하한, 최저임금, 구직급여, 간이세액표, 연말정산 공제, 세법개정안 확정 항목, 가산세율, 당좌대출이자율, 비과세 한도, 세무일정·공휴일)을 하나씩 확인해서\n계산기·실무상식·가산세·연말정산·달력 일정까지 고쳐주고, "개정안"으로 표시된 건 확정됐는지 확인해서 바꿔줘.`}
+function updCopy(){const t=updMsg();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>alert('요청 문구를 복사했어요.\nClaude에게 최신 TaxDiary 파일을 첨부하고 붙여넣기 하세요.'),()=>{prompt('아래 문구를 복사하세요 (Ctrl+C)',t.replace(/\n/g,' '))})}
+function updCal(){const y=updY(),cat=typeof taxFilingCategory==='function'?taxFilingCategory():'',L=[[`${y-1}-12-29`,`🔄 TaxDiary ${y}년 세법 업데이트 요청 (1차)`,'국회 세법 통과 후 — 최신 파일 첨부 + 설정 › 연도별 업데이트의 요청 문구 붙여넣기'],[`${y}-01-02`,`🔄 ${y}년 4대보험 요율·최저임금 반영 확인`,'설정 › 연도별 업데이트 체크'],[`${y}-03-03`,`🔄 TaxDiary ${y}년 업데이트 요청 (2차 · 간이세액표·시행령)`,'시행령·간이세액표 개정 확인 후 요청'],[`${y}-07-01`,`🔄 국민연금 기준소득월액 상·하한 변경 확인`,'급여 계산기 반영 여부'],[`${y}-08-06`,`🔄 ${y+1}년 최저임금 고시 확인`,'고시되면 업데이트 요청 때 같이']];
+ const add=L.filter(l=>!tasks.some(t=>t.id==='upd-'+l[0]));if(!add.length){alert('이미 달력에 등록돼 있어요.');return}if(!confirm(`달력에 ${add.length}건을 등록할까요?\n\n`+add.map(l=>`· ${l[0]}  ${l[1]}`).join('\n')))return;
+ add.forEach(l=>tasks.push({id:'upd-'+l[0],title:l[1],emoji:'🔄',date:l[0],endDate:l[0],relatedPerson:'',category:cat,status:'예정',priority:'normal',isDday:false,excludeOverdue:false,repeat:'none',repeatUntil:'',actualDate:'',memo:l[2],link:'',color:'',logs:[],attachments:[]}));saveData();try{renderAll()}catch(e){}alert('달력에 등록했어요.')}
+function renderUpd(){const b=$('updBody');if(!b)return;const y=updY(),c=(profile.updChk||{})[y]||{},done=UPD_ITEMS.filter(i=>c[i[0]]).length;
+ b.innerHTML=`<div class="vt-top"><label>업데이트 대상 연도 <select onchange="profile.updYear=+this.value;saveData();renderUpd()">${[y-1,y,y+1].map(v=>`<option${v===y?' selected':''}>${v}</option>`).join('')}</select></label><span class="subtle">이 파일은 <b>2026년 11월</b> 기준으로 만들어졌어요.</span><span style="margin-left:auto"></span><button type="button" class="btn btn-primary" onclick="updCopy()">📋 Claude 요청 문구 복사</button><button type="button" class="btn btn-outline" onclick="updCal()">📅 알림 달력에 등록</button></div>
+ <div class="upd-tl">${UPD_TL.map(([w,t,n])=>`<div><span>${w}</span><b>${t}</b><small>${n}</small></div>`).join('')}</div>
+ <div class="cl-total"><b>${y}년 반영 확인</b><div class="cl-bar"><i style="display:block;height:100%;width:${Math.round(done/UPD_ITEMS.length*100)}%;background:linear-gradient(90deg,#6366f1,#16a34a)"></i></div><b>${done} / ${UPD_ITEMS.length}</b></div>
+ <div class="ym-wrap" style="margin-top:10px"><table class="pr-sum upd-tbl"><thead><tr><th style="width:40px">✓</th><th>항목</th><th>지금 앱에 들어간 기준</th><th>바뀌는 시기</th><th>반영 위치</th></tr></thead><tbody>${UPD_ITEMS.map(([id,t,cur,when,note,where])=>`<tr class="${c[id]?'done':''}" onclick="updTog('${id}')"><td><input type="checkbox"${c[id]?' checked':''} onclick="event.stopPropagation();updTog('${id}')"></td><td><b>${t}</b>${c[id]?`<span class="vt-badge">✓ ${c[id].slice(5).replace('-','/')}</span>`:''}</td><td>${cur}${note?`<small>💡 ${note}</small>`:''}</td><td>${when}</td><td><small style="color:#475569">${where}</small></td></tr>`).join('')}</tbody></table></div>
+ <div class="subtle lc-note">📌 <b>업데이트 부탁하는 법</b>: ① 최신 TaxDiary 파일을 Claude에게 첨부 ② 위 <b>📋 요청 문구 복사</b>를 눌러 붙여넣기 ③ 받은 새 파일로 교체 → 반영된 항목을 여기서 체크.<br>※ 체크는 "새 파일에 반영된 걸 내가 확인했다"는 표시예요. 데이터(일정·업무일지 등)는 파일을 바꿔도 로그인 계정에 그대로 남아요.</div>`}
+const _showPageUpd=showPage;showPage=function(id,b){const r=_showPageUpd(id,b);if(id==='updPage')try{renderUpd()}catch(e){}return r};
 
 function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').toLowerCase().includes(q));
  (typeof tasks!=='undefined'?tasks:[]).forEach(t=>R.push({cat:'task',icon:'📅',title:t.title,sub:`${t.date||''} · ${t.category||''}${t.relatedPerson?' · '+t.relatedPerson:''}`,text:[t.title,t.memo,t.relatedPerson,t.category].join(' '),go:()=>{showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}}));
