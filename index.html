@@ -595,6 +595,18 @@ body.theme-notion .nav-group-btn.active{background:transparent!important;color:#
 .ye-links{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}.ye-link{display:flex;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--line,#e2e8f0);border-radius:12px;padding:12px 14px;text-decoration:none;color:#0f172a;transition:.15s}.ye-link:hover{border-color:#14b8a6;box-shadow:0 4px 14px rgba(20,184,166,.15);transform:translateY(-1px)}.ye-link span{font-size:.8rem;color:#64748b;line-height:1.5}
 @media print{.ye-tabs{display:none}}
 </style>
+<style>
+.ym-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.ym-up{cursor:pointer}.ym-bar .subtle{font-size:.8rem}
+.ym-wrap{overflow-x:auto;border:1px solid var(--line,#e2e8f0);border-radius:12px;background:#fff}
+.ym-tbl{border-collapse:collapse;width:100%;min-width:1150px;font-size:.82rem}.ym-tbl th,.ym-tbl td{border-bottom:1px solid #eef2f7;padding:3px 4px;text-align:right;white-space:nowrap}
+.ym-tbl thead th{background:#f0fdfa;color:#0f766e;font-weight:800;text-align:center;padding:7px 4px}.ym-tbl thead th.cd{background:#eff6ff;color:#1d4ed8}.ym-tbl .ym-grp th{font-size:.72rem;padding:3px;background:#fff;color:#64748b}
+.ym-tbl tbody th{background:#f8fafc;text-align:center;width:46px}.ym-tbl td.cd{background:#fafcff}
+.ym-tbl input{width:100%;min-width:82px;border:1px solid transparent;border-radius:5px;padding:5px 6px;text-align:right;font:inherit;background:transparent}.ym-tbl input:hover{border-color:#cbd5e1}.ym-tbl input:focus{border-color:#14b8a6;background:#fff;outline:0;box-shadow:0 0 0 2px #ccfbf1}
+.ym-tbl tfoot td,.ym-tbl tfoot th{background:#f1f5f9;font-weight:900;padding:8px 6px;color:#0f172a}
+.ex-term{margin-top:12px;border:1px solid #c7d2fe;background:#f8faff;border-radius:12px;padding:12px 14px}.ex-term-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px}.ex-set{font-size:.84rem}.ex-set select{padding:3px 6px;border:1px solid #cbd5e1;border-radius:6px}
+.ex-add{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px;font-size:.84rem}.ex-add input,.ex-add select{padding:6px 8px;border:1px solid #cbd5e1;border-radius:7px;font:inherit}.ex-add #exName{width:110px}.ex-ck{display:flex;align-items:center;gap:4px}
+.ex-tbl td{vertical-align:top}.ex-tbl small{color:#64748b}.ex-basis{font-size:.74rem;color:#64748b;margin-top:2px;white-space:normal}.ex-dd{display:inline-block;padding:2px 9px;border-radius:999px;font-weight:800;font-size:.78rem;background:#dcfce7;color:#166534}.ex-soon .ex-dd{background:#fef3c7;color:#b45309}.ex-over .ex-dd{background:#fee2e2;color:#b91c1c}.ex-soon{background:#fffbeb}.ex-over{background:#fef2f2}.ex-act{white-space:nowrap}.ex-act .small-action{margin:1px}
+</style>
 </head>
 <body>
 
@@ -1229,6 +1241,41 @@ TaxDiary 회계·세무 › 환율·경제에서도 매매기준율을 바로 �
    <details><summary>2. 임원 상여금 · 보수</summary><div class="nt-box"><p>정관·주주총회·이사회 결의로 정한 <b>지급 기준</b>을 넘는 임원 상여금은 <b>손금불산입</b>돼요. 기준이 아예 없으면 전액 부인될 수 있어요.</p><p>지배주주인 임원에게 같은 직위의 다른 임원보다 많이 주는 보수도 초과분이 부인될 수 있어요. 임원 보수 한도는 매년 주총에서 승인받아 두세요.</p></div></details>
    <details><summary>3. 주주명부 · 주식등변동상황명세서</summary><div class="nt-box"><p>법인세 신고 때 <b>주식등변동상황명세서</b>를 내야 하고, 주식 매매·증여·증자 등 이동이 있었다면 반드시 반영해요. 누락·오류는 액면금액의 <b>1% 가산세</b>, 그리고 증여세·양도세 문제로 번질 수 있어요.</p><p class="nt-tip">💡 주주명부는 변동이 생길 때마다 바로 갱신하고, 명의신탁 주식이 있는지도 확인하세요.</p></div></details>
    <details><summary>4. 기타 특수관계인 거래</summary><div class="nt-box"><p><b>가지급금·가수금</b>(인정이자), <b>부당행위계산부인</b>(시가보다 싸게 팔거나 비싸게 사는 거래), 임원 개인 비용의 법인 처리 — 모두 세무조사 단골 항목이에요. 거래마다 계약서·이사회 의사록·시가 근거를 남겨두세요.</p></div></details>
+   <details open><summary>5. 임원 임기 · 중임등기 (법인등기) ⭐ 자주 놓침</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th style="width:120px"></th><th>👔 이사 (사내·사외·기타비상무, 대표이사 포함)</th><th>🔎 감사</th></tr>
+    <tr><td><b>임기</b></td><td><b>3년을 넘지 못함</b> (상법 383조) — 정관에서 1~3년으로 정해요. 보통 3년</td><td><b>취임 후 3년 내의 최종 결산기에 관한 정기주총 종결 시까지</b> (상법 410조) — 법으로 정해져 있어서 정관으로 바꿀 수 없어요</td></tr>
+    <tr><td><b>연장</b></td><td>임기가 <b>결산기 말일 ~ 그 결산 정기주총 사이</b>에 끝나면, 정관에 규정이 있을 때만 <b>그 정기주총 종결 시까지</b> 연장 가능</td><td>처음부터 "정기주총 종결 시"가 기준이라 연장 개념이 없음</td></tr>
+    <tr><td><b>예시</b><br><small>12월 결산·3월 주총</small></td><td>2024.3.25 취임 → <b>2027.3.25</b> 만료. 정관 연장 규정이 있고 2027.3.25가 2026년 결산 정기주총보다 먼저라면 → 그 주총 종결 시까지</td><td>2024.3.25 취임 → 3년 되는 2027.3.25 안에 있는 마지막 결산기는 <b>2026.12.31</b> → <b>2027년 3월 정기주총 종결 시</b> 만료</td></tr>
+    <tr><td><b>재선임</b></td><td>주주총회 (대표이사는 이사회 또는 정관에 따라 주총)</td><td>주주총회</td></tr></table>
+    <p>📮 <b>등기</b>: 임기만료·중임(같은 사람 재선임)·퇴임·취임은 <b>변경일로부터 2주 안에</b> 본점 소재지에 변경등기 (상법 317조·183조). 늦으면 대표이사 개인에게 <b>과태료</b>(상법 635조, 500만원 이하 — 지연 기간에 따라 부과)가 나와요.</p>
+    <p>⚠️ <b>자주 놓치는 것</b>: ① 같은 사람이 계속하니까 등기를 안 해도 되는 줄 아는 경우 → <b>중임도 반드시 등기</b> ② 임기 만료 후 한참 지나 재선임하면 "중임"이 아니라 <b>퇴임 + 취임</b>으로 등기돼요 ③ 이사 임기가 끝나면 <b>대표이사 자격도 같이</b> 끝나서 대표이사 중임등기도 같이 해야 해요 ④ 자본금 10억 미만 회사는 감사를 안 둘 수도 있어요 (상법 409조 ④).</p>
+    <div class="ex-term"><div class="ex-term-head"><b>📋 우리 회사 임원 임기 관리</b><span class="ex-set">결산월 <select id="exFy" onchange="exSet()"></select> · 정기주총 결산 후 <select id="exAgm" onchange="exSet()"><option value="2">2</option><option value="3">3</option></select>개월 이내</span></div>
+     <div class="ex-add"><input id="exName" placeholder="성명"><select id="exPos"><option value="dir">사내이사</option><option value="ceo">대표이사(사내이사)</option><option value="out">사외·기타비상무이사</option><option value="aud">감사</option></select><label>취임일 <input id="exStart" type="date"></label><label>임기 <select id="exYears"><option>3</option><option>2</option><option>1</option></select>년</label><label class="ex-ck"><input id="exExt" type="checkbox" checked> 정관 연장 규정 있음</label><button type="button" class="btn btn-primary" onclick="exAdd()">＋ 추가</button></div>
+     <div id="exList"></div>
+     <div class="subtle lc-note">※ 임기 만료일은 "취임일로부터 N년이 되는 날"(초일 불산입) 기준으로 계산했어요. 정관 내용과 등기부등본의 취임일을 꼭 확인하고, 애매하면 법무사·등기소에 확인하세요.</div></div>
+   </div></details>
+   <details><summary>6. 특수관계인은 누구? (법인세 기준)</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th style="width:42px">#</th><th>특수관계인 범위 (법인세법 시행령 제2조)</th></tr>
+    <tr><td>①</td><td>임원 임면권 행사·사업방침 결정 등 회사 경영에 <b>사실상 영향력</b>을 행사하는 사람과 그 <b>친족</b></td></tr>
+    <tr><td>②</td><td><b>주주</b>(소액주주 제외)와 그 친족 — 소액주주 = 지분 1% 미만 (단, 지배주주의 특수관계인이면 소액주주라도 포함)</td></tr>
+    <tr><td>③</td><td>회사의 <b>임원·직원</b> 또는 주주의 직원, 법인·주주의 금전 등으로 <b>생계를 유지하는 사람</b>과 생계를 같이하는 친족</td></tr>
+    <tr><td>④</td><td>①~③이 발행주식의 <b>30% 이상</b> 출자했거나 사실상 영향력을 행사하는 다른 법인</td></tr>
+    <tr><td>⑤</td><td>①~④가 30% 이상 출자한 법인에 다시 30% 이상 출자한 법인 등</td></tr>
+    <tr><td>⑥</td><td>해당 법인에 30% 이상 출자한 법인·개인, 같은 <b>기업집단 계열회사</b>와 그 임원</td></tr></table>
+    <p>👪 <b>친족 범위</b> (국세기본법 시행령): 4촌 이내 혈족, 3촌 이내 인척, 배우자(사실혼 포함), 친양자로 입양된 사람의 친생 부모·배우자·직계비속 등</p>
+    <p>👔 <b>임원 범위</b> (법인세법 시행령 40조): 회장·사장·부사장·대표이사·전무·상무 등 <b>이사회 구성원 전원</b>, 청산인, <b>감사</b>, 그 밖에 이에 준하는 직무에 종사하는 사람 — 등기 여부보다 <b>실제 직무</b>로 판단</p>
+    <p>🏢 우리 회사처럼 <b>자회사(30% 이상 출자)</b>가 있으면 자회사도 특수관계인 → 자금대여 이자율·거래가격이 시가인지 꼭 챙기기</p>
+   </div></details>
+   <details><summary>7. 임원·특수관계인이라서 생기는 세무 이슈 체크</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th style="width:170px">항목</th><th>내용</th><th style="width:200px">관련 메뉴</th></tr>
+    <tr><td><b>가지급금 인정이자</b></td><td>특수관계인에게 빌려준 돈은 <b>가중평균차입이자율</b>(또는 당좌대출이자율 4.6%)로 이자를 받아야 하고, 덜 받으면 차액을 익금산입·상여 처분</td><td>💰 이자·가지급금 계산기</td></tr>
+    <tr><td><b>지급이자 손금불산입</b></td><td>업무무관 가지급금이 있으면 회사 차입금 이자 중 가지급금 비율만큼 비용 불인정</td><td>💰 이자·가지급금 계산기</td></tr>
+    <tr><td><b>부당행위계산부인</b></td><td>특수관계인과 시가보다 싸게 팔거나 비싸게 산 거래 — 시가와 차이가 <b>3억원 이상이거나 시가의 5% 이상</b>이면 부인</td><td>—</td></tr>
+    <tr><td><b>임원 보수·상여·퇴직금</b></td><td>정관·주총 결의 기준을 넘는 상여, 한도를 넘는 퇴직금은 손금불산입</td><td>🧮 결산·세무조정 도구 › 임원 퇴직금 한도</td></tr>
+    <tr><td><b>4대보험</b></td><td>근로자성이 없는 등기임원(대표이사 등)은 원칙적으로 <b>고용·산재보험 제외</b>, 국민연금·건강보험은 가입</td><td>💵 급여 계산기 › 가입 보험 선택</td></tr>
+    <tr><td><b>회계 공시</b></td><td>재무제표 주석에 특수관계자 거래·잔액, <b>주요 경영진 보상</b> 공시 (일반기업회계기준 제16장)</td><td>—</td></tr></table>
+   </div></details>
+
   </div>
   <div class="nt-pane" data-pane="credit" hidden>
    <details open><summary>1. 통합고용세액공제 · 사후관리 (추징 주의!)</summary><div class="nt-box"><p>상시근로자(특히 청년·장애인·60세 이상 등)를 늘리면 늘어난 인원 1인당 일정 금액을 법인세에서 공제받아요.</p><p><b>⚠ 가장 자주 터지는 추징 리스크:</b> 공제받은 연도 이후 <b>2년 안에 상시근로자 수가 줄면</b> 공제받은 세금을 다시 내야 해요(청년 등 인원만 줄어도 일부 추징).</p><p class="nt-tip">💡 중도 퇴사자가 생기면 신규 채용으로 인원을 유지하는지 <b>분기별로 월평균 인원</b>을 체크하세요. 🧮 결산·세무조정 도구 › 고용 인원 사후관리에서 모니터링할 수 있어요.</p></div></details>
@@ -1299,9 +1346,10 @@ TaxDiary 회계·세무 › 환율·경제에서도 매매기준율을 바로 �
 </section>
 <section id="yePage" class="page-panel diary-page ye-page">
   <div class="diary-toolbar"><div><div class="diary-title"><span class="diary-title-mark">🧾</span>연말정산</div><div class="diary-subtitle"><b>2026년 귀속</b> (2027년 1~2월 정산) 기준이에요. 하는 법·바뀐 점·공제 요건을 보고, 신용카드·의료비·예상 환급액을 바로 계산해요. 입력한 값은 자동 저장돼요.</div></div></div>
-  <div class="nt-tabs ye-tabs"><button type="button" class="nt-tab ye-tab on" data-ye="calc" onclick="yeTab('calc')">🧮 예상 환급액 계산기</button><button type="button" class="nt-tab ye-tab" data-ye="card" onclick="yeTab('card')">💳 신용카드 공제</button><button type="button" class="nt-tab ye-tab" data-ye="med" onclick="yeTab('med')">🏥 의료비 공제</button><button type="button" class="nt-tab ye-tab" data-ye="guide" onclick="yeTab('guide')">📖 연말정산 하는 법</button><button type="button" class="nt-tab ye-tab" data-ye="change" onclick="yeTab('change')">🆕 2026 귀속 바뀐 점</button><button type="button" class="nt-tab ye-tab" data-ye="rule" onclick="yeTab('rule')">📋 공제 요건·공제율 표</button><button type="button" class="nt-tab ye-tab" data-ye="links" onclick="yeTab('links')">🔗 사이트·자료</button></div>
+  <div class="nt-tabs ye-tabs"><button type="button" class="nt-tab ye-tab on" data-ye="calc" onclick="yeTab('calc')">🧮 예상 환급액 계산기</button><button type="button" class="nt-tab ye-tab" data-ye="month" onclick="yeTab('month')">📥 월별 입력·엑셀</button><button type="button" class="nt-tab ye-tab" data-ye="card" onclick="yeTab('card')">💳 신용카드 공제</button><button type="button" class="nt-tab ye-tab" data-ye="med" onclick="yeTab('med')">🏥 의료비 공제</button><button type="button" class="nt-tab ye-tab" data-ye="guide" onclick="yeTab('guide')">📖 연말정산 하는 법</button><button type="button" class="nt-tab ye-tab" data-ye="change" onclick="yeTab('change')">🆕 2026 귀속 바뀐 점</button><button type="button" class="nt-tab ye-tab" data-ye="rule" onclick="yeTab('rule')">📋 공제 요건·공제율 표</button><button type="button" class="nt-tab ye-tab" data-ye="links" onclick="yeTab('links')">🔗 사이트·자료</button></div>
 
   <div class="ye-pane" data-yp="calc"><div id="yeCalcBox"></div></div>
+  <div class="ye-pane" data-yp="month" hidden><div id="yeMonthBox"></div></div>
   <div class="ye-pane" data-yp="card" hidden><div id="yeCardBox"></div></div>
   <div class="ye-pane" data-yp="med" hidden><div id="yeMedBox"></div></div>
 
@@ -3225,7 +3273,7 @@ function yeRun(S,std){const g=S.gross||0,ed=yeEarnDed(g),earn=Math.max(0,g-ed);
  return {g,ed,earn,human,nps,ins,hs,mort,card,limited,totDed,base,tax,items,cr,dec,local:Math.floor(dec*.1/10)*10,std}}
 
 /* --- 화면 --- */
-function yeRender(){['yeCalcBox','yeCardBox','yeMedBox'].forEach(i=>{const e=$(i);if(e)e.innerHTML=''});if(yeCur==='calc')yeCalcUI();if(yeCur==='card')yeCardUI();if(yeCur==='med')yeMedUI()}
+function yeRender(){['yeCalcBox','yeCardBox','yeMedBox','yeMonthBox'].forEach(i=>{const e=$(i);if(e)e.innerHTML=''});if(yeCur==='calc')yeCalcUI();if(yeCur==='card')yeCardUI();if(yeCur==='med')yeMedUI();if(yeCur==='month')yeMonthUI()}
 function yeCalcUI(){const b=$('yeCalcBox');if(!b)return;
  b.innerHTML=`<div class="pc-grid"><div class="pc-card lc-in ye-in">
  ${yH('① 기본')}${yGross()}${yM('paid','기납부 소득세 (1~12월 원천징수 합계)','지방소득세 제외 · 급여대장 소득세 합계')}
@@ -3290,6 +3338,78 @@ function ppBuild(id){const sec=$(id);if(!sec)return'';const cl=sec.cloneNode(tru
 function pagePrint(id){const html=ppBuild(id);if(!html)return;const w=window.open('','_blank');if(!w){alert('팝업이 차단됐어요. 브라우저 주소창 오른쪽에서 팝업을 허용해 주세요.');return}
  w.document.open();w.document.write(html);w.document.close();setTimeout(()=>{try{w.focus();w.print()}catch(e){}},600)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ppInit);else ppInit();
+
+/* ===== 임원 임기 관리 ===== */
+function exD(s){return new Date(s+'T12:00:00')}
+function exAddY(s,n){const d=exD(s);const m=d.getMonth();d.setFullYear(d.getFullYear()+n);if(d.getMonth()!==m)d.setDate(0);return toISO(d)}
+function exAddDays(s,n){const d=exD(s);d.setDate(d.getDate()+n);return toISO(d)}
+function exFyEnd(y,fm){return toISO(new Date(y,fm,0,12))}
+function exAgmDue(fe,k){const d=exD(fe);return toISO(new Date(d.getFullYear(),d.getMonth()+1+k,0,12))}
+function exLastFyEndOnOrBefore(s,fm){const d=exD(s);let y=d.getFullYear();let e=exFyEnd(y,fm);if(e>s)e=exFyEnd(y-1,fm);return e}
+function exCalc(x){const fm=profile.exFy||12,k=profile.exAgm||3;
+ if(x.pos==='aud'){const lim=exAddY(x.start,3),fe=exLastFyEndOnOrBefore(lim,fm);return {end:exAgmDue(fe,k),agm:true,fe,basis:`취임 후 3년(${lim}) 안의 마지막 결산기 ${fe} → 그 정기주총 종결 시`}}
+ const exp=exAddY(x.start,x.years||3);
+ if(x.ext){const fe=exLastFyEndOnOrBefore(exAddDays(exp,-1),fm),due=exAgmDue(fe,k);if(exp>fe&&exp<=due)return {end:due,agm:true,fe,basis:`${exp} 만료 예정이지만 ${fe} 결산 정기주총 전이라 정관에 따라 주총 종결 시까지 연장`}}
+ return {end:exp,agm:false,basis:`취임일로부터 ${x.years||3}년`}}
+const EX_POS={dir:'사내이사',ceo:'대표이사',out:'사외·기타비상무이사',aud:'감사'};
+function exSet(){profile.exFy=Number($('exFy').value);profile.exAgm=Number($('exAgm').value);saveData();exRender()}
+function exAdd(){const name=$('exName').value.trim(),start=$('exStart').value;if(!name||!start){alert('성명과 취임일을 입력해 주세요.');return}
+ (profile.execs=profile.execs||[]).push({id:Date.now().toString(36),name,pos:$('exPos').value,start,years:Number($('exYears').value)||3,ext:$('exExt').checked});$('exName').value='';saveData();exRender()}
+function exDel(id){if(!confirm('이 임원을 목록에서 지울까요?'))return;profile.execs=(profile.execs||[]).filter(x=>x.id!==id);saveData();exRender()}
+function exRenew(id){const x=(profile.execs||[]).find(v=>v.id===id);if(!x)return;const c=exCalc(x);const ns=prompt(`${x.name} ${EX_POS[x.pos]} 중임(재선임) 후 새 취임일을 입력하세요.\n(만료일과 같은 날 재선임하면 공백 없이 '중임')`,c.end);if(!ns||!/^\d{4}-\d{2}-\d{2}$/.test(ns))return;x.start=ns;saveData();exRender()}
+function exCal(id){const x=(profile.execs||[]).find(v=>v.id===id);if(!x)return;const c=exCalc(x),cat=typeof taxFilingCategory==='function'?taxFilingCategory():'',pos=EX_POS[x.pos];
+ const L=[[`[임원] ${x.name} ${pos} 임기만료 1개월 전 — 주총 소집·중임 준비`,exAddDays(c.end,-30),`임기만료 ${c.end}${c.agm?' (정기주총 종결 시)':''}. 주총 소집통지(2주 전)·의사록·취임승낙서 준비`],[`[임원] ${x.name} ${pos} 임기만료${c.agm?' (정기주총)':''}`,c.end,c.basis],[`[등기] ${x.name} ${pos} 중임·변경등기 기한`,exAddDays(c.end,14),'변경일로부터 2주 이내 본점 소재지 등기. 늦으면 과태료(상법 635조)']];
+ const id0=`ex-${x.id}-`;const add=L.filter((l,i)=>!tasks.some(t=>t.id===id0+i+'-'+l[1]));if(!add.length){alert('이미 달력에 등록돼 있어요.');return}
+ if(!confirm(`달력에 ${add.length}건을 등록할까요?\n\n`+add.map(l=>`· ${l[1]}  ${l[0]}`).join('\n')))return;
+ L.forEach((l,i)=>{const tid=id0+i+'-'+l[1];if(tasks.some(t=>t.id===tid))return;tasks.push({id:tid,title:l[0],emoji:'👔',date:l[1],endDate:l[1],relatedPerson:x.name,category:cat,status:'예정',priority:'important',isDday:false,excludeOverdue:false,repeat:'none',repeatUntil:'',actualDate:'',memo:l[2],link:'',color:'',logs:[],attachments:[]})});saveData();try{renderAll()}catch(e){}alert('달력에 등록했어요.')}
+function exRender(){const L=$('exList');if(!L)return;const fm=profile.exFy||12,k=profile.exAgm||3;
+ $('exFy').innerHTML=Array.from({length:12},(_,i)=>`<option value="${i+1}"${i+1===fm?' selected':''}>${i+1}월</option>`).join('');$('exAgm').value=String(k);
+ const xs=(profile.execs||[]).map(x=>({x,c:exCalc(x)})).sort((a,b)=>a.c.end.localeCompare(b.c.end)),t0=toISO(new Date());
+ if(!xs.length){L.innerHTML='<div class="subtle" style="padding:8px 2px">등록된 임원이 없어요. 등기부등본의 취임일을 보고 추가해 보세요.</div>';return}
+ L.innerHTML=`<table class="nt-tbl ex-tbl"><tr><th>성명</th><th>직위</th><th>취임일</th><th>임기만료 (예정)</th><th>남은 기간</th><th>등기 기한</th><th></th></tr>${xs.map(({x,c})=>{const dd=Math.round((exD(c.end)-exD(t0))/864e5),cls=dd<0?'over':dd<=90?'soon':'ok',reg=exAddDays(c.end,14);
+  return `<tr class="ex-${cls}"><td><b>${escapeHTML(x.name)}</b></td><td>${EX_POS[x.pos]}${x.pos!=='aud'?` <small>${x.years}년${x.ext?' · 연장규정':''}</small>`:''}</td><td>${x.start}</td><td><b>${c.end}</b>${c.agm?' <small>정기주총 종결 시</small>':''}<div class="ex-basis">${escapeHTML(c.basis)}</div></td><td><span class="ex-dd">${dd<0?`만료 ${-dd}일 지남`:dd===0?'오늘 만료':`D-${dd}`}</span></td><td>${reg}${dd<-14?' <b style="color:#b91c1c">⚠ 기한 지남</b>':''}</td><td class="ex-act"><button type="button" class="small-action" onclick="exCal('${x.id}')">📅 달력 등록</button><button type="button" class="small-action" onclick="exRenew('${x.id}')">🔁 중임 반영</button><button type="button" class="small-action" onclick="exDel('${x.id}')">🗑</button></td></tr>`}).join('')}</table>`}
+const _ntTabEx=ntTab;ntTab=function(k){_ntTabEx(k);if(k==='exec')exRender()};
+const _showPageEx=showPage;showPage=function(id,b){const r=_showPageEx(id,b);if(id==='notesPage')try{exRender()}catch(e){}return r};
+
+/* ===== 연말정산 월별 입력·엑셀 ===== */
+const YM_COLS=[['pay','과세 급여'],['nt','비과세'],['tax','소득세'],['nps','국민연금'],['hi','건강보험'],['ltc','장기요양'],['emp','고용보험'],['cc','신용카드'],['dc','체크·현금'],['mk','전통시장'],['tr','대중교통'],['cu','도서·공연·체육']];
+function ymData(){const S=yeS();if(!Array.isArray(S.mon)||S.mon.length!==12)S.mon=Array.from({length:12},()=>Array(YM_COLS.length).fill(0));return S.mon}
+function ymSum(c){return ymData().reduce((a,r)=>a+(Number(r[c])||0),0)}
+function ymApply(){const S=yeS(),s=k=>ymSum(YM_COLS.findIndex(x=>x[0]===k));
+ if(s('pay'))S.gross=s('pay');if(s('tax'))S.paid=s('tax');if(s('nps'))S.nps=s('nps');const ins=s('hi')+s('ltc')+s('emp');if(ins)S.hi=ins;
+ const CM=[['cc','cdCredit'],['dc','cdDebit'],['mk','cdMarket'],['tr','cdTransit'],['cu','cdCulture']];if(CM.some(([a])=>s(a)))CM.forEach(([a,b])=>{S[b]=s(a)});
+ clearTimeout(window._yeT);window._yeT=setTimeout(()=>{try{saveData()}catch(e){}},900)}
+function ymIn(el){const r=+el.dataset.r,c=+el.dataset.c;ymData()[r][c]=Number(String(el.value).replace(/[^0-9]/g,''))||0;ymApply();ymTotals()}
+function ymTotals(){YM_COLS.forEach((x,c)=>{const e=$('ymT'+c);if(e)e.textContent=ymSum(c).toLocaleString('ko-KR')});const o=$('ymSum');if(o){const S=yeS();o.innerHTML=`➡️ 계산기에 반영됨: 총급여 <b>${won(S.gross||0)}</b> · 기납부 소득세 <b>${won(S.paid||0)}</b> · 국민연금 <b>${won(S.nps||0)}</b> · 건강·요양·고용 <b>${won(S.hi||0)}</b> · 카드 등 <b>${won((S.cdCredit||0)+(S.cdDebit||0)+(S.cdMarket||0)+(S.cdTransit||0)+(S.cdCulture||0))}</b>`}}
+function ymNum(v){if(v==null||v==='')return 0;if(typeof v==='number')return Math.round(v);const n=Number(String(v).replace(/[,\s원₩]/g,'').replace(/[^0-9.\-]/g,''));return isNaN(n)?0:Math.round(n)}
+function ymPaste(e){const t=(e.clipboardData||window.clipboardData).getData('text');if(!/[\t\n]/.test(t.trim()))return;e.preventDefault();const r0=+e.target.dataset.r,c0=+e.target.dataset.c,D=ymData();
+ t.replace(/\r/g,'').split('\n').filter(l=>l.length).forEach((line,i)=>{const r=r0+i;if(r>11)return;line.split('\t').forEach((v,j)=>{const c=c0+j;if(c<YM_COLS.length)D[r][c]=ymNum(v)})});ymApply();yeMonthUI()}
+function ymColOf(h){h=String(h||'').replace(/\s/g,'');if(!h)return -1;const f=k=>YM_COLS.findIndex(x=>x[0]===k);
+ if(/비과세/.test(h))return f('nt');if(/지방/.test(h))return -1;if(/소득세|원천세/.test(h))return f('tax');if(/요양/.test(h))return f('ltc');if(/건강|건보/.test(h))return f('hi');if(/연금/.test(h))return f('nps');if(/고용/.test(h))return f('emp');
+ if(/신용/.test(h))return f('cc');if(/체크|현금|직불|선불|제로페이/.test(h))return f('dc');if(/전통/.test(h))return f('mk');if(/대중|교통/.test(h))return f('tr');if(/도서|공연|문화|체육|헬스|수영/.test(h))return f('cu');
+ if(/과세|급여|지급|월급|총액|임금/.test(h))return f('pay');return -1}
+function ymFromRows(rows){let hi=-1,map=null,mc=-1;for(let i=0;i<Math.min(rows.length,15);i++){const m={};let n=0;(rows[i]||[]).forEach((h,j)=>{const c=ymColOf(h);if(c>=0&&!(c in m)){m[c]=j;n++}if(mc<0&&/^(월|귀속월|지급월|구분|월별)$/.test(String(h||'').trim()))mc=j});if(n>=2){hi=i;map=m;break}else mc=-1}
+ if(hi<0)return null;const D=Array.from({length:12},()=>Array(YM_COLS.length).fill(0));let seq=0,used=0;
+ for(let i=hi+1;i<rows.length;i++){const row=rows[i]||[];const lab=String(row[mc>=0?mc:0]??'').trim();if(/합계|총계|^계$|소계/.test(lab))continue;
+  let m=-1;if(mc>=0||/월/.test(lab)){const mm=lab.match(/(\d{1,2})\s*월/)||lab.match(/^(\d{1,2})$/)||lab.match(/\d{4}[-.\/](\d{1,2})/);if(mm)m=+mm[1]-1}
+  if(row[mc>=0?mc:0] instanceof Date)m=row[mc>=0?mc:0].getMonth();
+  const vals=Object.keys(map).map(c=>[+c,ymNum(row[map[c]])]);if(!vals.some(v=>v[1]))continue;if(m<0||m>11)m=seq;if(m>11)break;seq=m+1;used++;vals.forEach(([c,v])=>D[m][c]+=v)}
+ return used?{D,cols:Object.keys(map).map(c=>YM_COLS[c][1]),used}:null}
+function ymUpload(e){const f=e.target.files[0];e.target.value='';if(!f)return;if(typeof XLSX==='undefined'){alert('엑셀 기능을 불러오지 못했어요. 인터넷 연결을 확인하거나, 엑셀에서 표를 복사해 1월 칸에 붙여넣어 주세요.');return}
+ const rd=new FileReader();rd.onload=ev=>{try{const wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array',cellDates:true});let res=null;for(const n of wb.SheetNames){res=ymFromRows(XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:''}));if(res)break}
+  if(!res){alert('제목 행(과세급여·소득세·국민연금·신용카드 등)을 찾지 못했어요.\n"⬇ 양식 받기"로 받은 양식에 맞춰 넣거나, 표를 복사해 붙여넣어 주세요.');return}
+  if(!confirm(`${res.used}개월 데이터를 찾았어요.\n인식한 항목: ${res.cols.join(', ')}\n\n지금 표를 이 내용으로 바꿀까요?`))return;yeS().mon=res.D;ymApply();yeMonthUI()}catch(err){alert('엑셀을 읽지 못했어요: '+err.message)}};rd.readAsArrayBuffer(f)}
+function ymTemplate(){const head=['월',...YM_COLS.map(x=>x[1])],D=ymData(),rows=[head,...D.map((r,i)=>[`${i+1}월`,...r]),['합계',...YM_COLS.map((x,c)=>ymSum(c))]];
+ if(typeof XLSX!=='undefined'){const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=head.map((h,i)=>({wch:i?14:6}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'월별 급여·카드');XLSX.writeFile(wb,'연말정산_월별입력양식.xlsx');return}
+ const csv='﻿'+rows.map(r=>r.join(',')).join('\r\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='연말정산_월별입력양식.csv';a.click()}
+function ymClear(){if(!confirm('월별 표를 모두 비울까요? (계산기에 반영된 값은 그대로 남아요)'))return;yeS().mon=null;ymData();saveData();yeMonthUI()}
+function yeMonthUI(){const b=$('yeMonthBox');if(!b)return;const D=ymData(),f=v=>v?Number(v).toLocaleString('ko-KR'):'';
+ b.innerHTML=`<div class="ym-bar"><label class="btn btn-primary ym-up">📤 엑셀 업로드<input type="file" accept=".xlsx,.xls,.csv" onchange="ymUpload(event)" hidden></label><button type="button" class="btn btn-outline" onclick="ymTemplate()">⬇ 양식 받기${D.some(r=>r.some(v=>v))?' (지금 값 포함)':''}</button><button type="button" class="btn btn-outline" onclick="ymClear()">🗑 비우기</button><span class="subtle">💡 엑셀·급여대장에서 <b>여러 칸을 복사</b>해 시작할 칸(예: 1월 과세 급여)에 <b>Ctrl+V</b> 하면 한 번에 채워져요.</span></div>
+ <div class="ym-wrap"><table class="ym-tbl"><thead><tr><th>월</th>${YM_COLS.map((x,i)=>`<th class="${i>=7?'cd':''}">${x[1]}</th>`).join('')}</tr><tr class="ym-grp"><th></th><th colspan="7">👥 급여대장</th><th colspan="5" class="cd">💳 카드·현금영수증 (공제 대상만)</th></tr></thead>
+ <tbody>${D.map((r,i)=>`<tr><th>${i+1}월</th>${r.map((v,c)=>`<td class="${c>=7?'cd':''}"><input data-r="${i}" data-c="${c}" inputmode="numeric" value="${f(v)}" oninput="pcFmt(this);ymIn(this)" onpaste="ymPaste(event)"></td>`).join('')}</tr>`).join('')}</tbody>
+ <tfoot><tr><th>합계</th>${YM_COLS.map((x,c)=>`<td id="ymT${c}" class="${c>=7?'cd':''}">${ymSum(c).toLocaleString('ko-KR')}</td>`).join('')}</tr></tfoot></table></div>
+ <div class="ye-link-row" id="ymSum"></div>
+ <div class="subtle lc-note">✔ 합계가 <b>예상 환급액 계산기·신용카드 공제</b>에 자동으로 들어가요 (건강·장기요양·고용은 합쳐서 반영). 비과세는 총급여에서 빠지니 참고용이에요.<br>✔ 엑셀 업로드는 제목 행에 "과세급여(또는 지급액)·소득세·국민연금·건강보험·신용카드…" 같은 글자가 있으면 순서가 달라도 알아서 찾아요. 지방소득세 열은 건너뛰어요.<br>✔ 12월 급여가 아직 안 나왔으면 11월 금액을 복사해 넣으면 예상치를 볼 수 있어요.</div>`;ymTotals()}
 
 function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').toLowerCase().includes(q));
  (typeof tasks!=='undefined'?tasks:[]).forEach(t=>R.push({cat:'task',icon:'📅',title:t.title,sub:`${t.date||''} · ${t.category||''}${t.relatedPerson?' · '+t.relatedPerson:''}`,text:[t.title,t.memo,t.relatedPerson,t.category].join(' '),go:()=>{showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}}));
