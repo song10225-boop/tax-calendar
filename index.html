@@ -623,6 +623,20 @@ body.theme-notion .nav-group-btn.active{background:transparent!important;color:#
 .ln-prev{border:1.5px solid #0ea5e9;border-radius:12px;padding:10px 12px;margin-bottom:10px;background:#fff}.ln-prev-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}.ln-prev-sum{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;margin-bottom:6px}.ln-prev-sum b{color:#0369a1}.ln-prev select{padding:3px 5px;border:1px solid #cbd5e1;border-radius:6px;font:inherit;font-size:.8rem}
 </style>
 
+<style>
+.pr-y{font-weight:700;font-size:.86rem;display:flex;align-items:center;gap:6px}.pr-y select{padding:5px 8px;border:1px solid #cbd5e1;border-radius:7px}
+.pr-sum{border-collapse:collapse;width:100%;font-size:.82rem;background:#fff}.pr-sum th,.pr-sum td{border-bottom:1px solid #eef2f7;padding:7px 8px;text-align:right;white-space:nowrap}.pr-sum th:first-child,.pr-sum td:first-child{text-align:left}.pr-sum thead th{background:#f0fdfa;color:#0f766e;text-align:center;font-weight:800}.pr-sum tbody tr{cursor:pointer}.pr-sum tbody tr:hover{background:#f8fafc}.pr-sum tr.on{background:#ecfeff;box-shadow:inset 3px 0 0 #0891b2}.pr-sum tfoot td,.pr-sum tfoot th{background:#f1f5f9;font-weight:900}.pr-sum small{display:block;color:#94a3b8;font-size:.7rem}
+.pr-bosu th{border-left:1px solid #e2e8f0}.pr-plus{color:#dc2626}.pr-minus{color:#2563eb}
+.pr-emp{margin-top:12px}.pr-emp-h{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:8px;font-size:.84rem}.pr-emp-h b{font-size:1rem}.pr-emp-h input{padding:5px 8px;border:1px solid #cbd5e1;border-radius:7px;font:inherit}
+.pr-due{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:0 0 10px}.pr-due div{background:#fff;border:1px solid #bae6fd;border-radius:10px;padding:9px 12px;font-size:.86rem}.pr-due span{display:block;color:#0369a1;font-size:.78rem;margin-top:2px}
+.pr-h{font-size:.98rem;margin:14px 0 6px}
+.vt-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px}.vt-top label{font-weight:700;font-size:.86rem;display:flex;gap:6px;align-items:center}.vt-top select{padding:6px 8px;border:1px solid #cbd5e1;border-radius:8px}.vt-due{margin-left:auto;font-size:.9rem}.vt-due span{display:inline-block;margin-left:6px;padding:2px 10px;border-radius:999px;background:#dcfce7;color:#166534;font-weight:800}.vt-due span.soon{background:#fef3c7;color:#b45309}.vt-due span.over{background:#fee2e2;color:#b91c1c}
+.vt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:12px;margin-top:12px}.vt-gh{display:flex;justify-content:space-between;align-items:center;padding-bottom:6px;font-size:1rem}.vt-gh span{font-size:.78rem;color:#64748b;font-weight:700}
+.vt-item{display:flex;gap:10px;align-items:flex-start;padding:8px 2px;border-top:1px dashed #e2e8f0;cursor:pointer}.vt-item input{width:18px;height:18px;margin-top:2px;accent-color:#16a34a;flex-shrink:0}.vt-t{font-weight:700;font-size:.9rem;color:#0f172a}.vt-item small{color:#64748b;font-size:.76rem}.vt-item.done .vt-t{text-decoration:line-through;text-decoration-color:#16a34a;text-decoration-thickness:2px;color:#94a3b8}.vt-badge{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:#dcfce7;color:#15803d;font-size:.72rem;font-weight:800;text-decoration:none}
+</style>
+
+<style>.vr-ref{margin-top:12px;background:#fff;border:1px solid var(--line,#e2e8f0);border-radius:12px;padding:4px 14px 10px}.vr-ref summary{cursor:pointer;font-weight:800;padding:8px 0}</style>
+
 </head>
 <body>
 
@@ -731,6 +745,7 @@ body.theme-notion .nav-group-btn.active{background:transparent!important;color:#
   <div class="nav-group"><button type="button" class="nav-link nav-group-btn" onclick="toggleNavMenu(this)"><span class="nav-icon">🧾</span> 회계·세무 <span class="nav-caret">▾</span></button>
     <div class="nav-menu">
       <button class="nav-link nav-sub" data-page="closingPage" onclick="showPage('closingPage',this);renderClosing()"><span class="nav-icon">✅</span> 결산·실무 체크리스트</button>
+      <button class="nav-link nav-sub" data-page="vatPage" onclick="showPage('vatPage',this)"><span class="nav-icon">🧾</span> 부가세 신고 체크리스트</button>
       <button class="nav-link nav-sub" data-page="ctPage" onclick="showPage('ctPage',this);renderCT()"><span class="nav-icon">🧮</span> 결산·세무조정 도구</button>
       <button class="nav-link nav-sub" data-page="entPage" onclick="showPage('entPage',this);renderEnt()"><span class="nav-icon">🍽</span> 업무추진비 증빙체크</button>
       <button class="nav-link nav-sub" data-page="loanPage" onclick="showPage('loanPage',this);lnTabGo(lnTab)"><span class="nav-icon">💰</span> 이자·가지급금 계산기</button>
@@ -741,6 +756,7 @@ body.theme-notion .nav-group-btn.active{background:transparent!important;color:#
     <div class="nav-menu">
       <button class="nav-link nav-sub" data-page="payCalcPage" onclick="showPage('payCalcPage',this);payCalc()"><span class="nav-icon">💵</span> 급여 계산기(역산)</button>
       <button class="nav-link nav-sub" data-page="yePage" onclick="showPage('yePage',this);yeTab(yeCur)"><span class="nav-icon">🧾</span> 연말정산</button>
+      <button class="nav-link nav-sub" data-page="prPage" onclick="showPage('prPage',this)"><span class="nav-icon">📑</span> 보수총액·지급명세서·이직확인서</button>
       <button class="nav-link nav-sub" data-page="laborCalcPage" onclick="showPage('laborCalcPage',this);renderLaborCalc()"><span class="nav-icon">🧮</span> 노무·정산 계산기</button>
       <button class="nav-link nav-sub" data-page="leavePage" onclick="showPage('leavePage',this)"><span class="nav-icon">🌿</span> 연차관리</button>
       <button class="nav-link nav-sub" data-page="retirementPage" onclick="showPage('retirementPage',this)"><span class="nav-icon">🏦</span> 퇴직금 관리</button>
@@ -1095,7 +1111,7 @@ body.theme-notion .nav-group-btn.active{background:transparent!important;color:#
    <a class="ins-link" href="https://edi.nhis.or.kr/" target="_blank" rel="noopener noreferrer"><b>🟩 건강보험 EDI</b><small>자격 취득·상실, 보수총액 신고, 고지·납부</small></a>
    <a class="ins-link" href="https://total.comwel.or.kr/" target="_blank" rel="noopener noreferrer"><b>🟧 고용·산재보험 토탈서비스</b><small>근로자 고용정보 신고, 보수총액 신고, 산재 요율</small></a>
    <a class="ins-link" href="https://www.4insure.or.kr/" target="_blank" rel="noopener noreferrer"><b>🟪 4대사회보험 정보연계센터</b><small>사업장 가입자 명부·가입내역 확인서 발급, 통합 신고</small></a>
-   <a class="ins-link" href="https://siho.nhis.or.kr/" target="_blank" rel="noopener noreferrer"><b>🟫 사회보험 통합징수포털</b><small>4대보험료 통합 고지·납부 조회, 자동이체·납부확인서</small></a>
+   <a class="ins-link" href="https://si4n.nhis.or.kr/jpza/JpZaa00101.do" target="_blank" rel="noopener noreferrer"><b>🟫 사회보험 통합징수포털</b><small>4대보험료 통합 고지·납부 조회, 자동이체·납부확인서</small></a>
   </div></div>
   <div class="econ-sec"><h3>⚖ 노무·법령·모성보호</h3><div class="ins-grid">
    <a class="ins-link" href="https://www.work24.go.kr/" target="_blank" rel="noopener noreferrer"><b>🟦 고용24</b><small>출산전후휴가·육아휴직 급여, 육아기 근로시간 단축 지원금, 정부 고용장려금 신청<br><span style="color:#b45309">※ 모성보호·고용장려금은 토탈서비스가 아닌 고용24에서 처리</span></small></a>
@@ -1194,7 +1210,7 @@ TaxDiary 회계·세무 › 환율·경제에서도 매매기준율을 바로 �
 </section>
 <section id="notesPage" class="page-panel diary-page notes-page">
   <div class="diary-toolbar"><div><div class="diary-title"><span class="diary-title-mark">📚</span>실무 상식 노트</div><div class="diary-subtitle">회계·인사노무·세무 실무자가 꼭 알아야 할 뼈대를 정리했어요. 제목을 누르면 펼쳐져요.</div></div><div class="diary-actions"><input id="ntSearch" type="search" class="nt-search" placeholder="🔎 노트 검색 (예: 통상임금, 가지급금)" oninput="ntSearch(this.value)"><button type="button" class="btn btn-outline" onclick="document.querySelectorAll('#notesPage details').forEach(d=>d.open=true)">모두 펼치기</button><button type="button" class="btn btn-outline" onclick="document.querySelectorAll('#notesPage details').forEach(d=>d.open=false)">모두 접기</button></div></div>
-  <div class="nt-tabs"><button type="button" class="nt-tab on" data-nt="acc" onclick="ntTab('acc')">📒 회계 기본</button><button type="button" class="nt-tab" data-nt="hr" onclick="ntTab('hr')">👥 인사·노무 기본</button><button type="button" class="nt-tab" data-nt="tax" onclick="ntTab('tax')">🧾 세무 기본</button><button type="button" class="nt-tab" data-nt="fx" onclick="ntTab('fx')">🌏 수출입·외화</button><button type="button" class="nt-tab" data-nt="acct" onclick="ntTab('acct')">📖 헷갈리는 계정과목</button><button type="button" class="nt-tab" data-nt="exec" onclick="ntTab('exec')">👔 임원·특수관계인</button><button type="button" class="nt-tab" data-nt="credit" onclick="ntTab('credit')">💸 세액공제·지원금</button><button type="button" class="nt-tab" data-nt="excel" onclick="ntTab('excel')">📊 엑셀 실무 함수</button><button type="button" class="nt-tab" data-nt="docs" onclick="ntTab('docs')">📁 필수 서류함</button></div>
+  <div class="nt-tabs"><button type="button" class="nt-tab on" data-nt="acc" onclick="ntTab('acc')">📒 회계 기본</button><button type="button" class="nt-tab" data-nt="hr" onclick="ntTab('hr')">👥 인사·노무 기본</button><button type="button" class="nt-tab" data-nt="tax" onclick="ntTab('tax')">🧾 세무 기본</button><button type="button" class="nt-tab" data-nt="vat" onclick="ntTab('vat')">🧾 부가세</button><button type="button" class="nt-tab" data-nt="fx" onclick="ntTab('fx')">🌏 수출입·외화</button><button type="button" class="nt-tab" data-nt="acct" onclick="ntTab('acct')">📖 헷갈리는 계정과목</button><button type="button" class="nt-tab" data-nt="exec" onclick="ntTab('exec')">👔 임원·특수관계인</button><button type="button" class="nt-tab" data-nt="credit" onclick="ntTab('credit')">💸 세액공제·지원금</button><button type="button" class="nt-tab" data-nt="excel" onclick="ntTab('excel')">📊 엑셀 실무 함수</button><button type="button" class="nt-tab" data-nt="docs" onclick="ntTab('docs')">📁 필수 서류함</button></div>
   <div class="nt-pane" data-pane="acc">
    <details open><summary>1. 복식부기와 회계등식</summary><div class="nt-box"><p class="nt-key">자산 = 부채 + 자본</p><p>모든 거래는 원인과 결과가 동시에 생겨서, <b>차변 합계 = 대변 합계</b>가 항상 맞아요.</p><table class="nt-tbl"><tr><th>차변 (왼쪽)</th><th>대변 (오른쪽)</th></tr><tr><td>자산 증가</td><td>자산 감소</td></tr><tr><td>부채 감소</td><td>부채 증가</td></tr><tr><td>자본 감소</td><td>자본 증가</td></tr><tr><td>비용 발생</td><td>수익 발생</td></tr></table><p class="nt-tip">💡 외우는 법: <b>"자산·비용은 왼쪽에서 늘고, 부채·자본·수익은 오른쪽에서 늘어난다."</b> 감소는 반대쪽이에요.</p></div></details>
    <details><summary>2. 재무제표 5가지</summary><div class="nt-box"><table class="nt-tbl"><tr><th>재무제표</th><th>무엇을 보여주나</th></tr><tr><td><b>재무상태표 (B/S)</b></td><td>특정 <b>시점</b>의 자산·부채·자본 (회사의 재산 상태)</td></tr><tr><td><b>손익계산서 (P/L)</b></td><td>일정 <b>기간</b>의 수익·비용·당기순이익 (회사의 성적표)</td></tr><tr><td><b>현금흐름표</b></td><td>영업·투자·재무활동별 실제 현금 유입·유출 — 이익이 나도 현금이 없으면 <b>흑자도산</b> 가능</td></tr><tr><td><b>자본변동표</b></td><td>증자·배당·이익잉여금 등 자본 구성요소의 변동</td></tr><tr><td><b>주석</b></td><td>숫자에 대한 상세 설명·회계정책 — 외감법인 실무에서 가장 꼼꼼히 보는 부분</td></tr></table></div></details>
@@ -1202,6 +1218,38 @@ TaxDiary 회계·세무 › 환율·경제에서도 매매기준율을 바로 �
    <details><summary>4. 결산 핵심 프로세스</summary><div class="nt-box"><ol class="nt-ol"><li><b>계정 잔액 검증</b> — 통장·카드·거래처 잔액 대사, 가지급금·가수금 정리</li><li><b>기말 수정분개</b> — 감가상각비, 선급비용·미지급비용·미수수익·선수수익, 퇴직급여충당부채, 대손충당금, 외화자산·부채 평가(매매기준율), 재고자산 실사</li><li><b>시산표 확인</b> — 차·대변 일치, 이상 잔액(마이너스 자산 등) 점검</li><li><b>장부 마감</b> — 수익·비용을 손익 계정으로 마감 → 이익잉여금 대체 → 재무상태표 이월</li><li><b>세무조정</b> — 법인세 신고를 위해 회계이익과 세법상 소득의 차이 조정</li></ol></div></details>
   </div>
   <div class="nt-pane" data-pane="hr" hidden>
+   <details open><summary>⏰ 반차 쓴 날 연장·야간 수당 (헷갈리는 포인트)</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th style="width:110px"></th><th>🕕 연장근로 (× 1.5)</th><th>🌙 야간근로 (가산 × 0.5)</th></tr>
+    <tr><td><b>판단 기준</b></td><td><b>실제로 일한 시간</b>이 하루 8시간 · 주 40시간을 넘었는지</td><td><b>시각</b> — 22:00 ~ 06:00 사이에 일했는지</td></tr>
+    <tr><td><b>반차·연차</b></td><td>쉰 시간은 <b>실근로 아님</b> → 연장 계산에서 빠져요</td><td>상관없음 — 22시 이후 일하면 무조건 가산</td></tr>
+    <tr><td><b>5인 미만</b></td><td colspan="2">가산수당 규정 적용 안 됨 (일한 시간만큼 1.0배는 지급)</td></tr></table>
+    <p><b>예시</b> (소정 09:00~18:00, 휴게 1시간, 5인 이상)</p>
+    <table class="nt-tbl"><tr><th>상황</th><th>실근로</th><th>판정</th></tr>
+    <tr><td>오전 반차 → 13:00 출근, 22:00 퇴근 (저녁 휴게 1시간)</td><td>8시간</td><td>18~22시 4시간은 <b>소정 초과지만 8시간 이내 → 1.0배</b>만 (가산 없음) · 야간 없음</td></tr>
+    <tr><td>오전 반차 → 13:00 출근, 23:00 퇴근 (휴게 1시간)</td><td>9시간</td><td>8시간 넘은 <b>1시간 연장 × 1.5</b> + 22~23시 <b>야간 가산 0.5</b> → 그 1시간은 2.0배</td></tr>
+    <tr><td>반차 없이 09:00 출근, 22:00 퇴근 (휴게 1시간)</td><td>12시간</td><td>18~22시 <b>4시간 연장 × 1.5</b></td></tr>
+    <tr><td>반차 없이 09:00 출근, 24:00 퇴근 (휴게 2시간)</td><td>13시간</td><td><b>연장 5시간 × 1.5</b> + 22~24시 <b>야간 2시간 × 0.5</b> 추가</td></tr></table>
+    <p>⚠️ 취업규칙·근로계약에 "소정 퇴근시각 이후 근무는 연장으로 본다"처럼 <b>더 유리한 규정</b>이 있으면 그걸 따라요. 🧮 <b>노무·정산 계산기 › 🕘 하루 근무 판정</b>에서 시각만 넣으면 계산돼요.</p>
+   </div></details>
+   <details open><summary>🚪 퇴사 처리 · 상실 사유 코드 · 이직확인서</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th style="width:56px">코드</th><th>상실(이직) 사유</th><th style="width:150px">실업급여</th><th>메모</th></tr>
+    <tr><td><b>11</b></td><td>개인 사정으로 인한 자진퇴사</td><td>✖ 원칙 불가</td><td>전직·창업·학업 등</td></tr>
+    <tr><td><b>12</b></td><td>사업장 이전·근로조건 변동·임금체불 등으로 자진퇴사</td><td>○ 정당한 사유 증빙 시</td><td>임금체불 2개월 이상, 통근 왕복 3시간 이상, 질병·육아 등</td></tr>
+    <tr><td><b>22</b></td><td>폐업·도산</td><td>✔ 가능</td><td></td></tr>
+    <tr><td><b>23</b></td><td>경영상 필요·회사 불황으로 인원감축 (<b>권고사직</b>·명예퇴직 포함)</td><td>✔ 가능</td><td>⚠️ 고용지원금 받는 중이면 <b>감원방지기간</b> 확인 — 지원금 반환·제한될 수 있어요</td></tr>
+    <tr><td><b>26</b></td><td>근로자 귀책사유에 의한 징계해고·권고사직</td><td>✖ 원칙 불가</td><td>중대한 귀책사유인 경우</td></tr>
+    <tr><td><b>31</b></td><td>정년</td><td>✔ 가능</td><td></td></tr>
+    <tr><td><b>32</b></td><td>계약기간 만료·공사 종료</td><td>✔ 가능</td><td>근로자가 재계약을 거부하면 제한될 수 있음</td></tr>
+    <tr><td><b>41</b></td><td>고용보험 비적용</td><td>—</td><td>적용 제외자</td></tr>
+    <tr><td><b>42</b></td><td>이중고용</td><td>—</td><td></td></tr></table>
+    <table class="nt-tbl"><tr><th style="width:170px">처리</th><th>기한·내용</th></tr>
+    <tr><td><b>4대보험 상실신고</b></td><td>이직일(마지막 근무일) 다음 날이 <b>상실일</b> · 상실일이 속한 달의 <b>다음 달 15일까지</b> (국민연금·건강·고용·산재 같이)</td></tr>
+    <tr><td><b>이직확인서</b></td><td>근로자가 실업급여를 신청해 고용센터가 요청하면 <b>10일 안에</b> 고용24(기업)로 제출 · 상실신고 사유 코드와 <b>같은 사유</b>로!</td></tr>
+    <tr><td><b>이직확인서 기재</b></td><td>피보험단위기간(이직 전 18개월 중 <b>유급일수 180일</b> 이상), 1일 소정근로시간, <b>이직 전 3개월 임금</b>(평균임금 산정내역), 이직 사유</td></tr>
+    <tr><td><b>퇴직금·정산</b></td><td>퇴직일부터 <b>14일 이내</b> 퇴직금·미지급 임금 지급 · 건강보험 퇴직정산 · 중도퇴사자 연말정산 · 퇴직소득 원천징수(다음 달 10일)</td></tr>
+    <tr><td><b>2026 구직급여</b></td><td>1일 상한 <b>68,100원</b> · 하한 최저임금 80% × 소정근로시간 (2026년 8시간 기준 66,048원) · 소정급여일수 120~270일</td></tr></table>
+    <p>🧮 <b>인사·급여 › 보수총액·지급명세서·이직확인서 › 📤 이직확인서</b>에서 평균임금·피보험단위기간·실업급여 예상액을 계산해 보세요.</p>
+   </div></details>
    <details open><summary>⭐ 통상임금 vs 평균임금 한눈에 구분</summary><div class="nt-box">
     <table class="nt-tbl"><tr><th style="width:130px"></th><th>💼 통상임금</th><th>📊 평균임금</th></tr>
     <tr><td><b>한 줄 정의</b></td><td>"<b>약속된</b> 월급" — 일한 대가로 정기적·일률적으로 주기로 <b>정해둔</b> 임금</td><td>"<b>실제로 받은</b> 월급의 평균" — 직전 3개월 동안 실제 지급된 임금 전부의 하루 평균</td></tr>
@@ -1237,6 +1285,59 @@ TaxDiary 회계·세무 › 환율·경제에서도 매매기준율을 바로 �
    <details open><summary>1. 적격증빙 4가지</summary><div class="nt-box"><p><b>세금계산서 · 계산서 · 신용카드매출전표(법인카드) · 현금영수증(지출증빙)</b></p><p>건당 3만 원 초과 지출(업무추진비 포함)은 적격증빙을 받아야 해요. 받지 못하면 <b>증빙불비가산세 2%</b>가 붙고, 업무추진비는 손금불산입돼요. (경조사비는 20만 원까지 청첩장·부고장으로 인정)</p><p class="nt-tip">💡 2026년 세제개편안에 이 기준을 3만→5만 원(경조사 20만→30만 원)으로 올리는 내용이 있어요. 시행령이 확정되면 바뀌어요.</p></div></details>
    <details><summary>2. 원천징수 세율 한눈에</summary><div class="nt-box"><table class="nt-tbl"><tr><th>소득</th><th>소득세</th><th>지방세 포함</th></tr><tr><td>근로소득</td><td>간이세액표</td><td>+10%</td></tr><tr><td>사업소득 (인적용역)</td><td>3%</td><td>3.3%</td></tr><tr><td>기타소득 (필요경비 60%)</td><td>소득금액의 20%</td><td>지급액의 8.8%</td></tr><tr><td>일용근로소득</td><td>(일급−15만)×6%×45%</td><td>+10%</td></tr><tr><td>이자 (금융)·배당</td><td>14%</td><td>15.4%</td></tr><tr><td>비영업대금의 이익</td><td>25%</td><td>27.5%</td></tr><tr><td>퇴직소득</td><td>연분연승 계산</td><td>+10%</td></tr></table></div></details>
    <details><summary>3. 자주 쓰는 신고 기한</summary><div class="nt-box"><table class="nt-tbl"><tr><th>신고</th><th>기한</th></tr><tr><td>원천세 신고·납부</td><td>지급한 달의 다음 달 10일 (반기납부 승인 시 1·7월 10일)</td></tr><tr><td>부가가치세</td><td>법인: 예정 4·10월 25일, 확정 1·7월 25일</td></tr><tr><td>법인세 (12월 결산)</td><td>3월 31일 · 중간예납 8월 31일</td></tr><tr><td>지방소득세 (법인)</td><td>4월 30일</td></tr><tr><td>일용근로소득 지급명세서</td><td>지급한 달의 다음 달 말일 (매월)</td></tr><tr><td>근로·퇴직·사업소득 지급명세서 (연간)</td><td>다음 해 3월 10일</td></tr></table><p class="nt-tip">💡 세무 달력의 🧾 법정 세무일정 버튼으로 자동 등록할 수 있어요. 기한이 토·일·공휴일이면 다음 영업일이에요.</p></div></details>
+  </div>
+  <div class="nt-pane" data-pane="vat" hidden>
+   <details open><summary>📅 과세기간 · 신고기한</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th>구분</th><th>대상 기간</th><th>신고·납부기한</th><th>법인</th><th>개인(일반과세)</th></tr>
+    <tr><td><b>1기 예정</b></td><td>1.1 ~ 3.31</td><td><b>4월 25일</b></td><td>예정신고 (직전 기 공급가액 1.5억 미만은 예정고지)</td><td>예정고지 (직전 기 납부세액 50%)</td></tr>
+    <tr><td><b>1기 확정</b></td><td>1.1 ~ 6.30 (예정분 제외)</td><td><b>7월 25일</b></td><td colspan="2">확정신고</td></tr>
+    <tr><td><b>2기 예정</b></td><td>7.1 ~ 9.30</td><td><b>10월 25일</b></td><td>예정신고 (또는 예정고지)</td><td>예정고지</td></tr>
+    <tr><td><b>2기 확정</b></td><td>7.1 ~ 12.31 (예정분 제외)</td><td>다음 해 <b>1월 25일</b></td><td colspan="2">확정신고</td></tr></table>
+    <p>기한이 토·일·공휴일이면 <b>다음 영업일</b>까지. 간이과세자는 1년(1.1~12.31) 단위로 다음 해 1월 25일 신고.</p>
+   </div></details>
+   <details><summary>🧾 세금계산서 발급 시기 · 수정세금계산서</summary><div class="nt-box">
+    <ul><li><b>원칙</b>: 공급시기(재화 인도일·용역 제공 완료일)에 발급 · <b>월합계</b>는 그 달 말일자로 <b>다음 달 10일까지</b></li>
+    <li><b>전송</b>: 전자세금계산서는 발급일 <b>다음 날까지</b> 국세청 전송</li>
+    <li><b>수정세금계산서 작성일자</b>: 계약해제 → 해제일 · 공급가액 증감 → 증감 사유 발생일 · 환입 → 환입일 · 기재 착오·이중발급 → <b>당초 작성일자</b></li>
+    <li>착오 정정은 당초 작성일자로 발급하므로 <b>이미 신고한 기간</b>이면 수정신고가 필요할 수 있어요</li></ul>
+   </div></details>
+   <details><summary>🚫 공제 안 되는 매입세액 (불공제)</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th style="width:200px">항목</th><th>내용</th></tr>
+    <tr><td><b>접대비</b> 관련</td><td>거래처 식사·선물 등 — 세금계산서를 받아도 불공제</td></tr>
+    <tr><td><b>비영업용 소형승용차</b></td><td>개별소비세 과세 승용차(8인승 이하, 1,000cc 초과)의 구입·임차·유지(주유·수리) — 경차·9인승 이상·화물차는 공제</td></tr>
+    <tr><td><b>면세사업</b> 관련</td><td>겸영이면 공통매입세액을 공급가액 비율로 안분</td></tr>
+    <tr><td><b>사업과 무관</b>한 지출</td><td>대표·임직원 개인 사용분</td></tr>
+    <tr><td><b>토지</b> 관련</td><td>토지 조성·취득 관련 비용 (건물 철거비 포함)</td></tr>
+    <tr><td><b>세금계산서 미수취·부실</b></td><td>필요적 기재사항 누락·사실과 다른 세금계산서</td></tr>
+    <tr><td><b>사업자등록 전</b> 매입</td><td>공급시기가 속한 과세기간 끝난 후 20일 안에 등록 신청하면 공제 가능</td></tr></table>
+   </div></details>
+   <details><summary>💳 신용카드 매입 공제 요령</summary><div class="nt-box">
+    <ul><li>법인카드는 홈택스 <b>사업용 신용카드 등록</b> 확인 → 「신용카드 매입내역 조회」에서 <b>공제/불공제 선택</b></li>
+    <li>불공제로 바꿔야 하는 것: 접대비, 승용차 주유·수리, 면세 품목(농산물·도서 등), 간이과세자(영수증 발급 대상)·면세사업자 가맹점, 해외 사용분, 개인 사용분</li>
+    <li>직원 <b>복리후생</b> 식대·회식비는 공제 가능 (접대비와 구분해서 기록)</li></ul>
+   </div></details>
+   <details><summary>🎁 간주공급 · 영세율 · 대손세액공제 · 조기환급</summary><div class="nt-box">
+    <table class="nt-tbl"><tr><th style="width:150px">항목</th><th>내용</th></tr>
+    <tr><td><b>간주공급</b></td><td>매입세액 공제받은 재화를 <b>사업상 증여</b>(거래처 선물)·<b>개인적 공급</b>(대표 개인 사용)·면세 전용·폐업 시 잔존재화 → 시가로 과세 · 직원 경조사·설추석 선물은 1인당 연 10만원까지 제외</td></tr>
+    <tr><td><b>영세율</b></td><td>수출(수출신고필증), 내국신용장·구매확인서 거래 → 세율 0%, 매입세액은 환급 · 수출실적명세서·영세율 첨부서류 제출</td></tr>
+    <tr><td><b>대손세액공제</b></td><td>파산·강제집행·소멸시효 완성·부도 6개월 경과 등으로 못 받은 외상매출금의 부가세를 <b>확정신고</b> 때 매출세액에서 차감 (공급일부터 10년 안에 확정된 대손)</td></tr>
+    <tr><td><b>조기환급</b></td><td>영세율 적용·사업 설비 신설·취득·확장 시 → 매월·매2월 또는 예정·확정 신고 후 <b>15일 이내</b> 환급</td></tr></table>
+   </div></details>
+   <details><summary>🔎 신고 전 대사 포인트</summary><div class="nt-box">
+    <ul><li>더존 <b>부가세 신고서 ↔ 홈택스</b> 매출·매입 세금계산서 합계(건수·공급가액·세액) 일치</li>
+    <li>부가세예수금·대급금 계정 잔액 ↔ 신고서 매출세액·매입세액</li>
+    <li>카드매출(PG 포함)·현금영수증 매출 누락 여부</li>
+    <li>예정신고 누락분은 확정신고 때 <b>예정신고 누락분</b> 칸에 (가산세 확인)</li>
+    <li>✅ <b>회계·세무 › 부가세 신고 체크리스트</b>에서 기수별로 체크하세요</li></ul>
+   </div></details>
+     <details><summary>📊 부가율 체크하는 법</summary><div class="nt-box">
+    <ul><li><b>부가율</b> = (매출 과세표준 − 매입 과세표준) ÷ 매출 과세표준 × 100 — 매출에서 얼마나 "부가가치"를 남겼는지</li>
+    <li>국세청은 부가율이 <b>직전 신고나 동종업종보다 크게 낮으면</b> 매출 누락·가공매입을 의심해 신고 전 안내·사후검증을 해요</li>
+    <li><b>체크 순서</b>: ① 이번 기 부가율 계산 ② <b>직전 기·작년 같은 기</b>와 비교 ③ 홈택스 <b>신고도움서비스</b>의 동종업종 평균과 비교 ④ 낮다면 사유(설비투자·재고 증가·원가 상승·수출 증가)를 메모·증빙으로 남기기</li>
+    <li>고정자산(기계·차량·인테리어) 매입이 크면 부가율이 일시적으로 떨어져요 → <b>고정자산 제외 부가율</b>도 같이 보기</li>
+    <li>간이과세자 업종별 부가가치율(15~40%)은 세액 계산용 <b>법정 비율</b>이라 일반과세자 기준선으로 쓰면 안 돼요</li>
+    <li>🧮 <b>회계·세무 › 부가세 신고 체크리스트 › 📊 부가율 체크</b>에서 계산해 보세요</li></ul>
+   </div></details>
   </div>
   <div class="nt-pane" data-pane="fx" hidden>
    <details open><summary>1. 수출 기본</summary><div class="nt-box">
@@ -1512,6 +1613,15 @@ TaxDiary 회계·세무 › 환율·경제에서도 매매기준율을 바로 �
    <div class="subtle lc-note">📞 막히면 <b>국세상담센터 126</b> (1번 홈택스 → 연말정산 상담). 1~2월은 대기가 길어서 홈택스 <b>"인터넷 상담"</b>이 더 빠를 때가 많아요.</div>
   </div>
   <div class="subtle lc-note">※ 2026년 11월 기준 개정 내용을 반영한 <b>참고용 계산</b>이에요. 청년 중소기업 감면, 외국인 단일세율, 기부금 한도(소득금액 기준) 등 세부 요건은 빠져 있어서 실제 회사 정산(더존) 결과와 차이가 날 수 있어요.</div>
+</section>
+<section id="prPage" class="page-panel diary-page pr-page">
+  <div class="diary-toolbar"><div><div class="diary-title"><span class="diary-title-mark">📑</span>보수총액·지급명세서·이직확인서</div><div class="diary-subtitle">직원별 1~12월 급여(급여대장)를 한 번 넣어두면 <b>보수총액 신고·건강보험 정산 예상</b>, <b>지급명세서 집계</b>, <b>이직확인서 평균임금·실업급여 예상</b>까지 같이 계산해요.</div></div></div>
+  <div class="nt-tabs"><button type="button" class="nt-tab pr-tab on" data-pr="emp" onclick="prTab('emp')">👥 직원별 급여 입력</button><button type="button" class="nt-tab pr-tab" data-pr="bosu" onclick="prTab('bosu')">🏥 보수총액 신고</button><button type="button" class="nt-tab pr-tab" data-pr="jm" onclick="prTab('jm')">🧾 지급명세서 집계</button><button type="button" class="nt-tab pr-tab" data-pr="ij" onclick="prTab('ij')">📤 이직확인서</button></div>
+  <div id="prBody"></div>
+</section>
+<section id="vatPage" class="page-panel diary-page vat-page">
+  <div class="diary-toolbar"><div><div class="diary-title"><span class="diary-title-mark">🧾</span>부가세 신고 체크리스트</div><div class="diary-subtitle">기수별로 매출·매입·부속서류·검증·신고 후 정리까지 하나씩 체크해요. 체크하면 줄이 그어지고 완료 날짜가 남아요.</div></div></div>
+  <div id="vatBody"></div>
 </section>
 <section id="memoPage" class="page-panel diary-page sticky-memo-page">
   <div class="diary-toolbar">
@@ -2902,7 +3012,7 @@ function updateCalExpandBtn(){document.body.classList.toggle('cal-expand-all',ca
 const _applyAppearanceExp=applyAppearance;applyAppearance=function(){const r=_applyAppearanceExp.apply(this,arguments);if(calExpandAll!==!!profile.calExpandAll){calExpandAll=!!profile.calExpandAll;try{renderCalendar()}catch(e){}}updateCalExpandBtn();return r};
 /* ===== [인사] 노무 계산기 ===== */
 let lcTab='hol';
-const LC_TABS=[['hol','⏱ 주휴수당·알바 시급'],['leave','🌴 연차 미사용수당'],['ot','🌙 연장·야간·휴일'],['prorate','📆 일할계산'],['ins','🏥 퇴사 4대보험 정산'],['sev','🏦 퇴직금·퇴직소득세'],['daily','👷 일용근로소득'],['nt','📋 비과세 항목표'],['wh','🧾 원천세 집계표']];
+const LC_TABS=[['hol','⏱ 주휴수당·알바 시급'],['leave','🌴 연차 미사용수당'],['ot','🌙 연장·야간·휴일'],['day','🕘 하루 근무 판정 (반차·연장·야간)'],['prorate','📆 일할계산'],['ins','🏥 퇴사 4대보험 정산'],['sev','🏦 퇴직금·퇴직소득세'],['daily','👷 일용근로소득'],['nt','📋 비과세 항목표'],['wh','🧾 원천세 집계표']];
 const won=v=>Math.round(v).toLocaleString('ko-KR')+'원';
 function lcN(id){const el=$(id);return el?Number(String(el.value||'').replace(/[^0-9.]/g,''))||0:0}
 function lcMoney(id,label,val,hint){return `<label class="lc-f"><span>${label}${hint?` <small>${hint}</small>`:''}</span><input id="${id}" type="text" inputmode="numeric" value="${Number(val).toLocaleString('ko-KR')}" oninput="pcFmt(this);lcCalc()"></label>`}
@@ -2918,6 +3028,7 @@ function renderLaborCalc(){
  if(lcTab==='hol')f=lcMoney('lcWage','시급',minWageNow(),'2026년 최저 10,320원')+lcNum('lcWeekH','1주 소정근로시간',20,'최대 40','0.5')+lcNum('lcDays','주 근무일수',5,'','1');
  if(lcTab==='leave')f=lcDate('lcJoin','입사일',`${Number(today.slice(0,4))-2}-03-02`)+lcDate('lcBase','기준일 (퇴사일·정산일)',today)+lcSel('lcLvMode','통상시급 입력 방식',[['month','월 통상임금 ÷ 209',1],['hour','시급 직접 입력']])+lcMoney('lcLvPay','월 통상임금 (또는 시급)',3000000)+lcNum('lcLvHours','1일 소정근로시간',8,'','0.5')+lcNum('lcLvDays','미사용 연차 일수',5,'','0.5');
  if(lcTab==='ot')f=lcMoney('lcOtPay','월 통상임금',3000000,'기본급+고정수당')+lcNum('lcOtBase','월 소정근로시간',209,'주휴 포함','1')+lcSel('lcOt5','사업장 규모',[['1','5인 이상 (가산수당 적용)',1],['0','5인 미만 (가산 없음)']])+lcNum('lcOtH','연장근로 시간',10,'× 1.5','0.5')+lcNum('lcNightH','야간근로 시간',0,'22~06시 · 가산 0.5','0.5')+lcNum('lcHolH','휴일근로 8시간 이내',0,'× 1.5','0.5')+lcNum('lcHolH2','휴일근로 8시간 초과',0,'× 2.0','0.5');
+ if(lcTab==='day')f=lcMoney('dyPay','월 통상임금',3000000,'기본급+고정수당')+lcNum('dyBase','월 소정근로시간',209,'','1')+`<label class="lc-f"><span>출근 시각</span><input id="dyIn" type="time" value="13:00" oninput="lcCalc()"></label><label class="lc-f"><span>퇴근 시각 <small>자정 넘으면 그대로 입력 (예: 01:00)</small></span><input id="dyOut" type="time" value="23:00" oninput="lcCalc()"></label>`+lcNum('dyBrk','휴게시간 (분)',60,'점심·저녁 휴게 합계','10')+lcNum('dyNBrk','그중 22~06시 사이 휴게 (분)',0,'','10')+lcSel('dyLeave','이날 휴가 사용',[['4','오전/오후 반차 (4시간)',1],['2','반반차 (2시간)'],['0','휴가 없음']])+lcNum('dySched','1일 소정근로시간',8,'','0.5')+lcSel('dyMode','연장 판정 기준',[['law','법 기준 — 실근로 8시간 초과분',1],['co','회사 규정 — 소정 퇴근시각 이후 전부']])+`<label class="lc-f"><span>소정 퇴근시각 <small>회사 규정 기준일 때</small></span><input id="dyEnd" type="time" value="18:00" oninput="lcCalc()"></label>`+lcSel('dyFive','사업장 규모',[['1','5인 이상',1],['0','5인 미만 (가산 없음)']]);
  if(lcTab==='prorate')f=lcMoney('lcPrPay','월급',3000000)+lcSel('lcPrType','구분',[['in','중도 입사 (입사일부터 말일까지)',1],['out','중도 퇴사 (1일부터 마지막 근무일까지)']])+lcDate('lcPrDate','입사일 / 마지막 근무일',today)+lcSel('lcPrMode','계산 방식',[['cal','달력일수 기준 (해당 월 일수)',1],['30','30일 기준'],['work','근무일(평일) 기준 · 공휴일 제외']]);
  if(lcTab==='ins')f=lcMoney('lcInsTot','올해 총 보수액',36000000,'1월(입사월)~퇴사월, 비과세 제외')+lcNum('lcInsM','근무 월수',12,'건강보험 부과 월수','1')+lcMoney('lcInsPaidH','이미 낸 건강보험료',0,'근로자분 합계')+lcMoney('lcInsPaidL','이미 낸 장기요양보험료',0,'근로자분 합계')+lcMoney('lcInsPaidE','이미 낸 고용보험료',0,'근로자분 합계');
  if(lcTab==='sev')f=lcDate('lcSvJoin','입사일',`${Number(today.slice(0,4))-3}-01-02`)+lcDate('lcSvLast','마지막 근무일',today)+lcMoney('lcSv3m','퇴직 전 3개월 임금총액',9000000,'기본급+수당')+lcMoney('lcSvBonus','연간 상여금 총액',0,'× 3/12 반영')+lcMoney('lcSvLeave','연차수당',0,'전년도 미사용분 × 3/12')+lcMoney('lcSvOrd','1일 통상임금',0,'선택 · 평균임금보다 크면 적용')+lcMoney('lcSvOverride','퇴직소득 직접 입력',0,'선택 · 위로금 포함 등');
@@ -2935,6 +3046,15 @@ function lcCalc(){
   o.innerHTML=lcRes([['grp','발생 연차 (입사일 기준 참고)'],['현재 연차 발생 기준',gen,note],['grp','미사용 연차수당'],['통상시급',won(hr),$('lcLvMode').value==='month'?'월 통상임금 ÷ 209':''],['1일 통상임금',won(hr*hrs),`× ${hrs}시간`],['미사용 일수',d+'일'],['연차 미사용수당',won(pay),'',1]],['연차 미사용수당',won(pay),`통상시급 ${won(hr)} × ${hrs}시간 × ${d}일`],'※ 회계연도 기준으로 연차를 관리하면 발생 일수가 달라질 수 있어요. 연차사용촉진을 적법하게 한 경우 미사용수당 지급 의무가 없어요.')}
  if(lcTab==='ot'){const hr=lcN('lcOtPay')/(lcN('lcOtBase')||209),five=$('lcOt5').value==='1',a=lcN('lcOtH'),n=lcN('lcNightH'),h1=lcN('lcHolH'),h2=lcN('lcHolH2'),ot=hr*a*(five?1.5:1),nt=five?hr*n*.5:0,ho1=hr*h1*(five?1.5:1),ho2=hr*h2*(five?2:1),tot=ot+nt+ho1+ho2;
   o.innerHTML=lcRes([['통상시급',won(hr),`${won(lcN('lcOtPay'))} ÷ ${lcN('lcOtBase')||209}시간`],['grp','수당'],['연장근로수당',won(ot),`${a}시간 × ${five?'1.5':'1.0'}`],['야간근로 가산수당',won(nt),five?`${n}시간 × 0.5 (가산분)`:'5인 미만 미적용'],['휴일근로 (8시간 이내)',won(ho1),`${h1}시간 × ${five?'1.5':'1.0'}`],['휴일근로 (8시간 초과)',won(ho2),`${h2}시간 × ${five?'2.0':'1.0'}`],['수당 합계',won(tot),'',1]],['연장·야간·휴일 수당 합계',won(tot),`통상시급 ${won(hr)}`],'※ 야간근로는 가산분(0.5)만 계산해요. 연장과 야간이 겹치면 연장 1.5 + 야간 0.5 = 2.0배가 돼요. 5인 미만 사업장은 가산수당 규정이 적용되지 않아요.')}
+ if(lcTab==='day'){const tm=v=>{const [h,m]=String(v||'0:0').split(':').map(Number);return (h||0)*60+(m||0)},s=tm($('dyIn').value);let e=tm($('dyOut').value);if(e<=s)e+=1440;
+  const brk=lcN('dyBrk'),nbrk=lcN('dyNBrk'),lv=+$('dyLeave').value,sched=lcN('dySched')||8,co=$('dyMode').value==='co',five=$('dyFive').value==='1',hr=lcN('dyPay')/(lcN('dyBase')||209);
+  const ov=(a,b,c,d)=>Math.max(0,Math.min(b,d)-Math.max(a,c)),NW=[[-120,360],[1320,1800],[2760,3240]],nightOf=(a,b)=>NW.reduce((t,[c,d])=>t+ov(a,b,c,d),0);
+  const work=Math.max(0,e-s-brk),night=Math.max(0,nightOf(s,e)-nbrk),remain=Math.max(0,sched-lv)*60;
+  let ot=co?Math.min(work,Math.max(0,e-tm($('dyEnd').value))):Math.max(0,work-480);const inner=Math.max(0,(work-ot)-remain),otNight=Math.min(ot,night,nightOf(e-ot,e));
+  const H=m=>{const h=Math.floor(m/60),mm=m%60;return `${h}시간${mm?` ${mm}분`:''}`},fmt=x=>`${String(Math.floor(x/60)%24).padStart(2,'0')}:${String(x%60).padStart(2,'0')}`;
+  const pIn=hr*inner/60,pOt=hr*ot/60*(five?1.5:1),pN=five?hr*night/60*.5:0,tot=pIn+pOt+pN;
+  o.innerHTML=lcRes([['근무 시각',`${fmt(s)} ~ ${fmt(e)}${e>=1440?' (다음 날)':''}`,`휴게 ${brk}분`],['실근로시간',H(work),'휴가·반차 시간은 실근로가 아니에요',1],['휴가 사용',lv?`${lv}시간 (유급)`:'없음',lv?'월급에 이미 포함 · 가산 없음':''],['남은 소정근로',H(remain),`소정 ${sched}시간 − 휴가 ${lv}시간`],['grp','시간 판정'],['소정 초과 · 8시간 이내 (법내 초과)',H(inner),'통상시급 × 1.0 (가산 없음)'],[co?'연장 (회사 규정: 소정 퇴근 이후)':'연장 (실근로 8시간 초과분)',H(ot),five?'× 1.5':'5인 미만 × 1.0'],['야간 (22:00~06:00)',H(night),five?'가산 × 0.5 — 반차와 상관없이 시각 기준':'5인 미만 가산 없음'],...(otNight?[['그중 연장+야간 겹침',H(otNight),'1.5 + 0.5 = 2.0배']]:[]),['grp','수당 (월급 외 추가로 줄 돈)'],['법내 초과분',won(pIn)],['연장근로수당',won(pOt)],['야간 가산수당',won(pN)],['합계',won(tot),`통상시급 ${won(hr)}`,1]],['이날 추가 지급액',won(tot),`실근로 ${H(work)} · 연장 ${H(ot)} · 야간 ${H(night)}`],
+  `💡 <b>연장</b>은 "몇 시에 일했나"가 아니라 <b>실제로 일한 시간이 하루 8시간(주 40시간)을 넘었나</b>로 봐요. 반차·연차로 쉰 시간은 실근로가 아니라서, 오전 반차 후 저녁 늦게까지 일해도 실근로가 8시간 이하면 가산(1.5배) 없이 <b>1.0배</b>만 줘요.<br>💡 <b>야간</b>은 반대로 <b>시각 기준</b>이에요. 22시~06시에 일한 시간은 반차를 썼든 안 썼든 0.5배 가산(5인 이상).<br>※ 주 40시간 초과분도 연장이라, 그 주에 다른 날 연장이 많으면 결과가 달라질 수 있어요. 취업규칙·근로계약에 "소정 퇴근시각 이후는 연장"처럼 더 유리하게 정했다면 회사 규정을 따르세요(위 '판정 기준'에서 선택).`)}
  if(lcTab==='prorate'){const pay=lcN('lcPrPay'),dt=$('lcPrDate').value;if(!dt){o.innerHTML='';return}const y=+dt.slice(0,4),m=+dt.slice(5,7),d=+dt.slice(8,10),last=new Date(y,m,0).getDate(),inn=$('lcPrType').value==='in',from=inn?d:1,to=inn?last:d,mode=$('lcPrMode').value;
   const isWork=x=>{const D=new Date(y,m-1,x),w=D.getDay();return w!==0&&w!==6&&!getHoliday(toISO(D))};let num,den;
   if(mode==='work'){num=0;den=0;for(let x=1;x<=last;x++)if(isWork(x)){den++;if(x>=from&&x<=to)num++}}else{num=to-from+1;den=mode==='30'?30:last;if(mode==='30')num=Math.min(num,30)}
@@ -3547,7 +3667,7 @@ function yeMonthUI(){const b=$('yeMonthBox');if(!b)return;const D=ymData(),f=v=>
  <div class="subtle lc-note">✔ 합계가 <b>예상 환급액 계산기·신용카드 공제</b>에 자동으로 들어가요 (건강·장기요양·고용은 합쳐서 반영). 비과세는 총급여에서 빠지니 참고용이에요.<br>✔ 엑셀 업로드는 제목 행에 "과세급여(또는 지급액)·소득세·국민연금·건강보험·신용카드…" 같은 글자가 있으면 순서가 달라도 알아서 찾아요. 지방소득세 열은 건너뛰어요.<br>✔ 12월 급여가 아직 안 나왔으면 11월 금액을 복사해 넣으면 예상치를 볼 수 있어요.</div>`;ymTotals()}
 
 /* ===== 보고서 인쇄 · 엑셀 저장 (계산기) ===== */
-const RP_PAGES=['payCalcPage','laborCalcPage','ctPage','loanPage','fxCalcPage','yePage','entPage','retirementPage','leavePage','insInfoPage','penaltyPage','closingPage'];
+const RP_PAGES=['prPage','vatPage','payCalcPage','laborCalcPage','ctPage','loanPage','fxCalcPage','yePage','entPage','retirementPage','leavePage','insInfoPage','penaltyPage','closingPage'];
 function rpVis(el){return !!(el&&el.getClientRects().length)}
 function rpTitle(sec){const t=((sec.querySelector('.diary-title,.panel-title')||{}).textContent||'').replace(/\s+/g,' ').trim();const tabs=[...sec.querySelectorAll('button.on,button.active')].filter(rpVis).map(b=>b.textContent.replace(/\s+/g,' ').trim()).filter(x=>x&&x.length<30);return {t,tab:tabs.join(' · ')}}
 function rpLabel(el){let lab=el.closest('label');if(!lab){let p=el,i=0;while(p&&i<3&&!lab){let s=p.previousElementSibling;while(s&&!lab){if(s.tagName==='LABEL'&&!s.querySelector('input,select,textarea'))lab=s;s=s.previousElementSibling}p=p.parentElement;i++}}
@@ -3565,7 +3685,7 @@ function rpReport(id){const sec=$(id);if(!sec)return;const {t,tab}=rpTitle(sec),
  else{const c=rpClean(sec);c.querySelectorAll('.diary-toolbar,.nt-tabs,.lc-tabs,.ent-cfg,.ent-add,.ex-add,.ln-up,.ym-bar,.lc-note').forEach(e=>e.remove());body=`<div class="rp-res">${c.innerHTML}</div>`}
  const kv=[];for(let i=0;i<ins.length;i+=2)kv.push(`<tr><th>${escapeHTML(ins[i][0])}</th><td>${escapeHTML(ins[i][1])}</td>${ins[i+1]?`<th>${escapeHTML(ins[i+1][0])}</th><td>${escapeHTML(ins[i+1][1])}</td>`:'<th></th><td></td>'}</tr>`);
  let au='';try{au=localStorage.getItem('rpAuthor')||''}catch(e){}
- const tabTool=['ctPage','laborCalcPage','loanPage','fxCalcPage','yePage','penaltyPage'].includes(id)&&tab,name=(tabTool?tab:t).replace(/^[^\w가-힣]+/,''),subT=tabTool?t.replace(/^[^\w가-힣]+/,''):tab;let n=1;const sec2=[];
+ const tabTool=['ctPage','laborCalcPage','loanPage','fxCalcPage','yePage','penaltyPage','prPage'].includes(id)&&tab,name=(tabTool?tab:t).replace(/^[^\w가-힣]+/,''),subT=tabTool?t.replace(/^[^\w가-힣]+/,''):tab;let n=1;const sec2=[];
  if(heroes.length)sec2.push(`<h2>${n++}. 결론 요약</h2><div class="rp-sum">${heroes.map(h=>`<div class="rp-hero"><span>${escapeHTML(h[0])}</span><b>${escapeHTML(h[1])}</b>${h[2]?`<small>${escapeHTML(h[2])}</small>`:''}</div>`).join('')}</div>`);
  if(kv.length)sec2.push(`<h2>${n++}. 입력 조건</h2><table class="rp-kv">${kv.join('')}</table>`);
  sec2.push(`<h2>${n++}. ${res.length?'계산 내역':'내용'}</h2>${body}`);
@@ -3583,13 +3703,14 @@ function rpReport(id){const sec=$(id);if(!sec)return;const {t,tab}=rpTitle(sec),
  .rp-doc [contenteditable]:focus,.rp-doc:focus-within h1{outline:0}.rp-bar{position:sticky;top:0;background:#1e3a8a;color:#fff;padding:9px 14px;display:flex;gap:8px;align-items:center;font-size:13px;z-index:9}.rp-bar button{border:0;border-radius:6px;padding:7px 14px;font-weight:800;cursor:pointer;background:#fff;color:#1e3a8a}.rp-bar span{opacity:.85;margin-left:6px}
  @media print{.rp-bar{display:none}.rp-memo:empty{display:none}h2,tr,.rp-hero{break-inside:avoid;break-after:auto}}</style>`;
  const html=`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${escapeHTML(name)} 검토 보고</title>${[...document.querySelectorAll('link[rel=stylesheet]')].map(l=>l.outerHTML).join('')}${[...document.querySelectorAll('style')].map(x=>x.outerHTML).join('')}${css}</head><body>
- <div class="rp-bar"><button onclick="print()">🖨 인쇄 / PDF로 저장</button><button onclick="close()">닫기</button><span>✏️ 문서 어디든 눌러서 글자·숫자를 바로 고치고 지울 수 있어요 (Ctrl+Z 되돌리기)</span></div>
+ <div class="rp-bar"><button onclick="print()">🖨 인쇄 / PDF로 저장</button><button onclick="close()">닫기</button><button onclick="sg(0)">🖊 결재란 숨기기/보이기</button><button onclick="sg(1)">＋ 결재칸</button><button onclick="sg(-1)">－ 결재칸</button><span>✏️ 문서 어디든 눌러서 고칠 수 있어요 (Ctrl+Z 되돌리기)</span></div>
  <div class="rp-doc" contenteditable="true" spellcheck="false"><div class="rp-top"><div><h1 contenteditable="true">${escapeHTML(name)} 검토 보고</h1><div class="rp-sub" contenteditable="true">${escapeHTML(subT||'')}</div></div>
  <table class="rp-sign"><tr><th rowspan="2" class="v">결<br>재</th><th contenteditable="true">담당</th><th contenteditable="true">부서장</th><th contenteditable="true">대표이사</th></tr><tr><td></td><td></td><td></td></tr></table></div>
  <table class="rp-meta"><tr><th>작성일</th><td>${ds}</td><th>작성자</th><td contenteditable="true" id="rpAu">${escapeHTML(au)}</td></tr><tr><th>기준</th><td colspan="3" contenteditable="true">${escapeHTML(((sec.querySelector('.diary-subtitle,.subtle')||{}).textContent||'').replace(/\s+/g,' ').trim().slice(0,160))}</td></tr></table>
  ${sec2.join('')}
  ${notes.length?`<div class="rp-notes">${notes.map(x=>'<div>'+x+'</div>').join('')}</div>`:''}<div class="rp-foot">TaxDiary 계산 결과 · ${toISO(now)}</div></div>
- <script>document.getElementById('rpAu').addEventListener('input',e=>{try{opener&&opener.localStorage.setItem('rpAuthor',e.target.textContent.trim())}catch(_){}})<\/script></body></html>`;
+ <script>function sg(n){const t=document.querySelector('.rp-sign');if(!t)return;if(!n){t.style.display=t.style.display==='none'?'':'none';return}t.style.display='';const r=t.rows;if(n>0){const h=document.createElement('th');h.textContent='결재';h.contentEditable='true';r[0].appendChild(h);r[1].appendChild(document.createElement('td'))}else if(r[1].cells.length>1){r[0].deleteCell(-1);r[1].deleteCell(-1)}}
+document.getElementById('rpAu').addEventListener('input',e=>{try{opener&&opener.localStorage.setItem('rpAuthor',e.target.textContent.trim())}catch(_){}})<\/script></body></html>`;
  const w=window.open('','_blank');if(!w){alert('팝업이 차단됐어요. 주소창 오른쪽에서 팝업을 허용해 주세요.');return}w.document.open();w.document.write(html);w.document.close();return html}
 function rpNum(t){const s=String(t).replace(/\s/g,'');if(/^[−\-–]?₩?[\d,]+(\.\d+)?(원|만원)?$/.test(s)&&/\d/.test(s)){const neg=/^[−\-–]/.test(s);let n=Number(s.replace(/[^0-9.]/g,''));if(/만원$/.test(s))n*=1e4;return neg?-n:n}return t}
 function rpRows(sec){const {t,tab}=rpTitle(sec),ins=rpInputs(sec),res=rpResults(sec),rows=[[t.replace(/^[^\w가-힣]+/,'')],[tab],['작성일',toISO(new Date())],[]];
@@ -3607,6 +3728,138 @@ function rpInit(){RP_PAGES.forEach(id=>{const sec=$(id);if(!sec||sec.querySelect
  const mk=(t,ti,fn)=>{const b=document.createElement('button');b.type='button';b.className='btn btn-outline rp-btn';b.textContent=t;b.title=ti;b.onclick=()=>fn(id);return b};
  box.insertBefore(mk('📊 엑셀 저장','지금 계산된 입력값·결과를 엑셀 파일로 저장해요',rpExcel),pb||null);box.insertBefore(mk('📄 보고서','결재란이 있는 보고용 양식으로 출력해요',rpReport),box.querySelector('.rp-btn'))})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',rpInit);else rpInit();
+
+/* ===== 보수총액·지급명세서·이직확인서 ===== */
+let prCur='emp';
+const PR_COLS=[['pay','과세 급여'],['nt','비과세'],['itax','소득세'],['hi','건강보험'],['ltc','장기요양'],['emp','고용보험']];
+const PR_RATE={2025:{hi:.03545,ltc:.1295,emp:.009},2026:{hi:.03595,ltc:.9448/7.19,emp:.009},2027:{hi:.03595,ltc:.9448/7.19,emp:.009}};
+function prD(){const d=profile.payroll=profile.payroll||{year:new Date().getFullYear(),emps:[],cur:''};d.emps.forEach(e=>{if(!Array.isArray(e.m)||e.m.length!==12)e.m=Array.from({length:12},()=>Array(PR_COLS.length).fill(0))});return d}
+function prEmp(){const d=prD();let e=d.emps.find(x=>x.id===d.cur);if(!e&&d.emps.length){e=d.emps[0];d.cur=e.id}return e}
+function prNewEmp(name){return {id:'pe'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name,join:'',leave:'',m:Array.from({length:12},()=>Array(PR_COLS.length).fill(0))}}
+function prSum(e,c){return e.m.reduce((a,r)=>a+(Number(r[c])||0),0)}
+function prMonths(e){return e.m.filter(r=>(Number(r[0])||0)+(Number(r[1])||0)>0).length}
+function prSave(){clearTimeout(window._prT);window._prT=setTimeout(()=>{try{saveData()}catch(e){}},700)}
+function prTab(k){prCur=k;document.querySelectorAll('.pr-tab').forEach(b=>b.classList.toggle('on',b.dataset.pr===k));prRender()}
+function prRender(){const b=$('prBody');if(!b)return;({emp:prEmpUI,bosu:prBosuUI,jm:prJmUI,ij:prIjUI})[prCur]()}
+function prAdd(){const n=(prompt('직원 이름을 입력하세요.')||'').trim();if(!n)return;const d=prD(),e=prNewEmp(n);d.emps.push(e);d.cur=e.id;saveData();prRender()}
+function prDel(){const d=prD(),e=prEmp();if(!e||!confirm(`'${e.name}' 직원의 급여 데이터를 지울까요?`))return;d.emps=d.emps.filter(x=>x!==e);d.cur='';saveData();prRender()}
+function prSet(k,v){const e=prEmp();if(!e)return;e[k]=v;prSave();if(k==='name')prRender()}
+function prIn(el){const e=prEmp();if(!e)return;e.m[+el.dataset.r][+el.dataset.c]=Number(String(el.value).replace(/[^0-9]/g,''))||0;prSave();PR_COLS.forEach((x,c)=>{const t=$('prT'+c);if(t)t.textContent=prSum(e,c).toLocaleString('ko-KR')})}
+function prPaste(ev){const t=(ev.clipboardData||window.clipboardData).getData('text');if(!/[\t\n]/.test(t.trim()))return;ev.preventDefault();const e=prEmp();if(!e)return;const r0=+ev.target.dataset.r,c0=+ev.target.dataset.c;
+ t.replace(/\r/g,'').split('\n').filter(l=>l.length).forEach((line,i)=>{const r=r0+i;if(r>11)return;line.split('\t').forEach((v,j)=>{const c=c0+j;if(c<PR_COLS.length)e.m[r][c]=ymNum(v)})});prSave();prRender()}
+function prColOf(h){h=String(h||'').replace(/\s/g,'');if(!h)return null;
+ if(/성명|이름|사원명|직원명|^성$/.test(h))return 'name';if(/입사/.test(h))return 'join';if(/퇴사|이직일|상실/.test(h))return 'leave';
+ if(/^(귀속)?(연)?월$|귀속월|귀속년월|지급월|급여월|년월|지급연월|귀속연월/.test(h))return 'month';
+ if(/비과세/.test(h))return 'nt';if(/지방/.test(h))return null;if(/소득세|갑근세/.test(h))return 'itax';if(/요양/.test(h))return 'ltc';if(/건강|건보/.test(h))return 'hi';if(/고용/.test(h))return 'emp';if(/연금|산재|공제합계|차인|실지급|실수령/.test(h))return null;
+ if(/과세/.test(h))return 'payTax';if(/지급총액|급여총액|총지급|지급합계|급여계|총급여|보수/.test(h))return 'payTot';return null}
+function prMonthOf(v){if(v==null||v==='')return -1;if(v instanceof Date)return v.getMonth();if(typeof v==='number'){if(v>=1&&v<=12)return v-1;if(v>20000){const d=new Date(Math.round((v-25569)*864e5));return d.getUTCMonth()}if(v>=200001&&v<=210012)return v%100-1}
+ const s=String(v);let m=s.match(/\d{4}\s*[-./년]\s*(\d{1,2})/);if(m)return +m[1]-1;m=s.match(/(\d{1,2})\s*월/);if(m)return +m[1]-1;m=s.match(/^\s*(\d{1,2})\s*$/);if(m)return +m[1]-1;return -1}
+function prParse(wb){const out={};let used=0,miss=0;
+ wb.SheetNames.forEach(sn=>{const rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,raw:true,defval:''});let hi=-1,map={};
+  for(let i=0;i<Math.min(rows.length,20);i++){const m={};(rows[i]||[]).forEach((h,j)=>{const k=prColOf(h);if(k&&m[k]==null)m[k]=j});if(m.name!=null&&(m.payTax!=null||m.payTot!=null||m.itax!=null)){hi=i;map=m;break}}
+  if(hi<0)return;const sm=prMonthOf(sn);
+  for(let i=hi+1;i<rows.length;i++){const r=rows[i]||[],name=String(r[map.name]??'').trim();if(!name||/합계|총계|소계|^계$/.test(name))continue;let mo=map.month!=null?prMonthOf(r[map.month]):sm;if(mo<0||mo>11){miss++;continue}
+   const g=k=>map[k]!=null?ymNum(r[map[k]]):0,nt=g('nt'),pay=map.payTax!=null?g('payTax'):Math.max(0,g('payTot')-nt);
+   const o=out[name]=out[name]||{m:Array.from({length:12},()=>Array(PR_COLS.length).fill(0)),join:'',leave:''};[pay,nt,g('itax'),g('hi'),g('ltc'),g('emp')].forEach((v,c)=>o.m[mo][c]+=v);
+   if(map.join!=null&&r[map.join])o.join=lnDate(r[map.join],prD().year);if(map.leave!=null&&r[map.leave])o.leave=lnDate(r[map.leave],prD().year);used++}});
+ return {out,used,miss}}
+function prUpload(ev){const f=ev.target.files[0];ev.target.value='';if(!f)return;if(typeof XLSX==='undefined'){alert('엑셀 기능을 불러오지 못했어요. 인터넷 연결을 확인하거나, 표를 복사해 붙여넣어 주세요.');return}
+ const rd=new FileReader();rd.onload=x=>{try{const wb=XLSX.read(new Uint8Array(x.target.result),{type:'array',cellDates:true}),{out,used,miss}=prParse(wb),names=Object.keys(out);
+  if(!names.length){alert('제목 행에서 "성명"과 "과세급여(또는 지급총액)·소득세" 같은 항목을 찾지 못했어요.\n⬇ 양식을 받아 그 모양대로 넣거나, 월(귀속월) 열이 없으면 시트 이름을 "1월", "2월"처럼 해주세요.');return}
+  const d=prD(),exist=names.filter(n=>d.emps.some(e=>e.name===n)).length;
+  if(!confirm(`${names.length}명 · ${used}건을 읽었어요.${miss?`\n(월을 알 수 없는 ${miss}줄은 건너뜀)`:''}\n\n${names.slice(0,12).join(', ')}${names.length>12?' …':''}\n\n${exist?`이미 있는 직원 ${exist}명은 엑셀에 있는 달만 덮어써요. `:''}불러올까요?`))return;
+  names.forEach(n=>{let e=d.emps.find(v=>v.name===n);if(!e){e=prNewEmp(n);d.emps.push(e)}const o=out[n];o.m.forEach((row,mo)=>{if(row.some(v=>v))e.m[mo]=row});if(o.join)e.join=o.join;if(o.leave)e.leave=o.leave});saveData();prRender()}catch(err){alert('엑셀을 읽지 못했어요: '+err.message)}};rd.readAsArrayBuffer(f)}
+function prTemplate(){const y=prD().year,rows=[['성명','귀속월','입사일','퇴사일','과세급여','비과세','소득세','건강보험','장기요양','고용보험'],['홍길동',`${y}-01`,`${y-2}-03-02`,'',3000000,200000,74350,107850,14170,27000],['홍길동',`${y}-02`,'','',3000000,200000,74350,107850,14170,27000],['김사원',`${y}-01`,`${y}-01-02`,'',2500000,200000,32820,89870,11800,22500]];
+ if(typeof XLSX!=='undefined'){const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=rows[0].map((h,i)=>({wch:i<4?12:12}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'급여대장');XLSX.writeFile(wb,`${y}_직원별_급여대장_양식.xlsx`);return}
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+rows.map(r=>r.join(',')).join('\r\n')],{type:'text/csv'}));a.download=`${y}_직원별_급여대장_양식.csv`;a.click()}
+function prYearSel(){const d=prD();return `<label class="pr-y">귀속연도 <select onchange="prD().year=+this.value;saveData();prRender()">${[2025,2026,2027].map(y=>`<option${y===d.year?' selected':''}>${y}</option>`).join('')}</select></label>`}
+function prEmpUI(){const d=prD(),e=prEmp(),f=v=>v?Number(v).toLocaleString('ko-KR'):'';
+ const sum=d.emps.length?`<div class="ym-wrap"><table class="pr-sum"><thead><tr><th>성명</th><th>입사일</th><th>퇴사일</th><th>근무월수</th>${PR_COLS.map(x=>`<th>${x[1]}</th>`).join('')}</tr></thead><tbody>${d.emps.map(x=>`<tr class="${e&&x.id===e.id?'on':''}" onclick="prD().cur='${x.id}';prRender()"><td><b>${escapeHTML(x.name)}</b></td><td>${x.join||'-'}</td><td>${x.leave||'-'}</td><td>${prMonths(x)}</td>${PR_COLS.map((c,i)=>`<td>${prSum(x,i).toLocaleString('ko-KR')}</td>`).join('')}</tr>`).join('')}</tbody><tfoot><tr><th>합계 ${d.emps.length}명</th><td></td><td></td><td></td>${PR_COLS.map((c,i)=>`<td>${d.emps.reduce((a,x)=>a+prSum(x,i),0).toLocaleString('ko-KR')}</td>`).join('')}</tr></tfoot></table></div>`:'<div class="subtle" style="padding:14px">직원을 추가하거나 급여대장 엑셀을 올려보세요.</div>';
+ $('prBody').innerHTML=`<div class="ym-bar">${prYearSel()}<label class="btn btn-primary ym-up">📤 급여대장 엑셀 올리기<input type="file" accept=".xlsx,.xls,.csv" onchange="prUpload(event)" hidden></label><button type="button" class="btn btn-outline" onclick="prTemplate()">⬇ 양식</button><button type="button" class="btn btn-outline" onclick="prAdd()">＋ 직원 추가</button>${e?'<button type="button" class="btn btn-outline" onclick="prDel()">🗑 선택 직원 삭제</button>':''}</div>
+ <div class="subtle lc-note" style="margin:0 0 8px">📎 엑셀 한 줄에 <b>성명 · 귀속월 · 과세급여(또는 지급총액) · 비과세 · 소득세 · 건강보험 · 장기요양 · 고용보험</b>이 있으면 돼요. 더존 급여대장을 달마다 시트로 나눴다면 시트 이름을 "1월", "2월"처럼 해두면 귀속월 열이 없어도 읽어요. "지급총액"만 있으면 비과세를 빼서 과세급여로 계산해요.</div>
+ ${sum}${e?`<div class="pr-emp"><div class="pr-emp-h"><b>✏️ ${escapeHTML(e.name)}</b><label>이름 <input value="${escapeHTML(e.name)}" onchange="prSet('name',this.value.trim()||'이름 없음')"></label><label>입사일 <input type="date" value="${e.join||''}" onchange="prSet('join',this.value)"></label><label>퇴사일 <input type="date" value="${e.leave||''}" onchange="prSet('leave',this.value)"></label><span class="subtle">💡 엑셀에서 여러 칸 복사 → 1월 칸에 Ctrl+V</span></div>
+ <div class="ym-wrap"><table class="ym-tbl"><thead><tr><th>월</th>${PR_COLS.map(x=>`<th>${x[1]}</th>`).join('')}</tr></thead><tbody>${e.m.map((r,i)=>`<tr><th>${i+1}월</th>${r.map((v,c)=>`<td><input data-r="${i}" data-c="${c}" inputmode="numeric" value="${f(v)}" oninput="pcFmt(this);prIn(this)" onpaste="prPaste(event)"></td>`).join('')}</tr>`).join('')}</tbody><tfoot><tr><th>합계</th>${PR_COLS.map((x,c)=>`<td id="prT${c}">${prSum(e,c).toLocaleString('ko-KR')}</td>`).join('')}</tr></tfoot></table></div></div>`:''}`}
+function prBosuUI(){const d=prD(),R=PR_RATE[d.year]||PR_RATE[2026],y=d.year,fl=v=>Math.floor(v/10)*10,f=v=>Math.round(v).toLocaleString('ko-KR'),sg=v=>v>0?`<b class="pr-plus">+${f(v)}</b>`:v<0?`<b class="pr-minus">${f(v)}</b>`:'0';
+ const rows=d.emps.map(e=>{const tot=prSum(e,0),mo=prMonths(e),hiD=fl(tot*R.hi),ltcD=fl(hiD*R.ltc),empD=fl(tot*R.emp),hiP=prSum(e,3),ltcP=prSum(e,4),empP=prSum(e,5);return {e,tot,mo,avg:mo?tot/mo:0,hiD,ltcD,empD,hi:hiD-hiP,ltc:ltcD-ltcP,em:empD-empP,hiP,ltcP,empP}});
+ const T=k=>rows.reduce((a,r)=>a+r[k],0);
+ $('prBody').innerHTML=`<div class="ym-bar">${prYearSel()}<span class="subtle">요율: 건강 ${(R.hi*100).toFixed(3)}% · 장기요양 건보료×${(R.ltc*100).toFixed(2)}% · 고용 ${(R.emp*100).toFixed(1)}% (근로자 부담분)</span></div>
+ <div class="pr-due"><div>🏥 <b>건강보험 보수총액 통보서</b><span>${y+1}.3.10까지 · 건보공단 EDI</span></div><div>💼 <b>고용·산재 보수총액 신고</b><span>${y+1}.3.15까지 · 근로복지공단 토탈서비스</span></div><div>📅 <b>정산보험료</b><span>4월분 보험료에 반영 (분할납부 신청 가능)</span></div></div>
+ ${rows.length?`<div class="ym-wrap"><table class="pr-sum pr-bosu"><thead><tr><th rowspan="2">성명</th><th rowspan="2">근무<br>월수</th><th rowspan="2">${y}년<br>보수총액</th><th rowspan="2">월평균<br>보수</th><th colspan="3">건강보험 (근로자)</th><th colspan="3">장기요양 (근로자)</th><th colspan="3">고용보험 (근로자 실업급여분)</th></tr><tr><th>확정</th><th>기납부</th><th>정산</th><th>확정</th><th>기납부</th><th>정산</th><th>확정</th><th>기납부</th><th>정산</th></tr></thead>
+ <tbody>${rows.map(r=>`<tr><td><b>${escapeHTML(r.e.name)}</b>${r.e.leave?`<small>퇴사 ${r.e.leave}</small>`:''}</td><td>${r.mo}</td><td>${f(r.tot)}</td><td>${f(r.avg)}</td><td>${f(r.hiD)}</td><td>${f(r.hiP)}</td><td>${sg(r.hi)}</td><td>${f(r.ltcD)}</td><td>${f(r.ltcP)}</td><td>${sg(r.ltc)}</td><td>${f(r.empD)}</td><td>${f(r.empP)}</td><td>${sg(r.em)}</td></tr>`).join('')}</tbody>
+ <tfoot><tr><th>합계</th><td></td><td>${f(T('tot'))}</td><td></td><td>${f(T('hiD'))}</td><td>${f(T('hiP'))}</td><td>${sg(T('hi'))}</td><td>${f(T('ltcD'))}</td><td>${f(T('ltcP'))}</td><td>${sg(T('ltc'))}</td><td>${f(T('empD'))}</td><td>${f(T('empP'))}</td><td>${sg(T('em'))}</td></tr></tfoot></table></div>`:'<div class="subtle" style="padding:14px">먼저 👥 직원별 급여 입력에서 급여를 넣어주세요.</div>'}
+ <div class="subtle lc-note">✔ <b>보수총액</b> = 1~12월 근로소득에서 <b>비과세를 뺀 금액</b>(연말정산 총급여와 같아야 해요) · 근무월수 = 급여가 있는 달 수 (건강보험은 <b>1일 입사월만</b> 포함, 2일 이후 입사월·퇴사월 처리 확인)<br>✔ <b>정산 +</b> = 더 내야 함(추가징수) · <b>−</b> = 돌려받음(환급). 건강·장기요양은 <b>회사도 같은 금액</b>이 정산돼요.<br>✔ 이건 연간 총액 × 요율로 계산한 <b>추정치</b>예요. 실제 정산은 공단이 월별 보수월액 기준으로 계산하니 차이가 조금 날 수 있어요. 퇴사자는 퇴사 때 이미 정산했으면 제외하세요.<br>✔ 고용보험 회사 부담분은 실업급여 0.9% + 고용안정·직업능력개발 0.25~0.85%예요. 산재는 회사만 부담해요.</div>`}
+function prJmUI(){const d=prD(),y=d.year,f=v=>Math.round(v).toLocaleString('ko-KR'),half=(e,c,h)=>e.m.slice(h*6,h*6+6).reduce((a,r)=>a+(Number(r[c])||0),0);
+ const rows=d.emps.map(e=>({e,pay:prSum(e,0),nt:prSum(e,1),it:prSum(e,2),loc:e.m.reduce((a,r)=>a+Math.floor((Number(r[2])||0)*.1/10)*10,0),h1:half(e,0,0)+half(e,1,0),h2:half(e,0,1)+half(e,1,1)}));const T=k=>rows.reduce((a,r)=>a+r[k],0);
+ $('prBody').innerHTML=`<div class="ym-bar">${prYearSel()}</div>
+ ${rows.length?`<h3 class="pr-h">📋 ${y}년 근로소득 지급명세서 집계 (제출 ${y+1}.3.10까지)</h3><div class="ym-wrap"><table class="pr-sum"><thead><tr><th>성명</th><th>근무기간</th><th>과세 급여 (총급여)</th><th>비과세</th><th>지급 합계</th><th>기납부 소득세</th><th>지방소득세</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${escapeHTML(r.e.name)}</b></td><td>${(r.e.join&&r.e.join.slice(0,4)==String(y)?r.e.join:`${y}-01-01`)} ~ ${(r.e.leave&&r.e.leave.slice(0,4)==String(y)?r.e.leave:`${y}-12-31`)}</td><td>${f(r.pay)}</td><td>${f(r.nt)}</td><td>${f(r.pay+r.nt)}</td><td>${f(r.it)}</td><td>${f(r.loc)}</td></tr>`).join('')}</tbody><tfoot><tr><th>합계 ${rows.length}명</th><td></td><td>${f(T('pay'))}</td><td>${f(T('nt'))}</td><td>${f(T('pay')+T('nt'))}</td><td>${f(T('it'))}</td><td>${f(T('loc'))}</td></tr></tfoot></table></div>
+ <h3 class="pr-h">🗓 근로소득 간이지급명세서 (반기 지급액)</h3><div class="ym-wrap"><table class="pr-sum"><thead><tr><th>성명</th><th>상반기 (1~6월) · ${y}.7.31까지</th><th>하반기 (7~12월) · ${y+1}.1.31까지</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${escapeHTML(r.e.name)}</b></td><td>${f(r.h1)}</td><td>${f(r.h2)}</td></tr>`).join('')}</tbody><tfoot><tr><th>합계</th><td>${f(T('h1'))}</td><td>${f(T('h2'))}</td></tr></tfoot></table></div>`:'<div class="subtle" style="padding:14px">먼저 👥 직원별 급여 입력에서 급여를 넣어주세요.</div>'}
+ <h3 class="pr-h">📅 지급명세서 종류별 제출기한</h3><table class="nt-tbl"><tr><th>종류</th><th>제출기한</th><th>미제출 가산세</th></tr>
+ <tr><td><b>근로소득</b> 지급명세서 (연말정산)</td><td>다음 해 <b>3월 10일</b></td><td rowspan="3">지급금액의 <b>1%</b> (기한 후 3개월 내 제출 0.5%)</td></tr><tr><td><b>퇴직소득</b> 지급명세서</td><td>다음 해 <b>3월 10일</b></td></tr><tr><td><b>이자·배당·기타소득</b> 지급명세서</td><td>다음 해 <b>2월 말일</b></td></tr>
+ <tr><td><b>사업소득</b> 간이지급명세서 (3.3%)</td><td><b>매월</b> — 지급한 달의 다음 달 말일</td><td rowspan="2">지급금액의 <b>0.25%</b> (기한 후 1개월 내 0.125%)</td></tr><tr><td><b>근로소득</b> 간이지급명세서</td><td>반기 — 상반기 7월 31일 · 하반기 1월 31일 (매월 제출 전환 시기는 국세청 공지 확인)</td></tr>
+ <tr><td><b>일용근로소득</b> 지급명세서</td><td><b>매월</b> — 지급한 달의 다음 달 말일</td><td>지급금액의 0.25% (기한 후 1개월 내 0.125%)</td></tr></table>
+ <div class="subtle lc-note">✔ 지급명세서 총급여 = 연말정산 총급여 = 보수총액(건강·고용) 이 세 숫자가 <b>서로 맞는지</b> 꼭 대사하세요. 다르면 비과세 분류·귀속월 차이(12월분 1월 지급 등)를 확인해요.<br>✔ 지방소득세는 월별 소득세 × 10%(10원 미만 절사)를 더한 추정치예요.</div>`}
+function prIjUI(){const d=prD(),e=prEmp(),S=profile.ijForm=profile.ijForm||{};const g=(k,def)=>S[k]??def;
+ const opt=d.emps.map(x=>`<option value="${x.id}"${e&&x.id===e.id?' selected':''}>${escapeHTML(x.name)}</option>`).join('');
+ const leave=g('leave',e&&e.leave||toISO(new Date()));
+ let pre=0;if(e&&leave){const ld=parseISO(leave);for(let k=0;k<3;k++){const mo=ld.getMonth()-k;if(mo>=0&&String(ld.getFullYear())===String(d.year))pre+=(Number(e.m[mo][0])||0)+(Number(e.m[mo][1])||0)}}
+ $('prBody').innerHTML=`<div class="pc-grid"><div class="pc-card lc-in">
+ <label class="lc-f"><span>직원</span><select onchange="prD().cur=this.value;profile.ijForm={};saveData();prRender()">${opt||'<option>직원을 먼저 추가하세요</option>'}</select></label>
+ <div class="pc-row"><label class="lc-f"><span>입사일 (피보험자격 취득일)</span><input id="ijJoin" type="date" value="${g('join',e&&e.join||'')}" onchange="ijSet(this)"></label><label class="lc-f"><span>이직일 <small>(마지막 근무일)</small></span><input id="ijLeave" type="date" value="${leave}" onchange="ijSet(this)"></label></div>
+ <div class="pc-row"><label class="lc-f"><span>이직 당시 만 나이</span><input id="ijAge" type="number" min="15" max="99" value="${g('age',40)}" oninput="ijSet(this)"></label><label class="lc-f"><span>장애인 여부</span><select id="ijDis" onchange="ijSet(this)"><option value="0">아니요</option><option value="1"${g('dis','0')=='1'?' selected':''}>예</option></select></label></div>
+ <div class="pc-row"><label class="lc-f"><span>주 소정근로일</span><select id="ijWd" onchange="ijSet(this)"><option value="5">주 5일 (토요일 무급휴무)</option><option value="6"${g('wd','5')=='6'?' selected':''}>주 6일</option></select></label><label class="lc-f"><span>1일 소정근로시간</span><input id="ijHr" type="number" min="1" max="8" step="0.5" value="${g('hr',8)}" oninput="ijSet(this)"></label></div>
+ <label class="lc-f"><span>이직 사유 (상실 사유 코드)</span><select id="ijCode" onchange="ijSet(this)">${IJ_CODES.map(([c,t])=>`<option value="${c}"${g('code','11')==c?' selected':''}>${c} · ${t}</option>`).join('')}</select></label>
+ <label class="lc-f"><span>이직 전 3개월 임금총액 <small>${pre?'급여 입력값으로 자동 채움 · 고쳐도 돼요':'기본급+수당 (비과세 포함)'}</small></span><input id="ijWage" inputmode="numeric" value="${Number(g('wage',pre)||0).toLocaleString('ko-KR')}" oninput="pcFmt(this);ijSet(this)"></label>
+ <div class="pc-row"><label class="lc-f"><span>직전 1년 상여금 <small>× 3/12 반영</small></span><input id="ijBonus" inputmode="numeric" value="${Number(g('bonus',0)).toLocaleString('ko-KR')}" oninput="pcFmt(this);ijSet(this)"></label><label class="lc-f"><span>연차수당 <small>× 3/12 반영</small></span><input id="ijLeaveP" inputmode="numeric" value="${Number(g('leaveP',0)).toLocaleString('ko-KR')}" oninput="pcFmt(this);ijSet(this)"></label></div>
+ </div><div class="pc-card" id="ijOut"></div></div>`;ijCalc()}
+const IJ_CODES=[['11','개인사정으로 인한 자진퇴사 (전직·자영업 등)'],['12','사업장 이전·근로조건 변동·임금체불 등으로 자진퇴사'],['22','폐업·도산'],['23','경영상 필요·회사 불황으로 인원감축 (권고사직·명예퇴직 포함)'],['26','근로자 귀책사유에 의한 징계해고·권고사직'],['31','정년'],['32','계약기간 만료·공사 종료'],['41','고용보험 비적용'],['42','이중고용']];
+const IJ_OK={'11':['✖ 원칙적으로 실업급여 불가','본인 사정 자진퇴사. 단, 질병·육아·통근곤란(왕복 3시간 이상) 등 정당한 사유가 증빙되면 가능해서 12번 등으로 봐요.'],'12':['○ 정당한 사유 인정 시 가능','임금체불(2개월 이상)·근로조건 저하·사업장 이전 등 구체적 사유와 증빙 필요'],'22':['✔ 수급 가능',''],'23':['✔ 수급 가능','권고사직은 23번. 회사 지원금(고용유지·신규채용 지원금)을 받는 중이면 감원방지기간 확인!'],'26':['✖ 원칙적으로 불가','중대한 귀책사유(형법 위반, 회사에 막대한 손해 등)로 해고된 경우. 경미하면 23번 검토'],'31':['✔ 수급 가능',''],'32':['✔ 수급 가능','계약 갱신을 근로자가 거부했다면 수급 제한될 수 있어요'],'41':['— 해당 없음','고용보험 적용 제외자'],'42':['— 해당 없음','이중취득 상실']};
+function ijSet(el){const m={ijJoin:'join',ijLeave:'leave',ijAge:'age',ijDis:'dis',ijWd:'wd',ijHr:'hr',ijCode:'code',ijWage:'wage',ijBonus:'bonus',ijLeaveP:'leaveP'}[el.id];const S=profile.ijForm=profile.ijForm||{};S[m]=['wage','bonus','leaveP'].includes(m)?(Number(String(el.value).replace(/[^0-9]/g,''))||0):el.value;prSave();ijCalc()}
+function ijCalc(){const o=$('ijOut');if(!o)return;const join=$('ijJoin').value,leave=$('ijLeave').value,age=+$('ijAge').value||0,dis=$('ijDis').value==='1',wd=+$('ijWd').value,hr=Math.min(8,+$('ijHr').value||8),code=$('ijCode').value,wage=lcN('ijWage'),bonus=lcN('ijBonus'),lp=lcN('ijLeaveP');
+ if(!leave){o.innerHTML='<div class="subtle">이직일을 넣어주세요.</div>';return}
+ const ld=parseISO(leave),end=new Date(ld),st=new Date(ld);st.setDate(st.getDate()+1);st.setMonth(st.getMonth()-3);const days=Math.round((end-st)/864e5)+1;
+ const total=wage+Math.floor(bonus*3/12)+Math.floor(lp*3/12),avg=days?total/days:0;
+ const minW={2025:10030,2026:10320,2027:10700}[ld.getFullYear()]||10320,lo=Math.floor(minW*.8*hr),hiCap=ld.getFullYear()>=2026?68100:66000,daily=Math.min(Math.max(Math.floor(avg*.6),lo),Math.max(hiCap,lo));
+ let unit=0;if(join){const s0=new Date(ld);s0.setMonth(s0.getMonth()-18);s0.setDate(s0.getDate()+1);const s=parseISO(join)>s0?parseISO(join):s0;for(let x=new Date(s);x<=ld;x.setDate(x.getDate()+1)){if(wd===5&&x.getDay()===6)continue;unit++}}
+ const yrs=join?(ld-parseISO(join))/(365.25*864e5):0,bi=yrs<1?0:yrs<3?1:yrs<5?2:yrs<10?3:4,tbl=(age>=50||dis)?[120,180,210,240,270]:[120,150,180,210,240],pd=tbl[bi],ok=IJ_OK[code];
+ const sd=toISO(st),loss=(()=>{const n=new Date(ld);n.setDate(n.getDate()+1);return toISO(new Date(n.getFullYear(),n.getMonth()+1,15,12))})();
+ o.innerHTML=lcRes([['grp','평균임금 (이직확인서 기재)'],['산정기간',`${sd} ~ ${leave}`,`${days}일 (이직일 이전 3개월)`],['3개월 임금총액',won(wage)],['상여금·연차수당 가산',won(Math.floor(bonus*3/12)+Math.floor(lp*3/12)),'각 × 3/12'],['1일 평균임금',won(avg),`${won(total)} ÷ ${days}일`,1],['grp','피보험단위기간'],['이직 전 18개월 중 유급일수',`약 ${unit}일`,wd===5?'토요일(무급휴무일) 제외 추정':'전체 일수 추정'],['180일 요건',unit>=180?'✔ 충족':'✖ 부족',unit>=180?'':'180일 미만이면 실업급여 불가',1],['grp','실업급여 예상 (참고)'],['이직 사유',`${code}번`,ok?ok[0]:''],['구직급여 1일액',won(daily),`평균임금 60% · 하한 ${won(lo)} · 상한 ${won(hiCap)}`],['소정급여일수',`${pd}일`,`가입기간 약 ${yrs.toFixed(1)}년 · ${age>=50||dis?'50세 이상·장애인':'50세 미만'}`],['예상 총액',won(daily*pd),'',1]],[unit>=180&&ok&&ok[0].startsWith('✔')?'실업급여 예상 총액':'1일 평균임금',unit>=180&&ok&&ok[0].startsWith('✔')?won(daily*pd):won(avg),`${code}번 ${ok?ok[0]:''}`],
+ `${ok&&ok[1]?'💬 '+ok[1]+'<br>':''}📮 <b>처리 순서</b>: ① 고용보험 <b>상실신고</b> — 이직일 다음 날이 속한 달의 다음 달 15일까지(${loss}) ② <b>이직확인서</b> — 근로자가 실업급여를 신청해 고용센터가 요청하면 <b>10일 안에</b> 고용24로 제출 ③ 상실신고 사유 코드와 이직확인서 사유가 <b>같아야</b> 해요.<br>※ 평균임금·피보험단위기간은 추정치예요. 무급휴직·결근일, 휴업 기간이 있으면 제외해야 해요.`)}
+
+/* ===== 부가세 신고 체크리스트 ===== */
+const VAT_ITEMS=[
+['📤 매출',[['s1','전자세금계산서 매출 — 홈택스 발급분과 장부(더존) 대사','발급·전송 누락, 수정세금계산서 반영 확인'],['s2','종이 세금계산서·계산서 매출 확인','있으면 매출처별 합계표에 따로 기재'],['s3','신용카드 매출·현금영수증 매출 집계','홈택스 「신용카드 매출자료 조회」 · 현금영수증 발행분'],['s4','세금계산서 없는 현금매출·기타매출','간주공급(사업상 증여·개인적 공급), 직원 복리후생 제공분 등'],['s5','영세율 매출 — 수출실적명세서·영세율 첨부서류','직수출(수출신고필증), 내국신용장·구매확인서 전자발급명세서'],['s6','고정자산(차량·비품) 매각분 세금계산서','처분했다면 매출 과세표준에 포함'],['s7','부동산 임대 — 간주임대료·임대공급가액명세서','해당 시']]],
+['📥 매입',[['p1','전자세금계산서 매입 — 홈택스 수취분과 장부 대사','지연수취·미수취분, 거래처 발급 지연 확인'],['p2','종이 매입세금계산서·계산서 정리',''],['p3','사업용 신용카드 매입 — 공제/불공제 분류','홈택스 사업용카드 등록 확인 · 접대비·개인사용·면세 구입분 불공제'],['p4','현금영수증(지출증빙) 매입 확인',''],['p5','수입세금계산서 (세관) 반영','수입 부가세 공제'],['p6','불공제 매입세액 분류','접대비, 비영업용 소형승용차(구입·유지·렌트), 면세사업 관련, 사업 무관, 토지 관련, 등록 전 매입'],['p7','고정자산 매입 — 건물등감가상각자산취득명세서',''],['p8','의제매입세액·대손세액공제 해당 여부','해당 시 명세서 첨부'],['p9','공통매입세액 안분·정산 (겸영 사업자)','확정신고 때 정산']]],
+['📎 부속서류',[['a1','매출처별·매입처별 세금계산서 합계표',''],['a2','신용카드매출전표등 수령명세서 (매입)',''],['a3','공제받지 못할 매입세액 명세서',''],['a4','수출실적명세서·영세율 매출명세서','해당 시'],['a5','사업장별 부가세 과세표준·납부세액 신고명세서','주사업장 총괄납부·사업자단위과세 시']]],
+['🔍 검증·신고',[['v1','장부 부가세예수금·대급금 = 신고서 금액 대사','차이 원인(기간 귀속·불공제) 메모'],['v2','예정고지·예정신고 납부세액 차감 확인','확정신고 시 기납부세액 빠뜨리지 않기'],['v3','가산세 해당 여부 확인','지연발급·지연수취·합계표 미제출 등 → 가산세·과태료 메뉴'],['v4','조기환급 신청 여부 (영세율·설비투자)','환급이면 계좌 등록·조기환급 신고서'],['v5','홈택스 전자신고 제출 · 접수증 저장','신고기한 25일 (토·일·공휴일이면 다음 영업일)']]],
+['🗂 신고 후',[['f1','납부 (25일까지) 또는 환급 계좌 확인',''],['f2','부가세 정리 분개','(차) 부가세예수금 / (대) 부가세대급금 · 미지급세금(또는 미수금)'],['f3','신고서·부속서류·접수증 PDF 보관','서류함 · 5년 보관'],['f4','다음 기수 일정 달력 확인','예정고지 납부(4/25·10/25) 포함']]]];
+function vatKey(){const v=profile.vatSel=profile.vatSel||(()=>{const t=new Date(),m=t.getMonth()+1,y=t.getFullYear();if(m<=1)return {y:y-1,h:2,k:'f'};if(m<=4)return {y,h:1,k:'p'};if(m<=7)return {y,h:1,k:'f'};if(m<=10)return {y,h:2,k:'p'};return {y,h:2,k:'f'}})();return v}
+function vatDue(v){const raw=v.h===1?(v.k==='p'?`${v.y}-04-25`:`${v.y}-07-25`):(v.k==='p'?`${v.y}-10-25`:`${v.y+1}-01-25`);return pnBiz(raw)}
+function vatToggle(id){const v=vatKey(),k=`${v.y}-${v.h}-${v.k}`,c=(profile.vatChk=profile.vatChk||{})[k]=(profile.vatChk[k]||{});if(c[id])delete c[id];else c[id]=toISO(new Date());saveData();renderVat()}
+function vatSet(f,val){const v=vatKey();v[f]=+val||val;saveData();renderVat()}
+function vatReset(){const v=vatKey(),k=`${v.y}-${v.h}-${v.k}`;if(!confirm('이 기수의 체크를 모두 지울까요?'))return;(profile.vatChk||{})[k]={};saveData();renderVat()}
+function renderVat(){const b=$('vatBody');if(!b)return;const v=vatKey(),k=`${v.y}-${v.h}-${v.k}`,c=(profile.vatChk||{})[k]||{},due=vatDue(v);let tot=0,done=0;VAT_ITEMS.forEach(g=>g[1].forEach(i=>{tot++;if(c[i[0]])done++}));
+ const dd=Math.round((parseISO(due)-parseISO(toISO(new Date())))/864e5),pct=tot?Math.round(done/tot*100):0;
+ b.innerHTML=`<div class="vt-top"><label>연도 <select onchange="vatSet('y',this.value)">${[v.y-1,v.y,v.y+1].map(y=>`<option${y===v.y?' selected':''}>${y}</option>`).join('')}</select></label><label>기수 <select onchange="vatSet('h',this.value)"><option value="1"${v.h===1?' selected':''}>1기 (1~6월)</option><option value="2"${v.h===2?' selected':''}>2기 (7~12월)</option></select></label><label>구분 <select onchange="vatSet('k',this.value)"><option value="p"${v.k==='p'?' selected':''}>예정 (법인)</option><option value="f"${v.k==='f'?' selected':''}>확정</option></select></label>
+ <div class="vt-due">📅 신고·납부기한 <b>${due}</b> (${pnWd(due)}) <span class="${dd<0?'over':dd<=7?'soon':''}">${dd<0?`${-dd}일 지남`:dd===0?'오늘!':`D-${dd}`}</span></div><button type="button" class="btn btn-outline" onclick="vatReset()">↺ 체크 초기화</button></div>
+ <div class="cl-total"><b>${v.y}년 ${v.h}기 ${v.k==='p'?'예정':'확정'} 진행률</b><div class="cl-bar"><i style="display:block;height:100%;width:${pct}%;background:linear-gradient(90deg,#f59e0b,#16a34a)"></i></div><b>${done} / ${tot} (${pct}%)</b></div>
+ <div class="vt-grid">${VAT_ITEMS.map(([g,items])=>`<div class="cl-grp"><div class="vt-gh"><b>${g}</b><span>${items.filter(i=>c[i[0]]).length}/${items.length}</span></div>${items.map(([id,t,n])=>`<label class="vt-item${c[id]?' done':''}"><input type="checkbox"${c[id]?' checked':''} onchange="vatToggle('${id}')"><div><div class="vt-t">${t}${c[id]?` <span class="vt-badge">✓ 완료 ${c[id].slice(5).replace('-','/')}</span>`:''}</div>${n?`<small>${n}</small>`:''}</div></label>`).join('')}</div>`).join('')}</div>
+ <div class="subtle lc-note">※ 법인 예정신고: 직전 과세기간 공급가액 1.5억 원 미만 법인은 예정신고 대신 <b>예정고지</b>(직전 기 납부세액의 50%)로 납부할 수 있어요. 개인 일반과세자는 원칙적으로 예정고지예요. · 📚 실무 상식 노트 › 🧾 부가세 탭에 자세한 내용이 있어요.</div>`}
+const _showPagePr=showPage;showPage=function(id,b){const r=_showPagePr(id,b);if(id==='prPage')try{prRender()}catch(e){}if(id==='vatPage')try{renderVat()}catch(e){}return r};
+
+let vatCur='chk';
+const VR_SIMPLE=[['소매업 · 재생용 재료수집·판매업 · 음식점업',15],['제조업 · 농업·임업·어업 · 소화물 전문 운송업',20],['숙박업',25],['건설업 · 운수·창고업(소화물 제외) · 정보통신업',30],['금융·보험 관련 서비스업 · 전문·과학·기술서비스업 · 사업시설관리·사업지원·임대서비스업 · 부동산 관련 서비스업 · 부동산임대업',40],['그 밖의 서비스업',30]];
+function vrS(){return profile.vatRate=profile.vatRate||{}}
+function vrIn(el){vrS()[el.dataset.k]=el.type==='number'?parseFloat(el.value)||0:(Number(String(el.value).replace(/[^0-9]/g,''))||0);saveData();vrCalc()}
+function vrUI(){const S=vrS(),M=(k,l,h)=>`<label class="lc-f"><span>${l}${h?` <small>${h}</small>`:''}</span><input data-k="${k}" inputmode="numeric" value="${S[k]?Number(S[k]).toLocaleString('ko-KR'):''}" placeholder="0" oninput="pcFmt(this);vrIn(this)"></label>`;
+ return `<div class="pc-grid"><div class="pc-card lc-in"><div class="ye-h">📊 이번 기수</div>${M('sale','매출 과세표준 합계','세금계산서+카드+현금+기타 · 영세율 포함')}${M('buy','공제받는 매입 공급가액 합계','세금계산서+카드+현금영수증 (불공제 제외)')}${M('fix','그중 고정자산 매입','기계·차량·인테리어 등 큰 설비')}
+ <div class="ye-h">🔁 비교 (선택)</div>${M('pSale','직전 기(또는 작년 같은 기) 매출')}${M('pBuy','직전 기(또는 작년 같은 기) 매입')}<label class="lc-f"><span>동종업종 평균 부가율 (%) <small>홈택스 신고도움서비스에서 확인</small></span><input data-k="avg" type="number" step="0.1" value="${S.avg||''}" placeholder="예: 25" oninput="vrIn(this)"></label></div><div class="pc-card" id="vrOut"></div></div>
+ <details class="vr-ref"><summary>📋 참고: 간이과세자 업종별 부가가치율 (법정 비율)</summary><table class="nt-tbl"><tr><th>업종</th><th style="width:90px">부가가치율</th></tr>${VR_SIMPLE.map(([a,b])=>`<tr><td>${a}</td><td><b>${b}%</b></td></tr>`).join('')}</table><div class="subtle">※ 간이과세자 세액 계산용으로 법에 정한 비율이에요(부가세법 시행령, 2021.7 이후). 일반과세자·법인의 "평균 부가율"과는 다르니 비교 기준으로는 <b>홈택스 신고도움서비스의 동종업종 평균</b>을 쓰세요.</div></details>`}
+function vrCalc(){const o=$('vrOut');if(!o)return;const S=vrS(),sale=S.sale||0,buy=S.buy||0,fix=S.fix||0,r=sale?(sale-buy)/sale*100:0,r2=sale?(sale-(buy-fix))/sale*100:0,pr=S.pSale?(S.pSale-(S.pBuy||0))/S.pSale*100:null,avg=S.avg||0,p=x=>x.toFixed(1)+'%';
+ if(!sale){o.innerHTML='<div class="subtle">매출과 매입을 넣으면 부가율을 계산해요.</div>';return}
+ const warn=[];if(r<0)warn.push('⚠️ 매입이 매출보다 많아요 (환급) — 설비투자·재고 증가·수출(영세율)이 아니면 원인 확인');if(pr!=null&&pr-r>=10)warn.push(`⚠️ 직전보다 <b>${(pr-r).toFixed(1)}%p</b> 낮아졌어요 — 매출 누락·매입 과다(가공·개인 사용분) 여부 점검`);if(avg&&r<avg)warn.push(`⚠️ 동종업종 평균(${p(avg)})보다 <b>${(avg-r).toFixed(1)}%p</b> 낮아요 — 사후검증 대상이 될 수 있어 사유(설비투자·재고·원가 상승 등)를 정리해 두세요`);
+ o.innerHTML=lcRes([['매출 과세표준',won(sale)],['공제 매입',won(buy)],['부가가치 (매출 − 매입)',won(sale-buy)],['부가율',p(r),'(매출 − 매입) ÷ 매출 × 100',1],...(fix?[['고정자산 제외 부가율',p(r2),'설비투자 영향을 빼고 본 값',1]]:[]),...(pr!=null?[['직전 비교 부가율',p(pr),`${r-pr>=0?'+':''}${(r-pr).toFixed(1)}%p`]]:[]),...(avg?[['동종업종 평균',p(avg),`${r-avg>=0?'+':''}${(r-avg).toFixed(1)}%p`]]:[]),['예상 납부세액 (참고)',won((sale-buy)*.1),'(매출 − 매입) × 10%']],['부가율',p(r),fix?`고정자산 제외 ${p(r2)}`:`부가가치 ${won(sale-buy)}`],(warn.length?warn.join('<br>')+'<br>':'✅ 특이사항 없음<br>')+'※ 부가율이 갑자기 떨어지면 국세청 신고 전 안내(신고도움서비스)·사후검증에서 소명 요청을 받을 수 있어요. 기준선은 업종마다 달라 공식 수치가 없으니, <b>직전 기·작년 같은 기·동종업종 평균</b>과 비교하는 게 실무 체크법이에요.')}
+const _renderVatBase=renderVat;renderVat=function(){const b=$('vatBody');if(!b)return;const tabs=`<div class="nt-tabs" style="margin-bottom:10px"><button type="button" class="nt-tab vt-tab${vatCur==='chk'?' on':''}" onclick="vatCur='chk';renderVat()">✅ 신고 체크리스트</button><button type="button" class="nt-tab vt-tab${vatCur==='rate'?' on':''}" onclick="vatCur='rate';renderVat()">📊 부가율 체크</button></div>`;
+ if(vatCur==='rate'){b.innerHTML=tabs+vrUI();vrCalc();return}_renderVatBase();b.insertAdjacentHTML('afterbegin',tabs)};
 
 function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').toLowerCase().includes(q));
  (typeof tasks!=='undefined'?tasks:[]).forEach(t=>R.push({cat:'task',icon:'📅',title:t.title,sub:`${t.date||''} · ${t.category||''}${t.relatedPerson?' · '+t.relatedPerson:''}`,text:[t.title,t.memo,t.relatedPerson,t.category].join(' '),go:()=>{showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}}));
