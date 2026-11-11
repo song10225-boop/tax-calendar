@@ -2242,7 +2242,8 @@ function ecosKey(){return String(profile.ecosKey||ECOS_DEFAULT_KEY||'').trim()}
 function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 async function fxFetchJSON(url){const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),12000);try{const r=await fetch(url,{signal:ctl.signal});if(!r.ok)throw new Error('HTTP '+r.status);return await r.json()}finally{clearTimeout(t)}}
-function ecosProxy(){return String(profile.ecosProxy||'').trim()}
+const ECOS_DEFAULT_PROXY='https://script.google.com/macros/s/AKfycbzv4SEnZ8M9A1SAUbm8GfjtWHxisgrgMLxsVK6dn5AQxAGtZ9PQ9dfccJ33cKz8xEK-/exec';
+function ecosProxy(){return String(profile.ecosProxy||ECOS_DEFAULT_PROXY||'').trim()}
 async function ecosFetch(path){const px=ecosProxy();if(px){const j=await fxFetchJSON(px+(px.includes('?')?'&':'?')+'path='+encodeURIComponent(path));if(j&&j.error)throw new Error(j.error);return j}try{return await fxFetchJSON('https://ecos.bok.or.kr/api/'+path)}catch(e){if(String(e.message||e)==='Failed to fetch'||e.name==='TypeError')throw new Error('NEED_PROXY');throw e}}
 function setEcosProxy(){const el=$('ecosProxyIn'),v=(el?el.value:'').trim();if(v&&!/^https:\/\/script\.google(usercontent)?\.com\//.test(v)){alert('구글 Apps Script 웹 앱 주소(https://script.google.com/macros/s/.../exec)를 붙여넣어 주세요.');return}profile.ecosProxy=v;saveData();lsSet('taxDiaryFxCache2',null);lsSet('taxDiaryKsCache',null);renderEcosKeyBox();loadFx(true);loadKeyStats(true)}
 function ecosProxyHelp(){return `<details class="ecos-help"${ecosProxy()?'':' open'}><summary>🔌 한국은행 연결용 중간 다리(구글 Apps Script) ${ecosProxy()?'<b style="color:#15803d">연결됨</b>':'<b style="color:#b45309">설정 필요</b>'}</summary>
