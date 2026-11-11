@@ -1329,7 +1329,7 @@ function deleteCategory(index){
 function syncLinkedDiaryStatus(task){
  if(!task)return;
  const nextStatus=task.status==='완료'?'완료':task.status||'진행 중';
- diaryRows.filter(r=>String(r.taskId)===String(task.id)).forEach(r=>{r.status=nextStatus;r.doneDate=nextStatus==='완료'?(r.doneDate||task.actualDate||toISO(new Date())):'';r.taskTitle=task.title;r.person=task.relatedPerson||r.person||'';r.deadline=task.date||r.deadline||'';r.note='연결 업무: '+task.title;});
+ diaryRows.filter(r=>String(r.taskId)===String(task.id)).forEach(r=>{r.status=nextStatus;r.doneDate=nextStatus==='완료'?(task.actualDate||r.doneDate||toISO(new Date())):'';r.taskTitle=task.title;r.person=task.relatedPerson||r.person||'';r.deadline=task.date||r.deadline||'';r.note='연결 업무: '+task.title;});
 }
 function syncLegacyTaskLogs(){
  if(!Array.isArray(diaryRows))diaryRows=[];
@@ -1719,6 +1719,7 @@ function updateDiaryField(id,key,value){
    if(task && key==='deadline' && value){task.date=value; if(!task.endDate || task.endDate<value)task.endDate=value; r.deadline=value;}
    if(task && key==='person')task.relatedPerson=value;
    if(task && key==='status')task.status=value;
+   if(task && key==='doneDate')task.actualDate=value;
    if(log){
      if(key==='content')log.text=value;
      if(key==='date'){log.date=value;const oldAt=log.at?new Date(log.at):new Date();if(value&& !Number.isNaN(oldAt.getTime())){oldAt.setFullYear(Number(value.slice(0,4)),Number(value.slice(5,7))-1,Number(value.slice(8,10)));log.at=oldAt.toISOString();}}
@@ -1998,6 +1999,7 @@ function spellCheckEls(els,anchor){
  anchor.insertAdjacentElement('afterend',p);
 }
 const _openTaskModalSpell=openTaskModal;openTaskModal=function(){document.querySelectorAll('.spell-label ~ .spell-panel, #taskMemo ~ .spell-panel, #taskDiary ~ .spell-panel').forEach(x=>x.remove());return _openTaskModalSpell.apply(this,arguments)};
+$('taskStatus')?.addEventListener('change',e=>{const a=$('taskActualDate');if(!a)return;if(e.target.value==='완료'&&!a.value)a.value=toISO(new Date())});
 /* ===== [추가] 법정 세무일정 자동 등록 / 마감 알림 배너 / 부가세 계산 / 투데이리스트 밀린 표시 ===== */
 const p2=n=>String(n).padStart(2,'0');
 function taxAdjust(iso){const d=new Date(iso+'T12:00:00');while(d.getDay()===0||d.getDay()===6||getHoliday(toISO(d)))d.setDate(d.getDate()+1);return toISO(d)}
@@ -2404,7 +2406,7 @@ async function saveTask(e){
  for(const old of (existing?.attachments||[]).filter(a=>removedAttachmentPaths.has(a.path)&&a.path)){try{await storage.ref().child(old.path).delete();}catch(err){console.warn('첨부파일 삭제 실패',err);}}
  let uploadedAttachments=[];
  try{for(const file of selectedFiles){const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-100);const path=`users/${currentUser.uid}/tasks/${taskId}/${Date.now()}_${Math.random().toString(16).slice(2)}_${safeName}`;const snap=await storage.ref().child(path).put(file,{contentType:file.type||'application/octet-stream',customMetadata:{originalName:file.name}});const url=await snap.ref.getDownloadURL();uploadedAttachments.push({name:file.name,type:file.type||'',size:file.size,url,path,uploadedAt:new Date().toISOString()});}}catch(err){console.error('첨부 업로드 실패',err);alert('첨부파일 업로드에 실패했어요. Firebase Storage 사용 설정과 보안 규칙, 인터넷 연결을 확인해 주세요.\n파일이 저장되지 않았으니 일정은 아직 저장하지 않았어요.');return;}
- const item={id:taskId,title,emoji:$('taskEmoji').value,date,endDate:endDate||date,relatedPerson:$('taskRelatedPerson').value.trim(),category:$('taskCategory').value,status:$('taskStatus').value,priority:$('taskPriority').value,isDday:$('taskIsDday').checked,excludeOverdue:$('taskExcludeOverdue').checked,repeat:$('taskRepeat').value,repeatUntil:$('taskRepeatUntil').value||'',actualDate:$('taskActualDate').value,memo:$('taskMemo').value.trim(),link:$('taskLink').value.trim(),color:$('taskColor').value,logs,attachments:[...keptAttachments,...uploadedAttachments]};
+ const item={id:taskId,title,emoji:$('taskEmoji').value,date,endDate:endDate||date,relatedPerson:$('taskRelatedPerson').value.trim(),category:$('taskCategory').value,status:$('taskStatus').value,priority:$('taskPriority').value,isDday:$('taskIsDday').checked,excludeOverdue:$('taskExcludeOverdue').checked,repeat:$('taskRepeat').value,repeatUntil:$('taskRepeatUntil').value||'',actualDate:($('taskStatus').value==='완료'&&!$('taskActualDate').value)?toISO(new Date()):$('taskActualDate').value,memo:$('taskMemo').value.trim(),link:$('taskLink').value.trim(),color:$('taskColor').value,logs,attachments:[...keptAttachments,...uploadedAttachments]};
  let propagateEdit=false;
  if(id && existing && ((existing.repeat&&existing.repeat!=='none')||/-r\d+$/.test(String(id)))){
    propagateEdit=confirm('반복 일정도 수정할까요?\n\n[확인] 현재 일정과 이후 반복 일정을 함께 수정\n[취소] 현재 일정만 수정');
@@ -2423,7 +2425,7 @@ async function saveTask(e){
  }else{tasks.push(item)}
  if(item.repeat!=='none' && !/-r\d+$/.test(String(item.id)))createRecurring(item)
  // 기존 진행일지의 연결 정보도 현재 업무의 담당자·상태·마감일과 동기화
- diaryRows.filter(r=>r.taskId===taskId).forEach(r=>{r.person=item.relatedPerson;r.status=item.status;r.doneDate=item.status==='완료'?(r.doneDate||item.actualDate||toISO(new Date())):'';r.deadline=item.date;r.taskTitle=item.title;r.note='연결 업무: '+item.title;});
+ diaryRows.filter(r=>r.taskId===taskId).forEach(r=>{r.person=item.relatedPerson;r.status=item.status;r.doneDate=item.status==='완료'?(item.actualDate||r.doneDate||toISO(new Date())):'';r.deadline=item.date;r.taskTitle=item.title;r.note='연결 업무: '+item.title;});
  if(newLog){
    diaryRows.push({id:`diary-${newLog.id}`,logId:newLog.id,taskId:taskId,taskTitle:item.title,date:newLog.date,status:item.status,person:item.relatedPerson,content:newLog.text,deadline:item.date,doneDate:item.status==='완료'?(item.actualDate||toISO(new Date())):'',note:'연결 업무: '+item.title,at:newLog.at});
  }
