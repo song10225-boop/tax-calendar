@@ -618,6 +618,11 @@ body.theme-notion .nav-group-btn.active{background:transparent!important;color:#
 .pn-acts{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}.pn-acts .subtle{font-size:.76rem}
 </style>
 
+<style>
+.ln-up{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#f0f9ff;border:1px dashed #7dd3fc;border-radius:10px;padding:9px 12px;margin-bottom:8px;font-size:.84rem}.ln-up select{padding:6px 8px;border:1px solid #cbd5e1;border-radius:7px;font:inherit;max-width:100%}.ln-up .subtle{font-size:.76rem;flex-basis:100%}
+.ln-prev{border:1.5px solid #0ea5e9;border-radius:12px;padding:10px 12px;margin-bottom:10px;background:#fff}.ln-prev-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}.ln-prev-sum{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;margin-bottom:6px}.ln-prev-sum b{color:#0369a1}.ln-prev select{padding:3px 5px;border:1px solid #cbd5e1;border-radius:6px;font:inherit;font-size:.8rem}
+</style>
+
 </head>
 <body>
 
@@ -1179,7 +1184,8 @@ TaxDiary 회계·세무 › 환율·경제에서도 매매기준율을 바로 �
   <div class="diary-toolbar"><div><div class="diary-title"><span class="diary-title-mark">💰</span>이자·가지급금 계산기</div><div class="diary-subtitle">이자소득 원천징수(금융 14% · 비영업대금 25%)와 주·임·종 가지급금·가수금 인정이자를 계산해요.</div></div></div>
   <div class="lc-tabs"><button type="button" class="lc-tab ln-tab on" data-t="int" onclick="lnTabGo('int')">🏦 이자소득 원천징수</button><button type="button" class="lc-tab ln-tab" data-t="loan" onclick="lnTabGo('loan')">📒 가지급금·가수금 인정이자</button></div>
   <div class="ln-pane" data-p="int"><div class="pc-grid"><div class="pc-card lc-in">
-   <label class="lc-f"><span>소득 구분</span><select id="intKind" onchange="intCalc()"><option value="fin">금융기관 이자 (14%)</option><option value="nonbiz">비영업대금의 이익 · 비금융 대여 이자 (25%)</option><option value="p2p">온라인투자연계금융 P2P (14%)</option><option value="div">배당소득 (14%)</option></select></label>
+   <label class="lc-f"><span>소득 구분</span><select id="intKind" onchange="$('intRate').value={fin:14,nonbiz:25,p2p:14,div:14}[this.value];intCalc()"><option value="fin">금융기관 이자 (14%)</option><option value="nonbiz">비영업대금의 이익 · 비금융 대여 이자 (25%)</option><option value="p2p">온라인투자연계금융 P2P (14%)</option><option value="div">배당소득 (14%)</option></select></label>
+   <label class="lc-f"><span>원천징수 세율 (%) <small>구분을 바꾸면 기본 세율로 돌아가요 · 직접 고쳐도 돼요</small></span><input id="intRate" type="number" step="0.1" min="0" max="100" value="14" oninput="intCalc()"></label>
    <label class="lc-f"><span>받는 사람</span><select id="intWho" onchange="intCalc()"><option value="ind">개인</option><option value="corp">법인</option></select></label>
    <label class="lc-f"><span>계산 방향</span><select id="intDir" onchange="intCalc()"><option value="fwd">세전 이자 → 실수령</option><option value="rev">실수령 맞추기 (역산)</option></select></label>
    <label class="lc-f"><span>금액</span><input id="intAmt" type="text" inputmode="numeric" value="1,000,000" oninput="pcFmt(this);intCalc()"></label>
@@ -3004,11 +3010,11 @@ function entCfgSet(){const c=entCfg();c.rule=$('entRule').value;c.sme=$('entSme'
 function ntTab(k){document.querySelectorAll('.nt-tab').forEach(b=>b.classList.toggle('on',b.dataset.nt===k));document.querySelectorAll('.nt-pane').forEach(p=>p.hidden=p.dataset.pane!==k)}
 let lnTab='int';
 function lnTabGo(t){lnTab=t;document.querySelectorAll('.ln-tab').forEach(b=>b.classList.toggle('on',b.dataset.t===t));document.querySelectorAll('.ln-pane').forEach(p=>p.hidden=p.dataset.p!==t);if(t==='int')intCalc();else loanRender()}
-function intCalc(){const o=$('intOut');if(!o)return;const kind=$('intKind').value,rate={fin:.14,nonbiz:.25,p2p:.14,div:.14}[kind],rev=$('intDir').value==='rev',amt=lcN('intAmt'),corp=$('intWho').value==='corp';
+function intCalc(){const o=$('intOut');if(!o)return;const kind=$('intKind').value,rate=(()=>{const v=parseFloat(($('intRate')||{}).value);return isNaN(v)?{fin:.14,nonbiz:.25,p2p:.14,div:.14}[kind]:v/100})(),pct=x=>(+(x*100).toFixed(2))+'%',rev=$('intDir').value==='rev',amt=lcN('intAmt'),corp=$('intWho').value==='corp';
  const f=g=>{const t=fl10(g*rate),l=fl10(t*.1);return {g,t,l,net:g-t-l}};let r;
  if(!rev)r=f(amt);else{let lo=0,hi=Math.max(1000,amt*2);while(f(hi).net<amt)hi*=2;while(hi-lo>1){const m=Math.floor((lo+hi)/2);if(f(m).net>=amt)hi=m;else lo=m}r=f(hi)}
  const nm={fin:'금융기관 이자 (예금·적금 등)',nonbiz:'비영업대금의 이익 (비금융 대여 이자)',p2p:'온라인투자연계금융(P2P) 이자',div:'배당소득'}[kind];
- o.innerHTML=lcRes([['소득 구분',nm],['지급액 (세전)',won(r.g)],['소득세',won(r.t),`${rate*100}%`],[corp?'법인지방소득세 (특별징수)':'지방소득세',won(r.l),'소득세 × 10%'],['원천징수 합계',won(r.t+r.l),`${(rate*110).toFixed(1)}%`,1],['💰 실수령액',won(r.net),'',1]],rev?[`실수령 ${won(amt)}을 받으려면 필요한 세전 이자`,won(r.g),`원천징수 ${won(r.t+r.l)}`]:['원천징수 후 실수령액',won(r.net),`원천징수 ${won(r.t+r.l)} (${(rate*110).toFixed(1)}%)`],
+ o.innerHTML=lcRes([['소득 구분',nm],['지급액 (세전)',won(r.g)],['소득세',won(r.t),pct(rate)+({fin:.14,nonbiz:.25,p2p:.14,div:.14}[kind]!==rate?' (직접 입력)':'')],[corp?'법인지방소득세 (특별징수)':'지방소득세',won(r.l),'소득세 × 10%'],['원천징수 합계',won(r.t+r.l),pct(rate*1.1),1],['💰 실수령액',won(r.net),'',1]],rev?[`실수령 ${won(amt)}을 받으려면 필요한 세전 이자`,won(r.g),`원천징수 ${won(r.t+r.l)}`]:['원천징수 후 실수령액',won(r.net),`원천징수 ${won(r.t+r.l)} (${pct(rate*1.1)})`],
  `※ <b>금융 이자 14%</b>: 은행 등 금융기관 이자. <b>비영업대금의 이익 25%</b>: 금융업이 아닌 회사·개인이 돈을 빌려주고 받는 이자(예: 회사가 대표이사·관계사에게서 받는 대여 이자, 개인 간 대여). 단 온라인투자연계금융(P2P)은 14%예요.<br>※ ${corp?'법인에게 지급하는 이자는 법인세로 원천징수해요(법인세법 제73조). 금융기관 등 일부 법인은 원천징수가 제외될 수 있어요.':'개인의 금융소득(이자+배당)이 연 2,000만 원을 넘으면 종합과세 대상이에요.'} 세액은 10원 미만을 버려요.`)}
 /* 가지급금·가수금 원장 */
 function lnData(){const d=profile.loanLedger=profile.loanLedger||{people:[],cur:''};return d}
@@ -3032,7 +3038,7 @@ function loanRender(){
   <label style="display:flex;gap:6px;align-items:center;font-size:.84rem;font-weight:600"><input type="checkbox" ${p.offset?'checked':''} onchange="lnSet('offset',this.checked)"> 같은 사람의 가수금과 상계 (상환기간·이자율 약정이 없는 경우)</label>
   <div class="subtle" style="font-size:.74rem">인정이자율: 당좌대출이자율 연 4.6%(기본) 또는 회사의 가중평균차입이자율을 넣으세요.</div>
  </div><div class="pc-card" id="lnOut"></div></div>
- <div class="econ-sec" style="margin-top:12px"><h3>📒 입출 내역</h3><div class="ent-add"><input id="lnDate" type="date" value="${toISO(new Date())}"><select id="lnKind">${Object.entries(LN_KIND).map(([k,[t]])=>`<option value="${k}">${t}</option>`).join('')}</select><input id="lnAmt" placeholder="금액" inputmode="numeric" oninput="pcFmt(this)"><input id="lnMemo" placeholder="적요 (예: 개인 카드대금 대납)" style="flex:1;min-width:160px"><button type="button" class="btn btn-outline" onclick="lnAddEntry()">＋ 추가</button></div>
+ <div class="econ-sec" style="margin-top:12px"><h3>📒 입출 내역</h3><div class="ln-up"><b>📥 엑셀로 불러오기</b><select id="lnUpMode"><option value="g">더존 계정별원장 — 가지급금 계정 (차변=지급 · 대변=회수)</option><option value="s">더존 계정별원장 — 가수금 계정 (대변=입금 · 차변=반환)</option><option value="bankG">통장 입출금 — 출금=가지급금 지급 · 입금=가지급금 회수</option><option value="bankS">통장 입출금 — 입금=가수금 입금 · 출금=가수금 반환</option></select><button type="button" class="btn btn-primary" onclick="$('lnFile').click()">📤 엑셀 올리기</button><input id="lnFile" type="file" accept=".xlsx,.xls,.csv" hidden onchange="lnUpload(event)"><button type="button" class="btn btn-outline" onclick="lnTemplate()">⬇ 양식</button><button type="button" class="btn btn-outline" onclick="lnClearAll()">🗑 내역 전체 삭제</button><span class="subtle">통장 내역은 <b>대표·임원과 주고받은 건만</b> 남기고 올리거나, 불러온 뒤 체크를 풀어 빼세요.</span></div><div id="lnPrev"></div><div class="ent-add"><input id="lnDate" type="date" value="${toISO(new Date())}"><select id="lnKind">${Object.entries(LN_KIND).map(([k,[t]])=>`<option value="${k}">${t}</option>`).join('')}</select><input id="lnAmt" placeholder="금액" inputmode="numeric" oninput="pcFmt(this)"><input id="lnMemo" placeholder="적요 (예: 개인 카드대금 대납)" style="flex:1;min-width:160px"><button type="button" class="btn btn-outline" onclick="lnAddEntry()">＋ 추가</button></div>
  <div style="overflow-x:auto;margin-top:8px"><table class="ins-tbl"><thead><tr><th>일자</th><th>구분</th><th>금액</th><th>적요</th><th>가지급금 잔액</th><th>가수금 잔액</th><th></th></tr></thead><tbody id="lnRows"></tbody></table></div></div>`;
  loanCalc();
 }
@@ -3048,6 +3054,36 @@ function loanCalc(){
  '※ 법인세법 기준 추정치예요. 업무무관 가지급금이면 인정이자 외에도 <b>지급이자 손금불산입</b>(차입금 이자 중 가지급금 비율만큼)과 대손 불인정이 함께 적용돼요. 귀속자 상여 처분 시 근로소득 원천징수(소득금액변동통지)도 확인하세요.');
  const rows=$('lnRows');if(rows)rows.innerHTML=p.entries.length?p.entries.map(e=>{const b=bal[e.id];return `<tr><td>${e.date}</td><td>${LN_KIND[e.kind][0]}</td><td style="text-align:right">${e.amt.toLocaleString('ko-KR')}</td><td class="l">${escapeHTML(e.memo||'')}</td><td style="text-align:right">${b?b[0].toLocaleString('ko-KR'):'(기간 밖)'}</td><td style="text-align:right">${b?b[1].toLocaleString('ko-KR'):''}</td><td><button type="button" class="ent-del" onclick="lnDelEntry('${e.id}')">×</button></td></tr>`}).join(''):'<tr><td colspan="7" class="subtle">입출 내역을 추가하세요.</td></tr>';
 }
+/* 가지급금·가수금 엑셀 업로드 */
+function lnDate(v,yr){if(v==null||v==='')return '';if(v instanceof Date&&!isNaN(v))return toISO(new Date(v.getFullYear(),v.getMonth(),v.getDate(),12));if(typeof v==='number'&&v>20000&&v<80000){const d=new Date(Math.round((v-25569)*864e5));return toISO(new Date(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate(),12))}
+ const s=String(v).trim();let m=s.match(/(\d{4})\s*[-./년]\s*(\d{1,2})\s*[-./월]\s*(\d{1,2})/);if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;m=s.match(/^(\d{4})(\d{2})(\d{2})/);if(m)return `${m[1]}-${m[2]}-${m[3]}`;m=s.match(/^(\d{1,2})\s*[-./월]\s*(\d{1,2})/);if(m)return `${yr}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;return ''}
+function lnParse(rows,mode,yr){let hi=-1,c={};for(let i=0;i<Math.min(rows.length,20);i++){const m={};(rows[i]||[]).forEach((h,j)=>{h=String(h||'').replace(/\s/g,'');if(!h)return;
+  if(m.date==null&&/일자|거래일|날짜|일시|월일|^date/i.test(h))m.date=j;else if(m.dr==null&&/차변|출금|지급액|찾으신/.test(h))m.dr=j;else if(m.cr==null&&/대변|입금|맡기신/.test(h))m.cr=j;else if(m.amt==null&&/금액/.test(h)&&!/잔액/.test(h))m.amt=j;else if(m.kind==null&&/구분|입출|거래구분/.test(h))m.kind=j;else if(/적요|내용|메모|기재|비고|거래처|받는분|보낸분/.test(h))(m.memos=m.memos||[]).push(j)});
+  if(m.date!=null&&(m.dr!=null||m.cr!=null||m.amt!=null)){hi=i;c=m;break}}
+ if(hi<0)return null;const out=[];
+ for(let i=hi+1;i<rows.length;i++){const r=rows[i]||[],memo=(c.memos||[]).map(j=>String(r[j]??'').trim()).filter(Boolean).join(' · '),date=lnDate(r[c.date],yr);if(/전기이월|월계|누계|합계|소계|이월/.test(memo+String(r[c.date]??'')))continue;if(!date)continue;
+  let dr=c.dr!=null?ymNum(r[c.dr]):0,cr=c.cr!=null?ymNum(r[c.cr]):0;if(c.amt!=null&&!dr&&!cr){const a=ymNum(r[c.amt]),k=String(c.kind!=null?r[c.kind]:'');if(/입금|대변|회수|입/.test(k))cr=Math.abs(a);else if(/출금|차변|지급|출/.test(k))dr=Math.abs(a);else if(a<0)cr=-a;else dr=a}
+  const add=(amt,side)=>{if(!amt||amt<0)return;let kind;
+   if(mode==='g')kind=side==='dr'?'gOut':'gIn';else if(mode==='s')kind=side==='cr'?'sIn':'sOut';else if(mode==='bankG')kind=side==='dr'?'gOut':'gIn';else kind=side==='dr'?'sOut':'sIn';
+   out.push({date,kind,amt:Math.round(amt),memo,on:true})};
+  add(dr,'dr');add(cr,'cr')}
+ return out}
+function lnUpload(e){const f=e.target.files[0];e.target.value='';if(!f)return;const p=lnPerson();if(!p){alert('먼저 대상자를 추가해 주세요.');return}if(typeof XLSX==='undefined'){alert('엑셀 기능을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.');return}
+ const mode=$('lnUpMode').value,yr=(p.from||toISO(new Date())).slice(0,4);const rd=new FileReader();rd.onload=ev=>{try{const wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array',cellDates:true});let res=null;for(const n of wb.SheetNames){res=lnParse(XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:''}),mode,yr);if(res&&res.length)break}
+  if(!res||!res.length){alert('일자·금액(또는 차변/대변, 입금/출금) 제목 행을 찾지 못했어요.\n엑셀 첫 줄 근처에 "일자 · 적요 · 차변 · 대변" 또는 "거래일 · 출금 · 입금 · 내용" 같은 제목이 있어야 해요.');return}
+  window._lnPrev=res;lnPrevRender()}catch(err){alert('엑셀을 읽지 못했어요: '+err.message)}};rd.readAsArrayBuffer(f)}
+function lnPrevRender(){const b=$('lnPrev'),L=window._lnPrev||[];if(!b)return;if(!L.length){b.innerHTML='';return}const n=L.filter(x=>x.on).length,sum=k=>L.filter(x=>x.on&&x.kind===k).reduce((a,x)=>a+x.amt,0);
+ b.innerHTML=`<div class="ln-prev"><div class="ln-prev-h"><b>📥 불러온 내역 ${L.length}건</b> <span class="subtle">체크한 건만 추가돼요 · 구분은 건별로 바꿀 수 있어요</span><span style="margin-left:auto"></span><button type="button" class="btn btn-outline" onclick="window._lnPrev.forEach(x=>x.on=!window._lnPrev.every(y=>y.on));lnPrevRender()">전체 선택/해제</button><button type="button" class="btn btn-outline" onclick="window._lnPrev=[];lnPrevRender()">취소</button><button type="button" class="btn btn-primary" onclick="lnPrevAdd()">✔ ${n}건 원장에 추가</button></div>
+ <div class="ln-prev-sum">${Object.entries(LN_KIND).map(([k,[t]])=>sum(k)?`<span>${t} <b>${sum(k).toLocaleString('ko-KR')}</b></span>`:'').join('')}</div>
+ <div style="max-height:320px;overflow:auto"><table class="ins-tbl"><thead><tr><th></th><th>일자</th><th>구분</th><th>금액</th><th>적요</th></tr></thead><tbody>${L.map((x,i)=>`<tr${x.on?'':' style="opacity:.45"'}><td><input type="checkbox"${x.on?' checked':''} onchange="window._lnPrev[${i}].on=this.checked;lnPrevRender()"></td><td>${x.date}</td><td><select onchange="window._lnPrev[${i}].kind=this.value;lnPrevRender()">${Object.entries(LN_KIND).map(([k,[t]])=>`<option value="${k}"${k===x.kind?' selected':''}>${t}</option>`).join('')}</select></td><td style="text-align:right">${x.amt.toLocaleString('ko-KR')}</td><td class="l">${escapeHTML(x.memo)}</td></tr>`).join('')}</tbody></table></div></div>`}
+function lnPrevAdd(){const p=lnPerson(),L=(window._lnPrev||[]).filter(x=>x.on);if(!p||!L.length)return;const dup=L.filter(x=>p.entries.some(e=>e.date===x.date&&e.amt===x.amt&&e.kind===x.kind)).length;
+ if(dup&&!confirm(`이미 원장에 같은 일자·금액·구분인 건이 ${dup}건 있어요. 그래도 모두 추가할까요?\n(취소하면 중복 건은 빼고 추가해요)`)){L.splice(0,L.length,...L.filter(x=>!p.entries.some(e=>e.date===x.date&&e.amt===x.amt&&e.kind===x.kind)))}
+ L.forEach((x,i)=>p.entries.push({id:'e'+Date.now()+'_'+i,date:x.date,kind:x.kind,amt:x.amt,memo:x.memo}));p.entries.sort((a,b)=>a.date.localeCompare(b.date));window._lnPrev=[];saveData();loanRender();alert(`${L.length}건을 '${p.name}' 원장에 추가했어요.`)}
+function lnTemplate(){const rows=[['일자','적요','차변(가지급금 지급)','대변(회수)'],['2026-01-15','대표이사 개인 카드대금 대납',3000000,''],['2026-03-31','일부 회수','',1000000]];
+ if(typeof XLSX!=='undefined'){const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[{wch:12},{wch:30},{wch:20},{wch:16}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'가지급금');XLSX.writeFile(wb,'가지급금_입출내역_양식.xlsx');return}
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+rows.map(r=>r.join(',')).join('\r\n')],{type:'text/csv'}));a.download='가지급금_입출내역_양식.csv';a.click()}
+function lnClearAll(){const p=lnPerson();if(!p||!p.entries.length)return;if(!confirm(`'${p.name}'의 입출 내역 ${p.entries.length}건을 모두 지울까요?`))return;p.entries=[];saveData();loanRender()}
+
 /* ===== [회계] 외화 환산·환차손익 계산기 ===== */
 let fxTab='settle';
 const FXC=['USD','JPY','EUR','CNY'],FXRE={USD:/미국\s*달러/,JPY:/일본\s*엔/,EUR:/유로/,CNY:/위안/};
@@ -3517,16 +3553,16 @@ function rpTitle(sec){const t=((sec.querySelector('.diary-title,.panel-title')||
 function rpLabel(el){let lab=el.closest('label');if(!lab){let p=el,i=0;while(p&&i<3&&!lab){let s=p.previousElementSibling;while(s&&!lab){if(s.tagName==='LABEL'&&!s.querySelector('input,select,textarea'))lab=s;s=s.previousElementSibling}p=p.parentElement;i++}}
  if(lab){const c=lab.cloneNode(true);c.querySelectorAll('input,select,textarea,small,option').forEach(x=>x.remove());const sp=c.querySelector('span');const t=(sp||c).textContent.replace(/\s+/g,' ').trim();if(t)return t}
  const td=el.closest('td,th');if(td){const tr=td.parentElement,tb=tr.closest('table'),idx=[...tr.children].indexOf(td),rh=tr.children[0]&&tr.children[0]!==td?tr.children[0].textContent.trim():'',hr=tb&&tb.querySelector('thead tr'),ch=hr&&hr.children[idx]?hr.children[idx].textContent.trim():'';const t=[rh,ch].filter(Boolean).join(' ');if(t)return t}
- return el.placeholder||el.title||el.id||''}
-function rpInputs(sec){const out=[];sec.querySelectorAll('input,select,textarea').forEach(el=>{if(!rpVis(el)||['hidden','file','button','submit'].includes(el.type)||el.type==='search'||/search/i.test(el.id)||el.closest('.ex-add,.pp-bar,.diary-actions'))return;
- let v;if(el.type==='checkbox'||el.type==='radio'){if(el.type==='radio'&&!el.checked)return;v=el.checked?'예':'아니오'}else if(el.tagName==='SELECT')v=el.selectedOptions[0]?el.selectedOptions[0].text:'';else v=el.value;if(v===''||v==null)return;
+ return el.placeholder||''}
+function rpInputs(sec){const out=[];sec.querySelectorAll('input,select,textarea').forEach(el=>{if(!rpVis(el)||['hidden','file','button','submit'].includes(el.type)||el.type==='search'||/search/i.test(el.id)||el.closest('.ex-add,.pp-bar,.diary-actions,.ent-add,.ln-up,.ym-bar'))return;
+ if(el.tagName==='SELECT'&&el.value==='')return;let v;if(el.type==='checkbox'||el.type==='radio'){if(el.type==='radio'&&!el.checked)return;v=el.checked?'예':'아니오'}else if(el.tagName==='SELECT')v=el.selectedOptions[0]?el.selectedOptions[0].text:'';else v=el.value;if(v===''||v==null)return;
  const l=rpLabel(el);if(!l)return;out.push([l,String(v)])});return out}
 function rpResults(sec){let R=[...sec.querySelectorAll('.pc-card,#lcOut,#ctOut,#intOut,#fxsOut,#yeOut')].filter(el=>rpVis(el)&&!el.querySelector('input:not([type=search]),select,textarea')&&el.textContent.trim());R=R.filter(el=>!R.some(o=>o!==el&&o.contains(el)));return R}
 function rpClean(node){const c=node.cloneNode(true);c.querySelectorAll('button,script,iframe,[hidden],.pp-btn').forEach(e=>e.remove());c.querySelectorAll('input,select,textarea').forEach(e=>{const s=document.createElement('span');s.textContent=e.tagName==='SELECT'?(e.selectedOptions&&e.selectedOptions[0]?e.selectedOptions[0].text:''):e.value;e.replaceWith(s)});return c}
 function rpReport(id){const sec=$(id);if(!sec)return;const {t,tab}=rpTitle(sec),ins=rpInputs(sec),res=rpResults(sec),now=new Date(),ds=`${now.getFullYear()}. ${now.getMonth()+1}. ${now.getDate()}.`;
  let heroes=[],body='',notes=[];
  if(res.length){res.forEach(r=>{const c=rpClean(r);c.querySelectorAll('.pc-hero').forEach(h=>{heroes.push([(h.querySelector('small')||{}).textContent||'',(h.querySelector('b')||{}).textContent||'',(h.querySelector('.sub')||{}).textContent||'']);h.remove()});c.querySelectorAll('.lc-note,.subtle').forEach(n=>{if(n.textContent.trim())notes.push(n.innerHTML);n.remove()});body+=`<div class="rp-res">${c.innerHTML}</div>`})}
- else{const c=rpClean(sec);c.querySelectorAll('.diary-toolbar,.nt-tabs,.lc-tabs').forEach(e=>e.remove());body=`<div class="rp-res">${c.innerHTML}</div>`}
+ else{const c=rpClean(sec);c.querySelectorAll('.diary-toolbar,.nt-tabs,.lc-tabs,.ent-cfg,.ent-add,.ex-add,.ln-up,.ym-bar,.lc-note').forEach(e=>e.remove());body=`<div class="rp-res">${c.innerHTML}</div>`}
  const kv=[];for(let i=0;i<ins.length;i+=2)kv.push(`<tr><th>${escapeHTML(ins[i][0])}</th><td>${escapeHTML(ins[i][1])}</td>${ins[i+1]?`<th>${escapeHTML(ins[i+1][0])}</th><td>${escapeHTML(ins[i+1][1])}</td>`:'<th></th><td></td>'}</tr>`);
  let au='';try{au=localStorage.getItem('rpAuthor')||''}catch(e){}
  const tabTool=['ctPage','laborCalcPage','loanPage','fxCalcPage','yePage','penaltyPage'].includes(id)&&tab,name=(tabTool?tab:t).replace(/^[^\w가-힣]+/,''),subT=tabTool?t.replace(/^[^\w가-힣]+/,''):tab;let n=1;const sec2=[];
@@ -3534,7 +3570,7 @@ function rpReport(id){const sec=$(id);if(!sec)return;const {t,tab}=rpTitle(sec),
  if(kv.length)sec2.push(`<h2>${n++}. 입력 조건</h2><table class="rp-kv">${kv.join('')}</table>`);
  sec2.push(`<h2>${n++}. ${res.length?'계산 내역':'내용'}</h2>${body}`);
  sec2.push(`<h2>${n++}. 검토 의견</h2><div class="rp-memo" contenteditable="true" data-ph="여기를 눌러 의견을 적어주세요 (예: 위 기준으로 처리 예정입니다.)"></div>`);
- const css=`<style>@page{size:A4;margin:14mm 13mm}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}body{font-family:'Pretendard','Malgun Gothic','맑은 고딕',sans-serif;color:#111827;margin:0;font-size:12.5px;line-height:1.55}
+ const css=`<style>@page{size:A4;margin:14mm 13mm}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}html,body{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;zoom:1!important;display:block!important;background:#fff!important}body{font-family:'Pretendard','Malgun Gothic','맑은 고딕',sans-serif!important;color:#111827;margin:0;font-size:12.5px!important;line-height:1.55;padding:0!important}.rp-doc *{max-height:none!important}.rp-doc [style*=overflow]{overflow:visible!important}.rp-res thead th{position:static!important}.rp-doc:focus{outline:0}.rp-res .econ-sec,.rp-res .pc-card{border:0;padding:0;background:none}
  .rp-doc{max-width:780px;margin:0 auto;padding:18px 6px}.rp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.rp-sign{border-collapse:collapse;font-size:11px;width:auto!important;flex-shrink:0}.rp-sign th,.rp-sign td{border:1px solid #374151;text-align:center;width:64px}.rp-sign th{background:#f3f4f6;padding:3px;font-weight:700}.rp-sign td{height:52px}.rp-sign .v{width:22px;line-height:1.2;padding:2px}
  h1{font-size:22px;margin:4px 0 2px;letter-spacing:-.3px;outline:0;word-break:keep-all}.rp-sub{color:#4b5563;font-size:12px}.rp-meta{width:100%;border-collapse:collapse;margin:14px 0 6px;border-top:2px solid #111827}.rp-meta th,.rp-meta td{border-bottom:1px solid #d1d5db;padding:6px 8px;text-align:left}.rp-meta th{width:80px;background:#f9fafb;font-weight:700;color:#374151}
  h2{font-size:14px;margin:18px 0 6px;padding-left:8px;border-left:4px solid #1e3a8a;color:#1e3a8a}
@@ -3544,11 +3580,11 @@ function rpReport(id){const sec=$(id);if(!sec)return;const {t,tab}=rpTitle(sec),
  .rp-res .pc-card,.rp-res div{box-shadow:none!important}.rp-res h3,.rp-res h4{font-size:13px;margin:8px 0 4px}
  .rp-memo{min-height:70px;border:1px solid #9ca3af;border-radius:4px;padding:8px 10px;outline:0;white-space:pre-wrap}.rp-memo:empty::before{content:attr(data-ph);color:#9ca3af}
  .rp-notes{margin-top:14px;font-size:10.5px;color:#6b7280;border-top:1px dashed #d1d5db;padding-top:6px}.rp-foot{margin-top:10px;text-align:right;font-size:10.5px;color:#9ca3af}
- [contenteditable]:hover{background:#fffbeb}.rp-bar{position:sticky;top:0;background:#1e3a8a;color:#fff;padding:9px 14px;display:flex;gap:8px;align-items:center;font-size:13px;z-index:9}.rp-bar button{border:0;border-radius:6px;padding:7px 14px;font-weight:800;cursor:pointer;background:#fff;color:#1e3a8a}.rp-bar span{opacity:.85;margin-left:6px}
- @media print{.rp-bar{display:none}[contenteditable]:hover{background:none}.rp-memo:empty{display:none}h2,tr,.rp-hero{break-inside:avoid;break-after:auto}}</style>`;
- const html=`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${escapeHTML(name)} 검토 보고</title>${[...document.querySelectorAll('link[rel=stylesheet]')].map(l=>l.outerHTML).join('')}${css}</head><body>
- <div class="rp-bar"><button onclick="print()">🖨 인쇄 / PDF로 저장</button><button onclick="close()">닫기</button><span>✏️ 제목·작성자·결재란·검토 의견은 눌러서 바로 고칠 수 있어요</span></div>
- <div class="rp-doc"><div class="rp-top"><div><h1 contenteditable="true">${escapeHTML(name)} 검토 보고</h1><div class="rp-sub" contenteditable="true">${escapeHTML(subT||'')}</div></div>
+ .rp-doc [contenteditable]:focus,.rp-doc:focus-within h1{outline:0}.rp-bar{position:sticky;top:0;background:#1e3a8a;color:#fff;padding:9px 14px;display:flex;gap:8px;align-items:center;font-size:13px;z-index:9}.rp-bar button{border:0;border-radius:6px;padding:7px 14px;font-weight:800;cursor:pointer;background:#fff;color:#1e3a8a}.rp-bar span{opacity:.85;margin-left:6px}
+ @media print{.rp-bar{display:none}.rp-memo:empty{display:none}h2,tr,.rp-hero{break-inside:avoid;break-after:auto}}</style>`;
+ const html=`<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${escapeHTML(name)} 검토 보고</title>${[...document.querySelectorAll('link[rel=stylesheet]')].map(l=>l.outerHTML).join('')}${[...document.querySelectorAll('style')].map(x=>x.outerHTML).join('')}${css}</head><body>
+ <div class="rp-bar"><button onclick="print()">🖨 인쇄 / PDF로 저장</button><button onclick="close()">닫기</button><span>✏️ 문서 어디든 눌러서 글자·숫자를 바로 고치고 지울 수 있어요 (Ctrl+Z 되돌리기)</span></div>
+ <div class="rp-doc" contenteditable="true" spellcheck="false"><div class="rp-top"><div><h1 contenteditable="true">${escapeHTML(name)} 검토 보고</h1><div class="rp-sub" contenteditable="true">${escapeHTML(subT||'')}</div></div>
  <table class="rp-sign"><tr><th rowspan="2" class="v">결<br>재</th><th contenteditable="true">담당</th><th contenteditable="true">부서장</th><th contenteditable="true">대표이사</th></tr><tr><td></td><td></td><td></td></tr></table></div>
  <table class="rp-meta"><tr><th>작성일</th><td>${ds}</td><th>작성자</th><td contenteditable="true" id="rpAu">${escapeHTML(au)}</td></tr><tr><th>기준</th><td colspan="3" contenteditable="true">${escapeHTML(((sec.querySelector('.diary-subtitle,.subtle')||{}).textContent||'').replace(/\s+/g,' ').trim().slice(0,160))}</td></tr></table>
  ${sec2.join('')}
