@@ -775,6 +775,21 @@ body.theme-notion .nav-group-btn.active{background:transparent!important;color:#
 
 <style>.ac-reset{grid-column:1/-1}.ac-steps{counter-reset:st;list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}.ac-steps li{counter-increment:st;position:relative;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px 12px 50px}.ac-steps li::before{content:counter(st);position:absolute;left:12px;top:12px;width:26px;height:26px;border-radius:50%;background:#1e3a8a;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:.85rem}.ac-steps li b{font-size:.92rem}.ac-steps li p{margin:4px 0 8px;font-size:.8rem;color:#475569;line-height:1.55}.ac-keep{margin-top:10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:9px 12px;font-size:.82rem;line-height:1.6}</style>
 
+<style>body.not-owner .lc-tab[onclick*="'daily'"]{display:none!important}</style>
+
+<style>body.not-owner .ye-tab[data-ye="month"]{display:none!important}
+.wt-card{margin-top:12px;padding:14px 16px}.wt-h{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.wt-h b{font-size:1.02rem}.wt-ver{background:#eef2ff;color:#3730a3;border-radius:999px;padding:2px 10px;font-size:.74rem;font-weight:700}.wt-link{margin-left:auto;font-size:.8rem}
+.wt-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:14px}@media(max-width:1000px){.wt-grid{grid-template-columns:1fr}}
+.wt-nav{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font-size:.8rem}.wt-nav button{border:1px solid #e2e8f0;background:#fff;border-radius:7px;padding:4px 9px;cursor:pointer;font:inherit;font-size:.78rem}.wt-nav .wt-me{background:#ecfdf5;border-color:#a7f3d0;color:#047857;font-weight:700}.wt-nav input{width:100px;padding:4px 6px;border:1px solid #cbd5e1;border-radius:6px;text-align:right;font:inherit}
+.wt-scroll{overflow-x:auto;border:1px solid #e2e8f0;border-radius:10px}.wt-tbl{border-collapse:collapse;width:100%;font-size:.76rem;min-width:760px}.wt-tbl th,.wt-tbl td{padding:5px 6px;border-bottom:1px solid #f1f5f9;text-align:right;white-space:nowrap}.wt-tbl thead th{background:#f8fafc;position:sticky;top:0;text-align:center}.wt-tbl thead th small{display:block;font-weight:500;color:#94a3b8;font-size:.66rem}.wt-tbl tbody th{text-align:right;background:#fafafa;font-weight:700}
+.wt-tbl tr.me th,.wt-tbl tr.me td{background:#fef9c3}.wt-tbl td.pick{background:#fde047!important;font-weight:900;color:#713f12}
+.wt-kid{margin-top:8px;font-size:.8rem;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:6px 10px}.wt-kid small{color:#64748b}.wt-note{font-size:.74rem;color:#64748b;line-height:1.6;margin:6px 0 0}
+.wt-chk{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px}.wt-in{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.wt-in label{display:flex;flex-direction:column;gap:2px;font-size:.76rem;color:#475569;font-weight:700}.wt-in label small{font-weight:500;color:#94a3b8}.wt-in input,.wt-in select{padding:6px 8px;border:1px solid #cbd5e1;border-radius:7px;font:inherit;font-size:.84rem;text-align:right;background:#fff}
+.wt-res{width:100%;border-collapse:collapse;font-size:.82rem}.wt-res th{text-align:left;padding:6px 4px;width:44%;color:#334155;vertical-align:top}.wt-res td{padding:6px 4px;text-align:right}.wt-res td span{font-size:.74rem}.wt-res small{color:#64748b}.wt-res tr.ok td span{color:#047857;font-weight:700}.wt-res tr.mid td span{color:#b45309}.wt-res tr.bad td span{color:#b91c1c;font-weight:700}.wt-res tr+tr{border-top:1px dashed #e2e8f0}
+.wt-alert{margin-top:8px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px;font-size:.78rem;color:#7f1d1d}.wt-alert textarea{width:100%;margin-top:6px;height:58px;font:inherit;font-size:.74rem;border:1px solid #fecaca;border-radius:6px;padding:4px}
+.wt-why{margin:8px 0 0;padding-left:18px;font-size:.76rem;color:#475569;line-height:1.6}
+</style>
+
 </head>
 <body>
 
@@ -1249,6 +1264,7 @@ body.theme-notion .nav-group-btn.active{background:transparent!important;color:#
    </div>
    <div class="pc-card pc-out" id="pcOut"></div>
   </div>
+  <div class="pc-card wt-card pc-labor" id="wtBox"></div>
   <div class="subtle pc-note">※ 소득세는 국세청 <b>근로소득 간이세액표(2026.2.27 개정)</b> 값을 그대로 넣어 계산해요. 10만 원 단위 사이의 금액은 앞뒤 값을 이어서 계산해서, 공식 표와 대부분 같고 일부 구간에서 몇십~몇백 원 차이가 날 수 있어요. 공제가족 7명 이상은 6명 기준에서 추정해요.<br>※ <b>보험 제외 기준</b>: 국민연금은 만 60세가 되면 자격 상실(이후 임의계속 가능) · 대표자와 같이 사는 친족은 원칙적으로 고용보험 적용 제외(실제 근로자성이 인정되면 가입 가능) · 65세 이후 새로 고용되면 실업급여(근로자 0.9%) 제외, 회사 고용안정·직능개발분은 부과 · 건강보험은 나이와 관계없이 가입.<br>※ 4대보험(근로자 부담): 국민연금 4.75%, 건강보험 3.595%, 장기요양 건강보험료의 13.14%(0.9448%÷7.19%), 고용보험 0.9%. 각 보험료는 10원 미만을 버려요. 지방소득세는 소득세의 10%예요.<br>※ 실제 급여 처리 전에는 <a href="https://www.nts.go.kr/nts/cm/cntnts/cntntsView.do?mi=6602&cntntsId=7930" target="_blank" rel="noopener noreferrer">국세청 간이세액표</a>와 각 공단 고지 기준을 확인하세요.</div>
 </section>
 <section id="insInfoPage" class="page-panel diary-page insinfo-page">
@@ -4148,7 +4164,7 @@ function gsMark(t,q){const s=String(t||''),i=s.toLowerCase().indexOf(q);if(i<0)r
 /* ===== 연말정산 (2026년 귀속) ===== */
 let yeCur='calc';
 function yeS(){if(!profile.ye||typeof profile.ye!=='object')profile.ye={gross:42000000,people:1,paid:0};return profile.ye}
-function yeTab(k){yeCur=k;document.querySelectorAll('.ye-tab').forEach(b=>b.classList.toggle('on',b.dataset.ye===k));document.querySelectorAll('.ye-pane').forEach(p=>p.hidden=p.dataset.yp!==k);yeRender()}
+function yeTab(k){if(k==='month'&&acOwner!==true)k='calc';yeCur=k;document.querySelectorAll('.ye-tab').forEach(b=>b.classList.toggle('on',b.dataset.ye===k));document.querySelectorAll('.ye-pane').forEach(p=>p.hidden=p.dataset.yp!==k);yeRender()}
 function yeIn(el){const S=yeS(),k=el.dataset.k;S[k]=el.type==='checkbox'?(el.checked?1:0):Number(String(el.value).replace(/[^0-9]/g,''))||0;clearTimeout(window._yeT);window._yeT=setTimeout(()=>{try{saveData()}catch(e){}},900);yeOut()}
 function yM(k,label,hint){const v=yeS()[k]||0;return `<label class="lc-f"><span>${label}${hint?` <small>${hint}</small>`:''}</span><input data-k="${k}" type="text" inputmode="numeric" value="${v?Number(v).toLocaleString('ko-KR'):''}" placeholder="0" oninput="pcFmt(this);yeIn(this)"></label>`}
 function yC(k,label,max,hint,def){const S=yeS(),v=S[k]??def??0;let o='';for(let i=0;i<=max;i++)o+=`<option value="${i}"${i==v?' selected':''}>${i}명</option>`;return `<label class="lc-f"><span>${label}${hint?` <small>${hint}</small>`:''}</span><select data-k="${k}" onchange="yeIn(this)">${o}</select></label>`}
@@ -5148,7 +5164,7 @@ function c2Calc(){const o=$('ctOut2');if(!o)return;const S=c2S(ctTab),g=(k,d)=>S
   if(!autoAcc)acc=+S.acc;const mo2=y2===+acq.slice(0,4)?(+d2.slice(5,7))-(+acq.slice(5,7))+1:+d2.slice(5,7),cur=Math.round(Math.min(cost-acc,db?(cost-acc)*rate*mo2/12:cost*rate*mo2/12)),accT=Math.round(acc)+cur,bookV=cost-accT,gl=sale-bookV,vt=vat?Math.floor(sale*.1):0;
   o.innerHTML=lcRes([['취득가액',won(cost)],['전기말 감가상각누계액',won(acc),autoAcc?'자동 계산':'입력값'],['당기 감가상각 (처분일까지)',won(cur),`${mo2}개월`],['처분일 장부가액',won(bookV),'',1],['처분가액',won(sale)],[gl>=0?'유형자산처분이익':'유형자산처분손실',won(Math.abs(gl)),'영업외'+(gl>=0?'수익':'비용'),1]],[gl>=0?'처분이익':'처분손실',won(Math.abs(gl)),`장부가 ${won(bookV)} → 처분가 ${won(sale)}`],`📝 ① (차) 감가상각비 ${f(cur)} / (대) 감가상각누계액 ${f(cur)} ← 처분일까지<br>📝 ② (차) ${sale?`미수금(보통예금) ${f(sale+vt)} · `:''}감가상각누계액 ${f(accT)}${gl<0?` · 유형자산처분손실 ${f(-gl)}`:''} / (대) 비품·차량 등 ${f(cost)}${vt?` · 부가세예수금 ${f(vt)}`:''}${gl>0?` · 유형자산처분이익 ${f(gl)}`:''}<br>※ 차량·비품을 팔 때도 <b>세금계산서 발급</b>(부가세 과세) · 고정자산대장에서 제거 · 업무용승용차는 처분손실 연 800만 한도`);return}
  if(ctTab==='daily'){const day=dlyDay();if(!day)return;let TP=0,TI=0,TO=0;day.acc.forEach((a,i)=>{const io=day.tx.filter(t=>t.a===i),inn=io.filter(t=>t.io!=='out').reduce((s,t)=>s+(+t.amt||0),0),out=io.filter(t=>t.io==='out').reduce((s,t)=>s+(+t.amt||0),0),b=(+a.prev||0)+inn-out;TP+=+a.prev||0;TI+=inn;TO+=out;const set=(id,v)=>{const e=$(id);if(e)e.textContent=f(v)};set('dlyI'+i,inn);set('dlyO'+i,out);set('dlyB'+i,b)});[['dlyTP',TP],['dlyTI',TI],['dlyTO',TO],['dlyTB',TP+TI-TO]].forEach(([id,v])=>{const e=$(id);if(e)e.textContent=f(v)});o.innerHTML=`<div class="pp-sum"><div><small>전일 잔액</small><b>${f(TP)}</b></div><div><small>입금</small><b style="color:#2563eb">${f(TI)}</b></div><div><small>출금</small><b style="color:#dc2626">${f(TO)}</b></div><div><small>금일 잔액</small><b>${f(TP+TI-TO)}</b></div></div>`}}
-const _renderCT2=renderCT;renderCT=function(){_renderCT2();if(CT2.includes(ctTab)){const b=$('ctBody');if(b){b.innerHTML=c2UI();const S=c2S(ctTab);b.querySelectorAll('.lc-in [data-k]').forEach(el=>{const k=el.dataset.k;if(S[k]==null)S[k]=el.type==='checkbox'?el.checked:(el.tagName==='SELECT'||el.type==='date')?el.value:el.dataset.t==='n'?(parseFloat(el.value)||0):ymNum(el.value)});c2Calc()}}};
+const _renderCT2=renderCT;renderCT=function(){if(acOwner!==true&&ctTab==='daily')ctTab='accr';_renderCT2();if(CT2.includes(ctTab)){const b=$('ctBody');if(b){b.innerHTML=c2UI();const S=c2S(ctTab);b.querySelectorAll('.lc-in [data-k]').forEach(el=>{const k=el.dataset.k;if(S[k]==null)S[k]=el.type==='checkbox'?el.checked:(el.tagName==='SELECT'||el.type==='date')?el.value:el.dataset.t==='n'?(parseFloat(el.value)||0):ymNum(el.value)});c2Calc()}}};
 
 /* ===== 과태료·가산세 / 잡이익 / 잡손실 관리대장 ===== */
 let flCur='fine';
@@ -5410,7 +5426,7 @@ document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{if(acOwner===n
 /* ===== 큰 자료 따로 저장 (클라우드 1MB 한도 대비) =====
    main 문서: 일정·설정 등 / x-diary-YYYY: 업무일지 연도별 / x-p-키: 부가세 대사·관리대장·가지급금·급여 등 큰 자료
    각 문서가 따로 1MB 한도라 몇 년을 써도 안전해요. */
-const SPLIT_KEYS=['vatRec','fineLed','loanLedger','payroll'];
+const SPLIT_KEYS=['vatRec','fineLed','loanLedger','payroll','ct2','ye'];
 let splitReady=false,splitLast={},splitLoading=false;
 function splitNested(v){if(Array.isArray(v))return v.some(x=>Array.isArray(x)||splitNested(x));if(v&&typeof v==='object')return Object.values(v).some(splitNested);return false}
 function splitPKeys(){return Object.keys(profile||{}).filter(k=>SPLIT_KEYS.includes(k)||splitNested(profile[k]))}
@@ -5468,6 +5484,39 @@ function vpCalc(){const o=$('vpOut');if(!o)return;const kind=$('vpKind').value,d
  <tr><th>가산세 합계</th><th></th><th class="pn-red">${f(g+late)}</th></tr>
  <tr><th>납부할 세액 (본세 + 가산세)</th><th></th><th>${f(tax+g+late)}</th></tr></table>
  <div class="subtle" style="margin-top:6px;line-height:1.6">※ 세금계산서 관련 가산세(미발급·지연발급·지연전송 등)는 위의 🧾 세금계산서 계산기로 따로 계산해 더하세요. · 세무조사 통지·과세자료 해명 통지를 받은 뒤의 수정신고는 감면이 제한돼요. · 초과환급신고는 환급받은 날부터 계산하는 등 세부 기준이 달라 참고용이에요.</div>`}
+
+/* ===== 근로소득 간이세액표 보기 · 원천징수 확인 ===== */
+const WT_VER='2026.2.27 개정 (소득세법 시행령 별표 2)';
+let wtStart=null;
+function wtKidCut(k){return pcKidCut(k)}
+function wtTax(pay,fam,kid,ratio){return fl10(Math.max(0,pcTableTax(pay,fam)-wtKidCut(kid))*(ratio||1))}
+function wtRender(){const b=$('wtBox');if(!b)return;const cur=pcNum('pcAmt')||3000000,o=pcOpts?pcOpts():{fam:1,kid:0,ratio:1};
+ if(wtStart==null)wtStart=Math.max(1000000,Math.floor(cur/100000)*100000-500000);
+ const rows=[];for(let i=0;i<11;i++){const p=wtStart+i*100000;if(p>10000000)break;rows.push(p)}
+ const hl=Math.floor(cur/100000)*100000,f=v=>v.toLocaleString('ko-KR');
+ const S=profile.wtChk||(profile.wtChk={pay:cur,fam:o.fam,kid:o.kid,ratio:1,real:'',ht:''});
+ b.innerHTML=`<div class="wt-h"><b>📋 근로소득 간이세액표</b><span class="wt-ver">적용 기준 · ${WT_VER}</span><a class="wt-link" href="https://www.nts.go.kr/nts/cm/cntnts/cntntsView.do?mi=6602&cntntsId=7930" target="_blank" rel="noopener noreferrer">국세청 간이세액표 ↗</a></div>
+ <div class="wt-grid"><div>
+  <div class="wt-nav"><button type="button" onclick="wtStart=Math.max(1000000,wtStart-1000000);wtRender()">◀ 100만</button><button type="button" onclick="wtStart=Math.max(1000000,wtStart-100000);wtRender()">▲</button><label>월 급여 <input inputmode="numeric" value="${f(wtStart)}" onchange="wtStart=Math.max(1000000,Math.min(9000000,Math.floor(pcNum(this.id)||Number(this.value.replace(/[^0-9]/g,''))||1000000)));wtRender()" id="wtFrom"> 부터</label><button type="button" onclick="wtStart=Math.min(9000000,wtStart+100000);wtRender()">▼</button><button type="button" onclick="wtStart=Math.min(9000000,wtStart+1000000);wtRender()">100만 ▶</button><button type="button" class="wt-me" onclick="wtStart=null;wtRender()">📍 지금 급여로</button></div>
+  <div class="wt-scroll"><table class="wt-tbl"><thead><tr><th>월 과세급여<small>(비과세 제외)</small></th>${Array.from({length:11},(_,i)=>`<th>${i+1}인</th>`).join('')}</tr></thead><tbody>${rows.map(p=>`<tr class="${p===hl?'me':''}"><th>${f(p)}</th>${Array.from({length:11},(_,i)=>`<td class="${p===hl&&i+1===o.fam?'pick':''}">${f(pcTableTax(p,i+1))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+  <div class="wt-kid"><b>자녀세액공제 차감액</b> (8세 이상 20세 이하 자녀) · 1명 <b>${f(wtKidCut(1))}</b> · 2명 <b>${f(wtKidCut(2))}</b> · 3명 이상 2명분 + 1명당 <b>${f(wtKidCut(3)-wtKidCut(2))}</b> <small>→ 위 표 세액에서 빼요</small></div>
+  <p class="wt-note">※ 공제대상가족 수 = 본인 포함 기본공제 대상자 수 · 표 값은 지방소득세(10%) 제외 · 원천징수 비율 80%·120%를 신청했으면 표 세액 × 비율 · 1,000만 원 초과는 표의 1,000만 원 세액에 초과분 계산식을 더해요 · 7인 이상·10만 원 사이 금액은 앱이 앞뒤 값으로 계산해서 공식 표와 몇십 원 차이 날 수 있어요.</p>
+ </div>
+ <div class="wt-chk"><b>🔎 원천징수 제대로 됐나 확인</b>
+  <div class="wt-in"><label>월 과세급여<input id="wtPay" inputmode="numeric" value="${f(+S.pay||0)}" oninput="pcFmt(this);wtSet('pay',this)"></label><label>공제대상가족<select id="wtFam" onchange="wtSet('fam',this)">${Array.from({length:11},(_,i)=>`<option value="${i+1}"${+S.fam===i+1?' selected':''}>${i+1}인</option>`).join('')}</select></label><label>8~20세 자녀<select id="wtKid" onchange="wtSet('kid',this)">${Array.from({length:7},(_,i)=>`<option value="${i}"${+S.kid===i?' selected':''}>${i}명</option>`).join('')}</select></label><label>원천징수 비율<select id="wtRatio" onchange="wtSet('ratio',this)">${[[.8,'80%'],[1,'100%'],[1.2,'120%']].map(([v,t])=>`<option value="${v}"${+S.ratio===v?' selected':''}>${t}</option>`).join('')}</select></label>
+  <label>💼 실제로 뗀 소득세<small>급여대장 금액</small><input id="wtReal" inputmode="numeric" value="${S.real?f(+S.real):''}" placeholder="예: 84,850" oninput="pcFmt(this);wtSet('real',this)"></label><label>🏛 홈택스 조회 세액<small>있으면 입력</small><input id="wtHt" inputmode="numeric" value="${S.ht?f(+S.ht):''}" placeholder="간이세액표 조회값" oninput="pcFmt(this);wtSet('ht',this)"></label></div>
+  <div id="wtOut"></div></div></div>`;wtCheck()}
+function wtSet(k,el){const S=profile.wtChk;S[k]=el.tagName==='SELECT'?Number(el.value):Number(String(el.value).replace(/[^0-9]/g,''))||'';clearTimeout(window._wtT);window._wtT=setTimeout(saveData,800);wtCheck()}
+function wtCheck(){const o=$('wtOut');if(!o)return;const S=profile.wtChk,f=v=>Number(v).toLocaleString('ko-KR');const pay=+S.pay||0;if(!pay){o.innerHTML='';return}
+ const base=Math.max(0,pcTableTax(pay,+S.fam||1)-wtKidCut(+S.kid||0)),app=fl10(base*(+S.ratio||1)),loc=fl10(app*.1);
+ let h=`<table class="wt-res"><tr><th>앱 계산 (표 기준)</th><td><b>${f(app)}원</b> <small>+ 지방소득세 ${f(loc)}원</small></td></tr>`;
+ const cmp=(lab,v)=>{if(v===''||v==null)return '';const d=+v-app,ad=Math.abs(d);const cls=ad<=10?'ok':ad<=300?'mid':'bad';const msg=ad<=10?'✅ 일치':ad<=300?'🟡 소폭 차이 — 10만 원 사이 금액 계산 차이일 수 있어요. 홈택스 조회값으로 한 번 더 확인':'🔴 차이가 커요 — 아래 확인 목록을 봐 주세요';return `<tr class="${cls}"><th>${lab}</th><td>${f(v)}원 <small>(${d>0?'+':''}${f(d)}원)</small><br><span>${msg}</span></td></tr>`};
+ h+=cmp('💼 실제로 뗀 세액',S.real)+cmp('🏛 홈택스 조회 세액',S.ht)+'</table>';
+ const big=[S.real,S.ht].some(v=>v!==''&&v!=null&&Math.abs(+v-app)>300);
+ if(S.ht!==''&&S.ht!=null&&Math.abs(+S.ht-app)>300)h+=`<div class="wt-alert">📢 <b>홈택스 값과 앱 값이 달라요</b> — 간이세액표가 바뀌었을 수 있어요 (보통 2~3월 시행령 개정). 아래 문구를 복사해서 업데이트를 요청해 주세요.<textarea readonly>TaxDiary 간이세액표 업데이트 요청: 월 과세급여 ${f(pay)}원, 공제대상가족 ${S.fam}인, 자녀 ${S.kid}명 → 홈택스 ${f(S.ht)}원 / 앱 ${f(app)}원. 새 간이세액표(시행령 별표 2) 반영 부탁해요.</textarea></div>`;
+ if(big)h+=`<ul class="wt-why"><li><b>공제대상가족 수</b>: 본인 포함 · 연간 소득 100만 원 넘는 가족은 제외 — 원천징수 신고서 기준과 같나요?</li><li><b>비과세</b>(식대 20만 원 등)를 과세급여에 넣지 않았나요?</li><li><b>자녀 수</b>: 8세 이상 20세 이하만 차감</li><li><b>원천징수 비율</b> 80%·120% 신청 여부</li><li>상여·소급분 등 <b>지급대상기간이 있는 급여</b>는 계산법이 달라요</li><li>급여 프로그램의 간이세액표 버전이 최신인지</li></ul>`;
+ o.innerHTML=h}
+const _payCalcWT=payCalc;payCalc=function(){_payCalcWT();try{if($('wtBox'))wtRender()}catch(e){}};
 
 function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').toLowerCase().includes(q));
  (typeof tasks!=='undefined'?tasks:[]).forEach(t=>R.push({cat:'task',icon:'📅',title:t.title,sub:`${t.date||''} · ${t.category||''}${t.relatedPerson?' · '+t.relatedPerson:''}`,text:[t.title,t.memo,t.relatedPerson,t.category].join(' '),go:()=>{showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}}));
