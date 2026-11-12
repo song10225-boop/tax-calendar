@@ -790,6 +790,15 @@ body.theme-notion .nav-group-btn.active{background:transparent!important;color:#
 .wt-why{margin:8px 0 0;padding-left:18px;font-size:.76rem;color:#475569;line-height:1.6}
 </style>
 
+<style>
+@media(min-width:821px){body.theme-notion:not(.nav-collapsed) .nav-group-btn{pointer-events:auto!important;cursor:pointer;align-items:center;border-radius:6px!important;user-select:none}
+body.theme-notion:not(.nav-collapsed) .nav-group-btn:hover{background:var(--nt-hover,#f1f1ef)!important;color:#37352f!important}
+body.theme-notion:not(.nav-collapsed) .nav-group-btn .nav-caret{display:inline-block!important;margin-left:auto;font-size:.7rem;transition:transform .15s;opacity:.7}
+body.theme-notion:not(.nav-collapsed) .nav-group.fold .nav-group-btn .nav-caret{transform:rotate(-90deg)}
+body.theme-notion:not(.nav-collapsed) .nav-group.fold .nav-menu .nav-link:not(.active){display:none!important}
+}
+</style>
+
 </head>
 <body>
 
@@ -5523,6 +5532,17 @@ function wtCheck(){const o=$('wtOut');if(!o)return;const S=profile.wtChk,f=v=>Nu
  if(big)h+=`<ul class="wt-why"><li><b>공제대상가족 수</b>: 본인 포함 · 연간 소득 100만 원 넘는 가족은 제외 — 원천징수 신고서 기준과 같나요?</li><li><b>비과세</b>(식대 20만 원 등)를 과세급여에 넣지 않았나요?</li><li><b>자녀 수</b>: 8세 이상 20세 이하만 차감</li><li><b>원천징수 비율</b> 80%·120% 신청 여부</li><li>상여·소급분 등 <b>지급대상기간이 있는 급여</b>는 계산법이 달라요</li><li>급여 프로그램의 간이세액표 버전이 최신인지</li></ul>`;
  o.innerHTML=h}
 const _payCalcWT=payCalc;payCalc=function(){_payCalcWT();try{if($('wtBox'))wtRender()}catch(e){}};
+
+
+/* ===== 노션 스타일 사이드바: 큰 제목 눌러 접기·펼치기 ===== */
+function nfName(g){const b=g.querySelector('.nav-group-btn');return b?b.textContent.replace('▾','').trim():''}
+function nfVertical(btn){const b=document.body;return b.classList.contains('theme-notion')&&!b.classList.contains('nav-collapsed')&&getComputedStyle(btn).display!=='none'&&getComputedStyle(btn.parentElement).flexDirection==='column'}
+function nfApply(){const F=new Set((profile&&profile.navFold)||[]);document.querySelectorAll('nav .nav-group').forEach(g=>{const on=F.has(nfName(g));g.classList.toggle('fold',on);const b=g.querySelector('.nav-group-btn');if(b)b.title=document.body.classList.contains('theme-notion')?(on?'눌러서 펼치기':'눌러서 접기'):''})}
+const _toggleNavMenuNF=toggleNavMenu;toggleNavMenu=function(btn){if(nfVertical(btn)){const g=btn.closest('.nav-group'),n=nfName(g),F=new Set(profile.navFold||[]);F.has(n)?F.delete(n):F.add(n);profile.navFold=[...F];saveData();nfApply();return}return _toggleNavMenuNF(btn)};
+function nfAll(fold){profile.navFold=fold?[...document.querySelectorAll('nav .nav-group')].map(nfName).filter(Boolean):[];saveData();nfApply()}
+const _acApplyNF=acApply;acApply=function(){_acApplyNF();try{nfApply()}catch(e){}};
+const _applyAppearanceNF=applyAppearance;applyAppearance=function(){const r=_applyAppearanceNF.apply(this,arguments);try{nfApply()}catch(e){}return r};
+document.addEventListener('DOMContentLoaded',()=>{try{nfApply()}catch(e){}});
 
 function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').toLowerCase().includes(q));
  (typeof tasks!=='undefined'?tasks:[]).forEach(t=>R.push({cat:'task',icon:'📅',title:t.title,sub:`${t.date||''} · ${t.category||''}${t.relatedPerson?' · '+t.relatedPerson:''}`,text:[t.title,t.memo,t.relatedPerson,t.category].join(' '),go:()=>{showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}}));
