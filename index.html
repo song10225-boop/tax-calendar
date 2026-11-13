@@ -803,6 +803,8 @@ body.theme-notion:not(.nav-collapsed) .nav-group.fold .nav-menu .nav-link:not(.a
 
 <style>.pc-total{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;background:linear-gradient(135deg,#ecfdf5,#eff6ff);border:1px solid #a7f3d0;border-radius:10px;padding:9px 12px;margin:8px 0 10px}.pc-total span{font-weight:800;color:#065f46;font-size:.88rem}.pc-total span small{font-weight:500;color:#64748b}.pc-total b{margin-left:auto;font-size:1.15rem;color:#064e3b}.pc-tot-sub{width:100%;text-align:right;color:#64748b;font-size:.74rem}.pc-ntbox{margin-top:12px;padding:12px 16px}.pc-ntbox summary{cursor:pointer;font-weight:800;font-size:1rem}.pc-ntbox .econ-sec h3{display:none}</style>
 
+<style>.dm-bar{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:0 0 10px}.dm-y{display:flex;align-items:center;gap:4px;margin-right:6px}.dm-y b{font-size:.95rem;min-width:44px;text-align:center}.dm-y button{border:1px solid #e2e8f0;background:#fff;border-radius:7px;padding:3px 8px;cursor:pointer;font-size:.75rem}.dm-c{border:1px solid #e2e8f0;background:#fff;border-radius:999px;padding:4px 11px;font:inherit;font-size:.8rem;cursor:pointer;color:#334155;transition:.12s}.dm-c small{background:#eef2ff;color:#4338ca;border-radius:999px;padding:0 6px;font-size:.7rem;font-weight:800;margin-left:2px}.dm-c:hover{border-color:#6366f1}.dm-c.on{background:#1e3a8a;border-color:#1e3a8a;color:#fff;font-weight:800}.dm-c.on small{background:rgba(255,255,255,.25);color:#fff}.dm-c.zero{color:#cbd5e1}.dm-c.now:not(.on){border-color:#93c5fd;box-shadow:inset 0 -2px 0 #93c5fd}</style>
+
 </head>
 <body>
 
@@ -1048,6 +1050,7 @@ body.theme-notion:not(.nav-collapsed) .nav-group.fold .nav-menu .nav-link:not(.a
     <input id="diaryDateTo" type="date" title="기록 날짜 종료" onchange="renderDiaryTable()">
     <button class="small-action" onclick="clearDiaryFilters()">필터 초기화</button>
   </div>
+  <div class="dm-bar" id="diaryMonthBar"></div>
   <div class="diary-table-wrap"><table class="diary-table"><thead><tr>
     <th style="width:55px">NO.</th><th style="width:125px">날짜</th><th style="width:75px">요일</th><th style="width:120px">상태</th><th style="width:150px">업무관련자</th><th style="min-width:220px">내용</th><th style="width:130px">마감일</th><th style="width:130px">완료일</th><th style="min-width:180px">비고</th><th style="width:70px">관리</th>
   </tr></thead><tbody id="diaryTableBody"></tbody></table></div>
@@ -5566,6 +5569,21 @@ function ntTableHTML(){return `<div class="econ-sec"><h3>📋 주요 근로소�
 const _payCalcTOT=payCalc;payCalc=function(){_payCalcTOT();try{const el=$('pcTotLine');if(!el)return;const nt=pcNum('pcNt'),amt=pcNum('pcAmt');let tax,gross;if(pcModeV==='F'){tax=amt;gross=amt+nt}else{const x=pcReverse(amt,pcOpts());tax=x.r.taxable;gross=x.r.gross}
  el.innerHTML=`<span>💰 급여 총합계 <small>(과세 + 비과세)</small></span><b>${gross.toLocaleString('ko-KR')}원</b><small class="pc-tot-sub">과세 ${tax.toLocaleString('ko-KR')} + 비과세 ${nt.toLocaleString('ko-KR')}${pcModeV==='R'?' · 역산 결과 기준':''}</small>`;
  const nb=$('pcNtBody');if(nb&&!nb.dataset.on){nb.dataset.on=1;nb.innerHTML=ntTableHTML()}}catch(e){}};
+
+
+/* ===== 업무일지 월별 바로 보기 ===== */
+let dmYear=null;
+function dmRange(y,m){const last=new Date(y,m,0).getDate();return [`${y}-${String(m).padStart(2,'0')}-01`,`${y}-${String(m).padStart(2,'0')}-${last}`]}
+function dmPick(m){const f=$('diaryDateFrom'),t=$('diaryDateTo');if(!f||!t)return;if(m===0){f.value=`${dmYear}-01-01`;t.value=`${dmYear}-12-31`}else if(m<0){f.value='';t.value=''}else{const [a,b]=dmRange(dmYear,m);f.value=a;t.value=b}renderDiaryTable()}
+function dmRender(){const bar=$('diaryMonthBar');if(!bar)return;const f=$('diaryDateFrom')?.value||'',t=$('diaryDateTo')?.value||'';
+ if(dmYear==null)dmYear=(f||toISO(new Date())).slice(0,4)*1;
+ const cnt=Array(13).fill(0);(diaryRows||[]).forEach(r=>{const d=String(r.date||'');if(d.slice(0,4)==dmYear)cnt[+d.slice(5,7)]++});const yTot=cnt.reduce((a,b)=>a+b,0);
+ let act=-2;if(!f&&!t)act=-1;else if(f===`${dmYear}-01-01`&&t===`${dmYear}-12-31`)act=0;else for(let m=1;m<=12;m++){const [a,b]=dmRange(dmYear,m);if(f===a&&t===b)act=m}
+ const nowM=new Date().getFullYear()===dmYear?new Date().getMonth()+1:0;
+ bar.innerHTML=`<div class="dm-y"><button type="button" onclick="dmYear--;dmRender()" title="이전 해">◀</button><b>${dmYear}</b><button type="button" onclick="dmYear++;dmRender()" title="다음 해">▶</button></div>
+ <button type="button" class="dm-c${act===-1?' on':''}" onclick="dmPick(-1)">전체 기간</button><button type="button" class="dm-c${act===0?' on':''}" onclick="dmPick(0)">${dmYear}년 <small>${yTot}</small></button>
+ ${Array.from({length:12},(_,i)=>i+1).map(m=>`<button type="button" class="dm-c${act===m?' on':''}${!cnt[m]?' zero':''}${m===nowM?' now':''}" onclick="dmPick(${m})">${m}월${cnt[m]?` <small>${cnt[m]}</small>`:''}</button>`).join('')}`}
+const _renderDiaryTableDM=renderDiaryTable;renderDiaryTable=function(){const r=_renderDiaryTableDM.apply(this,arguments);try{dmRender()}catch(e){}return r};
 
 function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').toLowerCase().includes(q));
  (typeof tasks!=='undefined'?tasks:[]).forEach(t=>R.push({cat:'task',icon:'📅',title:t.title,sub:`${t.date||''} · ${t.category||''}${t.relatedPerson?' · '+t.relatedPerson:''}`,text:[t.title,t.memo,t.relatedPerson,t.category].join(' '),go:()=>{showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}}));
