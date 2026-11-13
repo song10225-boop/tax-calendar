@@ -799,6 +799,10 @@ body.theme-notion:not(.nav-collapsed) .nav-group.fold .nav-menu .nav-link:not(.a
 }
 </style>
 
+<style>.pc-gj summary small{color:#64748b;font-weight:500;margin-left:4px}.pc-gj-help{font-size:.78rem;color:#475569;line-height:1.55;margin:6px 0}.pc-gj-tip{font-size:.74rem;color:#64748b;background:#f8fafc;border-radius:8px;padding:6px 8px;margin-top:6px;line-height:1.5}.pc-gj input{width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:8px;text-align:right;font:inherit}</style>
+
+<style>.pc-total{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;background:linear-gradient(135deg,#ecfdf5,#eff6ff);border:1px solid #a7f3d0;border-radius:10px;padding:9px 12px;margin:8px 0 10px}.pc-total span{font-weight:800;color:#065f46;font-size:.88rem}.pc-total span small{font-weight:500;color:#64748b}.pc-total b{margin-left:auto;font-size:1.15rem;color:#064e3b}.pc-tot-sub{width:100%;text-align:right;color:#64748b;font-size:.74rem}.pc-ntbox{margin-top:12px;padding:12px 16px}.pc-ntbox summary{cursor:pointer;font-weight:800;font-size:1rem}.pc-ntbox .econ-sec h3{display:none}</style>
+
 </head>
 <body>
 
@@ -1265,15 +1269,23 @@ body.theme-notion:not(.nav-collapsed) .nav-group.fold .nav-menu .nav-link:not(.a
     <label id="pcAmtLabel">월 과세 급여 (기본급 + 과세수당)</label><div class="pc-money"><input id="pcAmt" type="text" inputmode="numeric" value="3,000,000" oninput="pcFmt(this);payCalc()"><span>원</span></div>
     <div class="pc-quick"><button type="button" onclick="pcSet(2500000)">250만</button><button type="button" onclick="pcSet(3000000)">300만</button><button type="button" onclick="pcSet(3500000)">350만</button><button type="button" onclick="pcSet(4000000)">400만</button><button type="button" onclick="pcSet(5000000)">500만</button></div>
     <div id="pcEtcBox" style="display:none"><label>기타소득 필요경비</label><select id="pcEtcExp" onchange="payCalc()" style="width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:8px"><option value="0.6">60% 인정 (강연료·자문료·원고료 등) → 8.8%</option><option value="0">필요경비 없음 (상금 등) → 22%</option></select></div>
-    <div class="pc-labor"><label>비과세 수당 <small>(식대 월 20만 원 한도 등)</small></label><div class="pc-money"><input id="pcNt" type="text" inputmode="numeric" value="0" oninput="pcFmt(this);payCalc()"><span>원</span></div>
+    <div class="pc-labor"><label>비과세 수당 <small>(식대 월 20만 원 한도 등 · <a href="#" onclick="document.getElementById('pcNtBox').open=true;document.getElementById('pcNtBox').scrollIntoView({behavior:'smooth'});return false">한도 보기</a>)</small></label><div class="pc-money"><input id="pcNt" type="text" inputmode="numeric" value="0" oninput="pcFmt(this);payCalc()"><span>원</span></div>
+    <div class="pc-total" id="pcTotLine"></div>
     <div class="pc-row"><label>공제대상 가족 수 <small>(본인 포함)</small><select id="pcFam" onchange="payCalc()"></select></label><label>8~20세 자녀 수<select id="pcKid" onchange="payCalc()"></select></label></div>
     <div class="pc-row"><label>원천징수 비율<select id="pcRatio" onchange="payCalc()"><option value="1">100% (기본)</option><option value="0.8">80%</option><option value="1.2">120%</option></select></label><label>국민연금 기준<select id="pcNpsPeriod" onchange="payCalc()"><option value="new">2026.7~ (41만~659만)</option><option value="old">~2026.6 (40만~637만)</option></select></label></div>
     <label>가입 보험 선택 <small>(체크 해제 = 제외)</small></label><div class="pc-ins"><select id="pcInsPreset" onchange="pcInsPreset(this.value)"><option value="">빠른 선택…</option><option value="all">일반 근로자 (4대보험 전부)</option><option value="60">만 60세 이상 (국민연금 제외)</option><option value="fam">대표자 가족·친족 (고용보험 제외)</option><option value="65">65세 이후 신규 입사 (고용보험 근로자분 제외)</option><option value="60fam">60세 이상 + 대표 가족 (연금·고용 제외)</option></select><label class="pc-chk"><input type="checkbox" id="pcInsN" checked onchange="payCalc()"> 국민연금</label><label class="pc-chk"><input type="checkbox" id="pcInsH" checked onchange="payCalc()"> 건강·장기요양</label><label class="pc-chk"><input type="checkbox" id="pcInsE" checked onchange="payCalc()"> 고용보험</label></div>
+    <details class="pc-adv pc-labor-only pc-gj" id="pcGj"><summary>📌 고지 기준으로 맞추기 <small>국민연금·건강보험 (직접 입력)</small></summary>
+     <p class="pc-gj-help">4대보험은 이번 달 급여가 아니라 <b>신고된 기준</b>으로 고지돼요. 국민연금은 <b>7월~다음 해 6월</b>까지 전년도 소득으로 정한 기준소득월액을 써서, 1~6월과 7~12월 보험료가 달라요. 고지서·EDI 금액에 맞추고 싶을 때 여기서 직접 넣으세요.</p>
+     <div class="pc-row"><label>국민연금 계산<select id="pcNpsMode" onchange="pcGjSave();payCalc()"><option value="auto">이번 달 급여로 계산</option><option value="base">기준소득월액 직접 입력</option><option value="amt">고지 보험료(근로자분) 직접 입력</option></select></label><label id="pcNpsValL">금액<input id="pcNpsVal" inputmode="numeric" placeholder="예: 3,100,000" oninput="pcFmt(this);pcGjSave();payCalc()"></label></div>
+     <div class="pc-row"><label>건강보험 계산<select id="pcHiMode" onchange="pcGjSave();payCalc()"><option value="auto">이번 달 급여로 계산</option><option value="base">보수월액 직접 입력</option><option value="amt">고지 건강보험료(근로자분) 직접 입력</option></select></label><label id="pcHiValL">금액<input id="pcHiVal" inputmode="numeric" placeholder="예: 3,000,000" oninput="pcFmt(this);pcGjSave();payCalc()"></label></div>
+     <div class="pc-gj-tip">💡 예) 2026년 1~6월: 2025.7월에 정해진 기준소득월액 / 7~12월: 2026.7월에 새로 정해진 기준소득월액 · 장기요양은 건강보험료 × 0.1314로 자동 계산 · 입력값은 이 계정에 저장돼요</div>
+    </details>
     <details class="pc-adv pc-labor-only"><summary>회사 부담분 설정</summary><div class="pc-row"><label>고용안정·직업능력개발<select id="pcEmpSize" onchange="payCalc()"><option value="0.0025">150인 미만 (0.25%)</option><option value="0.0045">150인 이상 우선지원 (0.45%)</option><option value="0.0065">150~1,000인 미만 (0.65%)</option><option value="0.0085">1,000인 이상·국가 (0.85%)</option></select></label><label>산재보험료율 (%) <small>업종별로 달라요</small><input id="pcSanjae" type="number" step="0.01" min="0" value="0.66" oninput="payCalc()"></label></div></details></div>
    </div>
    <div class="pc-card pc-out" id="pcOut"></div>
   </div>
   <div class="pc-card wt-card pc-labor" id="wtBox"></div>
+  <details class="pc-card pc-labor pc-ntbox" id="pcNtBox" open><summary>📋 비과세 항목·한도 (2026)</summary><div id="pcNtBody"></div></details>
   <div class="subtle pc-note">※ 소득세는 국세청 <b>근로소득 간이세액표(2026.2.27 개정)</b> 값을 그대로 넣어 계산해요. 10만 원 단위 사이의 금액은 앞뒤 값을 이어서 계산해서, 공식 표와 대부분 같고 일부 구간에서 몇십~몇백 원 차이가 날 수 있어요. 공제가족 7명 이상은 6명 기준에서 추정해요.<br>※ <b>보험 제외 기준</b>: 국민연금은 만 60세가 되면 자격 상실(이후 임의계속 가능) · 대표자와 같이 사는 친족은 원칙적으로 고용보험 적용 제외(실제 근로자성이 인정되면 가입 가능) · 65세 이후 새로 고용되면 실업급여(근로자 0.9%) 제외, 회사 고용안정·직능개발분은 부과 · 건강보험은 나이와 관계없이 가입.<br>※ 4대보험(근로자 부담): 국민연금 4.75%, 건강보험 3.595%, 장기요양 건강보험료의 13.14%(0.9448%÷7.19% = 0.13140…을 소수점 다섯째 자리에서 반올림한 0.1314), 고용보험 0.9%. 각 보험료는 10원 미만을 버려요. 지방소득세는 소득세의 10%예요.<br>※ 실제 급여 처리 전에는 <a href="https://www.nts.go.kr/nts/cm/cntnts/cntntsView.do?mi=6602&cntntsId=7930" target="_blank" rel="noopener noreferrer">국세청 간이세액표</a>와 각 공단 고지 기준을 확인하세요.</div>
 </section>
 <section id="insInfoPage" class="page-panel diary-page insinfo-page">
@@ -3619,11 +3631,11 @@ function pcTableTax(pay,n){
 function pcKidCut(k){return k<=0?0:k===1?20830:k===2?45830:45830+(k-2)*33330}
 function pcCompute(taxable,opt){
  const [lo,hi]=opt.nps==='old'?[4e5,637e4]:[41e4,659e4],npsBase=Math.floor(Math.min(Math.max(taxable,lo),hi)/1000)*1000;
- const I=opt.ins||{n:1,h:1,e:1},nps=taxable>0&&I.n?fl10(npsBase*.0475):0,hi_=I.h?fl10(taxable*.03595):0,ltc=fl10(hi_*0.1314),emp=I.e?fl10(taxable*.009):0;
+ const G=opt.gj||{},I=opt.ins||{n:1,h:1,e:1};let nb=npsBase;if(G.npsMode==='base'&&G.npsVal)nb=Math.floor(Math.min(Math.max(G.npsVal,lo),hi)/1000)*1000;const nps=!I.n?0:(G.npsMode==='amt'&&G.npsVal)?G.npsVal:(taxable>0||G.npsMode==='base'?fl10(nb*.0475):0),hi_=!I.h?0:(G.hiMode==='amt'&&G.hiVal)?G.hiVal:fl10(((G.hiMode==='base'&&G.hiVal)?G.hiVal:taxable)*.03595),ltc=fl10(hi_*0.1314),emp=I.e?fl10(taxable*.009):0;
  const t0=Math.max(0,pcTableTax(taxable,opt.fam)-pcKidCut(opt.kid)),inc=fl10(t0*opt.ratio),loc=fl10(inc*.1);
  const ded=nps+hi_+ltc+emp+inc+loc,gross=taxable+opt.nt,net=gross-ded;
  const cNps=nps,cHi=hi_,cLtc=ltc,cEmp=(I.e?fl10(taxable*.009):0)+((I.e||I.p65)?fl10(taxable*opt.empSize):0),cSan=fl10(taxable*opt.san/100),cTot=cNps+cHi+cLtc+cEmp+cSan;
- return {taxable,nt:opt.nt,gross,nps,hi:hi_,ltc,emp,inc,loc,ded,net,npsBase,comp:{nps:cNps,hi:cHi,ltc:cLtc,emp:cEmp,san:cSan,tot:cTot}};
+ return {taxable,nt:opt.nt,gross,nps,hi:hi_,ltc,emp,inc,loc,ded,net,npsBase:nb,gjN:G.npsMode,gjH:G.hiMode,comp:{nps:cNps,hi:cHi,ltc:cLtc,emp:cEmp,san:cSan,tot:cTot}};
 }
 function pcSimple(gross,type,expRate){
  let base,rate;if(type==='biz'){base=gross;rate=.03}else{base=Math.max(0,gross*(1-expRate));rate=.2}
@@ -3646,7 +3658,9 @@ function pcSimpleRender(amt){
 }
 function pcCopySimple(){const r=window._pcLastS;if(!r)return;const L=[['항목','금액'],['지급액',r.gross],['소득세',r.inc],['지방소득세',r.loc],['원천징수 합계',r.ded],['실수령액',r.net]].map(x=>x.join('\t')).join('\n');(navigator.clipboard?navigator.clipboard.writeText(L):Promise.reject()).then(()=>alert('복사했어요. 엑셀에 붙여넣기(Ctrl+V) 하세요.')).catch(()=>{const ta=document.createElement('textarea');ta.value=L;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();alert('복사했어요.')})}
 function pcInsPreset(v){const set=(n,h,e)=>{$('pcInsN').checked=n;$('pcInsH').checked=h;$('pcInsE').checked=e};if(v==='all')set(1,1,1);if(v==='60')set(0,1,1);if(v==='fam')set(1,1,0);if(v==='65')set(1,1,0);if(v==='60fam')set(0,1,0);window._pcInsP=v;payCalc()}
-function pcOpts(){return {ins:{n:$('pcInsN')?$('pcInsN').checked:true,h:$('pcInsH')?$('pcInsH').checked:true,e:$('pcInsE')?$('pcInsE').checked:true,p65:window._pcInsP==='65'},nt:pcNum('pcNt'),fam:Number($('pcFam').value)||1,kid:Number($('pcKid').value)||0,ratio:Number($('pcRatio').value)||1,nps:$('pcNpsPeriod').value,empSize:Number($('pcEmpSize').value)||.0025,san:Number($('pcSanjae').value)||0}}
+function pcGjSave(){const g=profile.pcGj=profile.pcGj||{};g.npsMode=$('pcNpsMode').value;g.npsVal=pcNum('pcNpsVal');g.hiMode=$('pcHiMode').value;g.hiVal=pcNum('pcHiVal');clearTimeout(window._pcGjT);window._pcGjT=setTimeout(saveData,800)}
+function pcGjLoad(){const g=profile.pcGj;if(!g||!$('pcNpsMode')||$('pcNpsMode').dataset.loaded)return;$('pcNpsMode').dataset.loaded=1;$('pcNpsMode').value=g.npsMode||'auto';$('pcHiMode').value=g.hiMode||'auto';$('pcNpsVal').value=g.npsVal?Number(g.npsVal).toLocaleString('ko-KR'):'';$('pcHiVal').value=g.hiVal?Number(g.hiVal).toLocaleString('ko-KR'):'';if((g.npsMode&&g.npsMode!=='auto')||(g.hiMode&&g.hiMode!=='auto'))$('pcGj').open=true}
+function pcOpts(){try{pcGjLoad()}catch(e){}const gj={npsMode:$('pcNpsMode')?$('pcNpsMode').value:'auto',npsVal:$('pcNpsVal')?pcNum('pcNpsVal'):0,hiMode:$('pcHiMode')?$('pcHiMode').value:'auto',hiVal:$('pcHiVal')?pcNum('pcHiVal'):0};try{$('pcNpsValL').style.display=gj.npsMode==='auto'?'none':'';$('pcHiValL').style.display=gj.hiMode==='auto'?'none':'';$('pcNpsValL').firstChild.textContent=gj.npsMode==='amt'?'고지 국민연금 (근로자분)':'기준소득월액';$('pcHiValL').firstChild.textContent=gj.hiMode==='amt'?'고지 건강보험료 (근로자분)':'보수월액'}catch(e){}return {gj,ins:{n:$('pcInsN')?$('pcInsN').checked:true,h:$('pcInsH')?$('pcInsH').checked:true,e:$('pcInsE')?$('pcInsE').checked:true,p65:window._pcInsP==='65'},nt:pcNum('pcNt'),fam:Number($('pcFam').value)||1,kid:Number($('pcKid').value)||0,ratio:Number($('pcRatio').value)||1,nps:$('pcNpsPeriod').value,empSize:Number($('pcEmpSize').value)||.0025,san:Number($('pcSanjae').value)||0}}
 function pcReverse(target,opt){
  if(target<=opt.nt)return {r:pcCompute(0,opt),exact:false};
  let lo=0,hi=Math.max(1e6,target*3);while(pcCompute(hi,opt).net<target)hi*=2;
@@ -3664,7 +3678,7 @@ function payCalc(){
  else{const x=pcReverse(amt,opt);r=x.r;head=`<div class="pc-hero"><small>실수령 ${amt.toLocaleString('ko-KR')}원을 받으려면 필요한 월 과세 급여</small><b>${r.taxable.toLocaleString('ko-KR')}원</b><div class="sub">${opt.nt?`+ 비과세 ${opt.nt.toLocaleString('ko-KR')}원 = 세전 합계 ${r.gross.toLocaleString('ko-KR')}원 · `:''}계산된 실수령 ${r.net.toLocaleString('ko-KR')}원${r.net!==amt?` (목표보다 ${(r.net-amt).toLocaleString('ko-KR')}원 많음 — 세액 구간 때문에 딱 맞는 금액이 없어 가장 가까운 위쪽 값)`:' ✓ 정확히 일치'}</div></div>`}
  const w=v=>v.toLocaleString('ko-KR')+'원',row=(a,b,c)=>`<tr><td>${a}${c?`<small>${c}</small>`:''}</td><td>${b}</td></tr>`;
  out.innerHTML=head+`<table class="pc-tbl"><tr class="grp"><td colspan="2">지급</td></tr>${row('과세 급여',w(r.taxable))}${row('비과세 수당',w(r.nt))}<tr class="sum"><td>지급 합계</td><td>${w(r.gross)}</td></tr>
- <tr class="grp"><td colspan="2">공제 (근로자 부담)</td></tr>${row('국민연금',opt.ins.n?w(r.nps):'제외',opt.ins.n?`4.75% · 기준 ${(r.npsBase/1e4).toLocaleString('ko-KR')}만`:'')}${row('건강보험',opt.ins.h?w(r.hi):'제외',opt.ins.h?'3.595%':'')}${row('장기요양보험',opt.ins.h?w(r.ltc):'제외',opt.ins.h?'건보료 × 0.1314 (13.14%)':'')}${row('고용보험',opt.ins.e?w(r.emp):'제외',opt.ins.e?'0.9%':'')}${row('소득세',w(r.inc),`간이세액 ${opt.fam}인${opt.kid?` · 자녀 ${opt.kid}`:''}${opt.ratio!==1?` · ${opt.ratio*100}%`:''}`)}${row('지방소득세',w(r.loc),'소득세 × 10%')}<tr class="sum"><td>공제 합계</td><td>${w(r.ded)}</td></tr>
+ <tr class="grp"><td colspan="2">공제 (근로자 부담)</td></tr>${row('국민연금',opt.ins.n?w(r.nps):'제외',opt.ins.n?(r.gjN==='amt'?'📌 고지 금액 직접 입력':`4.75% · 기준 ${(r.npsBase/1e4).toLocaleString('ko-KR')}만${r.gjN==='base'?' 📌 직접 입력':''}`):'')}${row('건강보험',opt.ins.h?w(r.hi):'제외',opt.ins.h?(r.gjH==='amt'?'📌 고지 금액 직접 입력':r.gjH==='base'?'3.595% · 📌 보수월액 직접 입력':'3.595%'):'')}${row('장기요양보험',opt.ins.h?w(r.ltc):'제외',opt.ins.h?'건보료 × 0.1314 (13.14%)':'')}${row('고용보험',opt.ins.e?w(r.emp):'제외',opt.ins.e?'0.9%':'')}${row('소득세',w(r.inc),`간이세액 ${opt.fam}인${opt.kid?` · 자녀 ${opt.kid}`:''}${opt.ratio!==1?` · ${opt.ratio*100}%`:''}`)}${row('지방소득세',w(r.loc),'소득세 × 10%')}<tr class="sum"><td>공제 합계</td><td>${w(r.ded)}</td></tr>
  <tr class="sum"><td>💰 실수령액</td><td style="color:#0f766e;font-size:1.1rem">${w(r.net)}</td></tr>
  <tr class="grp"><td colspan="2">회사 부담 (참고)</td></tr>${row('국민연금',w(r.comp.nps))}${row('건강보험 + 장기요양',w(r.comp.hi+r.comp.ltc))}${row('고용보험',w(r.comp.emp),`0.9% + ${(opt.empSize*100).toFixed(2)}%`)}${row('산재보험',w(r.comp.san),opt.san+'%')}<tr class="sum"><td>회사 부담 합계</td><td>${w(r.comp.tot)}</td></tr><tr class="sum"><td>🏢 회사 총 인건비 (지급 + 회사 부담)</td><td>${w(r.gross+r.comp.tot)}</td></tr>
  <tr class="grp"><td colspan="2">연간 환산 (×12)</td></tr>${row('연 세전 (비과세 포함)',w(r.gross*12))}${row('연 실수령',w(r.net*12))}</table>
@@ -3739,15 +3753,7 @@ function lcCalc(){
   let tax,note='';if(each){const t1=fl10(per);tax=t1<1000?0:t1;if(t1>0&&t1<1000)note='매일 지급 시 1회 소득세 1,000원 미만 → 소액부징수';tax*=n}else{const t=fl10(per*n);tax=t<1000?0:t;if(t>0&&t<1000)note='소득세 1,000원 미만 → 소액부징수'}
   const loc=each?fl10(fl10(per)<1000?0:fl10(per)*.1)*n:fl10(tax*.1),gross=p*n,emp=fl10(gross*.009);
   o.innerHTML=lcRes([['지급 총액',won(gross),`${won(p)} × ${n}일`],['1일 산출',won(per),`(일급 − 15만) × 6% × (1 − 55%)`],['소득세',won(tax),note],['지방소득세',won(loc)],['원천징수 합계',won(tax+loc),'',1],['grp','참고'],['고용보험 (근로자 0.9%)',won(emp),'일용근로자 고용보험 대상'],['세후 지급액 (고용보험 공제 후)',won(gross-tax-loc-emp),'',1]],['일용근로 원천징수 (소득세+지방세)',won(tax+loc),`실효세율 약 2.97% (일급 15만 초과분)`],'※ 일용근로소득은 3.3%(사업소득)가 아니에요. 일급 15만 원까지는 세금이 없어요. <b>일용근로소득 지급명세서는 지급일이 속한 달의 다음 달 말일까지 매월 제출</b>해요. 국민연금·건강보험은 월 8일 이상(또는 60시간 이상) 근로 시 가입 대상이에요.')}
- if(lcTab==='nt'){o.innerHTML=`<div class="econ-sec"><h3>📋 주요 근로소득 비과세 항목 (2026)</h3><div style="overflow-x:auto"><table class="ins-tbl"><thead><tr><th>항목</th><th>비과세 한도</th><th>주요 요건</th><th>4대보험 보수</th></tr></thead><tbody>
-  <tr><td>식대</td><td>월 20만 원</td><td class="l">현물 식사를 따로 제공받지 않을 것</td><td>제외</td></tr>
-  <tr><td>자가운전보조금</td><td>월 20만 원</td><td class="l">본인(또는 배우자 공동) 명의 차량을 업무에 직접 사용 · 실제 여비를 따로 받지 않을 것</td><td>제외</td></tr>
-  <tr><td>출산·보육수당</td><td>월 20만 원</td><td class="l">6세 이하(과세기간 개시일 기준) 자녀 보육 관련 · 자녀 수와 관계없이 1인당 한도</td><td>제외</td></tr>
-  <tr><td>출산지원금</td><td>전액</td><td class="l">출생일 이후 2년 이내 지급, 2회 이내 (친족인 특수관계자 제외)</td><td>제외</td></tr>
-  <tr><td>생산직 연장·야간·휴일근로수당</td><td>연 240만 원</td><td class="l">월정액급여 210만 원 이하 + 직전 연도 총급여 3,000만 원 이하 생산직 등</td><td>제외</td></tr>
-  <tr><td>연구보조비·연구활동비</td><td>월 20만 원</td><td class="l">연구기관·기업부설연구소 연구원 등 요건 충족 시</td><td>제외</td></tr>
-  <tr><td>육아휴직·출산전후휴가 급여</td><td>전액</td><td class="l">고용보험법에 따라 받는 급여</td><td>제외</td></tr>
-  </tbody></table></div><div class="subtle lc-note">※ 소득세법상 비과세 근로소득은 국민연금·건강보험·고용보험 보수에서도 빠져요. 요건을 갖추지 못하면 과세 급여로 봐야 하니 지급 규정과 증빙을 갖춰두세요. 한도·요건은 매년 세법 개정으로 바뀔 수 있어요.</div></div>`}
+ if(lcTab==='nt'){o.innerHTML=ntTableHTML()}
  if(lcTab==='wh'){const rows=[['근로소득 (간이세액)','wA'],['근로소득 (중도퇴사)','wB'],['일용근로소득','wC'],['퇴직소득','wD'],['사업소득','wE'],['기타소득','wF']];const st=profile.whSheet=profile.whSheet||{};
   o.innerHTML=`<div class="econ-sec"><h3>🧾 원천징수이행상황신고서 집계표 <small>소득별 인원·지급액·세액 정리</small></h3><div style="overflow-x:auto"><table class="ins-tbl wh-tbl"><thead><tr><th>소득 구분</th><th>인원</th><th>총지급액</th><th>소득세</th><th>지방소득세 (10%)</th></tr></thead><tbody>${rows.map(([t,k])=>{const r=st[k]||{};return `<tr><td>${t}</td><td><input data-wh="${k}|n" value="${r.n||''}" inputmode="numeric"></td><td><input data-wh="${k}|p" value="${r.p?Number(r.p).toLocaleString('ko-KR'):''}" inputmode="numeric"></td><td><input data-wh="${k}|t" value="${r.t?Number(r.t).toLocaleString('ko-KR'):''}" inputmode="numeric"></td><td class="wh-loc" data-loc="${k}"></td></tr>`}).join('')}<tr class="wh-sum"><td>합계</td><td id="whN"></td><td id="whP"></td><td id="whT"></td><td id="whL"></td></tr></tbody></table></div>
   <div class="pc-actions"><button type="button" class="btn btn-outline" onclick="whCopy()">📋 엑셀용 복사</button><button type="button" class="btn btn-outline" onclick="if(confirm('집계표를 비울까요?')){profile.whSheet={};saveData();renderLaborCalc()}">🧹 비우기</button></div>
@@ -4558,7 +4564,7 @@ const UPD_ITEMS=[
 ['minw','최저임금','2026년 10,320원 · 2027년 10,700원','8월 초 고시 → 다음 해 1월 1일 시행','','노무 계산기 · 4대보험·최저임금 · 이직확인서'],
 ['ui','구직급여 상한·하한','상한 68,100원 · 하한 최저임금 80% × 8시간','1월 1일','하한이 상한보다 높아지면 하한 적용','이직확인서'],
 ['wht','근로소득 간이세액표 · 자녀 차감액','2026.2.27 개정분 · 자녀 1명 20,830 / 2명 45,830 / 3명부터 +33,330','2월 말 ~ 3월 (소득세법 시행령 개정 시)','급여 계산기 아래 간이세액표의 "적용 기준" 표시도 같이 바꾸기','급여 계산기 · 간이세액표'],
-['nt','비과세 한도 · 일용근로소득','식대 월 20만 · 보육수당 자녀 1명당 월 20만 · 일용 일 15만 공제','12월 세법 통과 → 1월','','노무 계산기 › 비과세·일용근로 · 급여 계산기'],
+['nt','비과세 한도 · 일용근로소득','식대 월 20만 · 보육수당 자녀 1명당 월 20만(2026~) · 일용 일 15만 공제','12월 세법 통과 → 1월','','노무 계산기 › 비과세·일용근로 · 급여 계산기'],
 ['ret','퇴직소득세 공제','근속연수공제 · 환산급여공제 (2023 개정분)','개정 시','','노무 계산기 › 퇴직금·퇴직소득세'],
 ['ye','연말정산 공제','자녀세액공제 9세 이상 · 카드 자녀 한도 · 고향사랑 40% 등 (2026 귀속)','12월 세법 통과 → 다음 해 귀속분','자녀세액공제 나이 2027년 10세 이상 예정 · "2026 귀속 바뀐 점" 탭 제목·내용도 새 연도로','연말정산 메뉴 (전 탭)'],
 ['bill','세법개정안 확정 항목 ("개정안" 표시)','업무용승용차 700만/1,000만(2027 취득분) · 적격증빙 3만→5만·경조사 30만','12월 국회 통과 후 확정','통과 내용대로 "개정안" 표시를 지우거나 고치기','결산·세무조정 도구 · 업무추진비 · 실무상식'],
@@ -5543,6 +5549,22 @@ function nfAll(fold){profile.navFold=fold?[...document.querySelectorAll('nav .na
 const _acApplyNF=acApply;acApply=function(){_acApplyNF();try{nfApply()}catch(e){}};
 const _applyAppearanceNF=applyAppearance;applyAppearance=function(){const r=_applyAppearanceNF.apply(this,arguments);try{nfApply()}catch(e){}return r};
 document.addEventListener('DOMContentLoaded',()=>{try{nfApply()}catch(e){}});
+
+function ntTableHTML(){return `<div class="econ-sec"><h3>📋 주요 근로소득 비과세 항목 (2026)</h3><div style="overflow-x:auto"><table class="ins-tbl"><thead><tr><th>항목</th><th>비과세 한도</th><th>주요 요건</th><th>4대보험 보수</th></tr></thead><tbody>
+  <tr><td>식대</td><td>월 20만 원</td><td class="l">현물 식사를 따로 제공받지 않을 것</td><td>제외</td></tr>
+  <tr><td>자가운전보조금</td><td>월 20만 원</td><td class="l">본인(또는 배우자 공동) 명의 차량을 업무에 직접 사용 · 실제 여비를 따로 받지 않을 것</td><td>제외</td></tr>
+  <tr><td>출산·보육수당</td><td><b>자녀 1명당</b> 월 20만 원</td><td class="l">6세 이하(과세기간 개시일 기준) 자녀 보육 관련 · <b>2026.1.1부터 자녀 1명당</b> (2025년까지는 근로자 1인당 월 20만 원) · 자녀 2명이면 월 40만 원</td><td>제외</td></tr>
+  <tr><td>출산지원금</td><td>전액</td><td class="l">출생일 이후 2년 이내 지급, 2회 이내 (친족인 특수관계자 제외)</td><td>제외</td></tr>
+  <tr><td>생산직 연장·야간·휴일근로수당</td><td>연 240만 원</td><td class="l">월정액급여 210만 원 이하 + 직전 연도 총급여 3,000만 원 이하 생산직 등</td><td>제외</td></tr>
+  <tr><td>연구보조비·연구활동비</td><td>월 20만 원</td><td class="l">연구기관·기업부설연구소 연구원 등 요건 충족 시</td><td>제외</td></tr>
+  <tr><td>직무발명보상금</td><td>연 700만 원</td><td class="l">종업원이 사용자에게서 받는 직무발명보상금 (친족 등 제외)</td><td>제외</td></tr>
+  <tr><td>근로자 본인 학자금</td><td>전액</td><td class="l">업무 관련 교육 · 사내 규정에 따른 지급 · 교육 후 일정 기간 근무 안 하면 반납 조건 등</td><td>제외</td></tr>
+  <tr><td>육아휴직·출산전후휴가 급여</td><td>전액</td><td class="l">고용보험법에 따라 받는 급여</td><td>제외</td></tr>
+  </tbody></table></div><div class="subtle lc-note">※ 소득세법상 비과세 근로소득은 국민연금·건강보험·고용보험 보수에서도 빠져요. 요건을 갖추지 못하면 과세 급여로 봐야 하니 지급 규정과 증빙을 갖춰두세요. 한도·요건은 매년 세법 개정으로 바뀔 수 있어요.</div></div>`}
+
+const _payCalcTOT=payCalc;payCalc=function(){_payCalcTOT();try{const el=$('pcTotLine');if(!el)return;const nt=pcNum('pcNt'),amt=pcNum('pcAmt');let tax,gross;if(pcModeV==='F'){tax=amt;gross=amt+nt}else{const x=pcReverse(amt,pcOpts());tax=x.r.taxable;gross=x.r.gross}
+ el.innerHTML=`<span>💰 급여 총합계 <small>(과세 + 비과세)</small></span><b>${gross.toLocaleString('ko-KR')}원</b><small class="pc-tot-sub">과세 ${tax.toLocaleString('ko-KR')} + 비과세 ${nt.toLocaleString('ko-KR')}${pcModeV==='R'?' · 역산 결과 기준':''}</small>`;
+ const nb=$('pcNtBody');if(nb&&!nb.dataset.on){nb.dataset.on=1;nb.innerHTML=ntTableHTML()}}catch(e){}};
 
 function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').toLowerCase().includes(q));
  (typeof tasks!=='undefined'?tasks:[]).forEach(t=>R.push({cat:'task',icon:'📅',title:t.title,sub:`${t.date||''} · ${t.category||''}${t.relatedPerson?' · '+t.relatedPerson:''}`,text:[t.title,t.memo,t.relatedPerson,t.category].join(' '),go:()=>{showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}}));
