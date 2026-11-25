@@ -820,6 +820,8 @@ body.theme-notion:not(.nav-collapsed) .nav-group.fold .nav-menu .nav-link:not(.a
 .wd-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;width:100%;text-align:left;border:none;background:none;padding:6px 4px;border-top:1px dashed #f1f5f9;cursor:pointer;font:inherit}.wd-row:hover{background:#f8fafc}.wd-d{font-size:.68rem;font-weight:900;border-radius:999px;padding:1px 7px;background:#fef3c7;color:#92400e;min-width:44px;text-align:center}.wd-row.today .wd-d{background:#dbeafe;color:#1d4ed8}.wd-row.late .wd-d{background:#fee2e2;color:#b91c1c}.wd-t{font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wd-m{font-size:.7rem;color:#94a3b8}.wd-empty,.wd-more{font-size:.76rem;color:#94a3b8;padding:4px}
 </style>
 
+<style>.calendar-grid .day-header{position:sticky;top:var(--hdTop,0px);z-index:6;box-shadow:0 1px 0 var(--line,#e2e8f0)}body.theme-notion .calendar-grid .day-header{background:#fff}</style>
+
 </head>
 <body>
 
@@ -5621,7 +5623,7 @@ let calDrag=null,calUndo=null;
 function calShift(iso,n){const d=parseISO(iso);d.setDate(d.getDate()+n);return toISO(d)}
 function calToast(msg,undo){let el=document.getElementById('calToast');if(!el){el=document.createElement('div');el.id='calToast';document.body.appendChild(el)}el.innerHTML=msg+(undo?' <button onclick="calUndoDo()">되돌리기</button>':'')+' <button onclick="this.parentNode.remove()">✕</button>';clearTimeout(el._t);el._t=setTimeout(()=>el.remove(),6000)}
 function calUndoDo(){if(!calUndo)return;const t=tasks.find(x=>String(x.id)===String(calUndo.id));if(t){t.date=calUndo.date;t.endDate=calUndo.endDate}calUndo=null;saveData();renderAll();document.getElementById('calToast')?.remove()}
-function calEnhance(){const grid=document.querySelector('#calendarContent .calendar-grid');if(!grid)return;const todayIso=toISO(today);
+function calEnhance(){const grid=document.querySelector('#calendarContent .calendar-grid');if(!grid)return;try{let sc=grid.parentElement;while(sc&&sc!==document.body&&!/(auto|scroll)/.test(getComputedStyle(sc).overflowY))sc=sc.parentElement;if(sc&&sc!==document.body)grid.style.setProperty('--hdTop','-'+getComputedStyle(sc).paddingTop)}catch(e){}const todayIso=toISO(today);
  // 마감 배지 + 지연 강조
  grid.querySelectorAll('.event-chip[data-id]').forEach(chip=>{const t=tasks.find(x=>String(x.id)===chip.dataset.id);if(!t)return;
   if(t.status!=='완료'){const dd=daysUntil(t.date);if(isOverdue(t))chip.classList.add('overdue-chip');else if(dd===0)chip.classList.add('due-today');else if(dd>0&&dd<=3)chip.classList.add('due-soon');
