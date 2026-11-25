@@ -822,6 +822,8 @@ body.theme-notion:not(.nav-collapsed) .nav-group.fold .nav-menu .nav-link:not(.a
 
 <style>.calendar-grid .day-header{position:sticky;top:var(--hdTop,0px);z-index:6;box-shadow:0 1px 0 var(--line,#e2e8f0)}body.theme-notion .calendar-grid .day-header{background:#fff}</style>
 
+<style>.calendar-area>.cal-top{position:sticky;z-index:8;background:var(--bg,#f6f8fb);padding-top:var(--ca-pt,0px);margin-top:0}body.theme-notion .calendar-area>.cal-top{background:#fff}.calendar-area>.cal-top>.quick-filters{margin-bottom:8px}</style>
+
 </head>
 <body>
 
@@ -5623,7 +5625,7 @@ let calDrag=null,calUndo=null;
 function calShift(iso,n){const d=parseISO(iso);d.setDate(d.getDate()+n);return toISO(d)}
 function calToast(msg,undo){let el=document.getElementById('calToast');if(!el){el=document.createElement('div');el.id='calToast';document.body.appendChild(el)}el.innerHTML=msg+(undo?' <button onclick="calUndoDo()">되돌리기</button>':'')+' <button onclick="this.parentNode.remove()">✕</button>';clearTimeout(el._t);el._t=setTimeout(()=>el.remove(),6000)}
 function calUndoDo(){if(!calUndo)return;const t=tasks.find(x=>String(x.id)===String(calUndo.id));if(t){t.date=calUndo.date;t.endDate=calUndo.endDate}calUndo=null;saveData();renderAll();document.getElementById('calToast')?.remove()}
-function calEnhance(){const grid=document.querySelector('#calendarContent .calendar-grid');if(!grid)return;try{let sc=grid.parentElement;while(sc&&sc!==document.body&&!/(auto|scroll)/.test(getComputedStyle(sc).overflowY))sc=sc.parentElement;if(sc&&sc!==document.body)grid.style.setProperty('--hdTop','-'+getComputedStyle(sc).paddingTop)}catch(e){}const todayIso=toISO(today);
+function calEnhance(){const grid=document.querySelector('#calendarContent .calendar-grid');if(!grid)return;try{calStickyTop(grid)}catch(e){}const todayIso=toISO(today);
  // 마감 배지 + 지연 강조
  grid.querySelectorAll('.event-chip[data-id]').forEach(chip=>{const t=tasks.find(x=>String(x.id)===chip.dataset.id);if(!t)return;
   if(t.status!=='완료'){const dd=daysUntil(t.date);if(isOverdue(t))chip.classList.add('overdue-chip');else if(dd===0)chip.classList.add('due-today');else if(dd>0&&dd<=3)chip.classList.add('due-soon');
@@ -5647,6 +5649,16 @@ function weekDueRender(){const el=$('weekDue');if(!el)return;const t0=parseISO(t
  const L=tasks.filter(t=>t.status!=='완료'&&t.date>=a&&t.date<=b||(t.status!=='완료'&&isOverdue(t)&&t.date>=calShift(a,-7))).sort((x,y)=>x.date.localeCompare(y.date));const shown=L.slice(0,8);
  el.innerHTML=`<div class="wd-h"><b>🗓 이번 주 마감 · 밀린 일</b><small>${a.slice(5).replace('-','/')} ~ ${b.slice(5).replace('-','/')} · 미완료 ${L.length}건</small></div>`+(shown.length?shown.map(t=>{const dd=daysUntil(t.date),late=isOverdue(t);return `<button type="button" class="wd-row${late?' late':dd===0?' today':''}" onclick="editTask('${String(t.id).replace(/'/g,"\\'")}')"><span class="wd-d">${late?`D+${-dd}`:dd===0?'D-Day':`D-${dd}`}</span><span class="wd-t">${t.emoji?escapeHTML(t.emoji)+' ':''}${escapeHTML(t.title)}</span><span class="wd-m">${t.date.slice(5).replace('-','/')}(${'일월화수목금토'[parseISO(t.date).getDay()]})</span></button>`}).join('')+(L.length>8?`<div class="wd-more">외 ${L.length-8}건 — 목록 보기에서 확인</div>`:''):'<div class="wd-empty">이번 주 마감 남은 일이 없어요 🎉</div>')}
 const _renderSidebarWD=renderSidebar;renderSidebar=function(){const r=_renderSidebarWD.apply(this,arguments);try{weekDueRender()}catch(e){}return r};
+
+
+/* ===== 달력 위쪽(배너·월 이동·필터·요일) 고정 ===== */
+function calStickyTop(grid){const area=document.querySelector('.calendar-area');if(!area)return;let w=area.querySelector(':scope > .cal-top');
+ if(!w){w=document.createElement('div');w.className='cal-top';area.insertBefore(w,area.firstChild)}
+ [...area.children].forEach(ch=>{if(ch!==w&&ch.id!=='calendarContent'&&!w.contains(ch))w.appendChild(ch)});
+ const b=area.querySelector('#deadlineBanner');if(b&&w.firstChild!==b)w.insertBefore(b,w.firstChild);
+ const pt=parseFloat(getComputedStyle(area).paddingTop)||0;w.style.top=(-pt)+'px';
+ const set=()=>{const g=document.querySelector('#calendarContent .calendar-grid');if(g)g.style.setProperty('--hdTop',(w.offsetHeight-pt)+'px')};set();
+ if(!w._ro&&window.ResizeObserver){w._ro=new ResizeObserver(set);w._ro.observe(w)}}
 
 function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').toLowerCase().includes(q));
  (typeof tasks!=='undefined'?tasks:[]).forEach(t=>R.push({cat:'task',icon:'📅',title:t.title,sub:`${t.date||''} · ${t.category||''}${t.relatedPerson?' · '+t.relatedPerson:''}`,text:[t.title,t.memo,t.relatedPerson,t.category].join(' '),go:()=>{showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}}));
