@@ -896,6 +896,9 @@ body .wi-acts .btn.wi-add{background:#1F3864!important;color:#fff!important;bord
 .wi-tips-h{font-size:.82rem;color:#1F3864;margin-right:2px}
 .wi-tips span{display:inline-flex;align-items:center;gap:7px;background:#f1f5fb;border:1px solid #dbe3ef;border-radius:999px;padding:5px 12px 5px 5px;font-size:.8rem;color:#334155;font-weight:600}
 .wi-tips i{font-style:normal;background:#1F3864;color:#fff;border-radius:999px;min-width:24px;height:24px;padding:0 7px;display:inline-flex;align-items:center;justify-content:center;font-size:.74rem;font-weight:800}
+.rp-chips{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}.rp-chips button{border:1px solid #cbd5e1;background:#f8fafc;border-radius:999px;padding:3px 10px;font-size:.74rem;cursor:pointer;color:#334155;font-weight:600}.rp-chips button:hover{background:#e0e7ff;border-color:#a5b4fc}
+.towi{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;background:#eef3fb;border:1px solid #c9d6ea;border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:600;color:#1F3864}.towi input{width:auto!important;margin:0}.towi small{flex-basis:100%;font-weight:500;color:#64748b;font-size:.76rem}
+.m2d{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-top:6px;font-size:.84rem;color:#1F3864;cursor:pointer;font-weight:600}.m2d input{width:auto!important;margin:0}.m2d small{flex-basis:100%;font-weight:500;color:#64748b;font-size:.75rem}
 .wi-pop{position:fixed;z-index:9999;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 10px 30px #0f172a26;padding:5px;display:flex;flex-direction:column;min-width:190px}
 .wi-pop button{border:0;background:none;text-align:left;padding:8px 10px;border-radius:7px;font:inherit;font-size:.84rem;cursor:pointer;color:#1e293b;display:flex;justify-content:space-between;gap:10px}
 .wi-pop button small{color:#94a3b8;font-size:.72rem}
@@ -916,6 +919,18 @@ body .wi-wrap .wi-tb tr:nth-child(even) td{background:#f7f9fc}
 body .wi-wrap .wi-tb tr:hover td{background:#eef4ff!important}
 body .wi-wrap .wi-tb .wi-ck{border-color:#c00000!important}
 body .wi-wrap .wi-tb .wi-ck.on{background:#375623!important;border-color:#375623!important}
+</style>
+<style>
+html body .dm-bar{background:#f1f5fb;border:1.5px solid #b9c7dc;border-radius:12px;padding:8px 10px}
+html body .dm-bar .dm-c{border:1.5px solid #9fb0c8!important;color:#1e293b!important;font-weight:600;background:#fff!important}
+html body .dm-bar .dm-c.zero{border-color:#dbe2ec!important;color:#b6c0ce!important;font-weight:400}
+html body .dm-bar .dm-c.on{background:#1F3864!important;border-color:#1F3864!important;color:#fff!important;font-weight:800}
+html body .dm-bar .dm-c.now:not(.on){border-color:#3b82f6!important;box-shadow:inset 0 -2px 0 #3b82f6}
+html body .dm-bar .dm-c:hover{border-color:#1F3864!important}
+html body .diary-page table.diary-table thead th{background:#1F3864!important;color:#fff!important;font-weight:700!important;border-color:#33507f!important}
+html body .diary-page .diary-table-wrap{border:1.5px solid #1F3864!important}
+html body .diary-page .diary-table tbody tr[class] td .diary-preview,html body .diary-page .diary-table tbody tr td .diary-preview{color:#1e293b!important;font-weight:500}
+html body .diary-page .diary-table tbody tr td{border-bottom:1px solid #c3cdda!important}
 </style>
 </head>
 <body>
@@ -1112,7 +1127,7 @@ body .wi-wrap .wi-tb .wi-ck.on{background:#375623!important;border-color:#375623
     </div>
     <div class="filters">
       <select id="statusFilter" onchange="clearQuickFilter();renderAll()"><option value="all">모든 상태</option><option value="예정">예정</option><option value="진행 중">진행 중</option><option value="결재 대기">결재 대기</option><option value="자료 대기">타부서 자료 대기</option><option value="완료">완료</option><option value="지연">지연</option></select>
-      <input class="search-input" id="searchInput" placeholder="일정명·메모·관련자 검색" oninput="renderAll()">
+      <input class="search-input" id="searchInput" placeholder="일정명·메모·요청자 검색" oninput="renderAll()">
     </div>
     <div class="quick-filters" aria-label="빠른 업무 필터">
       <button class="quick-filter active" id="qf-all" onclick="quickFilter('all')">전체</button>
@@ -1160,7 +1175,7 @@ body .wi-wrap .wi-tb .wi-ck.on{background:#375623!important;border-color:#375623
   </div>
   <div class="diary-filters">
     <input id="diarySearch" placeholder="전체 내용 검색" oninput="renderDiaryTable()">
-    <input id="diaryPersonFilter" placeholder="업무 관련자 필터" oninput="renderDiaryTable()">
+    <input id="diaryPersonFilter" placeholder="요청자·상대방 필터" oninput="renderDiaryTable()">
     <select id="diaryStatusFilter" onchange="renderDiaryTable()"><option value="">모든 상태</option><option>예정</option><option>진행 중</option><option>결재 대기</option><option>자료 대기</option><option>완료</option><option>지연</option></select>
     <input id="diaryDateFrom" type="date" title="기록 날짜 시작" onchange="renderDiaryTable()">
     <input id="diaryDateTo" type="date" title="기록 날짜 종료" onchange="renderDiaryTable()">
@@ -1168,7 +1183,7 @@ body .wi-wrap .wi-tb .wi-ck.on{background:#375623!important;border-color:#375623
   </div>
   <div class="dm-bar" id="diaryMonthBar"></div>
   <div class="diary-table-wrap"><table class="diary-table"><thead><tr>
-    <th style="width:55px">NO.</th><th style="width:125px">날짜</th><th style="width:75px">요일</th><th style="width:120px">상태</th><th style="width:150px">업무관련자</th><th style="min-width:220px">내용</th><th style="width:130px">마감일</th><th style="width:130px">완료일</th><th style="min-width:180px">비고</th><th style="width:70px">관리</th>
+    <th style="width:55px">NO.</th><th style="width:125px">날짜</th><th style="width:75px">요일</th><th style="width:120px">상태</th><th style="width:150px">요청자·상대방</th><th style="min-width:220px">내용</th><th style="width:130px">마감일</th><th style="width:130px">완료일</th><th style="min-width:180px">비고</th><th style="width:70px">관리</th>
   </tr></thead><tbody id="diaryTableBody"></tbody></table></div>
   <div class="subtle">※ 데이터는 현재 브라우저에 저장됩니다. PC 변경이나 브라우저 초기화 전에 엑셀 백업을 보관하세요.</div>
 </section>
@@ -2654,7 +2669,7 @@ TaxDiary 회계·세무 › 환율·경제에서도 매매기준율을 바로 �
     </div>
 
     <div class="form-row"><label for="taskCategory">업무 분야</label><select class="field" id="taskCategory"><option>회계</option><option>자금</option><option>인사</option><option>총무</option><option>공통</option></select></div>
-    <div class="form-row"><label for="taskRelatedPerson">관련자 / 담당 부서</label><input class="field" id="taskRelatedPerson" placeholder="예: 김OO, 인사팀"></div>
+    <div class="form-row"><label for="taskRelatedPerson">요청자·상대방</label><input class="field" id="taskRelatedPerson" placeholder="요청: 팀장님 · ↔ 거래처 · 자체"><div class="rp-chips"><button type="button" onclick="rpChip('요청: ')">요청:</button><button type="button" onclick="rpChip('↔ ')">↔ 상대방</button><button type="button" onclick="rpChip('보고: ')">보고:</button><button type="button" onclick="rpChip('자체')">자체</button></div></div>
     <div class="form-row"><label for="taskStatus">진행 상태</label><select class="field" id="taskStatus"><option>예정</option><option>진행 중</option><option>결재 대기</option><option>자료 대기</option><option>완료</option></select></div>
     <div class="form-row"><label for="taskPriority">중요도</label><select class="field" id="taskPriority"><option value="normal">보통</option><option value="important">중요</option><option value="urgent">긴급</option></select></div>
     <div class="form-row"><label for="taskIsDday">디데이 목록</label><label style="display:flex;align-items:center;gap:8px;font-weight:600"><input id="taskIsDday" type="checkbox" style="width:auto"> 디데이 목록에 표시</label></div>
@@ -2671,6 +2686,7 @@ TaxDiary 회계·세무 › 환율·경제에서도 매매기준율을 바로 �
       <div id="taskAttachmentPreview" class="task-attachment-list"></div>
     </div>
     <div class="form-row full"><div class="spell-label"><label for="taskDiary">업무 진행 일지 추가</label><button type="button" class="spell-mini" onclick="spellCheckEls([$('taskDiary')],$('taskDiary'))">✓ 맞춤법</button></div><textarea class="field" id="taskDiary" placeholder="예: 10/19 거래명세서 수령 요청 완료. 회신 대기 중."></textarea><span class="subtle">저장할 때 작성한 내용이 날짜·시간과 함께 일지 이력에 추가됩니다.</span><div id="taskDiaryHistory"></div></div>
+    <div class="form-row full" id="taskToWiRow"><label class="towi"><input type="checkbox" id="taskToWi"> <span>📋 <b>진행 중 업무</b>에도 올리기</span><small id="taskToWiNote">체크하고 저장하면 진행 중 업무 목록에 이 일정이 한 줄 추가돼요 (예정일·요청자·메모 같이)</small></label></div>
     <div class="form-row full" id="taskDraftStatus" style="font-size:.78rem;color:#64748b">✍️ 새 일정 작성 내용은 자동으로 임시저장됩니다. 복사하거나 창이 닫혀도 다시 불러올 수 있어요.</div>
    </div>
    <div class="modal-actions"><div><button type="button" class="btn btn-danger" id="deleteTaskBtn" onclick="deleteCurrentTask()" style="display:none">삭제</button></div><div><button type="button" class="btn btn-outline" onclick="closeTaskModal()">취소</button><button type="submit" class="btn btn-primary">저장</button></div></div>
@@ -3252,7 +3268,7 @@ function renderDiaryTable(){
  const statusClass=r.status==='완료'?'status-done':r.status==='진행 중'?'status-progress':r.status==='지연'?'status-late':(['결재 대기','자료 대기'].includes(r.status)?'status-wait':'status-planned');
  return `<tr data-diary-row="${escapeHTML(r.id)}" class="diary-row ${editing?'diary-edit-row ':''}${r.status==='완료'?'diary-done':r.status==='진행 중'?'diary-progress':r.status==='지연'?'diary-late':(['결재 대기','자료 대기'].includes(r.status)?'diary-wait':'diary-planned')}">
  <td>${i+1}</td>
- ${editing?`<td><input data-field="date" type="date" value="${escapeHTML(r.date||'')}"></td><td>${weekday(r.date)}</td><td><select data-field="status" class="diary-status ${statusClass}">${['예정','진행 중','결재 대기','자료 대기','완료','지연'].map(v=>`<option ${r.status===v?'selected':''}>${v}</option>`).join('')}</select></td><td><input data-field="person" value="${escapeHTML(r.person||'')}" placeholder="담당자/부서"></td><td><textarea data-field="content" placeholder="업무 내용">${escapeHTML(r.content||'')}</textarea></td><td><input data-field="deadline" type="date" value="${escapeHTML(r.deadline||'')}"></td><td><input data-field="doneDate" type="date" value="${escapeHTML(r.doneDate||'')}" title="상태를 '완료'로 저장하면 비어 있을 때 오늘 날짜가 자동 입력돼요"></td><td><textarea data-field="note" placeholder="비고/후속 조치">${escapeHTML(r.note||'')}</textarea></td>`:
+ ${editing?`<td><input data-field="date" type="date" value="${escapeHTML(r.date||'')}"></td><td>${weekday(r.date)}</td><td><select data-field="status" class="diary-status ${statusClass}">${['예정','진행 중','결재 대기','자료 대기','완료','지연'].map(v=>`<option ${r.status===v?'selected':''}>${v}</option>`).join('')}</select></td><td><input data-field="person" value="${escapeHTML(r.person||'')}" placeholder="요청: 팀장님 · ↔ 거래처 · 자체"></td><td><textarea data-field="content" placeholder="업무 내용">${escapeHTML(r.content||'')}</textarea></td><td><input data-field="deadline" type="date" value="${escapeHTML(r.deadline||'')}"></td><td><input data-field="doneDate" type="date" value="${escapeHTML(r.doneDate||'')}" title="상태를 '완료'로 저장하면 비어 있을 때 오늘 날짜가 자동 입력돼요"></td><td><textarea data-field="note" placeholder="비고/후속 조치">${escapeHTML(r.note||'')}</textarea></td>`:
  `<td><div class="diary-stamp">${escapeHTML(r.date||'날짜 없음')}<small class="${hasUpdate?'stamp-updated':''}">${stampLabel} ${escapeHTML(stampText)}</small></div></td><td>${weekday(r.date)}</td><td><span class="priority-pill ${statusClass}">${escapeHTML(r.status||'예정')}</span></td><td>${escapeHTML(r.person||'—')}</td><td class="diary-readonly"><div class="diary-preview">${escapeHTML(r.content||'내용 없음')}</div>${r.note?`<div class="diary-preview note">비고: ${escapeHTML(r.note)}</div>`:''}</td><td>${escapeHTML(r.deadline||'—')}</td><td>${diaryDoneHTML(r)}</td><td class="diary-readonly"><div class="diary-preview note">${escapeHTML(r.note||'—')}</div></td>`}
  <td style="white-space:nowrap">${editing?`<button class="small-action diary-save-btn" onclick="saveDiaryEdit('${String(r.id).replace(/'/g,"\\'")}')">저장</button> <button class="small-action" title="내용·비고 맞춤법 확인" onclick="const tr=this.closest('tr');spellCheckEls([...tr.querySelectorAll('textarea:not([disabled])')],tr.children[5].lastElementChild||tr.children[5])">맞춤법</button> <button class="small-action" onclick="cancelDiaryEdit('${String(r.id).replace(/'/g,"\\'")}')">취소</button>`:`<button class="small-action diary-edit-btn" onclick="toggleDiaryEdit('${String(r.id).replace(/'/g,"\\'")}')">수정</button> `}${r.taskId?`<button class="small-action" onclick="openLinkedTask('${String(r.taskId).replace(/'/g,"\\'")}')">일정 수정</button> `:``}<button class="small-action" onclick="removeDiaryRow('${String(r.id).replace(/'/g,"\\'")}')">삭제</button></td></tr>`}).join(''):'<tr><td colspan="10" class="empty-state">표시할 일지가 없습니다. ‘＋ 일지 추가’를 눌러 기록을 시작하세요.</td></tr>';
 }
@@ -3288,7 +3304,7 @@ renderDiaryTable=function(){
  if(!vis.length&&items.length)body.insertAdjacentHTML('beforeend','<tr><td colspan="10" class="empty-state">조건에 맞는 일지가 없습니다.</td></tr>');
 };
 /* ===== [일지 기능 추가2] 보고서·분야·문구·링크·이력·통계·인쇄 ===== */
-const FIELD_KO={date:'날짜',status:'상태',person:'관련자',content:'내용',deadline:'마감일',doneDate:'완료일',note:'비고'};
+const FIELD_KO={date:'날짜',status:'상태',person:'요청자·상대방',content:'내용',deadline:'마감일',doneDate:'완료일',note:'비고'};
 const _udf=updateDiaryField;
 updateDiaryField=function(id,key,value){const r=diaryRows.find(x=>x.id===id);if(r&&FIELD_KO[key]&&String(r[key]||'')!==String(value||'')){(r.history=r.history||[]).push({at:new Date().toISOString(),key,from:r[key]||'',to:value||''});if(r.history.length>60)r.history.shift()}return _udf.apply(this,arguments)};
 function diaryDialog(title,html){let o=$('diaryDlg');if(o)o.remove();o=document.createElement('div');o.id='diaryDlg';o.className='diary-dlg';o.innerHTML=`<div class="diary-dlg-card"><div class="diary-dlg-head"><b>${title}</b><button type="button" class="small-action" id="diaryDlgClose">닫기</button></div><div id="diaryDlgBody">${html}</div></div>`;document.body.appendChild(o);$('diaryDlgClose').onclick=()=>o.remove();o.addEventListener('mousedown',e=>{if(e.target===o)o.remove()});return $('diaryDlgBody')}
@@ -3314,7 +3330,7 @@ function openDiaryStats(){
  const cnt=fn=>{const m={};rows.forEach(r=>{const k=fn(r)||'미분류';m[k]=(m[k]||0)+1});return Object.entries(m).sort((x,y)=>y[1]-x[1]).slice(0,8)};
  const bars=(arr,c)=>{const mx=Math.max(1,...arr.map(x=>x[1]));return arr.length?arr.map(([k,v])=>`<div class="st-row"><span class="st-k">${escapeHTML(k)}</span><span class="st-bar"><i style="width:${v/mx*100}%;background:${c}"></i></span><b>${v}</b></div>`).join(''):'<div class="subtle">데이터 없음</div>'};
  const n=new Date(),mon=[];for(let i=5;i>=0;i--){const d=new Date(n.getFullYear(),n.getMonth()-i,1),p=toISO(d).slice(0,7),rr=diaryRows.filter(r=>String(r.date).startsWith(p));mon.push([p.slice(2),rr.length?Math.round(rr.filter(r=>r.status==='완료').length/rr.length*100):0,rr.length])}
- diaryDialog('📊 월별 통계 ('+a.slice(0,7)+')',`<div style="font-size:1.05rem;font-weight:800;margin-bottom:10px">이번 달 ${rows.length}건 · 완료 ${done}건 · 완료율 ${rows.length?Math.round(done/rows.length*100):0}%</div><h4>분야별 업무량</h4>${bars(cnt(diaryCat),'#60a5fa')}<h4 style="margin-top:12px">관련자별 업무량</h4>${bars(cnt(r=>r.person),'#34d399')}<h4 style="margin-top:12px">최근 6개월 완료율</h4>${mon.map(m=>`<div class="st-row"><span class="st-k">${m[0]}</span><span class="st-bar"><i style="width:${m[1]}%;background:#f59e0b"></i></span><b>${m[1]}% <small>(${m[2]}건)</small></b></div>`).join('')}`);
+ diaryDialog('📊 월별 통계 ('+a.slice(0,7)+')',`<div style="font-size:1.05rem;font-weight:800;margin-bottom:10px">이번 달 ${rows.length}건 · 완료 ${done}건 · 완료율 ${rows.length?Math.round(done/rows.length*100):0}%</div><h4>분야별 업무량</h4>${bars(cnt(diaryCat),'#60a5fa')}<h4 style="margin-top:12px">요청자·상대방별 업무량</h4>${bars(cnt(r=>r.person),'#34d399')}<h4 style="margin-top:12px">최근 6개월 완료율</h4>${mon.map(m=>`<div class="st-row"><span class="st-k">${m[0]}</span><span class="st-bar"><i style="width:${m[1]}%;background:#f59e0b"></i></span><b>${m[1]}% <small>(${m[2]}건)</small></b></div>`).join('')}`);
 }
 function showDiaryHistory(id){const r=diaryRows.find(x=>String(x.id)===String(id));const h=(r?.history||[]).slice().reverse();diaryDialog('🕘 변경 이력',h.length?h.map(x=>`<div class="hist-row"><small>${new Date(x.at).toLocaleString('ko-KR')}</small><br><b>${FIELD_KO[x.key]}</b>: <s>${escapeHTML(x.from||'(비어 있음)')}</s> → ${escapeHTML(x.to||'(비어 있음)')}</div>`).join(''):'<div class="subtle">변경 이력이 없습니다.</div>')}
 function diaryPhrases(){if(!Array.isArray(profile.diaryPhrases))profile.diaryPhrases=['서류 송부 완료','결재 요청함','자료 요청함','회신 대기 중','확인 완료','보고 완료'];return profile.diaryPhrases}
@@ -5833,11 +5849,11 @@ function loadExcelJS(){return new Promise((res,rej)=>{if(window.ExcelJS)return r
 function xlStamp(v){try{const d=new Date(v);if(isNaN(d))return String(v||'');const p=n=>String(n).padStart(2,'0');return `${p(d.getMonth()+1)}/${p(d.getDate())}(${'일월화수목금토'[d.getDay()]}) ${p(d.getHours())}:${p(d.getMinutes())}`}catch(e){return String(v||'')}}
 function xlUrl(u){try{const x=new URL(u);[...x.searchParams.keys()].filter(k=>/^utm_/i.test(k)).forEach(k=>x.searchParams.delete(k));let s=x.toString();if(!x.search&&s.endsWith('?'))s=s.slice(0,-1);return s}catch(e){return u}}
 function xlRows(){const pr={'normal':'보통','important':'중요','urgent':'긴급'};
- const T=[...tasks].sort((a,b)=>String(a.date).localeCompare(String(b.date))).map(t=>({'업무명':t.title,'이모지':t.emoji||'','마감일':t.date,'종료일':t.endDate&&t.endDate!==t.date?t.endDate:'','분야':t.category,'상태':t.status,'중요도':pr[t.priority]||'보통','관련자':t.relatedPerson||'','반복주기':t.repeat||'none','실제완료일':t.actualDate||'','알림':t.remindAt?t.remindAt.replace('T',' '):'','메모':t.memo||'','관련링크':t.link||'','달력색상':t.color||'','디데이여부':t.isDday?'O':'X','진행일지':(t.logs||[]).map(l=>`${xlStamp(l.at)}  ${l.text}`).join('\n')}));
- const D=[...diaryRows].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))).map((r,i)=>({'NO.':i+1,'날짜':r.date||'','요일':weekday(r.date),'상태':r.status||'진행 중','업무관련자':r.person||'','내용':(r.content||'')+(r.recorded?'\n🎙 녹음: '+(r.recFile||'위치 미입력'):'')+(r.confirmSentAt?'\n✉ 확인 메시지 보냄: '+commStamp(r.confirmSentAt):'')+(r.addenda||[]).map(a=>'\n＋ '+commStamp(a.at)+' '+a.text).join('')+(r.rawMemo?'\n[원문 메모]\n'+r.rawMemo:''),'마감일':r.deadline||'','완료일':r.doneDate||'','비고':r.note||''}));
+ const T=[...tasks].sort((a,b)=>String(a.date).localeCompare(String(b.date))).map(t=>({'업무명':t.title,'이모지':t.emoji||'','마감일':t.date,'종료일':t.endDate&&t.endDate!==t.date?t.endDate:'','분야':t.category,'상태':t.status,'중요도':pr[t.priority]||'보통','요청자·상대방':t.relatedPerson||'','반복주기':t.repeat||'none','실제완료일':t.actualDate||'','알림':t.remindAt?t.remindAt.replace('T',' '):'','메모':t.memo||'','관련링크':t.link||'','달력색상':t.color||'','디데이여부':t.isDday?'O':'X','진행일지':(t.logs||[]).map(l=>`${xlStamp(l.at)}  ${l.text}`).join('\n')}));
+ const D=[...diaryRows].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))).map((r,i)=>({'NO.':i+1,'날짜':r.date||'','요일':weekday(r.date),'상태':r.status||'진행 중','요청자·상대방':r.person||'','내용':(r.content||'')+(r.recorded?'\n🎙 녹음: '+(r.recFile||'위치 미입력'):'')+(r.confirmSentAt?'\n✉ 확인 메시지 보냄: '+commStamp(r.confirmSentAt):'')+(r.addenda||[]).map(a=>'\n＋ '+commStamp(a.at)+' '+a.text).join('')+(r.rawMemo?'\n[원문 메모]\n'+r.rawMemo:''),'마감일':r.deadline||'','완료일':r.doneDate||'','비고':r.note||''}));
  const S=[...(profile.quickLinks||[]).map(l=>({'종류':'바로가기','이름':l.name||'','URL':l.url||'','로그인 ID':l.loginId||'','날짜':'','설명':''})),...(profile.customHolidays||[]).map(h=>({'종류':'공휴일','이름':'','URL':'','로그인 ID':'','날짜':h.date||'','설명':h.name||''})),{'종류':'화면설정','이름':profile.calendarTitle||'업무 캘린더','URL':'','로그인 ID':'','날짜':'','설명':['blue','rose','beige','lavender','green','notion'].includes(profile.theme)?profile.theme:'blue'}];
  return {T,D,S}}
-const XL_W={'업무명':34,'이모지':6,'마감일':12,'종료일':12,'분야':9,'상태':10,'중요도':8,'관련자':14,'반복주기':10,'실제완료일':12,'알림':16,'메모':40,'관련링크':28,'달력색상':10,'디데이여부':9,'진행일지':58,'NO.':6,'날짜':12,'요일':6,'업무관련자':16,'내용':60,'완료일':12,'비고':30,'종류':10,'이름':28,'URL':40,'로그인 ID':16,'설명':20};
+const XL_W={'업무명':34,'이모지':6,'마감일':12,'종료일':12,'분야':9,'상태':10,'중요도':8,'요청자·상대방':14,'반복주기':10,'실제완료일':12,'알림':16,'메모':40,'관련링크':28,'달력색상':10,'디데이여부':9,'진행일지':58,'NO.':6,'날짜':12,'요일':6,'요청자·상대방':16,'내용':60,'완료일':12,'비고':30,'종류':10,'이름':28,'URL':40,'로그인 ID':16,'설명':20};
 const XL_ST={'완료':['FFDCFCE7','FF166534'],'진행 중':['FFDBEAFE','FF1E40AF'],'지연':['FFFEE2E2','FFB91C1C'],'결재 대기':['FFFEF3C7','FF92400E'],'자료 대기':['FFFEF3C7','FF92400E'],'예정':['FFF1F5F9','FF475569']};
 async function exportExcelPretty(){let EJ;try{EJ=await loadExcelJS()}catch(e){return exportExcelPlain()}
  const {T,D,S}=xlRows(),wb=new EJ.Workbook();wb.creator='TaxDiary';const title=profile.calendarTitle||'업무 캘린더',todayS=toISO(new Date());
@@ -5876,10 +5892,10 @@ async function exportExcelPretty(){let EJ;try{EJ=await loadExcelJS()}catch(e){re
  sm.getColumn(9).width=10;sm.getColumn(10).width=3;sm.getColumn(11).width=16;sm.getColumn(12).width=9;
  let r0=table(5,months.filter(m=>m<=curM),'📌 지금까지 (이번 달 포함)','FF1E3A8A',true);
  const fut=months.filter(m=>m>curM);if(fut.length)r0=table(r0+1,fut,'🗓 앞으로 예정','FF64748B',false);
- const side=(startRow,head,obj,color,limit)=>{const h=sm.getRow(startRow);h.getCell(11).value=head;h.getCell(11).font=F({bold:true,size:11.5,color:{argb:color}});const hr=sm.getRow(startRow+1);[head.includes('분야')?'분야':'업무관련자','건수'].forEach((t,i)=>{const c=hr.getCell(11+i);c.value=t;c.font=F({bold:true,color:{argb:'FFFFFFFF'}});c.fill=fill(color);c.alignment={horizontal:'center'}});
+ const side=(startRow,head,obj,color,limit)=>{const h=sm.getRow(startRow);h.getCell(11).value=head;h.getCell(11).font=F({bold:true,size:11.5,color:{argb:color}});const hr=sm.getRow(startRow+1);[head.includes('분야')?'분야':'요청자·상대방','건수'].forEach((t,i)=>{const c=hr.getCell(11+i);c.value=t;c.font=F({bold:true,color:{argb:'FFFFFFFF'}});c.fill=fill(color);c.alignment={horizontal:'center'}});
   const E=Object.entries(obj).filter(([k])=>k).sort((a,b)=>b[1]-a[1]).slice(0,limit);E.forEach(([k,n],i)=>{const row=sm.getRow(startRow+2+i);row.getCell(11).value=k;row.getCell(12).value=n;[11,12].forEach(ci=>{const c=row.getCell(ci);c.font=F();c.alignment={horizontal:ci===11?'left':'center'};c.border={bottom:thin('FFE2E8F0')};if(i%2)c.fill=fill('FFF8FAFC')})});return startRow+2+E.length};
- const cats={};T.forEach(r=>{cats[r['분야']]=(cats[r['분야']]||0)+1});const ppl={};D.forEach(r=>{String(r['업무관련자']||'').split(/[,·/]/).map(x=>x.trim()).filter(Boolean).forEach(x=>{ppl[x]=(ppl[x]||0)+1})});
- let sr=side(5,'🏷 분야별 업무',cats,'FF047857',12);side(sr+1,'👥 업무관련자별 일지',ppl,'FF7C3AED',12);
+ const cats={};T.forEach(r=>{cats[r['분야']]=(cats[r['분야']]||0)+1});const ppl={};D.forEach(r=>{String(r['요청자·상대방']||r['업무관련자']||'').split(/[,·/]/).map(x=>x.trim().replace(/^(요청|보고|협조|문의|지시)\s*[:：]\s*|^↔\s*/,'').trim()).filter(Boolean).forEach(x=>{ppl[x]=(ppl[x]||0)+1})});
+ let sr=side(5,'🏷 분야별 업무',cats,'FF047857',12);side(sr+1,'👥 요청자·상대방별 일지',ppl,'FF7C3AED',12);
  r0=Math.max(r0,sr+15);
  sm.getCell(`B${r0+1}`).value='※ "달력 업무"·"업무 일지"·"바로가기·공휴일"·"진행 중 업무" 시트는 TaxDiary 엑셀 복원에 그대로 쓸 수 있어요. 숨긴 열(이모지·반복주기 등)도 복원용이라 지우지 마세요.';sm.getCell(`B${r0+1}`).font=F({size:9,color:{argb:'FF64748B'}});sm.getCell(`B${r0+2}`).value='※ 업무 일지에서 주황색 완료일 칸 = 상태는 완료인데 완료일이 비어 있는 줄 · 바로가기 시트엔 로그인 아이디가 있으니 외부 공유 시 주의';sm.getCell(`B${r0+2}`).font=F({size:9,color:{argb:'FF64748B'}});
  add('달력 업무',T,'FF1E3A8A','FFF5F8FF');add('업무 일지',D,'FF047857','FFF2FBF6');add('바로가기·공휴일',S,'FF6D28D9','FFF8F5FF');
@@ -6094,7 +6110,7 @@ function renderCalendar(){
   let n=1;while(col+n<7&&isoList[di+n]&&isoList[di+n]<=rangeEnd)n++;
   const contLeft=t.date<iso,contRight=rangeEnd>isoList[di+n-1];
   chip.className=chipClasses(t)+' range-slot range-bar'+(contLeft?' seg-left':'')+(contRight?' seg-right':'');chip.dataset.id=t.id;
-  chip.title=`${t.title} · ${t.category} · ${t.status}${t.relatedPerson?' · 관련자: '+t.relatedPerson:''} · ${t.date}~${rangeEnd}`;
+  chip.title=`${t.title} · ${t.category} · ${t.status}${t.relatedPerson?' · 요청자·상대방: '+t.relatedPerson:''} · ${t.date}~${rangeEnd}`;
   const dd=daysUntil(t.date),emojiStr=t.emoji?escapeHTML(t.emoji)+' ':'';
   chip.textContent=(isOverdue(t)?'⚠ ':'')+emojiStr+t.title+(!contLeft?(dd===0?' · D-Day':dd>0&&dd<=30?` · D-${dd}`:''):'');
   chip.style.width=`calc(${n}*100% + ${n-1}*(var(--cp,6px)*2 + var(--cb,1px)) + ${contLeft?'var(--cp,6px)':'0px'} + ${contRight?'(var(--cp,6px) + var(--cb,1px))':'0px'})`;
@@ -6102,7 +6118,7 @@ function renderCalendar(){
   applyChipColor(chip,t);chip.onclick=e=>{e.stopPropagation();editTask(t.id)};cell.appendChild(chip);
  }
  const displayTasks=expanded?singleTasks:singleTasks.slice(0,Math.max(0,3-rows));
- displayTasks.forEach(t=>{const chip=document.createElement('button');chip.className=chipClasses(t);chip.dataset.id=t.id;chip.title=`${t.title} · ${t.category} · ${t.status}${t.relatedPerson?' · 관련자: '+t.relatedPerson:''}`;const dd=daysUntil(t.date),emojiStr=t.emoji?escapeHTML(t.emoji)+' ':'';chip.textContent=(isOverdue(t)?'⚠ ':'')+emojiStr+t.title+(dd===0?' · D-Day':dd>0&&dd<=30?` · D-${dd}`:'');applyChipColor(chip,t);chip.onclick=e=>{e.stopPropagation();editTask(t.id)};cell.appendChild(chip);requestAnimationFrame(()=>{if(chip.isConnected&&chip.scrollWidth>chip.clientWidth+1)chip.classList.add("has-overflow")})});
+ displayTasks.forEach(t=>{const chip=document.createElement('button');chip.className=chipClasses(t);chip.dataset.id=t.id;chip.title=`${t.title} · ${t.category} · ${t.status}${t.relatedPerson?' · 요청자·상대방: '+t.relatedPerson:''}`;const dd=daysUntil(t.date),emojiStr=t.emoji?escapeHTML(t.emoji)+' ':'';chip.textContent=(isOverdue(t)?'⚠ ':'')+emojiStr+t.title+(dd===0?' · D-Day':dd>0&&dd<=30?` · D-${dd}`:'');applyChipColor(chip,t);chip.onclick=e=>{e.stopPropagation();editTask(t.id)};cell.appendChild(chip);requestAnimationFrame(()=>{if(chip.isConnected&&chip.scrollWidth>chip.clientWidth+1)chip.classList.add("has-overflow")})});
  if(dayTasks.length>3){const more=document.createElement('button');more.type='button';more.className='more-events';more.textContent=expanded?(calExpandAll?'▴ 접기':'접기'):`+${dayTasks.length-3}건 · 전체 일정 보기`;if(expanded)more.classList.add('is-collapse');more.title='해당 날짜의 일정을 모두 펼쳐 봅니다';more.onclick=e=>{e.stopPropagation();if(calExpandAll){if(expanded)collapsedCalendarDates.add(iso);else collapsedCalendarDates.delete(iso)}else{if(expanded)expandedCalendarDates.delete(iso);else expandedCalendarDates.add(iso)}renderCalendar()};cell.appendChild(more)}
  cell.onclick=()=>{selectedDate=iso;openTaskModal(null,iso);renderSidebar()};grid.appendChild(cell);
  }
@@ -6676,8 +6692,8 @@ TASK_DRAFT_FIELDS.forEach(id=>{const el=$(id);if(el){el.addEventListener('input'
 
 function exportExcel(){
  if(typeof XLSX==='undefined'){alert('엑셀 기능을 불러오지 못했습니다. 인터넷 연결을 확인하거나 기존 CSV 내보내기를 이용해 주세요.');return}
- const taskRows=tasks.map(t=>({'업무명':t.title,'이모지':t.emoji||'','마감일':t.date,'종료일':t.endDate&&t.endDate!==t.date?t.endDate:'','관련자':t.relatedPerson||'','알림':t.remindAt?t.remindAt.replace('T',' '):'','분야':t.category,'상태':t.status,'중요도':({'normal':'보통','important':'중요','urgent':'긴급'}[t.priority]||'보통'),'반복주기':t.repeat||'none','실제완료일':t.actualDate||'','메모':t.memo||'','관련링크':t.link||'','달력색상':t.color||'','디데이여부':t.isDday?'O':'X','진행일지':(t.logs||[]).map(l=>`${l.at}: ${l.text}`).join(' | ')}));
- const diaryData=diaryRows.map((r,i)=>({'NO.':i+1,'날짜':r.date||'','요일':weekday(r.date),'상태':r.status||'진행 중','업무관련자':r.person||'','내용':(r.content||'')+(r.recorded?'\n🎙 녹음: '+(r.recFile||'위치 미입력'):'')+(r.confirmSentAt?'\n✉ 확인 메시지 보냄: '+commStamp(r.confirmSentAt):'')+(r.addenda||[]).map(a=>'\n＋ '+commStamp(a.at)+' '+a.text).join('')+(r.rawMemo?'\n[원문 메모]\n'+r.rawMemo:''),'마감일':r.deadline||'','완료일':r.doneDate||'','비고':r.note||''}));
+ const taskRows=tasks.map(t=>({'업무명':t.title,'이모지':t.emoji||'','마감일':t.date,'종료일':t.endDate&&t.endDate!==t.date?t.endDate:'','요청자·상대방':t.relatedPerson||'','알림':t.remindAt?t.remindAt.replace('T',' '):'','분야':t.category,'상태':t.status,'중요도':({'normal':'보통','important':'중요','urgent':'긴급'}[t.priority]||'보통'),'반복주기':t.repeat||'none','실제완료일':t.actualDate||'','메모':t.memo||'','관련링크':t.link||'','달력색상':t.color||'','디데이여부':t.isDday?'O':'X','진행일지':(t.logs||[]).map(l=>`${l.at}: ${l.text}`).join(' | ')}));
+ const diaryData=diaryRows.map((r,i)=>({'NO.':i+1,'날짜':r.date||'','요일':weekday(r.date),'상태':r.status||'진행 중','요청자·상대방':r.person||'','내용':(r.content||'')+(r.recorded?'\n🎙 녹음: '+(r.recFile||'위치 미입력'):'')+(r.confirmSentAt?'\n✉ 확인 메시지 보냄: '+commStamp(r.confirmSentAt):'')+(r.addenda||[]).map(a=>'\n＋ '+commStamp(a.at)+' '+a.text).join('')+(r.rawMemo?'\n[원문 메모]\n'+r.rawMemo:''),'마감일':r.deadline||'','완료일':r.doneDate||'','비고':r.note||''}));
  const settingsRows=[
   ...(profile.quickLinks||[]).map(l=>({'종류':'바로가기','이름':l.name||'','URL':l.url||'','로그인 ID':l.loginId||'','날짜':'','설명':''})),
   ...(profile.customHolidays||[]).map(h=>({'종류':'공휴일','이름':'','URL':'','로그인 ID':'','날짜':h.date||'','설명':h.name||''})),
@@ -6700,8 +6716,8 @@ function importExcel(e){
   const settingsSheet=wb.Sheets['바로가기·공휴일'];
   const settingsData=settingsSheet?XLSX.utils.sheet_to_json(settingsSheet,{defval:''}):[];
   if(!confirm('선택한 엑셀의 업무와 일지로 현재 데이터를 교체할까요? 기존 데이터는 먼저 백업해 주세요.'))return;
-  tasks=taskData.map((r,i)=>({id:`import-${Date.now()}-${i}`,title:String(r['업무명']||''),emoji:String(r['이모지']||''),date:String(r['마감일']||''),category:['회계','자금','인사','총무','공통'].includes(r['분야'])?r['분야']:'공통',status:['예정','진행 중','결재 대기','자료 대기','완료'].includes(r['상태'])?r['상태']:'예정',priority:({'보통':'normal','중요':'important','긴급':'urgent'}[r['중요도']]||(['normal','important','urgent'].includes(r['중요도'])?r['중요도']:'normal')),repeat:r['반복주기']||'none',actualDate:r['실제완료일']||'',memo:r['메모']||'',link:r['관련링크']||'',color:r['달력색상']||'',isDday:String(r['디데이여부']||'').toUpperCase()==='O',endDate:(()=>{const e=excelDate(r['종료일']);return /^\d{4}-\d{2}-\d{2}$/.test(e)?e:''})(),relatedPerson:String(r['관련자']||''),remindAt:(()=>{const v=String(r['알림']||'').trim().replace(' ','T');return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(v)?v:''})(),reminded:true,logs:[] })).filter(t=>t.title&&/^\d{4}-\d{2}-\d{2}$/.test(t.date));
-  diaryRows=diaryData.map((r,i)=>({id:`diary-import-${Date.now()}-${i}`,date:excelDate(r['날짜']),status:['예정','진행 중','결재 대기','자료 대기','완료','지연'].includes(r['상태'])?r['상태']:'진행 중',person:String(r['업무관련자']||''),content:String(r['내용']||''),deadline:excelDate(r['마감일']),doneDate:r['완료일']?excelDate(r['완료일']):'',note:String(r['비고']||'')})).filter(r=>r.date||r.content||r.person);
+  tasks=taskData.map((r,i)=>({id:`import-${Date.now()}-${i}`,title:String(r['업무명']||''),emoji:String(r['이모지']||''),date:String(r['마감일']||''),category:['회계','자금','인사','총무','공통'].includes(r['분야'])?r['분야']:'공통',status:['예정','진행 중','결재 대기','자료 대기','완료'].includes(r['상태'])?r['상태']:'예정',priority:({'보통':'normal','중요':'important','긴급':'urgent'}[r['중요도']]||(['normal','important','urgent'].includes(r['중요도'])?r['중요도']:'normal')),repeat:r['반복주기']||'none',actualDate:r['실제완료일']||'',memo:r['메모']||'',link:r['관련링크']||'',color:r['달력색상']||'',isDday:String(r['디데이여부']||'').toUpperCase()==='O',endDate:(()=>{const e=excelDate(r['종료일']);return /^\d{4}-\d{2}-\d{2}$/.test(e)?e:''})(),relatedPerson:String(r['요청자·상대방']||r['관련자']||''),remindAt:(()=>{const v=String(r['알림']||'').trim().replace(' ','T');return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(v)?v:''})(),reminded:true,logs:[] })).filter(t=>t.title&&/^\d{4}-\d{2}-\d{2}$/.test(t.date));
+  diaryRows=diaryData.map((r,i)=>({id:`diary-import-${Date.now()}-${i}`,date:excelDate(r['날짜']),status:['예정','진행 중','결재 대기','자료 대기','완료','지연'].includes(r['상태'])?r['상태']:'진행 중',person:String(r['요청자·상대방']||r['업무관련자']||''),content:String(r['내용']||''),deadline:excelDate(r['마감일']),doneDate:r['완료일']?excelDate(r['완료일']):'',note:String(r['비고']||'')})).filter(r=>r.date||r.content||r.person);
   if(settingsSheet){profile.quickLinks=settingsData.filter(r=>r['종류']==='바로가기').map(r=>({name:String(r['이름']||''),url:String(r['URL']||''),loginId:String(r['로그인 ID']||'')})).filter(l=>l.name&&l.url);profile.customHolidays=settingsData.filter(r=>r['종류']==='공휴일').map(r=>({date:excelDate(r['날짜']),name:String(r['설명']||'')})).filter(h=>h.date&&h.name);const appearance=settingsData.find(r=>r['종류']==='화면설정');if(appearance){profile.calendarTitle=String(appearance['이름']||'업무 캘린더');profile.theme=['blue','rose','beige','lavender','green','notion'].includes(String(appearance['설명']||'blue'))?String(appearance['설명']):'blue'}}
   let wiN='';const wiSh=wb.Sheets['진행 중 업무'];if(wiSh){try{const g=wiParseAOA(XLSX.utils.sheet_to_json(wiSh,{header:1,defval:'',raw:true}));if(g){profile.workItems=g;wiSink();wiN=`, 진행 중 업무 ${g.length}건`;try{wiRender()}catch(e){}}}catch(er){console.warn(er)}}
   saveData();renderAll();renderDiaryTable();alert(`복원 완료: 달력 업무 ${tasks.length}건, 일지 ${diaryRows.length}건${wiN}`);
@@ -7471,14 +7487,14 @@ function wiAdd(){const L=wiList();const it={id:wiId(),title:'',client:'',amount:
  L.push(it);wiSink();if(wiFilter!=='all'&&wiFilter!=='open'&&wiFilter!=='진행중')wiFilter='all';wiQ='';saveData();wiRender();
  setTimeout(()=>{const el=document.querySelector(`[data-wi="${it.id}"] [data-f=title]`);if(el){el.scrollIntoView({block:'center'});el.focus()}},30)}
 function wiDel(id){const it=wiList().find(x=>x.id===id);if(!it)return;if(!confirm(`'${it.title||'(제목 없음)'}' 업무를 삭제할까요?\n(보관하려면 상태를 '보관'으로 바꾸면 돼요)`))return;
- profile.workItems=wiList().filter(x=>x!==it);if(it.cal){tasks=tasks.filter(t=>t.id!==it.cal);try{renderAll()}catch(e){}}saveData();wiRender()}
+ profile.workItems=wiList().filter(x=>x!==it);if(it.cal&&!it.fromCal){tasks=tasks.filter(t=>t.id!==it.cal);try{renderAll()}catch(e){}}saveData();wiRender()}
 function wiMove(id,d){const L=wiList(),i=L.findIndex(x=>x.id===id),S=wiShown(),si=S.findIndex(x=>x.id===id),o=S[si+d];if(i<0||!o)return;const j=L.indexOf(o);[L[i],L[j]]=[L[j],L[i]];wiSink();saveData();wiRender()}
 function wiArchiveDone(){const D=wiList().filter(x=>x.status==='완료');if(!D.length)return alert('완료된 업무가 없어요.');if(!confirm(`완료된 업무 ${D.length}건을 '보관'으로 옮길까요?\n목록 출력에서 빠지고, 보관 탭에서 다시 볼 수 있어요.`))return;D.forEach(x=>x.status='보관');wiSink();saveData();wiRender()}
 function wiSetF(f){wiFilter=f;wiRender()}
 /* 달력·업무일지 연결 */
 function wiCat(){try{const C=getCategories();return (C.find(c=>/업무|기타|일반/.test(c.name))||C[0]||{}).name||''}catch(e){return ''}}
 function wiSyncCal(it){if(!it.cal)return;const t=tasks.find(x=>x.id===it.cal);if(!t){it.cal='';return}if(!it.due){return}
- t.title=it.title||t.title;t.date=it.due;t.endDate=it.due;t.relatedPerson=it.client||'';t.memo=wiCalMemo(it);t.status=it.status==='완료'?'완료':t.status==='완료'?'예정':t.status;if(it.status==='완료'&&!t.actualDate)t.actualDate=it.doneAt||toISO(new Date());try{renderAll()}catch(e){}}
+ t.title=it.title||t.title;t.date=it.due;t.endDate=it.due;t.relatedPerson=it.client||'';if(!it.fromCal)t.memo=wiCalMemo(it);t.status=it.status==='완료'?'완료':t.status==='완료'?'예정':t.status;if(it.status==='완료'&&!t.actualDate)t.actualDate=it.doneAt||toISO(new Date());try{renderAll()}catch(e){}}
 function wiCalMemo(it){return ['[진행 중 업무]',it.amount?'금액: '+it.amount:'',it.next?'다음 할 일:\n'+it.next:''].filter(Boolean).join('\n')}
 function wiToCal(id){const it=wiList().find(x=>x.id===id);if(!it)return;if(!it.due){alert('예정일을 먼저 입력해 주세요.');const el=document.querySelector(`[data-wi="${id}"] [data-f=due]`);if(el)el.focus();return}
  if(it.cal&&tasks.some(t=>t.id===it.cal)){wiSyncCal(it);saveData();alert(`달력에 ${wiDot(it.due)} 일정으로 반영했어요.`);return}
@@ -7616,6 +7632,23 @@ function wiImport(inp){const f=inp.files&&inp.files[0];inp.value='';if(!f)return
   wiFilter='all';wiSink();saveData();wiRender();alert(`📥 ${got.length}건을 불러왔어요.`)}catch(err){console.error(err);alert('엑셀을 읽지 못했어요: '+err.message)}};rd.readAsArrayBuffer(f)}
 const _showPageWI=showPage;showPage=function(id,b){const r=_showPageWI(id,b);if(id==='wiPage')try{wiRender()}catch(e){console.error(e)}return r};
 
+
+function rpChip(v){const e=$('taskRelatedPerson');if(!e)return;const cur=e.value.replace(/^(요청|보고|협조|문의|지시)\s*[:：]\s*|^↔\s*|^자체\s*/,'');e.value=v==='자체'?(cur?'자체 → '+cur:'자체'):v+cur;e.focus();e.setSelectionRange(e.value.length,e.value.length)}
+
+/* 달력 일정 → 진행 중 업무 */
+function wiLinked(tid){return (profile.workItems||[]).find(x=>x.cal===tid)}
+function wiFromTask(t){if(!t||wiLinked(t.id))return;const memo=String(t.memo||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>/^[•\-→]/.test(l)?l:'• '+l).join('\n');
+ const L=wiList();L.push({id:wiId(),title:t.title||'',client:t.relatedPerson||'',amount:'',progress:memo,next:'',due:t.date||'',status:t.status==='완료'?'완료':(/대기/.test(t.status||'')?'대기':'진행중'),done:t.status==='완료',doneAt:t.status==='완료'?(t.actualDate||toISO(new Date())):'',note:'',cal:t.id,fromCal:true,createdAt:new Date().toISOString()});wiSink();saveData()}
+const _openTaskModalWI=openTaskModal;openTaskModal=function(id){const r=_openTaskModalWI.apply(this,arguments);try{const cb=$('taskToWi'),nt=$('taskToWiNote');if(cb){const ln=id&&wiLinked(id);cb.checked=!!ln;cb.disabled=!!ln;nt.innerHTML=ln?'✅ 이미 진행 중 업무에 올라가 있어요 — 거기서 진행 현황·다음 할 일을 적어 주세요':'체크하고 저장하면 진행 중 업무 목록에 이 일정이 한 줄 추가돼요 (예정일·요청자·메모 같이)'}}catch(e){}return r};
+const _saveTaskWI=saveTask;saveTask=async function(e){const on=$('taskToWi')&&$('taskToWi').checked&&!$('taskToWi').disabled,id=$('taskId').value,before=new Set(tasks.map(t=>t.id));const r=await _saveTaskWI.apply(this,arguments);
+ if(on)try{const t=id?tasks.find(x=>x.id===id):tasks.find(x=>!before.has(x.id));if(t){wiFromTask(t);try{wiRender()}catch(_){}}}catch(_){}return r};
+
+/* 메모 → 일지 같이 기록 */
+function m2dOn(){return profile.memoToDiary!==false}
+function m2dUI(){const d=$('taskDiary');if(!d)return;let w=$('m2dWrap');if(!w){w=document.createElement('label');w.id='m2dWrap';w.className='m2d';w.innerHTML='<input type="checkbox" id="m2dChk" onchange="profile.memoToDiary=this.checked;saveData()"> <span>📝 <b>메모 내용을 업무일지에도 같이 기록</b></span><small>일지 칸이 비어 있으면, 저장할 때 메모(새로 추가한 부분)가 이 일정 날짜의 업무일지로 들어가요</small>';d.closest('.form-row').appendChild(w)}$('m2dChk').checked=m2dOn()}
+const _openTaskModalM2D=openTaskModal;openTaskModal=function(){const r=_openTaskModalM2D.apply(this,arguments);try{m2dUI()}catch(e){}return r};
+const _saveTaskM2D=saveTask;saveTask=async function(e){try{if(m2dOn()){const d=$('taskDiary'),m=($('taskMemo').value||'').trim();if(d&&!d.value.trim()&&m){const id=$('taskId').value,ex=id?tasks.find(t=>t.id===id):null,old=String(ex&&ex.memo||'').trim();let add='';
+  if(!ex)add=m;else if(m!==old)add=old&&m.startsWith(old)?m.slice(old.length).trim():m;if(add)d.value=add}}}catch(_){}return _saveTaskM2D.apply(this,arguments)};
 </script>
 </body>
 </html>
