@@ -5756,20 +5756,41 @@ function xlRows(){const pr={'normal':'보통','important':'중요','urgent':'긴
 const XL_W={'업무명':34,'이모지':6,'마감일':12,'종료일':12,'분야':9,'상태':10,'중요도':8,'관련자':14,'반복주기':10,'실제완료일':12,'알림':16,'메모':40,'관련링크':28,'달력색상':10,'디데이여부':9,'진행일지':50,'NO.':6,'날짜':12,'요일':6,'업무관련자':16,'내용':60,'완료일':12,'비고':30,'종류':10,'이름':20,'URL':40,'로그인 ID':16,'설명':20};
 const XL_ST={'완료':['FFDCFCE7','FF166534'],'진행 중':['FFDBEAFE','FF1E40AF'],'지연':['FFFEE2E2','FFB91C1C'],'결재 대기':['FFFEF3C7','FF92400E'],'자료 대기':['FFFEF3C7','FF92400E'],'예정':['FFF1F5F9','FF475569']};
 async function exportExcelPretty(){let EJ;try{EJ=await loadExcelJS()}catch(e){return exportExcelPlain()}
- const {T,D,S}=xlRows(),wb=new EJ.Workbook();wb.creator='TaxDiary';const title=profile.calendarTitle||'업무 캘린더';
- const add=(name,rows,color)=>{const ws=wb.addWorksheet(name,{views:[{state:'frozen',ySplit:1}],properties:{tabColor:{argb:color}}});const keys=rows.length?Object.keys(rows[0]):[];
-  ws.columns=keys.map(k=>({header:k,key:k,width:XL_W[k]||14}));rows.forEach(r=>ws.addRow(r));
-  const hr=ws.getRow(1);hr.height=24;hr.eachCell(c=>{c.font={bold:true,color:{argb:'FFFFFFFF'},name:'맑은 고딕',size:10.5};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:color}};c.alignment={vertical:'middle',horizontal:'center'};c.border={bottom:{style:'medium',color:{argb:'FF1E293B'}}}});
-  ws.eachRow((row,i)=>{if(i===1)return;row.eachCell({includeEmpty:true},(c,ci)=>{const k=keys[ci-1];c.font={name:'맑은 고딕',size:10};c.border={top:{style:'thin',color:{argb:'FFE2E8F0'}},bottom:{style:'thin',color:{argb:'FFE2E8F0'}},left:{style:'thin',color:{argb:'FFE2E8F0'}},right:{style:'thin',color:{argb:'FFE2E8F0'}}};
-   const wide=['내용','메모','진행일지','비고','업무명'].includes(k);c.alignment={vertical:'top',wrapText:wide,horizontal:['NO.','요일','상태','분야','중요도','이모지','디데이여부','반복주기','마감일','종료일','날짜','완료일','실제완료일','알림'].includes(k)?'center':'left'};
-   if(i%2===0)c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};
-   if(k==='상태'&&XL_ST[c.value]){c.fill={type:'pattern',pattern:'solid',fgColor:{argb:XL_ST[c.value][0]}};c.font={name:'맑은 고딕',size:10,bold:true,color:{argb:XL_ST[c.value][1]}}}
-   if(k==='중요도'&&c.value==='긴급')c.font={name:'맑은 고딕',size:10,bold:true,color:{argb:'FFDC2626'}};
-   if(k==='중요도'&&c.value==='중요')c.font={name:'맑은 고딕',size:10,bold:true,color:{argb:'FFEA580C'}}})});
+ const {T,D,S}=xlRows(),wb=new EJ.Workbook();wb.creator='TaxDiary';const title=profile.calendarTitle||'업무 캘린더',todayS=toISO(new Date());
+ const F=(o={})=>({name:'맑은 고딕',size:10,...o}),fill=c=>({type:'pattern',pattern:'solid',fgColor:{argb:c}}),thin=c=>({style:'thin',color:{argb:c}});
+ const HIDE=['이모지','반복주기','달력색상','디데이여부'];
+ const add=(name,rows,main,band)=>{const ws=wb.addWorksheet(name,{views:[{state:'frozen',ySplit:1,xSplit:name==='달력 업무'?1:2,showGridLines:false}],properties:{tabColor:{argb:main},defaultRowHeight:20}});const keys=rows.length?Object.keys(rows[0]):[];
+  ws.columns=keys.map(k=>({header:k,key:k,width:XL_W[k]||14,hidden:HIDE.includes(k)}));rows.forEach(r=>ws.addRow(r));
+  const hr=ws.getRow(1);hr.height=30;hr.eachCell(c=>{c.font=F({bold:true,color:{argb:'FFFFFFFF'},size:10.5});c.fill=fill(main);c.alignment={vertical:'middle',horizontal:'center',wrapText:true};c.border={right:thin('FFFFFFFF')}});
+  const dk=keys.includes('마감일')?'마감일':'날짜';let prevM='',bandOn=false;
+  ws.eachRow((row,i)=>{if(i===1)return;const rec=rows[i-2]||{},mon=String(rec[dk]||'').slice(0,7),newM=mon!==prevM;if(newM){bandOn=!bandOn;prevM=mon}
+   const done=rec['상태']==='완료',late=!done&&rec[dk]&&rec[dk]<todayS&&rec['상태']!=='완료';
+   row.eachCell({includeEmpty:true},(c,ci)=>{const k=keys[ci-1];c.font=F({color:{argb:done?'FF64748B':'FF1E293B'}});
+    c.border=newM&&i>2?{bottom:thin('FFE2E8F0'),right:thin('FFF1F5F9'),top:{style:'medium',color:{argb:main}}}:{bottom:thin('FFE2E8F0'),right:thin('FFF1F5F9')};
+    const wide=['내용','메모','진행일지','비고','업무명'].includes(k);c.alignment={vertical:'top',wrapText:wide,horizontal:['NO.','요일','상태','분야','중요도','디데이여부','반복주기','마감일','종료일','날짜','완료일','실제완료일','알림'].includes(k)?'center':'left'};
+    if(bandOn)c.fill=fill(band);
+    if(k==='상태'&&XL_ST[c.value]){c.fill=fill(XL_ST[c.value][0]);c.font=F({bold:true,color:{argb:XL_ST[c.value][1]}})}
+    if(k==='중요도'&&c.value==='긴급')c.font=F({bold:true,color:{argb:'FFDC2626'}});if(k==='중요도'&&c.value==='중요')c.font=F({bold:true,color:{argb:'FFEA580C'}});
+    if(k===dk&&late)c.font=F({bold:true,color:{argb:'FFDC2626'}});
+    if(k==='요일'&&(c.value==='토'||c.value==='일'))c.font=F({bold:true,color:{argb:c.value==='일'?'FFDC2626':'FF2563EB'}});
+    if((k==='업무명'||k==='내용')&&!done)c.font=F({bold:k==='업무명',color:{argb:'FF0F172A'}})})});
   if(keys.length&&rows.length)ws.autoFilter={from:{row:1,column:1},to:{row:1,column:keys.length}};
-  ws.headerFooter={oddFooter:`&L${title} · ${name}&R&P / &N`};ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,paperSize:9,printTitlesRow:'1:1'}};
- add('달력 업무',T,'FF1E3A8A');add('업무 일지',D,'FF047857');add('바로가기·공휴일',S,'FF6D28D9');
- const buf=await wb.xlsx.writeBuffer();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.download=`TaxDiary_백업_${toISO(new Date())}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
+  ws.headerFooter={oddFooter:`&L${title} · ${name}&C출력 ${todayS}&R&P / &N`};ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,paperSize:9,printTitlesRow:'1:1',margins:{left:0.4,right:0.4,top:0.5,bottom:0.6,header:0.2,footer:0.3}};return ws};
+ // 요약 시트 (맨 앞)
+ const sm=wb.addWorksheet('요약',{views:[{showGridLines:false}],properties:{tabColor:{argb:'FFF59E0B'}}});sm.columns=[{width:3},{width:14},{width:11},{width:11},{width:11},{width:11},{width:11},{width:13},{width:3},{width:14},{width:10}];
+ sm.mergeCells('B2:H2');const t1=sm.getCell('B2');t1.value=`📅 ${title} — 업무 요약`;t1.font=F({size:16,bold:true,color:{argb:'FF0F172A'}});sm.getRow(2).height=30;
+ sm.getCell('B3').value=`출력일 ${todayS} · 달력 업무 ${T.length}건 · 업무 일지 ${D.length}건`;sm.getCell('B3').font=F({color:{argb:'FF64748B'}});
+ const months=[...new Set(T.map(r=>String(r['마감일']).slice(0,7)).concat(D.map(r=>String(r['날짜']).slice(0,7))).filter(x=>/^\d{4}-\d{2}$/.test(x)))].sort();
+ const hdr=['월','업무','완료','진행 중','예정·대기','지연','업무일지'];const hRow=sm.getRow(5);hdr.forEach((h,i)=>{const c=hRow.getCell(i+2);c.value=h;c.font=F({bold:true,color:{argb:'FFFFFFFF'}});c.fill=fill('FF1E3A8A');c.alignment={horizontal:'center',vertical:'middle'}});hRow.height=24;
+ let r0=6;const tot=[0,0,0,0,0,0];months.forEach((m,idx)=>{const L=T.filter(r=>String(r['마감일']).startsWith(m)),dn=L.filter(r=>r['상태']==='완료').length,ip=L.filter(r=>r['상태']==='진행 중').length,lt=L.filter(r=>r['상태']!=='완료'&&r['마감일']<todayS).length,pl=L.length-dn-ip-lt,dc=D.filter(r=>String(r['날짜']).startsWith(m)).length;const v=[L.length,dn,ip,Math.max(0,pl),lt,dc];v.forEach((x,i)=>tot[i]+=x);
+  const row=sm.getRow(r0);row.getCell(2).value=`${m.slice(0,4)}년 ${+m.slice(5)}월`;v.forEach((x,i)=>row.getCell(i+3).value=x);row.eachCell({includeEmpty:false},(c,ci)=>{c.font=F({bold:ci===2,color:{argb:ci===7&&c.value>0?'FFDC2626':'FF1E293B'}});c.alignment={horizontal:ci===2?'left':'center'};c.border={bottom:thin('FFE2E8F0')};if(idx%2)c.fill=fill('FFF8FAFC')});r0++});
+ const tr=sm.getRow(r0);tr.getCell(2).value='합계';tot.forEach((x,i)=>tr.getCell(i+3).value=x);tr.eachCell({includeEmpty:false},c=>{c.font=F({bold:true});c.fill=fill('FFEEF2FF');c.alignment={horizontal:'center'};c.border={top:{style:'medium',color:{argb:'FF1E3A8A'}}}});
+ // 분야별
+ const cats={};T.forEach(r=>{cats[r['분야']]=(cats[r['분야']]||0)+1});const ch=sm.getRow(5);['분야','업무'].forEach((h,i)=>{const c=ch.getCell(10+i);c.value=h;c.font=F({bold:true,color:{argb:'FFFFFFFF'}});c.fill=fill('FF047857');c.alignment={horizontal:'center'}});
+ Object.entries(cats).sort((a,b)=>b[1]-a[1]).forEach(([k,n],i)=>{const row=sm.getRow(6+i);row.getCell(10).value=k;row.getCell(11).value=n;[10,11].forEach(ci=>{const c=row.getCell(ci);c.font=F();c.alignment={horizontal:ci===10?'left':'center'};c.border={bottom:thin('FFE2E8F0')}})});
+ sm.getCell(`B${r0+2}`).value='※ "달력 업무"·"업무 일지"·"바로가기·공휴일" 시트는 TaxDiary 엑셀 복원에 그대로 쓸 수 있어요. 숨긴 열(이모지·반복주기 등)도 복원용이라 지우지 마세요.';sm.getCell(`B${r0+2}`).font=F({size:9,color:{argb:'FF64748B'}});
+ add('달력 업무',T,'FF1E3A8A','FFF5F8FF');add('업무 일지',D,'FF047857','FFF2FBF6');add('바로가기·공휴일',S,'FF6D28D9','FFF8F5FF');
+ const buf=await wb.xlsx.writeBuffer();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.download=`TaxDiary_백업_${todayS}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
 const exportExcelPlain=exportExcel;exportExcel=function(){exportExcelPretty().catch(e=>{console.warn(e);exportExcelPlain()})};
 
 function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').toLowerCase().includes(q));
