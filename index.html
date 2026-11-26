@@ -841,6 +841,58 @@ body.theme-notion:not(.nav-collapsed) .nav-group.fold .nav-menu .nav-link:not(.a
 .event-chip .chip-bell{margin-right:3px;font-size:.85em}
 </style>
 
+<style>
+.wi-top{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.wi-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:.84rem;color:#475569}
+.wi-subin{flex:1;min-width:220px;max-width:520px;border:1px dashed #cbd5e1;border-radius:8px;padding:6px 10px;font:inherit;color:#1F3864;font-weight:600;background:#fff}
+.wi-subin:focus{outline:2px solid #93c5fd;border-style:solid}
+.wi-chips{display:flex;gap:6px;flex-wrap:wrap}
+.wi-chip{--bg:#1F3864;--fg:#fff;display:inline-flex;align-items:center;border:1.5px solid var(--fg);border-radius:999px;overflow:hidden;padding:0;background:#fff;cursor:pointer;font:inherit;font-size:.82rem;font-weight:700;opacity:.72;transition:.15s}
+.wi-chip:not([style]){--fg:#1F3864}
+.wi-chip span{background:var(--bg);color:var(--fg);padding:5px 11px}.wi-chip:not([style]) span{background:#1F3864;color:#fff}
+.wi-chip b{padding:5px 11px;color:var(--fg);min-width:32px;text-align:center}
+.wi-chip.on{opacity:1;box-shadow:0 0 0 3px #1F386422}.wi-chip:hover{opacity:1}
+.wi-acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.wi-acts .btn{font-size:.82rem}.wi-up{cursor:pointer}
+.wi-q{border:1px solid #cbd5e1;border-radius:8px;padding:7px 10px;font:inherit;font-size:.84rem;width:170px}
+.wi-wrap{overflow-x:auto;border:1px solid #d6dce6;border-radius:10px;background:#fff}
+.wi-tb{width:100%;min-width:1180px;border-collapse:collapse;table-layout:fixed}
+.wi-tb th{background:#1F3864;color:#fff;font-size:.8rem;font-weight:700;padding:8px 4px;position:sticky;top:0;z-index:1}
+.wi-tb td{border-top:1px solid #e2e8f0;border-right:1px solid #eef2f7;padding:4px;vertical-align:top;font-size:.84rem}
+.wi-tb td:last-child{border-right:0}
+.wi-tb tr:hover td{background:#f8fafc}
+.wi-tb td.no{text-align:center;vertical-align:middle;color:#1F3864}
+.wi-tb td.no b{display:block;font-size:.95rem;margin:1px 0}.wi-tb td.no b.off{color:#94a3b8;font-size:.9rem}
+.wi-mv{border:0;background:none;color:#cbd5e1;font-size:.6rem;cursor:pointer;padding:0 4px;line-height:1}.wi-mv:hover{color:#1F3864}
+.wi-ta,.wi-in{width:100%;border:1px solid transparent;border-radius:6px;padding:5px 6px;font:inherit;font-size:.84rem;line-height:1.5;background:transparent;color:#111827;resize:none;overflow:hidden;box-sizing:border-box}
+.wi-ta:hover,.wi-in:hover{border-color:#e2e8f0}
+.wi-ta:focus,.wi-in:focus{border-color:#93c5fd;background:#fff;outline:0;box-shadow:0 0 0 3px #bfdbfe66}
+.wi-ta.tt{font-weight:700;color:#0f172a}
+.wi-ta.amt{text-align:center}
+.wi-in.note{font-size:.76rem;color:#64748b;padding:2px 6px}.wi-in.note::placeholder{color:#d5dbe3}.wi-ta::placeholder{color:#c0c8d4}
+.wi-tb td.due{text-align:center}
+.wi-tb td.due .wi-in,.wi-in.dd{font-size:.76rem;padding:4px 2px;text-align:center}
+.wi-dd{display:inline-block;font-style:normal;font-size:.7rem;font-weight:700;padding:1px 7px;border-radius:999px;background:#f1f5f9;color:#64748b;margin-top:2px}
+.wi-dd.today{background:#e0f2fe;color:#0369a1}.wi-dd.soon{background:#fff;color:#c2410c;border:1px solid #fdba74}.wi-dd.over{background:#fee2e2;color:#b91c1c}
+.wi-cal{display:block;font-size:.66rem;color:#64748b;margin-top:2px}
+.wi-st{width:100%;border:0;border-radius:6px;padding:6px 2px;font:inherit;font-size:.8rem;font-weight:800;text-align:center;cursor:pointer;margin-top:2px}
+.wi-tb td.ck{text-align:center}
+.wi-ck{width:28px;height:28px;border-radius:7px;border:2px solid #c00000;background:#fff;color:#fff;font-weight:900;cursor:pointer;margin-top:3px;font-size:.95rem}
+.wi-ck.on{background:#375623;border-color:#375623}.wi-ck:not(.on):hover{background:#fef2f2}
+.wi-tb td.mn button{border:0;background:none;font-size:1.1rem;color:#94a3b8;cursor:pointer;padding:4px 6px;border-radius:6px;margin-top:2px}.wi-tb td.mn button:hover{background:#eef2f7;color:#1F3864}
+.wi-tb tr.done .wi-ta,.wi-tb tr.done .wi-in{color:#a6a6a6}
+.wi-tb tr.done .wi-ta.tt{text-decoration:line-through}
+.wi-tb tr.arch td{background:#fafafa}.wi-tb tr.arch .wi-ta,.wi-tb tr.arch .wi-in{color:#8b8b8b}
+.wi-none{text-align:center;color:#94a3b8;padding:24px!important}
+.wi-empty{border:2px dashed #cbd5e1;border-radius:14px;padding:34px 20px;text-align:center;background:#f8fafc;color:#334155}
+.wi-empty b{font-size:1.05rem;color:#1F3864}.wi-empty p{font-size:.86rem;line-height:1.7;margin:10px 0 14px}
+.wi-tip{font-size:.76rem;color:#64748b;margin:10px 2px 0;line-height:1.6}
+.wi-pop{position:fixed;z-index:9999;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 10px 30px #0f172a26;padding:5px;display:flex;flex-direction:column;min-width:190px}
+.wi-pop button{border:0;background:none;text-align:left;padding:8px 10px;border-radius:7px;font:inherit;font-size:.84rem;cursor:pointer;color:#1e293b;display:flex;justify-content:space-between;gap:10px}
+.wi-pop button small{color:#94a3b8;font-size:.72rem}
+.wi-pop button:hover{background:#f1f5f9}.wi-pop button.del{color:#dc2626}
+@media(max-width:700px){.wi-q{width:100%}.wi-subin{min-width:0}}
+</style>
 </head>
 <body>
 
@@ -940,6 +992,7 @@ body.theme-notion:not(.nav-collapsed) .nav-group.fold .nav-menu .nav-link:not(.a
   <div class="nav-brand"><span class="brand-mark">✓</span>TaxDiary<button type="button" class="nav-collapse-btn" id="navCollapseBtn" onclick="toggleNavCollapse()" title="메뉴 접기">«</button></div>
   <button class="nav-link active" data-page="calendarPage" onclick="showPage('calendarPage',this)"><span class="nav-icon">🗓️</span> 세무 달력</button>
   <button class="nav-link" data-page="diaryPage" onclick="showPage('diaryPage',this)"><span class="nav-icon">📒</span> 업무일지</button>
+  <button class="nav-link" data-page="wiPage" onclick="showPage('wiPage',this)"><span class="nav-icon">📋</span> 진행 중 업무</button>
   <div class="nav-group"><button type="button" class="nav-link nav-group-btn" onclick="toggleNavMenu(this)"><span class="nav-icon">💼</span> 매출관리 <span class="nav-caret">▾</span></button>
     <div class="nav-menu">
       <button class="nav-link nav-sub" data-page="salesPage" onclick="showPage('salesPage',this)"><span class="nav-icon">📈</span> 매출</button>
@@ -1094,6 +1147,10 @@ body.theme-notion:not(.nav-collapsed) .nav-group.fold .nav-menu .nav-link:not(.a
     <th style="width:55px">NO.</th><th style="width:125px">날짜</th><th style="width:75px">요일</th><th style="width:120px">상태</th><th style="width:150px">업무관련자</th><th style="min-width:220px">내용</th><th style="width:130px">마감일</th><th style="width:130px">완료일</th><th style="min-width:180px">비고</th><th style="width:70px">관리</th>
   </tr></thead><tbody id="diaryTableBody"></tbody></table></div>
   <div class="subtle">※ 데이터는 현재 브라우저에 저장됩니다. PC 변경이나 브라우저 초기화 전에 엑셀 백업을 보관하세요.</div>
+</section>
+<section id="wiPage" class="page-panel diary-page wi-page">
+  <div class="diary-toolbar"><div><div class="diary-title"><span class="diary-title-mark">📋</span>진행 중 업무</div><div class="diary-subtitle">지금 손에 들고 있는 일을 한 줄씩 — 매일 <b>출력해서 바로바로 반영</b>하는 실무용 목록이에요. (업무일지는 기록용)</div></div></div>
+  <div id="wiBody"></div>
 </section>
 <section id="quickLinksPage" class="page-panel diary-page favorites-page">
   <div class="diary-toolbar favorites-page-heading">
@@ -5447,7 +5504,7 @@ const _showPageVP=showPage;showPage=function(id,b){const r=_showPageVP(id,b);if(
 const _showPageAC=showPage;showPage=function(id,b){if(acOwner===false&&OWNER_ONLY.some(([x])=>x===id))id='calendarPage',b=document.querySelector('[data-page=calendarPage]');const r=_showPageAC(id,b);if(id==='acPage')try{acRender()}catch(e){console.error(e)}return r};
 const _handleSignedInAC=handleSignedIn;handleSignedIn=async function(u){await _handleSignedInAC(u);await acCheckOwner()};
 /* 용량 */
-const AC_LABEL={tasks:'📅 세무 달력 일정',diaryRows:'📒 업무일지',deletedRecurringIds:'반복 일정 삭제 기록',ye:'📮 연말정산',vatRec:'🧾 부가세 대사·신고서',vatSel:'🧾 부가세 체크',vatChk:'🧾 부가세 체크리스트',vtool:'🧾 부가세 도구',fineLed:'📒 과태료·잡손익 관리대장',loanLedger:'💸 가지급금 입출금',payroll:'💵 급여',pl:'💹 월별 손익',prepList:'📌 선급비용·미수수익',corpTax:'🏢 법인세',ct2:'🛠 결산 도구',xlMine:'📊 내 엑셀 수식',studyChk:'🎓 공부 체크',execs:'👔 임원 임기',updChk:'🔄 업데이트 목록',closing:'✅ 결산 체크리스트',sales:'📈 매출',receivables:'💰 미수금',contacts:'📇 연락망',memos:'📌 메모장',quickLinks:'💗 즐겨찾기',leave:'🌿 연차',retire:'🏦 퇴직금',navHide:'메뉴 표시 설정',bk:'📑 기장현황',stickyNotes:'📌 메모장',todoItems:'📝 투데이리스트',customHolidays:'🌷 직접 추가한 공휴일',quickLinks:'💗 즐겨찾기',categories:'🏷 업무 분야 설정',diaryPhrases:'📒 자주 쓰는 문구',receivables:'💰 미수금',recvCompany:'💰 미수금 설정',salesCats:'📈 매출 구분',salesAlias:'📈 매출 거래처 이름',salesColors:'📈 매출 색상',closingCheck:'✅ 결산 체크리스트',wtChk:'📋 간이세액표 확인',pcGj:'💵 급여 계산기 고지 기준',navFold:'메뉴 접기 상태',docBox:'📁 필수 서류함',execs:'👔 임원 임기',cashPlan:'💵 자금수지표',fxEval:'💱 외화 환산',entCfg:'🍽 업무추진비 설정',whSheet:'🧾 원천세 집계표',ijForm:'📑 이직확인서',empMonitor:'📈 고용 인원 관리',stocks:'📈 관심 종목',ecosKey:'환율·경제 설정',updChk:'🔄 업데이트 체크',studyChk:'🎓 공부 체크',theme:'화면 테마'};
+const AC_LABEL={workItems:'📋 진행 중 업무',tasks:'📅 세무 달력 일정',diaryRows:'📒 업무일지',deletedRecurringIds:'반복 일정 삭제 기록',ye:'📮 연말정산',vatRec:'🧾 부가세 대사·신고서',vatSel:'🧾 부가세 체크',vatChk:'🧾 부가세 체크리스트',vtool:'🧾 부가세 도구',fineLed:'📒 과태료·잡손익 관리대장',loanLedger:'💸 가지급금 입출금',payroll:'💵 급여',pl:'💹 월별 손익',prepList:'📌 선급비용·미수수익',corpTax:'🏢 법인세',ct2:'🛠 결산 도구',xlMine:'📊 내 엑셀 수식',studyChk:'🎓 공부 체크',execs:'👔 임원 임기',updChk:'🔄 업데이트 목록',closing:'✅ 결산 체크리스트',sales:'📈 매출',receivables:'💰 미수금',contacts:'📇 연락망',memos:'📌 메모장',quickLinks:'💗 즐겨찾기',leave:'🌿 연차',retire:'🏦 퇴직금',navHide:'메뉴 표시 설정',bk:'📑 기장현황',stickyNotes:'📌 메모장',todoItems:'📝 투데이리스트',customHolidays:'🌷 직접 추가한 공휴일',quickLinks:'💗 즐겨찾기',categories:'🏷 업무 분야 설정',diaryPhrases:'📒 자주 쓰는 문구',receivables:'💰 미수금',recvCompany:'💰 미수금 설정',salesCats:'📈 매출 구분',salesAlias:'📈 매출 거래처 이름',salesColors:'📈 매출 색상',closingCheck:'✅ 결산 체크리스트',wtChk:'📋 간이세액표 확인',pcGj:'💵 급여 계산기 고지 기준',navFold:'메뉴 접기 상태',docBox:'📁 필수 서류함',execs:'👔 임원 임기',cashPlan:'💵 자금수지표',fxEval:'💱 외화 환산',entCfg:'🍽 업무추진비 설정',whSheet:'🧾 원천세 집계표',ijForm:'📑 이직확인서',empMonitor:'📈 고용 인원 관리',stocks:'📈 관심 종목',ecosKey:'환율·경제 설정',updChk:'🔄 업데이트 체크',studyChk:'🎓 공부 체크',theme:'화면 테마'};
 function acBytes(v){try{return new TextEncoder().encode(JSON.stringify(v)).length}catch(e){return 0}}
 function acSize(){const data={tasks,diaryRows,profile,deletedRecurringIds,updatedAt:''};const tot=acBytes(data);const parts=[['tasks',acBytes(tasks)],['diaryRows',acBytes(diaryRows)],['deletedRecurringIds',acBytes(deletedRecurringIds)]];
  Object.keys(profile||{}).forEach(k=>parts.push(['profile.'+k,acBytes(profile[k])]));parts.sort((a,b)=>b[1]-a[1]);return {tot,parts}}
@@ -5490,7 +5547,7 @@ document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{if(acOwner===n
 /* ===== 큰 자료 따로 저장 (클라우드 1MB 한도 대비) =====
    main 문서: 일정·설정 등 / x-diary-YYYY: 업무일지 연도별 / x-p-키: 부가세 대사·관리대장·가지급금·급여 등 큰 자료
    각 문서가 따로 1MB 한도라 몇 년을 써도 안전해요. */
-const SPLIT_KEYS=['vatRec','fineLed','loanLedger','payroll','ct2','ye'];
+const SPLIT_KEYS=['vatRec','fineLed','loanLedger','payroll','ct2','ye','workItems'];
 let splitReady=false,splitLast={},splitLoading=false;
 function splitNested(v){if(Array.isArray(v))return v.some(x=>Array.isArray(x)||splitNested(x));if(v&&typeof v==='object')return Object.values(v).some(splitNested);return false}
 function splitPKeys(){return Object.keys(profile||{}).filter(k=>SPLIT_KEYS.includes(k)||splitNested(profile[k]))}
@@ -5748,12 +5805,14 @@ const _saveTaskRM=saveTask;saveTask=async function(e){const v=$('taskRemindAt')?
 
 /* ===== 예쁜 엑셀 백업 (ExcelJS) ===== */
 function loadExcelJS(){return new Promise((res,rej)=>{if(window.ExcelJS)return res(window.ExcelJS);const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';s.onload=()=>window.ExcelJS?res(window.ExcelJS):rej(new Error('load'));s.onerror=()=>rej(new Error('load'));document.head.appendChild(s)})}
+function xlStamp(v){try{const d=new Date(v);if(isNaN(d))return String(v||'');const p=n=>String(n).padStart(2,'0');return `${p(d.getMonth()+1)}/${p(d.getDate())}(${'일월화수목금토'[d.getDay()]}) ${p(d.getHours())}:${p(d.getMinutes())}`}catch(e){return String(v||'')}}
+function xlUrl(u){try{const x=new URL(u);[...x.searchParams.keys()].filter(k=>/^utm_/i.test(k)).forEach(k=>x.searchParams.delete(k));let s=x.toString();if(!x.search&&s.endsWith('?'))s=s.slice(0,-1);return s}catch(e){return u}}
 function xlRows(){const pr={'normal':'보통','important':'중요','urgent':'긴급'};
- const T=[...tasks].sort((a,b)=>String(a.date).localeCompare(String(b.date))).map(t=>({'업무명':t.title,'이모지':t.emoji||'','마감일':t.date,'종료일':t.endDate&&t.endDate!==t.date?t.endDate:'','분야':t.category,'상태':t.status,'중요도':pr[t.priority]||'보통','관련자':t.relatedPerson||'','반복주기':t.repeat||'none','실제완료일':t.actualDate||'','알림':t.remindAt?t.remindAt.replace('T',' '):'','메모':t.memo||'','관련링크':t.link||'','달력색상':t.color||'','디데이여부':t.isDday?'O':'X','진행일지':(t.logs||[]).map(l=>`${l.at}: ${l.text}`).join(' | ')}));
+ const T=[...tasks].sort((a,b)=>String(a.date).localeCompare(String(b.date))).map(t=>({'업무명':t.title,'이모지':t.emoji||'','마감일':t.date,'종료일':t.endDate&&t.endDate!==t.date?t.endDate:'','분야':t.category,'상태':t.status,'중요도':pr[t.priority]||'보통','관련자':t.relatedPerson||'','반복주기':t.repeat||'none','실제완료일':t.actualDate||'','알림':t.remindAt?t.remindAt.replace('T',' '):'','메모':t.memo||'','관련링크':t.link||'','달력색상':t.color||'','디데이여부':t.isDday?'O':'X','진행일지':(t.logs||[]).map(l=>`${xlStamp(l.at)}  ${l.text}`).join('\n')}));
  const D=[...diaryRows].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))).map((r,i)=>({'NO.':i+1,'날짜':r.date||'','요일':weekday(r.date),'상태':r.status||'진행 중','업무관련자':r.person||'','내용':(r.content||'')+(r.recorded?'\n🎙 녹음: '+(r.recFile||'위치 미입력'):'')+(r.confirmSentAt?'\n✉ 확인 메시지 보냄: '+commStamp(r.confirmSentAt):'')+(r.addenda||[]).map(a=>'\n＋ '+commStamp(a.at)+' '+a.text).join('')+(r.rawMemo?'\n[원문 메모]\n'+r.rawMemo:''),'마감일':r.deadline||'','완료일':r.doneDate||'','비고':r.note||''}));
  const S=[...(profile.quickLinks||[]).map(l=>({'종류':'바로가기','이름':l.name||'','URL':l.url||'','로그인 ID':l.loginId||'','날짜':'','설명':''})),...(profile.customHolidays||[]).map(h=>({'종류':'공휴일','이름':'','URL':'','로그인 ID':'','날짜':h.date||'','설명':h.name||''})),{'종류':'화면설정','이름':profile.calendarTitle||'업무 캘린더','URL':'','로그인 ID':'','날짜':'','설명':['blue','rose','beige','lavender','green','notion'].includes(profile.theme)?profile.theme:'blue'}];
  return {T,D,S}}
-const XL_W={'업무명':34,'이모지':6,'마감일':12,'종료일':12,'분야':9,'상태':10,'중요도':8,'관련자':14,'반복주기':10,'실제완료일':12,'알림':16,'메모':40,'관련링크':28,'달력색상':10,'디데이여부':9,'진행일지':50,'NO.':6,'날짜':12,'요일':6,'업무관련자':16,'내용':60,'완료일':12,'비고':30,'종류':10,'이름':20,'URL':40,'로그인 ID':16,'설명':20};
+const XL_W={'업무명':34,'이모지':6,'마감일':12,'종료일':12,'분야':9,'상태':10,'중요도':8,'관련자':14,'반복주기':10,'실제완료일':12,'알림':16,'메모':40,'관련링크':28,'달력색상':10,'디데이여부':9,'진행일지':58,'NO.':6,'날짜':12,'요일':6,'업무관련자':16,'내용':60,'완료일':12,'비고':30,'종류':10,'이름':28,'URL':40,'로그인 ID':16,'설명':20};
 const XL_ST={'완료':['FFDCFCE7','FF166534'],'진행 중':['FFDBEAFE','FF1E40AF'],'지연':['FFFEE2E2','FFB91C1C'],'결재 대기':['FFFEF3C7','FF92400E'],'자료 대기':['FFFEF3C7','FF92400E'],'예정':['FFF1F5F9','FF475569']};
 async function exportExcelPretty(){let EJ;try{EJ=await loadExcelJS()}catch(e){return exportExcelPlain()}
  const {T,D,S}=xlRows(),wb=new EJ.Workbook();wb.creator='TaxDiary';const title=profile.calendarTitle||'업무 캘린더',todayS=toISO(new Date());
@@ -5773,23 +5832,33 @@ async function exportExcelPretty(){let EJ;try{EJ=await loadExcelJS()}catch(e){re
     if(k==='중요도'&&c.value==='긴급')c.font=F({bold:true,color:{argb:'FFDC2626'}});if(k==='중요도'&&c.value==='중요')c.font=F({bold:true,color:{argb:'FFEA580C'}});
     if(k===dk&&late)c.font=F({bold:true,color:{argb:'FFDC2626'}});
     if(k==='요일'&&(c.value==='토'||c.value==='일'))c.font=F({bold:true,color:{argb:c.value==='일'?'FFDC2626':'FF2563EB'}});
-    if((k==='업무명'||k==='내용')&&!done)c.font=F({bold:k==='업무명',color:{argb:'FF0F172A'}})})});
+    if((k==='업무명'||k==='내용')&&!done)c.font=F({bold:k==='업무명',color:{argb:'FF0F172A'}});
+    if(k==='완료일'&&done&&!c.value){c.fill=fill('FFFFEDD5');c.note='상태는 완료인데 완료일이 비어 있어요'}
+    if(k==='URL'&&c.value&&/^https?:/i.test(String(c.value))){const u=String(c.value);c.value={text:xlUrl(u),hyperlink:u};c.font=F({color:{argb:'FF2563EB'},underline:true})}})});
   if(keys.length&&rows.length)ws.autoFilter={from:{row:1,column:1},to:{row:1,column:keys.length}};
   ws.headerFooter={oddFooter:`&L${title} · ${name}&C출력 ${todayS}&R&P / &N`};ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,paperSize:9,printTitlesRow:'1:1',margins:{left:0.4,right:0.4,top:0.5,bottom:0.6,header:0.2,footer:0.3}};return ws};
  // 요약 시트 (맨 앞)
  const sm=wb.addWorksheet('요약',{views:[{showGridLines:false}],properties:{tabColor:{argb:'FFF59E0B'}}});sm.columns=[{width:3},{width:14},{width:11},{width:11},{width:11},{width:11},{width:11},{width:13},{width:3},{width:14},{width:10}];
  sm.mergeCells('B2:H2');const t1=sm.getCell('B2');t1.value=`📅 ${title} — 업무 요약`;t1.font=F({size:16,bold:true,color:{argb:'FF0F172A'}});sm.getRow(2).height=30;
  sm.getCell('B3').value=`출력일 ${todayS} · 달력 업무 ${T.length}건 · 업무 일지 ${D.length}건`;sm.getCell('B3').font=F({color:{argb:'FF64748B'}});
- const months=[...new Set(T.map(r=>String(r['마감일']).slice(0,7)).concat(D.map(r=>String(r['날짜']).slice(0,7))).filter(x=>/^\d{4}-\d{2}$/.test(x)))].sort();
- const hdr=['월','업무','완료','진행 중','예정·대기','지연','업무일지'];const hRow=sm.getRow(5);hdr.forEach((h,i)=>{const c=hRow.getCell(i+2);c.value=h;c.font=F({bold:true,color:{argb:'FFFFFFFF'}});c.fill=fill('FF1E3A8A');c.alignment={horizontal:'center',vertical:'middle'}});hRow.height=24;
- let r0=6;const tot=[0,0,0,0,0,0];months.forEach((m,idx)=>{const L=T.filter(r=>String(r['마감일']).startsWith(m)),dn=L.filter(r=>r['상태']==='완료').length,ip=L.filter(r=>r['상태']==='진행 중').length,lt=L.filter(r=>r['상태']!=='완료'&&r['마감일']<todayS).length,pl=L.length-dn-ip-lt,dc=D.filter(r=>String(r['날짜']).startsWith(m)).length;const v=[L.length,dn,ip,Math.max(0,pl),lt,dc];v.forEach((x,i)=>tot[i]+=x);
-  const row=sm.getRow(r0);row.getCell(2).value=`${m.slice(0,4)}년 ${+m.slice(5)}월`;v.forEach((x,i)=>row.getCell(i+3).value=x);row.eachCell({includeEmpty:false},(c,ci)=>{c.font=F({bold:ci===2,color:{argb:ci===7&&c.value>0?'FFDC2626':'FF1E293B'}});c.alignment={horizontal:ci===2?'left':'center'};c.border={bottom:thin('FFE2E8F0')};if(idx%2)c.fill=fill('FFF8FAFC')});r0++});
- const tr=sm.getRow(r0);tr.getCell(2).value='합계';tot.forEach((x,i)=>tr.getCell(i+3).value=x);tr.eachCell({includeEmpty:false},c=>{c.font=F({bold:true});c.fill=fill('FFEEF2FF');c.alignment={horizontal:'center'};c.border={top:{style:'medium',color:{argb:'FF1E3A8A'}}}});
- // 분야별
- const cats={};T.forEach(r=>{cats[r['분야']]=(cats[r['분야']]||0)+1});const ch=sm.getRow(5);['분야','업무'].forEach((h,i)=>{const c=ch.getCell(10+i);c.value=h;c.font=F({bold:true,color:{argb:'FFFFFFFF'}});c.fill=fill('FF047857');c.alignment={horizontal:'center'}});
- Object.entries(cats).sort((a,b)=>b[1]-a[1]).forEach(([k,n],i)=>{const row=sm.getRow(6+i);row.getCell(10).value=k;row.getCell(11).value=n;[10,11].forEach(ci=>{const c=row.getCell(ci);c.font=F();c.alignment={horizontal:ci===10?'left':'center'};c.border={bottom:thin('FFE2E8F0')}})});
- sm.getCell(`B${r0+2}`).value='※ "달력 업무"·"업무 일지"·"바로가기·공휴일" 시트는 TaxDiary 엑셀 복원에 그대로 쓸 수 있어요. 숨긴 열(이모지·반복주기 등)도 복원용이라 지우지 마세요.';sm.getCell(`B${r0+2}`).font=F({size:9,color:{argb:'FF64748B'}});
+ const months=[...new Set(T.map(r=>String(r['마감일']).slice(0,7)).concat(D.map(r=>String(r['날짜']).slice(0,7))).filter(x=>/^\d{4}-\d{2}$/.test(x)))].sort(),curM=todayS.slice(0,7);
+ const mStat=m=>{const L=T.filter(r=>String(r['마감일']).startsWith(m)),dn=L.filter(r=>r['상태']==='완료').length,ip=L.filter(r=>r['상태']==='진행 중').length,lt=L.filter(r=>r['상태']!=='완료'&&r['마감일']<todayS).length,pl=Math.max(0,L.length-dn-ip-lt),dc=D.filter(r=>String(r['날짜']).startsWith(m)).length;return [L.length,dn,ip,pl,lt,dc]};
+ const table=(startRow,list,head,color,showRate)=>{const hdr=['월','업무','완료','진행 중','예정·대기','지연','업무일지'].concat(showRate?['완료율']:[]);const sec=sm.getRow(startRow);sec.getCell(2).value=head;sec.getCell(2).font=F({bold:true,size:11.5,color:{argb:color}});
+  const hRow=sm.getRow(startRow+1);hdr.forEach((h,i)=>{const c=hRow.getCell(i+2);c.value=h;c.font=F({bold:true,color:{argb:'FFFFFFFF'}});c.fill=fill(color);c.alignment={horizontal:'center',vertical:'middle'}});hRow.height=24;
+  let r=startRow+2;const tot=[0,0,0,0,0,0];list.forEach((m,idx)=>{const v=mStat(m);v.forEach((x,i)=>tot[i]+=x);const row=sm.getRow(r);row.getCell(2).value=`${m.slice(0,4)}년 ${+m.slice(5)}월${m===curM?' ◀ 이번 달':''}`;v.forEach((x,i)=>row.getCell(i+3).value=x);if(showRate)row.getCell(9).value=v[0]?v[1]/v[0]:'';
+   row.eachCell({includeEmpty:false},(c,ci)=>{c.font=F({bold:ci===2||m===curM,color:{argb:ci===7&&c.value>0?'FFDC2626':'FF1E293B'}});c.alignment={horizontal:ci===2?'left':'center'};c.border={bottom:thin('FFE2E8F0')};if(m===curM)c.fill=fill('FFFEF9C3');else if(idx%2)c.fill=fill('FFF8FAFC');if(ci===9){c.numFmt='0%';if(typeof c.value==='number')c.font=F({bold:true,color:{argb:c.value>=0.9?'FF16A34A':c.value>=0.6?'FFCA8A04':'FFDC2626'}})}});r++});
+  const tr=sm.getRow(r);tr.getCell(2).value='합계';tot.forEach((x,i)=>tr.getCell(i+3).value=x);if(showRate){tr.getCell(9).value=tot[0]?tot[1]/tot[0]:'';tr.getCell(9).numFmt='0%'}tr.eachCell({includeEmpty:false},c=>{c.font=F({bold:true});c.fill=fill('FFEEF2FF');c.alignment={horizontal:'center'};c.border={top:{style:'medium',color:{argb:color}}}});return r+1};
+ sm.getColumn(9).width=10;sm.getColumn(10).width=3;sm.getColumn(11).width=16;sm.getColumn(12).width=9;
+ let r0=table(5,months.filter(m=>m<=curM),'📌 지금까지 (이번 달 포함)','FF1E3A8A',true);
+ const fut=months.filter(m=>m>curM);if(fut.length)r0=table(r0+1,fut,'🗓 앞으로 예정','FF64748B',false);
+ const side=(startRow,head,obj,color,limit)=>{const h=sm.getRow(startRow);h.getCell(11).value=head;h.getCell(11).font=F({bold:true,size:11.5,color:{argb:color}});const hr=sm.getRow(startRow+1);[head.includes('분야')?'분야':'업무관련자','건수'].forEach((t,i)=>{const c=hr.getCell(11+i);c.value=t;c.font=F({bold:true,color:{argb:'FFFFFFFF'}});c.fill=fill(color);c.alignment={horizontal:'center'}});
+  const E=Object.entries(obj).filter(([k])=>k).sort((a,b)=>b[1]-a[1]).slice(0,limit);E.forEach(([k,n],i)=>{const row=sm.getRow(startRow+2+i);row.getCell(11).value=k;row.getCell(12).value=n;[11,12].forEach(ci=>{const c=row.getCell(ci);c.font=F();c.alignment={horizontal:ci===11?'left':'center'};c.border={bottom:thin('FFE2E8F0')};if(i%2)c.fill=fill('FFF8FAFC')})});return startRow+2+E.length};
+ const cats={};T.forEach(r=>{cats[r['분야']]=(cats[r['분야']]||0)+1});const ppl={};D.forEach(r=>{String(r['업무관련자']||'').split(/[,·/]/).map(x=>x.trim()).filter(Boolean).forEach(x=>{ppl[x]=(ppl[x]||0)+1})});
+ let sr=side(5,'🏷 분야별 업무',cats,'FF047857',12);side(sr+1,'👥 업무관련자별 일지',ppl,'FF7C3AED',12);
+ r0=Math.max(r0,sr+15);
+ sm.getCell(`B${r0+1}`).value='※ "달력 업무"·"업무 일지"·"바로가기·공휴일"·"진행 중 업무" 시트는 TaxDiary 엑셀 복원에 그대로 쓸 수 있어요. 숨긴 열(이모지·반복주기 등)도 복원용이라 지우지 마세요.';sm.getCell(`B${r0+1}`).font=F({size:9,color:{argb:'FF64748B'}});sm.getCell(`B${r0+2}`).value='※ 업무 일지에서 주황색 완료일 칸 = 상태는 완료인데 완료일이 비어 있는 줄 · 바로가기 시트엔 로그인 아이디가 있으니 외부 공유 시 주의';sm.getCell(`B${r0+2}`).font=F({size:9,color:{argb:'FF64748B'}});
  add('달력 업무',T,'FF1E3A8A','FFF5F8FF');add('업무 일지',D,'FF047857','FFF2FBF6');add('바로가기·공휴일',S,'FF6D28D9','FFF8F5FF');
+ try{if(wiList().length)add('진행 중 업무',wiBackupRows(),'FF1F3864','FFF5F7FB')}catch(e){console.warn(e)}
  const buf=await wb.xlsx.writeBuffer();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.download=`TaxDiary_백업_${todayS}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
 const exportExcelPlain=exportExcel;exportExcel=function(){exportExcelPretty().catch(e=>{console.warn(e);exportExcelPlain()})};
 
@@ -6590,6 +6659,7 @@ function exportExcel(){
   {'종류':'화면설정','이름':profile.calendarTitle||'업무 캘린더','URL':'','로그인 ID':'','날짜':'','설명':['blue','rose','beige','lavender','green','notion'].includes(profile.theme)?profile.theme:'blue'}
  ];
  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(taskRows),'달력 업무');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(diaryData),'업무 일지');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(settingsRows),'바로가기·공휴일');
+ try{if(wiList().length)XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(wiBackupRows()),'진행 중 업무')}catch(e){}
  XLSX.writeFile(wb,`TaxDiary_백업_${toISO(new Date())}.xlsx`);
 }
 function importExcel(e){
@@ -6608,7 +6678,8 @@ function importExcel(e){
   tasks=taskData.map((r,i)=>({id:`import-${Date.now()}-${i}`,title:String(r['업무명']||''),emoji:String(r['이모지']||''),date:String(r['마감일']||''),category:['회계','자금','인사','총무','공통'].includes(r['분야'])?r['분야']:'공통',status:['예정','진행 중','결재 대기','자료 대기','완료'].includes(r['상태'])?r['상태']:'예정',priority:({'보통':'normal','중요':'important','긴급':'urgent'}[r['중요도']]||(['normal','important','urgent'].includes(r['중요도'])?r['중요도']:'normal')),repeat:r['반복주기']||'none',actualDate:r['실제완료일']||'',memo:r['메모']||'',link:r['관련링크']||'',color:r['달력색상']||'',isDday:String(r['디데이여부']||'').toUpperCase()==='O',endDate:(()=>{const e=excelDate(r['종료일']);return /^\d{4}-\d{2}-\d{2}$/.test(e)?e:''})(),relatedPerson:String(r['관련자']||''),remindAt:(()=>{const v=String(r['알림']||'').trim().replace(' ','T');return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(v)?v:''})(),reminded:true,logs:[] })).filter(t=>t.title&&/^\d{4}-\d{2}-\d{2}$/.test(t.date));
   diaryRows=diaryData.map((r,i)=>({id:`diary-import-${Date.now()}-${i}`,date:excelDate(r['날짜']),status:['예정','진행 중','결재 대기','자료 대기','완료','지연'].includes(r['상태'])?r['상태']:'진행 중',person:String(r['업무관련자']||''),content:String(r['내용']||''),deadline:excelDate(r['마감일']),doneDate:r['완료일']?excelDate(r['완료일']):'',note:String(r['비고']||'')})).filter(r=>r.date||r.content||r.person);
   if(settingsSheet){profile.quickLinks=settingsData.filter(r=>r['종류']==='바로가기').map(r=>({name:String(r['이름']||''),url:String(r['URL']||''),loginId:String(r['로그인 ID']||'')})).filter(l=>l.name&&l.url);profile.customHolidays=settingsData.filter(r=>r['종류']==='공휴일').map(r=>({date:excelDate(r['날짜']),name:String(r['설명']||'')})).filter(h=>h.date&&h.name);const appearance=settingsData.find(r=>r['종류']==='화면설정');if(appearance){profile.calendarTitle=String(appearance['이름']||'업무 캘린더');profile.theme=['blue','rose','beige','lavender','green','notion'].includes(String(appearance['설명']||'blue'))?String(appearance['설명']):'blue'}}
-  saveData();renderAll();renderDiaryTable();alert(`복원 완료: 달력 업무 ${tasks.length}건, 일지 ${diaryRows.length}건`);
+  let wiN='';const wiSh=wb.Sheets['진행 중 업무'];if(wiSh){try{const g=wiParseAOA(XLSX.utils.sheet_to_json(wiSh,{header:1,defval:'',raw:true}));if(g){profile.workItems=g;wiSink();wiN=`, 진행 중 업무 ${g.length}건`;try{wiRender()}catch(e){}}}catch(er){console.warn(er)}}
+  saveData();renderAll();renderDiaryTable();alert(`복원 완료: 달력 업무 ${tasks.length}건, 일지 ${diaryRows.length}건${wiN}`);
  }catch(err){alert('엑셀 파일을 읽지 못했습니다. TaxDiary에서 내보낸 .xlsx 파일인지 확인해 주세요.\\n'+err.message)}
  finally{e.target.value=''}
  };reader.readAsArrayBuffer(file);
@@ -7289,6 +7360,7 @@ const RESET_ITEMS=[
  ['contacts','📇 연락망 (통화·메일 이력 포함)',()=>getContacts().length+'곳',true],
  ['leave','🌿 연차관리 (기본정보·사용 내역)',()=>leaveEntries.length+'건',true],
  ['retire','🏦 퇴직금 관리 (직원 1·2 정보)',()=>'2명 슬롯',true],
+ ['wi','📋 진행 중 업무 (목록·머리글)',()=>(profile.workItems||[]).length+'건',true],
  ['company','🏢 회사 업무 자료 — 부가세 대사·체크, 과태료·잡손익 대장, 가지급금, 보수총액, 월별 손익, 결산 체크리스트, 연말정산·법인세·결산 도구 입력값, 임원 임기',()=>RESET_CO.filter(k=>profile[k]!=null).length+'개 항목',true],
  ['holiday','🌷 직접 추가한 공휴일·휴무일',()=>(profile.customHolidays||[]).length+'건',false],
  ['cats','🏷️ 업무 분야(회계·자금 등) 이름·색상 설정',()=>'기본값으로 복원',false]
@@ -7313,6 +7385,7 @@ async function runReset(){
   if(has('tasks')){try{await Promise.all(tasks.flatMap(t=>(t.attachments||[]).map(a=>a&&a.path?storage.ref(a.path).delete().catch(()=>{}):null)).filter(Boolean))}catch(e){}tasks=[];deletedRecurringIds=[];try{clearTaskDraft()}catch(e){}}
   if(has('diary'))diaryRows=[];
   if(has('todo'))profile.todoItems=[];
+  if(has('wi')){profile.workItems=[];delete profile.wiSub}
   if(has('memo'))profile.stickyNotes=[];
   if(has('recv')){profile.receivables=[];delete profile.recvCompany}
   if(has('bk'))delete profile.bk;
@@ -7340,6 +7413,168 @@ async function runReset(){
  setSyncStatus(fail.length?'초기화 일부 실패':'초기화 완료');
  alert(fail.length?`일부 항목은 초기화하지 못했어요:\n${fail.join('\n')}\n\n나머지는 완료됐어요.`:'선택한 항목을 초기화했어요. (즐겨찾기는 그대로 남아 있어요)');
 }
+
+/* ===== 📋 진행 중 업무 (실무 트래커) — 출력해서 바로바로 반영하는 현재 업무 목록 ===== */
+const WI_ST=['진행중','대기','완료','보관'];
+const WI_C={진행중:['#DDEBF7','#1F4E79'],대기:['#FCE4D6','#C55A11'],완료:['#E2EFDA','#375623'],보관:['#EDEDED','#595959']};
+let wiFilter='all',wiQ='';
+function wiList(){if(!Array.isArray(profile.workItems))profile.workItems=[];return profile.workItems}
+function wiNo(x){const A=wiList().filter(y=>y.status==='진행중'||y.status==='대기');const i=A.indexOf(x);return i<0?'':i+1}
+function wiNoT(x){const n=wiNo(x);return n!==''?n:x.status==='완료'?'✓':'–'}
+function wiSink(){const L=wiList(),g=st=>L.filter(x=>st.includes(x.status));profile.workItems=g(['진행중','대기']).concat(g(['완료']),g(['보관']),L.filter(x=>!WI_ST.includes(x.status)))}
+function wiId(){return 'wi-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function wiDot(iso){return iso?String(iso).replace(/-/g,'.'):''}
+function wiSub(){return (profile.wiSub!=null&&profile.wiSub!=='')?profile.wiSub:[profile.company,profile.name&&profile.name!=='사용자'?'담당 '+profile.name:''].filter(Boolean).join('  |  ')}
+function wiTodayDot(){return wiDot(toISO(new Date()))}
+function wiCounts(){const L=wiList(),c={all:L.length};WI_ST.forEach(s=>c[s]=L.filter(x=>x.status===s).length);return c}
+function wiShown(){const q=wiQ.trim().toLowerCase();return wiList().filter(x=>(wiFilter==='all'?true:wiFilter==='open'?(x.status==='진행중'||x.status==='대기'):x.status===wiFilter)&&(!q||[x.title,x.client,x.amount,x.progress,x.next,x.note].join(' ').toLowerCase().includes(q)))}
+function wiDday(iso,st){if(!iso||st==='완료'||st==='보관')return '';const d=Math.round((parseISO(iso)-parseISO(toISO(new Date())))/864e5);
+ return d===0?'<em class="wi-dd today">D-Day</em>':d<0?`<em class="wi-dd over">D+${-d}</em>`:d<=3?`<em class="wi-dd soon">D-${d}</em>`:d<=30?`<em class="wi-dd">D-${d}</em>`:''}
+function wiTA(f,v,ph,cls){return `<textarea class="wi-ta ${cls||''}" data-f="${f}" rows="1" placeholder="${ph}" oninput="wiFit(this)" onkeydown="wiKey(event,this)" onchange="wiSet(this)">${escapeHTML(v||'')}</textarea>`}
+function wiFit(t){t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px'}
+function wiKey(e,t){if(e.key!=='Enter'||e.shiftKey||e.isComposing||e.keyCode===229)return;const f=t.dataset.f;const b=f==='progress'?'• ':f==='next'?'- ':null;if(!b)return;
+ e.preventDefault();const s=t.selectionStart,v=t.value;t.value=v.slice(0,s)+'\n'+b+v.slice(t.selectionEnd);t.selectionStart=t.selectionEnd=s+1+b.length;wiFit(t)}
+function wiFocusB(t){const f=t.dataset.f;if(!t.value&&(f==='progress'||f==='next')){t.value=f==='progress'?'• ':'- ';setTimeout(()=>{t.selectionStart=t.selectionEnd=t.value.length},0)}}
+function wiItem(el){const tr=el.closest('[data-wi]');return tr&&wiList().find(x=>x.id===tr.dataset.wi)}
+function wiSet(el){const it=wiItem(el);if(!it)return;let v=el.value;if((el.dataset.f==='progress'||el.dataset.f==='next')&&/^[•\-]\s*$/.test(v.trim()))v='';
+ it[el.dataset.f]=v;it.updatedAt=new Date().toISOString();wiSyncCal(it);saveData();if(el.dataset.f==='due'){const td=el.closest('td');td.querySelectorAll('.wi-dd').forEach(x=>x.remove());el.insertAdjacentHTML('afterend',wiDday(it.due,it.status))}}
+function wiStatus(el){const it=wiItem(el);if(!it)return;it.status=el.value;if(el.value==='완료'){it.done=true;if(!it.doneAt)it.doneAt=toISO(new Date())}else{it.done=false}wiSyncCal(it);wiSink();saveData();wiRender()}
+function wiDone(id){const it=wiList().find(x=>x.id===id);if(!it)return;if(it.done){it.done=false;it.status=it.prevSt&&it.prevSt!=='완료'?it.prevSt:'진행중';it.doneAt=''}else{it.prevSt=it.status;it.done=true;it.status='완료';it.doneAt=toISO(new Date())}wiSyncCal(it);wiSink();saveData();wiRender()}
+function wiAdd(){const L=wiList();const it={id:wiId(),title:'',client:'',amount:'',progress:'',next:'',due:'',status:'진행중',done:false,doneAt:'',note:'',createdAt:new Date().toISOString()};
+ L.push(it);wiSink();if(wiFilter!=='all'&&wiFilter!=='open'&&wiFilter!=='진행중')wiFilter='all';wiQ='';saveData();wiRender();
+ setTimeout(()=>{const el=document.querySelector(`[data-wi="${it.id}"] [data-f=title]`);if(el){el.scrollIntoView({block:'center'});el.focus()}},30)}
+function wiDel(id){const it=wiList().find(x=>x.id===id);if(!it)return;if(!confirm(`'${it.title||'(제목 없음)'}' 업무를 삭제할까요?\n(보관하려면 상태를 '보관'으로 바꾸면 돼요)`))return;
+ profile.workItems=wiList().filter(x=>x!==it);if(it.cal){tasks=tasks.filter(t=>t.id!==it.cal);try{renderAll()}catch(e){}}saveData();wiRender()}
+function wiMove(id,d){const L=wiList(),i=L.findIndex(x=>x.id===id),S=wiShown(),si=S.findIndex(x=>x.id===id),o=S[si+d];if(i<0||!o)return;const j=L.indexOf(o);[L[i],L[j]]=[L[j],L[i]];wiSink();saveData();wiRender()}
+function wiArchiveDone(){const D=wiList().filter(x=>x.status==='완료');if(!D.length)return alert('완료된 업무가 없어요.');if(!confirm(`완료된 업무 ${D.length}건을 '보관'으로 옮길까요?\n목록 출력에서 빠지고, 보관 탭에서 다시 볼 수 있어요.`))return;D.forEach(x=>x.status='보관');wiSink();saveData();wiRender()}
+function wiSetF(f){wiFilter=f;wiRender()}
+/* 달력·업무일지 연결 */
+function wiCat(){try{const C=getCategories();return (C.find(c=>/업무|기타|일반/.test(c.name))||C[0]||{}).name||''}catch(e){return ''}}
+function wiSyncCal(it){if(!it.cal)return;const t=tasks.find(x=>x.id===it.cal);if(!t){it.cal='';return}if(!it.due){return}
+ t.title=it.title||t.title;t.date=it.due;t.endDate=it.due;t.relatedPerson=it.client||'';t.memo=wiCalMemo(it);t.status=it.status==='완료'?'완료':t.status==='완료'?'예정':t.status;if(it.status==='완료'&&!t.actualDate)t.actualDate=it.doneAt||toISO(new Date());try{renderAll()}catch(e){}}
+function wiCalMemo(it){return ['[진행 중 업무]',it.amount?'금액: '+it.amount:'',it.next?'다음 할 일:\n'+it.next:''].filter(Boolean).join('\n')}
+function wiToCal(id){const it=wiList().find(x=>x.id===id);if(!it)return;if(!it.due){alert('예정일을 먼저 입력해 주세요.');const el=document.querySelector(`[data-wi="${id}"] [data-f=due]`);if(el)el.focus();return}
+ if(it.cal&&tasks.some(t=>t.id===it.cal)){wiSyncCal(it);saveData();alert(`달력에 ${wiDot(it.due)} 일정으로 반영했어요.`);return}
+ const tid='wi-cal-'+it.id;tasks.push({id:tid,title:it.title||'진행 업무',emoji:'📋',date:it.due,endDate:it.due,relatedPerson:it.client||'',category:wiCat(),status:it.status==='완료'?'완료':'예정',priority:'important',isDday:false,excludeOverdue:false,repeat:'none',repeatUntil:'',actualDate:it.status==='완료'?(it.doneAt||''):'',memo:wiCalMemo(it),link:'',color:'',logs:[],attachments:[]});
+ it.cal=tid;saveData();try{renderAll()}catch(e){}wiRender();alert(`📅 ${wiDot(it.due)} 달력에 등록했어요.\n예정일·제목을 바꾸면 달력도 같이 바뀌어요.`)}
+function wiToDiary(id){const it=wiList().find(x=>x.id===id);if(!it)return;const now=new Date();
+ const content=[it.title,it.progress].filter(Boolean).join('\n');diaryRows.push({id:newDiaryId(),date:toISO(now),createdAt:now.toISOString(),status:it.status==='완료'?'완료':'진행 중',person:it.client||'',content,deadline:it.due||'',note:[it.amount?'금액 '+it.amount:'',it.next?'다음: '+it.next.replace(/\n/g,' / '):''].filter(Boolean).join(' · ')});
+ saveData();try{renderDiaryTable()}catch(e){}alert('📒 오늘 날짜로 업무일지에 기록했어요.\n(업무명·진행 현황·다음 할 일이 들어가요)')}
+/* 화면 */
+function wiRender(){const b=$('wiBody');if(!b)return;wiSink();const c=wiCounts(),S=wiShown(),L=wiList();
+ const chip=(k,t,n,st)=>`<button type="button" class="wi-chip ${wiFilter===k?'on':''}" ${st?`style="--bg:${WI_C[st][0]};--fg:${WI_C[st][1]}"`:''} onclick="wiSetF('${k}')"><span>${t}</span><b>${n}</b></button>`;
+ b.innerHTML=`<div class="wi-top">
+  <div class="wi-meta"><input class="wi-subin" value="${escapeHTML(wiSub())}" placeholder="부서 | 담당자 (출력물 머리글)" onchange="profile.wiSub=this.value.trim();saveData()" title="출력물 머리글에 들어가요"><span>작성일 <b>${wiTodayDot()}</b></span></div>
+  <div class="wi-chips">${chip('all','전체',c.all)}${chip('open','할 일만',c['진행중']+c['대기'])}${WI_ST.map(s=>chip(s,s,c[s],s)).join('')}</div>
+  <div class="wi-acts"><button class="btn" onclick="wiAdd()">＋ 새 업무</button><input type="search" class="wi-q" placeholder="🔍 검색" value="${escapeHTML(wiQ)}" oninput="wiQ=this.value;clearTimeout(wiQT);wiQT=setTimeout(wiQRe,250)">
+   <button class="btn btn-outline" onclick="wiPrintList()" title="A4 가로 · 지금 보이는 목록">🖨 목록 출력</button><button class="btn btn-outline" onclick="wiPrintCards()" title="건별로 한 장씩 (파일 표지용)">🗂 건별 표지</button>
+   <button class="btn btn-outline" onclick="wiExport()">📤 엑셀</button><label class="btn btn-outline wi-up">📥 엑셀 불러오기<input type="file" accept=".xlsx,.xls" hidden onchange="wiImport(this)"></label><button class="btn btn-outline" onclick="wiArchiveDone()" title="완료 → 보관">🗄 완료건 보관</button></div></div>
+ ${L.length?`<div class="wi-wrap"><table class="wi-tb"><colgroup><col style="width:46px"><col style="width:20%"><col style="width:9%"><col style="width:9%"><col style="width:23%"><col style="width:21%"><col style="width:122px"><col style="width:84px"><col style="width:52px"><col style="width:122px"><col style="width:40px"></colgroup>
+  <thead><tr><th>No</th><th>업무명</th><th>거래처/관련</th><th>금액</th><th>진행 현황</th><th>다음 할 일</th><th>예정일</th><th>상태</th><th>완료</th><th>완료일</th><th></th></tr></thead>
+  <tbody>${S.map((x,i)=>{const C=WI_C[x.status]||WI_C['진행중'];return `<tr data-wi="${x.id}" class="${x.status==='완료'?'done':''}${x.status==='보관'?' arch':''}">
+   <td class="no"><button class="wi-mv" onclick="wiMove('${x.id}',-1)" title="위로">▲</button><b class="${wiNo(x)===''?'off':''}">${wiNoT(x)}</b><button class="wi-mv" onclick="wiMove('${x.id}',1)" title="아래로">▼</button></td>
+   <td>${wiTA('title',x.title,'업무명','tt')}<input class="wi-in note" data-f="note" value="${escapeHTML(x.note||'')}" placeholder="비고" onchange="wiSet(this)"></td>
+   <td>${wiTA('client',x.client,'거래처')}</td><td>${wiTA('amount',x.amount,'금액','amt')}</td>
+   <td>${wiTA('progress',x.progress,'• 진행 현황 (Enter = 다음 줄)')}</td><td>${wiTA('next',x.next,'- 다음 할 일 (Enter = 다음 줄)')}</td>
+   <td class="due"><input type="date" class="wi-in" data-f="due" value="${escapeHTML(x.due||'')}" onchange="wiSet(this)">${wiDday(x.due,x.status)}${x.cal?'<small class="wi-cal">📅 달력 연결</small>':''}</td>
+   <td><select class="wi-st" style="background:${C[0]};color:${C[1]}" onchange="wiStatus(this)">${WI_ST.map(s=>`<option ${s===x.status?'selected':''}>${s}</option>`).join('')}</select></td>
+   <td class="ck"><button class="wi-ck ${x.done?'on':''}" onclick="wiDone('${x.id}')" title="${x.done?'완료 취소':'완료 체크'}">${x.done?'✓':''}</button></td>
+   <td><input type="date" class="wi-in dd" data-f="doneAt" value="${escapeHTML(x.doneAt||'')}" onchange="wiSet(this)"></td>
+   <td class="mn"><button onclick="wiMenu(event,'${x.id}')" title="더보기">⋯</button></td></tr>`}).join('')||`<tr><td colspan="11" class="wi-none">해당하는 업무가 없어요.</td></tr>`}</tbody></table></div>`
+  :`<div class="wi-empty"><b>📋 진행 중인 업무를 한 줄씩 적어두세요</b><p>업무명 · 거래처 · 금액 · 진행 현황 · 다음 할 일 · 예정일을 적고, 매일 <b>🖨 목록 출력</b>해서 바로바로 반영하면 돼요.<br>쓰던 엑셀(진행업무 표지)이 있으면 <b>📥 엑셀 불러오기</b>로 그대로 가져와요.</p><button class="btn" onclick="wiAdd()">＋ 첫 업무 적기</button></div>`}
+ <p class="wi-tip">💡 번호는 <b>진행중·대기</b> 건만 1번부터 자동으로 매겨져요 (완료 ✓ · 보관 –) · 완료·보관 건은 자동으로 맨 아래로 내려가요 · 진행 현황·다음 할 일 칸에서 <b>Enter</b>를 누르면 •, - 가 자동으로 붙어요 (줄만 바꾸려면 Shift+Enter) · <b>⋯</b> 버튼: 달력 등록 · 업무일지에 기록 · 이 건만 표지 출력 · 삭제 · 업무일지는 <b>기록</b>용, 여기는 <b>지금 진행 중인 일</b> 관리용이에요.</p>`;
+ b.querySelectorAll('.wi-ta').forEach(t=>{wiFit(t);t.addEventListener('focus',()=>wiFocusB(t))})}
+let wiQT=0;
+function wiQRe(){wiRender();const q=document.querySelector('.wi-q');if(q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}}
+function wiMenu(e,id){e.stopPropagation();document.querySelectorAll('.wi-pop').forEach(p=>p.remove());const it=wiList().find(x=>x.id===id);if(!it)return;const p=document.createElement('div');p.className='wi-pop';
+ p.innerHTML=`<button onclick="wiToCal('${id}')">📅 ${it.cal?'달력에 다시 반영':'달력에 등록'} <small>예정일</small></button><button onclick="wiToDiary('${id}')">📒 업무일지에 기록 <small>오늘 날짜</small></button><button onclick="wiPrintCards('${id}')">🗂 이 건 표지 출력</button><button onclick="wiDup('${id}')">⧉ 복사해서 새 업무</button><button class="del" onclick="wiDel('${id}')">🗑 삭제</button>`;
+ document.body.appendChild(p);const r=e.currentTarget.getBoundingClientRect();p.style.top=Math.min(window.innerHeight-p.offsetHeight-8,r.bottom+4)+'px';p.style.left=Math.max(8,r.right-p.offsetWidth)+'px';
+ setTimeout(()=>document.addEventListener('click',function h(){p.remove();document.removeEventListener('click',h)}),0)}
+function wiDup(id){const L=wiList(),i=L.findIndex(x=>x.id===id);if(i<0)return;const c=Object.assign({},L[i],{id:wiId(),status:'진행중',done:false,doneAt:'',cal:'',createdAt:new Date().toISOString()});c.title=(c.title||'')+' (복사)';L.splice(i+1,0,c);wiSink();saveData();wiRender()}
+/* 출력 */
+function wiFrame(html){const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);const d=f.contentWindow.document;d.open();d.write(html);d.close();setTimeout(()=>{f.contentWindow.focus();f.contentWindow.print();setTimeout(()=>f.remove(),2000)},350)}
+const wiH=s=>escapeHTML(s||'').replace(/\n/g,'<br>');
+const wiFoot=()=>escapeHTML((profile.calendarTitle||'업무 캘린더')+' · 진행 중 업무');
+function wiPrintList(){const S=wiShown().filter(x=>wiFilter===x.status||x.status!=='보관');if(!S.length)return alert('출력할 업무가 없어요.');const c={};WI_ST.forEach(s=>c[s]=S.filter(x=>x.status===s).length);const L=wiList(),blank=3;
+ const html=`<!doctype html><html><head><meta charset="utf-8"><title>진행 중 업무 목록</title><style>*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box}@page{size:A4 landscape;margin:0}html{padding:10mm 10mm 13mm}body{margin:0;font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',sans-serif;color:#111}
+ h1{margin:0;font-size:21pt;color:#1F3864;font-weight:800}.sub{margin:3px 0 8px;font-size:10pt;color:#404040;font-weight:600}.cnt{display:flex;gap:6px;margin-bottom:7px}.cnt span{border:1px solid #1F3864;font-size:9.5pt;font-weight:800;display:flex}.cnt span i{font-style:normal;padding:3px 9px}.cnt span b{padding:3px 10px;color:#1F3864;background:#fff;border-left:1px solid #1F3864}
+ table{width:100%;border-collapse:collapse;table-layout:fixed}th{background:#1F3864;color:#fff;font-size:9.5pt;padding:5px 3px;border:1px solid #1F3864}td{border:1px solid #8a8a8a;font-size:9pt;padding:4px 5px;vertical-align:top;line-height:1.42;font-weight:500;word-break:keep-all;overflow-wrap:anywhere}
+ td.c{text-align:center;vertical-align:middle}td.t{font-weight:800}td.no{font-weight:800;color:#1F3864;text-align:center;vertical-align:middle}tr{page-break-inside:avoid}tr.done td{color:#a6a6a6;font-weight:400}tr.done td.t{text-decoration:line-through}.st{font-weight:800}.mi{color:#C00000;font-weight:700}tr.bl td{height:13mm}.nt{display:block;color:#595959;font-weight:500;font-size:8pt;margin-top:2px}
+ .pf{position:fixed;left:0;right:0;bottom:4mm;text-align:center;font-size:8pt;color:#777}thead{display:table-header-group}</style></head><body>
+ <h1>진행 중 업무 목록</h1><div class="sub">${escapeHTML(wiSub())}${wiSub()?'  |  ':''}작성일 ${wiTodayDot()}</div>
+ <div class="cnt"><span style="background:#1F3864;color:#fff"><i>전체</i><b>${S.length}</b></span>${WI_ST.map(s=>`<span style="background:${WI_C[s][0]};color:${WI_C[s][1]}"><i>${s}</i><b>${c[s]}</b></span>`).join('')}</div>
+ <table><colgroup><col style="width:4%"><col style="width:17%"><col style="width:8.5%"><col style="width:9%"><col style="width:22%"><col style="width:20%"><col style="width:7.5%"><col style="width:5.5%"><col style="width:6%"><col style="width:7.5%"></colgroup>
+ <thead><tr><th>No</th><th>업무명</th><th>거래처/관련</th><th>금액</th><th>진행 현황</th><th>다음 할 일</th><th>예정일</th><th>상태</th><th>완료체크</th><th>완료일</th></tr></thead><tbody>
+ ${S.map(x=>`<tr class="${x.status==='완료'?'done':''}"><td class="no">${wiNoT(x)}</td><td class="t">${wiH(x.title)}${x.note?`<span class="nt">※ ${wiH(x.note)}</span>`:''}</td><td class="c">${wiH(x.client)}</td><td class="c">${wiH(x.amount)}</td><td>${wiH(x.progress)}</td><td>${wiH(x.next)}</td><td class="c">${wiDot(x.due)}</td><td class="c st" style="${x.status==='완료'?'':'color:'+(WI_C[x.status]||WI_C['진행중'])[1]}">${escapeHTML(x.status)}</td><td class="c ${x.done?'':'mi'}">${x.done?'완료':'미완료'}</td><td class="c">${wiDot(x.doneAt)}</td></tr>`).join('')}
+ ${Array.from({length:blank},()=>'<tr class="bl">'+'<td></td>'.repeat(10)+'</tr>').join('')}</tbody></table><div class="pf">${wiFoot()} · ${wiTodayDot()} 출력</div></body></html>`;wiFrame(html)}
+function wiPrintCards(id){const S=id?wiList().filter(x=>x.id===id):wiShown().filter(x=>x.status==='진행중'||x.status==='대기'||wiFilter===x.status);if(!S.length)return alert('출력할 업무가 없어요. (건별 표지는 진행중·대기 건이 나와요)');const L=wiList();
+ const box=s=>(s||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>'□ '+escapeHTML(l.replace(/^[-•□✓·]\s*/,''))).join('<br>');
+ const html=`<!doctype html><html><head><meta charset="utf-8"><title>건별 표지</title><style>*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box}@page{size:A4 portrait;margin:0}body{margin:0;font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',sans-serif;color:#111}
+ .pg{height:297mm;padding:22mm 18mm 16mm;page-break-after:always;display:flex;flex-direction:column;position:relative}.pg:last-child{page-break-after:auto}
+ .no{text-align:center;font-size:48pt;font-weight:900;color:#1F3864;line-height:1.1}.st{margin:8px auto 0;padding:7px 26px;font-size:16pt;font-weight:800;border-radius:4px;display:inline-block}.stw{text-align:center}
+ h2{text-align:center;font-size:20pt;margin:24px 0 22px;line-height:1.35;word-break:keep-all}table{width:100%;border-collapse:collapse}th{width:27%;background:#EEF2F8;color:#1F3864;font-size:12pt;font-weight:800;border:1px solid #7f8fa9;padding:10px}td{border:1px solid #7f8fa9;font-size:12pt;padding:10px 12px;line-height:1.6;font-weight:500;height:16mm}td.big{height:34mm;vertical-align:top}
+ .ft{margin-top:auto;text-align:right;font-size:9pt;color:#808080}</style></head><body>
+ ${S.map(x=>{const C=WI_C[x.status]||WI_C['진행중'];return `<div class="pg"><div class="no">${wiNo(x)!==''?'No. '+wiNo(x):wiNoT(x)}</div><div class="stw"><span class="st" style="background:${C[0]};color:${C[1]}">[ ${escapeHTML(x.status)} ]</span></div><h2>${wiH(x.title)||'&nbsp;'}</h2>
+ <table><tr><th>거래처/관련</th><td>${wiH(x.client)}</td></tr><tr><th>금액</th><td>${wiH(x.amount)}</td></tr><tr><th>진행 현황</th><td class="big">${wiH(x.progress)}</td></tr><tr><th>다음 할 일</th><td class="big">${box(x.next)}</td></tr><tr><th>예정일</th><td>${wiDot(x.due)}</td></tr><tr><th>비고</th><td>${wiH(x.note)}</td></tr><tr><th>완료일</th><td>${wiDot(x.doneAt)}</td></tr></table>
+ <div class="ft">${escapeHTML(wiSub())}${wiSub()?'  |  ':''}${wiTodayDot()} 작성</div></div>`}).join('')}</body></html>`;wiFrame(html)}
+/* 엑셀 내보내기 (쓰던 엑셀과 같은 모양) */
+async function wiExport(){const L=wiList().filter(x=>x.status!=='보관'||wiFilter==='보관'||wiFilter==='all');if(!L.length)return alert('내보낼 업무가 없어요.');const fn=`진행업무_${toISO(new Date()).replace(/-/g,'')}.xlsx`;
+ let EJ;try{EJ=await loadExcelJS()}catch(e){EJ=null}
+ if(!EJ){try{const rows=[['No','업무명','거래처/관련','금액','진행 현황','다음 할 일','예정일','상태','완료체크','완료일','비고']].concat(L.map((x,i)=>[wiNoT(x),x.title,x.client,x.amount,x.progress,x.next,wiDot(x.due),x.status,x.done?'완료':'미완료',wiDot(x.doneAt),x.note]));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'진행업무 표지');XLSX.writeFile(wb,fn)}catch(e){alert('엑셀 저장에 실패했어요: '+e.message)}return}
+ const wb=new EJ.Workbook(),ws=wb.addWorksheet('진행업무 표지',{pageSetup:{paperSize:9,orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,horizontalCentered:true,margins:{left:.4,right:.4,top:.5,bottom:.5,header:.2,footer:.2}},views:[{state:'frozen',ySplit:5}]});
+ const N='FF1F3864',F='맑은 고딕',bd={style:'thin',color:{argb:'FFBFBFBF'}},B={top:bd,left:bd,bottom:bd,right:bd};
+ [6,30,13,16,46,46,11,9,10,12].forEach((w,i)=>ws.getColumn(i+1).width=w);
+ ws.mergeCells('A1:J1');ws.getCell('A1').value='진행 중 업무 목록';ws.getCell('A1').font={name:F,size:18,bold:true,color:{argb:N}};ws.getRow(1).height=40;
+ ws.mergeCells('A2:J2');ws.getCell('A2').value=`${wiSub()}${wiSub()?'  |  ':''}작성일 ${wiTodayDot()}`;ws.getCell('A2').font={name:F,size:10,color:{argb:'FF595959'}};
+ const last=5+L.length+5;
+ [['A','전체',N,'FFFFFFFF',`COUNTA(B6:B${last})`],['C','진행중','FFDDEBF7','FF1F4E79',`COUNTIF(H6:H${last},"진행중")`],['E','대기','FFFCE4D6','FFC55A11',`COUNTIF(H6:H${last},"대기")`],['G','완료','FFE2EFDA','FF375623',`COUNTIF(H6:H${last},"완료")`],['I','보관','FFEDEDED','FF595959',`COUNTIF(H6:H${last},"보관")`]].forEach(([col,t,bg,fg,fm])=>{
+  const a=ws.getCell(col+'3');a.value=t;a.fill={type:'pattern',pattern:'solid',fgColor:{argb:bg}};a.font={name:F,bold:true,color:{argb:fg}};a.alignment={horizontal:'center',vertical:'middle'};a.border=B;
+  const n=ws.getCell(String.fromCharCode(col.charCodeAt(0)+1)+'3');n.value={formula:fm};n.font={name:F,bold:true,color:{argb:N}};n.alignment={horizontal:'center',vertical:'middle'};n.border=B});ws.getRow(3).height=24;
+ const hr=ws.getRow(5);['No','업무명','거래처/관련','금액','진행 현황','다음 할 일','예정일','상태','완료체크','완료일'].forEach((t,i)=>{const c=hr.getCell(i+1);c.value=t;c.fill={type:'pattern',pattern:'solid',fgColor:{argb:N}};c.font={name:F,bold:true,color:{argb:'FFFFFFFF'}};c.alignment={horizontal:'center',vertical:'middle'};c.border=B});hr.height=28;
+ const ln=s=>Math.max(1,String(s||'').split('\n').reduce((a,l)=>a+Math.ceil((l.length||1)/24),0));
+ L.concat(Array(5).fill(null)).forEach((x,i)=>{const r=ws.getRow(6+i);const v=x?[wiNoT(x),x.title+(x.note?'\n※ '+x.note:''),x.client,x.amount,x.progress,x.next,wiDot(x.due),x.status,x.done?'완료':'미완료',wiDot(x.doneAt)]:['','','','','','','','','',''];
+  v.forEach((val,j)=>{const c=r.getCell(j+1);c.value=val||null;c.border=B;c.font={name:F,size:10,bold:j===0||j===1||j===7,color:j===0?{argb:N}:undefined};c.alignment={vertical:'middle',wrapText:true,horizontal:[0,2,3,6,7,8,9].includes(j)?'center':'left'}});
+  r.height=x?Math.min(160,Math.max(30,15*Math.max(ln(x.progress),ln(x.next),Math.ceil(String(x.title||'').length/15))+8)):30});
+ const rg=`A6:J${last}`;
+ ws.addConditionalFormatting({ref:rg,rules:[{type:'expression',formulae:['$I6="완료"'],style:{font:{color:{argb:'FFA6A6A6'}}}}]});
+ ws.addConditionalFormatting({ref:`H6:H${last}`,rules:WI_ST.map(s=>({type:'expression',formulae:[`$H6="${s}"`],style:{font:{bold:true,color:{argb:'FF'+WI_C[s][1].slice(1)}}}}))});
+ ws.addConditionalFormatting({ref:`I6:I${last}`,rules:[{type:'expression',formulae:['$I6="미완료"'],style:{font:{color:{argb:'FFC00000'}}}}]});
+ for(let r=6;r<=last;r++){ws.getCell('H'+r).dataValidation={type:'list',allowBlank:true,formulae:['"진행중,대기,완료,보관"']};ws.getCell('I'+r).dataValidation={type:'list',allowBlank:true,formulae:['"미완료,완료"']}}
+ ws.pageSetup.printTitlesRow='5:5';
+ /* 건별 표지 */
+ const cs=wb.addWorksheet('건별 표지',{pageSetup:{paperSize:9,orientation:'portrait',fitToPage:true,fitToWidth:1,fitToHeight:0,horizontalCentered:true}});[3,18,62].forEach((w,i)=>cs.getColumn(i+1).width=w);
+ const CL=L.filter(x=>x.status==='진행중'||x.status==='대기');let r0=1;
+ CL.forEach((x,k)=>{const C=WI_C[x.status];const at=(r,v,st)=>{const c=cs.getCell('B'+r);cs.mergeCells(`B${r}:C${r}`);c.value=v;Object.assign(c,st)};
+  cs.getRow(r0).height=30;at(r0+1,(wiNo(x)!==''?'No. '+wiNo(x):wiNoT(x)),{font:{name:F,size:48,bold:true,color:{argb:N}},alignment:{horizontal:'center',vertical:'middle'}});cs.getRow(r0+1).height=70;
+  at(r0+2,`[ ${x.status} ]`,{font:{name:F,size:16,bold:true,color:{argb:'FF'+C[1].slice(1)}},fill:{type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C[0].slice(1)}},alignment:{horizontal:'center',vertical:'middle'}});cs.getRow(r0+2).height=30;
+  at(r0+4,x.title||'',{font:{name:F,size:20,bold:true},alignment:{horizontal:'center',vertical:'middle',wrapText:true}});cs.getRow(r0+4).height=60;
+  [['거래처/관련',x.client,36],['금액',x.amount,36],['진행 현황',x.progress,Math.max(50,ln(x.progress)*17)],['다음 할 일',(x.next||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>'□ '+l.replace(/^[-•□✓·]\s*/,'')).join('\n'),Math.max(50,ln(x.next)*17)],['예정일',wiDot(x.due),36],['비고',x.note,36],['완료일',wiDot(x.doneAt),36]].forEach(([h,v,ht],j)=>{const rr=r0+6+j;const a=cs.getCell('B'+rr),b2=cs.getCell('C'+rr);
+   a.value=h;a.font={name:F,size:12,bold:true,color:{argb:N}};a.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFEEF2F8'}};a.alignment={horizontal:'center',vertical:'middle'};a.border=B;b2.value=v||null;b2.font={name:F,size:12};b2.alignment={vertical:'middle',wrapText:true};b2.border=B;cs.getRow(rr).height=ht});
+  const fr=r0+14;at(fr,`${wiSub()}${wiSub()?'  |  ':''}${wiTodayDot()} 작성`,{font:{name:F,size:9,color:{argb:'FF808080'}},alignment:{horizontal:'right'}});
+  if(k<CL.length-1)cs.getRow(fr).addPageBreak();r0+=15});
+ const buf=await wb.xlsx.writeBuffer();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.download=fn;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
+/* 엑셀 불러오기 (진행업무 표지 시트 · 머리글 '업무명' 줄 찾아서) */
+function wiDateIn(v){if(v==null||v==='')return '';if(v instanceof Date)return toISO(v);if(typeof v==='number'){const d=new Date(Math.round((v-25569)*864e5));return toISO(new Date(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()))}
+ const m=String(v).match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);return m?`${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`:''}
+function wiParseAOA(A){  const hi=A.findIndex(r=>r.some(c=>String(c).replace(/\s/g,'')==='업무명'));if(hi<0)return null;
+  const H=A[hi].map(c=>String(c).replace(/\s/g,''));const col=(...k)=>H.findIndex(h=>k.includes(h));
+  const ix={title:col('업무명'),client:col('거래처/관련','거래처','관련'),amount:col('금액'),progress:col('진행현황'),next:col('다음할일'),due:col('예정일'),status:col('상태'),ck:col('완료체크'),doneAt:col('완료일'),note:col('비고')};
+  const got=[];A.slice(hi+1).forEach(r=>{const g=k=>ix[k]>=0?r[ix[k]]:'';const title=String(g('title')||'').trim();if(!title)return;let note=String(g('note')||'').trim();let t=title;const nm=title.match(/\n※\s*([\s\S]*)$/);if(nm){t=title.slice(0,nm.index).trim();note=note||nm[1].trim()}
+   let st=String(g('status')||'').trim();const ck=String(g('ck')||'').trim()==='완료';if(!WI_ST.includes(st))st=ck?'완료':'진행중';
+   got.push({id:wiId(),title:t,client:String(g('client')||'').trim(),amount:String(g('amount')??'').trim(),progress:String(g('progress')||'').trim(),next:String(g('next')||'').trim(),due:wiDateIn(g('due')),status:st,done:ck||st==='완료',doneAt:wiDateIn(g('doneAt')),note,createdAt:new Date().toISOString()})});
+  return got}
+function wiBackupRows(){return wiList().map(x=>({'순번':wiNoT(x),'업무명':x.title||'','거래처/관련':x.client||'','금액':x.amount||'','진행 현황':x.progress||'','다음 할 일':x.next||'','예정일':x.due||'','상태':x.status||'','완료체크':x.done?'완료':'미완료','완료일':x.doneAt||'','비고':x.note||''}))}
+function wiImport(inp){const f=inp.files&&inp.files[0];inp.value='';if(!f)return;const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
+  const sn=wb.SheetNames.find(n=>/진행/.test(n))||wb.SheetNames[0];const A=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:'',raw:true});
+  const got=wiParseAOA(A);if(got===null)return alert("'업무명' 머리글이 있는 시트를 찾지 못했어요.");
+  if(!got.length)return alert('불러올 업무가 없어요.');const L=wiList();const dup=got.filter(x=>L.some(y=>y.title===x.title&&y.client===x.client));
+  let mode='add';if(L.length){const a=prompt(`엑셀에서 ${got.length}건을 찾았어요.\n\n1 = 지금 목록 뒤에 추가${dup.length?` (같은 업무명 ${dup.length}건은 엑셀 내용으로 덮어쓰기)`:''}\n2 = 지금 목록을 지우고 엑셀로 바꾸기\n\n번호를 입력하세요`,'1');if(a===null)return;mode=a.trim()==='2'?'replace':'add'}
+  if(mode==='replace'){if(!confirm(`지금 목록 ${L.length}건을 지우고 엑셀 ${got.length}건으로 바꿀까요?`))return;profile.workItems=got}
+  else got.forEach(x=>{const y=L.find(y=>y.title===x.title&&y.client===x.client);if(y)Object.assign(y,x,{id:y.id,cal:y.cal});else L.push(x)});
+  wiFilter='all';wiSink();saveData();wiRender();alert(`📥 ${got.length}건을 불러왔어요.`)}catch(err){console.error(err);alert('엑셀을 읽지 못했어요: '+err.message)}};rd.readAsArrayBuffer(f)}
+const _showPageWI=showPage;showPage=function(id,b){const r=_showPageWI(id,b);if(id==='wiPage')try{wiRender()}catch(e){console.error(e)}return r};
+
 </script>
 </body>
 </html>
