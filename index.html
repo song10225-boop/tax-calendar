@@ -2871,7 +2871,7 @@ function syncLegacyTaskLogs(){
    if(!Array.isArray(t.logs))t.logs=[];
    t.logs.forEach((log,i)=>{
      if(!log.id)log.id=`legacy-${t.id}-${i}-${String(log.at||'').replace(/\W/g,'')}`;
-     const linked=diaryRows.some(r=>r.logId===log.id);
+     const linked=log.noDiary||diaryRows.some(r=>r.logId===log.id);
      if(!linked){
        const stamp=log.at?new Date(log.at):null;
        const logDate=log.date||((stamp&&!Number.isNaN(stamp.getTime()))?toISO(stamp):(t.date||toISO(new Date())));
@@ -7674,6 +7674,10 @@ function wiPull(){const L=profile&&profile.workItems;if(!Array.isArray(L)||!L.le
  if(ch){try{wiSink()}catch(e){}}return ch}
 const _saveDataWI=saveData;saveData=function(){let ch=false;try{ch=wiPull()}catch(e){}const r=_saveDataWI.apply(this,arguments);
  if(ch){const pg=$('wiPage'),b=$('wiBody');if(pg&&pg.classList.contains('active')&&!(b&&b.contains(document.activeElement)))try{wiRender()}catch(e){}}return r};
+
+/* 업무일지에서 지운 일정 기록은 다시 생기지 않게 */
+const _removeDiaryRowND=removeDiaryRow;removeDiaryRow=function(id){const r=diaryRows.find(x=>x.id===id);const out=_removeDiaryRowND.apply(this,arguments);
+ try{if(r&&r.logId&&!diaryRows.some(x=>x.id===id)){let hit=false;tasks.forEach(t=>(t.logs||[]).forEach(g=>{if(g.id===r.logId){g.noDiary=true;hit=true}}));if(hit)saveData()}}catch(e){}return out};
 </script>
 </body>
 </html>
