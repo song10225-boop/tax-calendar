@@ -7640,7 +7640,7 @@ function rpChip(v){const e=$('taskRelatedPerson');if(!e)return;const cur=e.value
 /* 달력 일정 → 진행 중 업무 */
 function wiLinked(tid){return (profile.workItems||[]).find(x=>x.cal===tid)}
 function wiFromTask(t){if(!t||wiLinked(t.id))return;const memo=String(t.memo||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>/^[•\-→]/.test(l)?l:'• '+l).join('\n');
- const L=wiList();L.push({id:wiId(),title:t.title||'',client:t.relatedPerson||'',amount:'',progress:memo,next:'',due:t.date||'',status:t.status==='완료'?'완료':(/대기/.test(t.status||'')?'대기':'진행중'),done:t.status==='완료',doneAt:t.status==='완료'?(t.actualDate||toISO(new Date())):'',note:'',cal:t.id,fromCal:true,createdAt:new Date().toISOString()});wiSink();saveData()}
+ const L=wiList();L.push({id:wiId(),title:t.title||'',client:t.relatedPerson||'',amount:'',progress:memo,next:'',due:t.date||'',status:t.status==='완료'?'완료':(/대기/.test(t.status||'')?'대기':'진행중'),done:t.status==='완료',doneAt:t.status==='완료'?(t.actualDate||toISO(new Date())):'',note:'',cal:t.id,fromCal:true,calMemo:String(t.memo||''),createdAt:new Date().toISOString()});wiSink();saveData()}
 const _openTaskModalWI=openTaskModal;openTaskModal=function(id){const r=_openTaskModalWI.apply(this,arguments);try{const cb=$('taskToWi'),nt=$('taskToWiNote');if(cb){const ln=id&&wiLinked(id);cb.checked=!!ln;cb.disabled=!!ln;nt.innerHTML=ln?'✅ 이미 진행 중 업무에 올라가 있어요 — 거기서 진행 현황·다음 할 일을 적어 주세요':'체크하고 저장하면 진행 중 업무 목록에 이 일정이 한 줄 추가돼요 (예정일·요청자·메모 같이)'}}catch(e){}return r};
 const _saveTaskWI=saveTask;saveTask=async function(e){const on=$('taskToWi')&&$('taskToWi').checked&&!$('taskToWi').disabled,id=$('taskId').value,before=new Set(tasks.map(t=>t.id));const r=await _saveTaskWI.apply(this,arguments);
  if(on)try{const t=id?tasks.find(x=>x.id===id):tasks.find(x=>!before.has(x.id));if(t){wiFromTask(t);try{wiRender()}catch(_){}}}catch(_){}return r};
@@ -7650,7 +7650,9 @@ function m2dOn(){return profile.memoToDiary!==false}
 function m2dUI(){const d=$('taskDiary');if(!d)return;let w=$('m2dWrap');if(!w){w=document.createElement('label');w.id='m2dWrap';w.className='m2d';w.innerHTML='<input type="checkbox" id="m2dChk" onchange="profile.memoToDiary=this.checked;saveData()"> <span>📝 <b>메모 내용을 업무일지에도 같이 기록</b></span><small>일지 칸이 비어 있으면, 저장할 때 메모(새로 추가한 부분)가 이 일정 날짜의 업무일지로 들어가요</small>';d.closest('.form-row').appendChild(w)}$('m2dChk').checked=m2dOn()}
 const _openTaskModalM2D=openTaskModal;openTaskModal=function(){const r=_openTaskModalM2D.apply(this,arguments);try{m2dUI()}catch(e){}return r};
 const _saveTaskM2D=saveTask;saveTask=async function(e){try{if(m2dOn()){const d=$('taskDiary'),m=($('taskMemo').value||'').trim();if(d&&!d.value.trim()&&m){const id=$('taskId').value,ex=id?tasks.find(t=>t.id===id):null,old=String(ex&&ex.memo||'').trim();let add='';
-  if(!ex)add=m;else if(m!==old)add=old&&m.startsWith(old)?m.slice(old.length).trim():m;if(add)d.value=add}}}catch(_){}return _saveTaskM2D.apply(this,arguments)};
+  const nz=x=>String(x||'').replace(/\s+/g,' ').trim(),seen=new Set();String(old).split('\n').forEach(l=>seen.add(nz(l)));
+  if(ex){(ex.logs||[]).forEach(g=>String(g.text||'').split('\n').forEach(l=>seen.add(nz(l))));(diaryRows||[]).filter(r=>r.taskId===ex.id||r.logId&&(ex.logs||[]).some(g=>g.id===r.logId)).forEach(r=>String(r.content||'').split('\n').forEach(l=>seen.add(nz(l))))}
+  if(!ex)add=m;else if(m!==old)add=m.split('\n').filter(l=>nz(l)&&!seen.has(nz(l))).join('\n').trim();if(add)d.value=add}}}catch(_){}return _saveTaskM2D.apply(this,arguments)};
 
 /* 달력 → 진행 중 업무: 완료·취소·날짜·제목 따라가기 */
 function wiPull(){const L=profile&&profile.workItems;if(!Array.isArray(L)||!L.length)return false;let ch=false;
@@ -7658,7 +7660,9 @@ function wiPull(){const L=profile&&profile.workItems;if(!Array.isArray(L)||!L.le
   if(tDone&&it.status!=='완료'&&it.status!=='보관'){it.prevSt=it.status;it.status='완료';it.done=true;it.doneAt=t.actualDate||toISO(new Date());ch=true}
   else if(!tDone&&it.status==='완료'){it.status=it.prevSt&&it.prevSt!=='완료'?it.prevSt:'진행중';it.done=false;it.doneAt='';ch=true}
   if(t.date&&it.due!==t.date){it.due=t.date;ch=true}
-  if(t.title&&it.title!==t.title){it.title=t.title;ch=true}});
+  if(t.title&&it.title!==t.title){it.title=t.title;ch=true}
+  if(it.fromCal&&String(t.memo||'')!==String(it.calMemo||'')){const nz=x=>String(x||'').replace(/^[\s•\-→·□]+/,'').replace(/\s+/g,' ').trim();const have=new Set(String(it.calMemo||'').split('\n').concat(String(it.progress||'').split('\n')).map(nz));
+   const add=String(t.memo||'').split('\n').filter(l=>nz(l)&&!have.has(nz(l))).map(l=>/^\s*[•\-→]/.test(l)?l.trim():'• '+l.trim());if(add.length)it.progress=[it.progress,add.join('\n')].filter(Boolean).join('\n');it.calMemo=String(t.memo||'');ch=true}});
  if(ch){try{wiSink()}catch(e){}}return ch}
 const _saveDataWI=saveData;saveData=function(){let ch=false;try{ch=wiPull()}catch(e){}const r=_saveDataWI.apply(this,arguments);
  if(ch){const pg=$('wiPage'),b=$('wiBody');if(pg&&pg.classList.contains('active')&&!(b&&b.contains(document.activeElement)))try{wiRender()}catch(e){}}return r};
