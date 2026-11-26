@@ -835,6 +835,12 @@ body.theme-notion:not(.nav-collapsed) .nav-group.fold .nav-menu .nav-link:not(.a
 
 <style>@media print{body{color:#000!important}.subtle,.diary-subtitle,.lc-note,.pc-note,.wt-note,small{color:#333!important;opacity:1!important}th,td{color:#000}}</style>
 
+<style>
+.rem-in{display:flex;gap:5px;flex-wrap:wrap;align-items:center}.rem-in input{flex:1 1 200px;min-width:190px}.rem-in button{border:1px solid #c7d2fe;background:#eef2ff;color:#3730a3;border-radius:999px;padding:4px 10px;font:inherit;font-size:.76rem;cursor:pointer}.rem-in button.x{background:#fff;border-color:#e2e8f0;color:#64748b}.rem-note{font-size:.76rem;color:#4338ca;margin-top:4px}.rem-note:empty{display:none}.rem-row label small{color:#94a3b8;font-weight:500}
+#remStack{position:fixed;right:18px;bottom:18px;z-index:10000;display:flex;flex-direction:column;gap:10px;max-width:340px}.rem-pop{background:#fff;border:2px solid #6366f1;border-radius:14px;box-shadow:0 12px 32px rgba(15,23,42,.28);padding:12px 14px;animation:remIn .25s ease}.rem-pop.missed{border-color:#f59e0b}@keyframes remIn{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}.rem-h{font-size:.78rem;font-weight:800;color:#4338ca}.rem-pop.missed .rem-h{color:#b45309}.rem-h small{color:#64748b;font-weight:600;margin-left:4px}.rem-t{font-size:1rem;font-weight:800;margin:4px 0 2px;color:#0f172a}.rem-m{font-size:.76rem;color:#475569;line-height:1.5}.rem-b{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.rem-b button{border:1px solid #e2e8f0;background:#f8fafc;border-radius:8px;padding:5px 10px;font:inherit;font-size:.78rem;cursor:pointer}.rem-b button.ok{margin-left:auto;background:#4f46e5;border-color:#4f46e5;color:#fff;font-weight:700}
+.event-chip .chip-bell{margin-right:3px;font-size:.85em}
+</style>
+
 </head>
 <body>
 
@@ -5643,6 +5649,7 @@ function calEnhance(){const grid=document.querySelector('#calendarContent .calen
   if(t.status!=='완료'){const dd=daysUntil(t.date);if(isOverdue(t))chip.classList.add('overdue-chip');else if(dd===0)chip.classList.add('due-today');else if(dd>0&&dd<=3)chip.classList.add('due-soon');
    if(!chip.classList.contains('seg-left')&&(isOverdue(t)||(dd>=0&&dd<=30))){chip.textContent=chip.textContent.replace(/ · D-(Day|\d+)$/,'');const b=document.createElement('span');b.className='dbadge'+(isOverdue(t)?' late':dd===0?' today':dd<=3?' soon':' far');b.textContent=isOverdue(t)?`D+${-dd}`:dd===0?'D-Day':`D-${dd}`;chip.textContent=chip.textContent.replace(/^⚠\s*/,'');chip.prepend(b)}}
   // 끌어서 옮기기
+  if(t.remindAt&&!t.reminded&&!chip.querySelector('.chip-bell')){const bl=document.createElement('span');bl.className='chip-bell';bl.textContent='⏰';bl.title='알림 '+t.remindAt.replace('T',' ');chip.insertBefore(bl,chip.firstChild)}
   if(!chip.querySelector('.chip-done')){const ok=document.createElement('span');ok.className='chip-done';ok.title=t.status==='완료'?'완료 취소':'바로 완료';ok.textContent=t.status==='완료'?'↩':'✓';ok.onclick=ev=>{ev.stopPropagation();ev.preventDefault();calQuickDone(t.id)};chip.appendChild(ok)}
   chip.draggable=true;chip.addEventListener('dragstart',e=>{const cell=chip.closest('.calendar-cell');calDrag={id:chip.dataset.id,from:cell&&cell.dataset.date};e.dataTransfer.effectAllowed='copyMove';try{e.dataTransfer.setData('text/plain',chip.dataset.id)}catch(_){}chip.classList.add('dragging')});chip.addEventListener('dragend',()=>{chip.classList.remove('dragging');grid.querySelectorAll('.drop-on').forEach(c=>c.classList.remove('drop-on'))})});
  grid.querySelectorAll('.calendar-cell[data-date]').forEach(cell=>{
@@ -5706,6 +5713,64 @@ const _printMonthC3=printMonthCalendar;printMonthCalendar=function(){const _f=ta
 
 
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;try{if($('taskModal')&&$('taskModal').classList.contains('open')){e.preventDefault();closeTaskModal();return}const ap=$('appearanceModal');if(ap&&ap.classList.contains('open')){closeAppearanceSettings();return}const dd=$('diaryDlg');if(dd){dd.remove();return}const ct=document.getElementById('calToast');if(ct)ct.remove()}catch(_){}});
+
+/* ===== ⏰ 일정 알림 ===== */
+function remNowStr(d=new Date()){const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`}
+function remFmt(v){if(!v)return '';const [d,t]=v.split('T');return `${d.slice(5).replace('-','/')}(${'일월화수목금토'[parseISO(d).getDay()]}) ${t}`}
+function remQuick(k){const inp=$('taskRemindAt');if(!inp)return;const base=$('taskDate').value||toISO(today);const p=n=>String(n).padStart(2,'0');
+ if(k==='clear')inp.value='';else if(k==='day9')inp.value=base+'T09:00';else if(k==='prev9')inp.value=calShift(base,-1)+'T09:00';else if(k==='30m'){const d=new Date(Date.now()+30*6e4);inp.value=remNowStr(d)}else if(k==='1h'){const d=new Date(Date.now()+60*6e4);inp.value=remNowStr(d)}
+ remNote();if(inp.value)remAsk()}
+function remNote(){const n=$('taskRemindNote'),v=$('taskRemindAt')&&$('taskRemindAt').value;if(!n)return;if(!v){n.textContent='';return}const past=v<=remNowStr();n.innerHTML=past?'⚠ 이미 지난 시간이에요':`🔔 <b>${remFmt(v)}</b>에 알려드려요${('Notification' in window)&&Notification.permission!=='granted'?' · 브라우저 알림을 허용하면 다른 창을 보고 있어도 떠요':''}`}
+function remAsk(){try{if('Notification' in window&&Notification.permission==='default')Notification.requestPermission().then(remNote)}catch(e){}}
+function remBeep(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const c=new C();[0,0.25].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=880;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(0.0001,c.currentTime+t);g.gain.exponentialRampToValueAtTime(0.25,c.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+t+0.2);o.start(c.currentTime+t);o.stop(c.currentTime+t+0.22)})}catch(e){}}
+function remBox(){let b=document.getElementById('remStack');if(!b){b=document.createElement('div');b.id='remStack';document.body.appendChild(b)}return b}
+function remFire(t,missed){const b=remBox();if(b.querySelector(`[data-rid="${CSS.escape(String(t.id))}"]`))return;const el=document.createElement('div');el.className='rem-pop'+(missed?' missed':'');el.dataset.rid=t.id;
+ el.innerHTML=`<div class="rem-h">${missed?'⏰ 놓친 알림':'🔔 일정 알림'} <small>${remFmt(t.remindAt)}</small></div><div class="rem-t">${t.emoji?escapeHTML(t.emoji)+' ':''}${escapeHTML(t.title)}</div><div class="rem-m">${escapeHTML(t.date)}${t.endDate&&t.endDate!==t.date?' ~ '+escapeHTML(t.endDate):''} · ${escapeHTML(t.category||'')} · ${escapeHTML(t.status||'')}${t.memo?'<br>'+escapeHTML(String(t.memo).slice(0,80)):''}</div><div class="rem-b"><button data-a="open">열기</button><button data-a="snooze">10분 뒤 다시</button><button data-a="done">✓ 완료</button><button data-a="ok" class="ok">확인</button></div>`;
+ el.onclick=e=>{const a=e.target.dataset&&e.target.dataset.a;if(!a)return;const x=tasks.find(z=>String(z.id)===String(t.id));
+  if(a==='snooze'&&x){x.remindAt=remNowStr(new Date(Date.now()+10*6e4));x.reminded=false;saveData()}
+  if(a==='done'&&x&&x.status!=='완료'){try{setListTaskStatus(x.id,true)}catch(_){}}
+  if(a==='open'){showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}
+  el.remove()};
+ b.appendChild(el);if(!missed)remBeep();
+ try{if('Notification' in window&&Notification.permission==='granted'){const n=new Notification((missed?'⏰ 놓친 알림 · ':'🔔 ')+t.title,{body:`${t.date} · ${t.category||''}${t.memo?' · '+String(t.memo).slice(0,60):''}`,tag:'td-'+t.id,requireInteraction:!missed});n.onclick=()=>{window.focus();n.close()}}}catch(e){}}
+let remFirst=true;
+function remCheck(){try{if(!Array.isArray(tasks))return;const now=remNowStr(),hourAgo=remNowStr(new Date(Date.now()-60*6e4));let ch=false;
+ tasks.forEach(t=>{if(t.remindAt&&!t.reminded&&t.remindAt<=now){remFire(t,remFirst&&t.remindAt<hourAgo);t.reminded=true;ch=true}});if(ch){saveData();try{renderCalendar()}catch(e){}}remFirst=false}catch(e){}}
+setInterval(remCheck,20000);setTimeout(remCheck,4000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)remCheck()});
+// 업무 등록 창에 알림 칸
+function remField(){if($('taskRemindAt'))return;const end=$('taskEndDate');if(!end)return;const row=document.createElement('div');row.className='form-row full rem-row';
+ row.innerHTML=`<label for="taskRemindAt">⏰ 알림 <small>(정한 시간에 팝업·소리로 알려줘요)</small></label><div class="rem-in"><input class="field" id="taskRemindAt" type="datetime-local"><button type="button" onclick="remQuick('day9')">당일 9시</button><button type="button" onclick="remQuick('prev9')">하루 전 9시</button><button type="button" onclick="remQuick('30m')">30분 뒤</button><button type="button" onclick="remQuick('1h')">1시간 뒤</button><button type="button" class="x" onclick="remQuick('clear')">지우기</button></div><div class="rem-note" id="taskRemindNote"></div>`;
+ end.closest('.form-row').after(row);$('taskRemindAt').addEventListener('change',()=>{remNote();if($('taskRemindAt').value)remAsk()})}
+const _openTaskModalRM=openTaskModal;openTaskModal=function(id){const r=_openTaskModalRM.apply(this,arguments);try{remField();const t=id?tasks.find(x=>x.id===id):null;$('taskRemindAt').value=t&&t.remindAt?t.remindAt:'';remNote()}catch(e){console.warn(e)}return r};
+const _saveTaskRM=saveTask;saveTask=async function(e){const v=$('taskRemindAt')?$('taskRemindAt').value:'',id=$('taskId').value,before=new Set(tasks.map(t=>t.id));const r=await _saveTaskRM.apply(this,arguments);
+ try{const t=id?tasks.find(x=>x.id===id):tasks.find(x=>!before.has(x.id));if(t&&(t.remindAt||'')!==v){t.remindAt=v;t.reminded=!v?false:v<=remNowStr();saveData();try{renderCalendar()}catch(_){}}}catch(_){}return r};
+
+/* ===== 예쁜 엑셀 백업 (ExcelJS) ===== */
+function loadExcelJS(){return new Promise((res,rej)=>{if(window.ExcelJS)return res(window.ExcelJS);const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';s.onload=()=>window.ExcelJS?res(window.ExcelJS):rej(new Error('load'));s.onerror=()=>rej(new Error('load'));document.head.appendChild(s)})}
+function xlRows(){const pr={'normal':'보통','important':'중요','urgent':'긴급'};
+ const T=[...tasks].sort((a,b)=>String(a.date).localeCompare(String(b.date))).map(t=>({'업무명':t.title,'이모지':t.emoji||'','마감일':t.date,'종료일':t.endDate&&t.endDate!==t.date?t.endDate:'','분야':t.category,'상태':t.status,'중요도':pr[t.priority]||'보통','관련자':t.relatedPerson||'','반복주기':t.repeat||'none','실제완료일':t.actualDate||'','알림':t.remindAt?t.remindAt.replace('T',' '):'','메모':t.memo||'','관련링크':t.link||'','달력색상':t.color||'','디데이여부':t.isDday?'O':'X','진행일지':(t.logs||[]).map(l=>`${l.at}: ${l.text}`).join(' | ')}));
+ const D=[...diaryRows].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))).map((r,i)=>({'NO.':i+1,'날짜':r.date||'','요일':weekday(r.date),'상태':r.status||'진행 중','업무관련자':r.person||'','내용':(r.content||'')+(r.recorded?'\n🎙 녹음: '+(r.recFile||'위치 미입력'):'')+(r.confirmSentAt?'\n✉ 확인 메시지 보냄: '+commStamp(r.confirmSentAt):'')+(r.addenda||[]).map(a=>'\n＋ '+commStamp(a.at)+' '+a.text).join('')+(r.rawMemo?'\n[원문 메모]\n'+r.rawMemo:''),'마감일':r.deadline||'','완료일':r.doneDate||'','비고':r.note||''}));
+ const S=[...(profile.quickLinks||[]).map(l=>({'종류':'바로가기','이름':l.name||'','URL':l.url||'','로그인 ID':l.loginId||'','날짜':'','설명':''})),...(profile.customHolidays||[]).map(h=>({'종류':'공휴일','이름':'','URL':'','로그인 ID':'','날짜':h.date||'','설명':h.name||''})),{'종류':'화면설정','이름':profile.calendarTitle||'업무 캘린더','URL':'','로그인 ID':'','날짜':'','설명':['blue','rose','beige','lavender','green','notion'].includes(profile.theme)?profile.theme:'blue'}];
+ return {T,D,S}}
+const XL_W={'업무명':34,'이모지':6,'마감일':12,'종료일':12,'분야':9,'상태':10,'중요도':8,'관련자':14,'반복주기':10,'실제완료일':12,'알림':16,'메모':40,'관련링크':28,'달력색상':10,'디데이여부':9,'진행일지':50,'NO.':6,'날짜':12,'요일':6,'업무관련자':16,'내용':60,'완료일':12,'비고':30,'종류':10,'이름':20,'URL':40,'로그인 ID':16,'설명':20};
+const XL_ST={'완료':['FFDCFCE7','FF166534'],'진행 중':['FFDBEAFE','FF1E40AF'],'지연':['FFFEE2E2','FFB91C1C'],'결재 대기':['FFFEF3C7','FF92400E'],'자료 대기':['FFFEF3C7','FF92400E'],'예정':['FFF1F5F9','FF475569']};
+async function exportExcelPretty(){let EJ;try{EJ=await loadExcelJS()}catch(e){return exportExcelPlain()}
+ const {T,D,S}=xlRows(),wb=new EJ.Workbook();wb.creator='TaxDiary';const title=profile.calendarTitle||'업무 캘린더';
+ const add=(name,rows,color)=>{const ws=wb.addWorksheet(name,{views:[{state:'frozen',ySplit:1}],properties:{tabColor:{argb:color}}});const keys=rows.length?Object.keys(rows[0]):[];
+  ws.columns=keys.map(k=>({header:k,key:k,width:XL_W[k]||14}));rows.forEach(r=>ws.addRow(r));
+  const hr=ws.getRow(1);hr.height=24;hr.eachCell(c=>{c.font={bold:true,color:{argb:'FFFFFFFF'},name:'맑은 고딕',size:10.5};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:color}};c.alignment={vertical:'middle',horizontal:'center'};c.border={bottom:{style:'medium',color:{argb:'FF1E293B'}}}});
+  ws.eachRow((row,i)=>{if(i===1)return;row.eachCell({includeEmpty:true},(c,ci)=>{const k=keys[ci-1];c.font={name:'맑은 고딕',size:10};c.border={top:{style:'thin',color:{argb:'FFE2E8F0'}},bottom:{style:'thin',color:{argb:'FFE2E8F0'}},left:{style:'thin',color:{argb:'FFE2E8F0'}},right:{style:'thin',color:{argb:'FFE2E8F0'}}};
+   const wide=['내용','메모','진행일지','비고','업무명'].includes(k);c.alignment={vertical:'top',wrapText:wide,horizontal:['NO.','요일','상태','분야','중요도','이모지','디데이여부','반복주기','마감일','종료일','날짜','완료일','실제완료일','알림'].includes(k)?'center':'left'};
+   if(i%2===0)c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};
+   if(k==='상태'&&XL_ST[c.value]){c.fill={type:'pattern',pattern:'solid',fgColor:{argb:XL_ST[c.value][0]}};c.font={name:'맑은 고딕',size:10,bold:true,color:{argb:XL_ST[c.value][1]}}}
+   if(k==='중요도'&&c.value==='긴급')c.font={name:'맑은 고딕',size:10,bold:true,color:{argb:'FFDC2626'}};
+   if(k==='중요도'&&c.value==='중요')c.font={name:'맑은 고딕',size:10,bold:true,color:{argb:'FFEA580C'}}})});
+  if(keys.length&&rows.length)ws.autoFilter={from:{row:1,column:1},to:{row:1,column:keys.length}};
+  ws.headerFooter={oddFooter:`&L${title} · ${name}&R&P / &N`};ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,paperSize:9,printTitlesRow:'1:1'}};
+ add('달력 업무',T,'FF1E3A8A');add('업무 일지',D,'FF047857');add('바로가기·공휴일',S,'FF6D28D9');
+ const buf=await wb.xlsx.writeBuffer();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.download=`TaxDiary_백업_${toISO(new Date())}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
+const exportExcelPlain=exportExcel;exportExcel=function(){exportExcelPretty().catch(e=>{console.warn(e);exportExcelPlain()})};
 
 function gsIndex(){const R=[],has=(o,q)=>Object.values(o).some(v=>String(v??'').toLowerCase().includes(q));
  (typeof tasks!=='undefined'?tasks:[]).forEach(t=>R.push({cat:'task',icon:'📅',title:t.title,sub:`${t.date||''} · ${t.category||''}${t.relatedPerson?' · '+t.relatedPerson:''}`,text:[t.title,t.memo,t.relatedPerson,t.category].join(' '),go:()=>{showPage('calendarPage',document.querySelector('[data-page=calendarPage]'));editTask(t.id)}}));
@@ -6496,7 +6561,7 @@ TASK_DRAFT_FIELDS.forEach(id=>{const el=$(id);if(el){el.addEventListener('input'
 
 function exportExcel(){
  if(typeof XLSX==='undefined'){alert('엑셀 기능을 불러오지 못했습니다. 인터넷 연결을 확인하거나 기존 CSV 내보내기를 이용해 주세요.');return}
- const taskRows=tasks.map(t=>({'업무명':t.title,'이모지':t.emoji||'','마감일':t.date,'분야':t.category,'상태':t.status,'중요도':({'normal':'보통','important':'중요','urgent':'긴급'}[t.priority]||'보통'),'반복주기':t.repeat||'none','실제완료일':t.actualDate||'','메모':t.memo||'','관련링크':t.link||'','달력색상':t.color||'','디데이여부':t.isDday?'O':'X','진행일지':(t.logs||[]).map(l=>`${l.at}: ${l.text}`).join(' | ')}));
+ const taskRows=tasks.map(t=>({'업무명':t.title,'이모지':t.emoji||'','마감일':t.date,'종료일':t.endDate&&t.endDate!==t.date?t.endDate:'','관련자':t.relatedPerson||'','알림':t.remindAt?t.remindAt.replace('T',' '):'','분야':t.category,'상태':t.status,'중요도':({'normal':'보통','important':'중요','urgent':'긴급'}[t.priority]||'보통'),'반복주기':t.repeat||'none','실제완료일':t.actualDate||'','메모':t.memo||'','관련링크':t.link||'','달력색상':t.color||'','디데이여부':t.isDday?'O':'X','진행일지':(t.logs||[]).map(l=>`${l.at}: ${l.text}`).join(' | ')}));
  const diaryData=diaryRows.map((r,i)=>({'NO.':i+1,'날짜':r.date||'','요일':weekday(r.date),'상태':r.status||'진행 중','업무관련자':r.person||'','내용':(r.content||'')+(r.recorded?'\n🎙 녹음: '+(r.recFile||'위치 미입력'):'')+(r.confirmSentAt?'\n✉ 확인 메시지 보냄: '+commStamp(r.confirmSentAt):'')+(r.addenda||[]).map(a=>'\n＋ '+commStamp(a.at)+' '+a.text).join('')+(r.rawMemo?'\n[원문 메모]\n'+r.rawMemo:''),'마감일':r.deadline||'','완료일':r.doneDate||'','비고':r.note||''}));
  const settingsRows=[
   ...(profile.quickLinks||[]).map(l=>({'종류':'바로가기','이름':l.name||'','URL':l.url||'','로그인 ID':l.loginId||'','날짜':'','설명':''})),
@@ -6519,7 +6584,7 @@ function importExcel(e){
   const settingsSheet=wb.Sheets['바로가기·공휴일'];
   const settingsData=settingsSheet?XLSX.utils.sheet_to_json(settingsSheet,{defval:''}):[];
   if(!confirm('선택한 엑셀의 업무와 일지로 현재 데이터를 교체할까요? 기존 데이터는 먼저 백업해 주세요.'))return;
-  tasks=taskData.map((r,i)=>({id:`import-${Date.now()}-${i}`,title:String(r['업무명']||''),emoji:String(r['이모지']||''),date:String(r['마감일']||''),category:['회계','자금','인사','총무','공통'].includes(r['분야'])?r['분야']:'공통',status:['예정','진행 중','결재 대기','자료 대기','완료'].includes(r['상태'])?r['상태']:'예정',priority:({'보통':'normal','중요':'important','긴급':'urgent'}[r['중요도']]||(['normal','important','urgent'].includes(r['중요도'])?r['중요도']:'normal')),repeat:r['반복주기']||'none',actualDate:r['실제완료일']||'',memo:r['메모']||'',link:r['관련링크']||'',color:r['달력색상']||'',isDday:String(r['디데이여부']||'').toUpperCase()==='O',logs:[] })).filter(t=>t.title&&/^\d{4}-\d{2}-\d{2}$/.test(t.date));
+  tasks=taskData.map((r,i)=>({id:`import-${Date.now()}-${i}`,title:String(r['업무명']||''),emoji:String(r['이모지']||''),date:String(r['마감일']||''),category:['회계','자금','인사','총무','공통'].includes(r['분야'])?r['분야']:'공통',status:['예정','진행 중','결재 대기','자료 대기','완료'].includes(r['상태'])?r['상태']:'예정',priority:({'보통':'normal','중요':'important','긴급':'urgent'}[r['중요도']]||(['normal','important','urgent'].includes(r['중요도'])?r['중요도']:'normal')),repeat:r['반복주기']||'none',actualDate:r['실제완료일']||'',memo:r['메모']||'',link:r['관련링크']||'',color:r['달력색상']||'',isDday:String(r['디데이여부']||'').toUpperCase()==='O',endDate:(()=>{const e=excelDate(r['종료일']);return /^\d{4}-\d{2}-\d{2}$/.test(e)?e:''})(),relatedPerson:String(r['관련자']||''),remindAt:(()=>{const v=String(r['알림']||'').trim().replace(' ','T');return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(v)?v:''})(),reminded:true,logs:[] })).filter(t=>t.title&&/^\d{4}-\d{2}-\d{2}$/.test(t.date));
   diaryRows=diaryData.map((r,i)=>({id:`diary-import-${Date.now()}-${i}`,date:excelDate(r['날짜']),status:['예정','진행 중','결재 대기','자료 대기','완료','지연'].includes(r['상태'])?r['상태']:'진행 중',person:String(r['업무관련자']||''),content:String(r['내용']||''),deadline:excelDate(r['마감일']),doneDate:r['완료일']?excelDate(r['완료일']):'',note:String(r['비고']||'')})).filter(r=>r.date||r.content||r.person);
   if(settingsSheet){profile.quickLinks=settingsData.filter(r=>r['종류']==='바로가기').map(r=>({name:String(r['이름']||''),url:String(r['URL']||''),loginId:String(r['로그인 ID']||'')})).filter(l=>l.name&&l.url);profile.customHolidays=settingsData.filter(r=>r['종류']==='공휴일').map(r=>({date:excelDate(r['날짜']),name:String(r['설명']||'')})).filter(h=>h.date&&h.name);const appearance=settingsData.find(r=>r['종류']==='화면설정');if(appearance){profile.calendarTitle=String(appearance['이름']||'업무 캘린더');profile.theme=['blue','rose','beige','lavender','green','notion'].includes(String(appearance['설명']||'blue'))?String(appearance['설명']):'blue'}}
   saveData();renderAll();renderDiaryTable();alert(`복원 완료: 달력 업무 ${tasks.length}건, 일지 ${diaryRows.length}건`);
