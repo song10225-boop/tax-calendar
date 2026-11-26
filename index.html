@@ -7493,8 +7493,10 @@ function wiArchiveDone(){const D=wiList().filter(x=>x.status==='완료');if(!D.l
 function wiSetF(f){wiFilter=f;wiRender()}
 /* 달력·업무일지 연결 */
 function wiCat(){try{const C=getCategories();return (C.find(c=>/업무|기타|일반/.test(c.name))||C[0]||{}).name||''}catch(e){return ''}}
-function wiSyncCal(it){if(!it.cal)return;const t=tasks.find(x=>x.id===it.cal);if(!t){it.cal='';return}if(!it.due){return}
- t.title=it.title||t.title;t.date=it.due;t.endDate=it.due;t.relatedPerson=it.client||'';if(!it.fromCal)t.memo=wiCalMemo(it);t.status=it.status==='완료'?'완료':t.status==='완료'?'예정':t.status;if(it.status==='완료'&&!t.actualDate)t.actualDate=it.doneAt||toISO(new Date());try{renderAll()}catch(e){}}
+function wiSyncCal(it){if(!it.cal)return;const t=tasks.find(x=>x.id===it.cal);if(!t){it.cal='';return}
+ if(it.title)t.title=it.title;if(it.due){t.date=it.due;if(!t.endDate||t.endDate<it.due)t.endDate=it.due}t.relatedPerson=it.client||'';if(!it.fromCal)t.memo=wiCalMemo(it);
+ if(it.status==='완료'){t.status='완료';if(!t.actualDate)t.actualDate=it.doneAt||toISO(new Date())}else if(it.status!=='보관'&&t.status==='완료'){t.status='예정';t.actualDate=''}
+ try{renderAll()}catch(e){}}
 function wiCalMemo(it){return ['[진행 중 업무]',it.amount?'금액: '+it.amount:'',it.next?'다음 할 일:\n'+it.next:''].filter(Boolean).join('\n')}
 function wiToCal(id){const it=wiList().find(x=>x.id===id);if(!it)return;if(!it.due){alert('예정일을 먼저 입력해 주세요.');const el=document.querySelector(`[data-wi="${id}"] [data-f=due]`);if(el)el.focus();return}
  if(it.cal&&tasks.some(t=>t.id===it.cal)){wiSyncCal(it);saveData();alert(`달력에 ${wiDot(it.due)} 일정으로 반영했어요.`);return}
@@ -7649,6 +7651,17 @@ function m2dUI(){const d=$('taskDiary');if(!d)return;let w=$('m2dWrap');if(!w){w
 const _openTaskModalM2D=openTaskModal;openTaskModal=function(){const r=_openTaskModalM2D.apply(this,arguments);try{m2dUI()}catch(e){}return r};
 const _saveTaskM2D=saveTask;saveTask=async function(e){try{if(m2dOn()){const d=$('taskDiary'),m=($('taskMemo').value||'').trim();if(d&&!d.value.trim()&&m){const id=$('taskId').value,ex=id?tasks.find(t=>t.id===id):null,old=String(ex&&ex.memo||'').trim();let add='';
   if(!ex)add=m;else if(m!==old)add=old&&m.startsWith(old)?m.slice(old.length).trim():m;if(add)d.value=add}}}catch(_){}return _saveTaskM2D.apply(this,arguments)};
+
+/* 달력 → 진행 중 업무: 완료·취소·날짜·제목 따라가기 */
+function wiPull(){const L=profile&&profile.workItems;if(!Array.isArray(L)||!L.length)return false;let ch=false;
+ L.forEach(it=>{if(!it.cal)return;const t=(tasks||[]).find(x=>x.id===it.cal);if(!t)return;const tDone=t.status==='완료';
+  if(tDone&&it.status!=='완료'&&it.status!=='보관'){it.prevSt=it.status;it.status='완료';it.done=true;it.doneAt=t.actualDate||toISO(new Date());ch=true}
+  else if(!tDone&&it.status==='완료'){it.status=it.prevSt&&it.prevSt!=='완료'?it.prevSt:'진행중';it.done=false;it.doneAt='';ch=true}
+  if(t.date&&it.due!==t.date){it.due=t.date;ch=true}
+  if(t.title&&it.title!==t.title){it.title=t.title;ch=true}});
+ if(ch){try{wiSink()}catch(e){}}return ch}
+const _saveDataWI=saveData;saveData=function(){let ch=false;try{ch=wiPull()}catch(e){}const r=_saveDataWI.apply(this,arguments);
+ if(ch){const pg=$('wiPage'),b=$('wiBody');if(pg&&pg.classList.contains('active')&&!(b&&b.contains(document.activeElement)))try{wiRender()}catch(e){}}return r};
 </script>
 </body>
 </html>
